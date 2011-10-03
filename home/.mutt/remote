@@ -1,0 +1,9 @@
+set folder=imaps://imap.gmail.com
+unmailboxes *
+mailboxes =INBOX =[Gmail]/Drafts =[Gmail]/'Sent Mail' =[Gmail]/Spam
+set spoolfile=+INBOX \
+    postponed=+[Gmail]/Drafts \
+    record=+[Gmail]/Drafts \
+    smtp_url=smtps://emacsray@smtp.gmail.com \
+    smtp_pass=$imap_pass \
+    from=emacsray@gmail.com

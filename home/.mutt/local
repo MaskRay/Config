@@ -1,0 +1,9 @@
+set folder=~/Maildir
+unmailboxes *
+mailboxes =inbox =drafts =drafts =codejam =gentoo-china =haskell-beginners =contest =shlug =school =toplanguage =rss
+set spoolfile=+inbox \
+    postponed=+drafts \
+    record=+sent \
+    smtp_url=smtps://emacsray@smtp.gmail.com \
+    smtp_pass=$imap_pass \
+    from=emacsray@gmail.com

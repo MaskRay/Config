@@ -1,0 +1,74 @@
+ignore *
+unignore From Subject Lines
+hdr_order From Subject Lines
+
+set imap_user=emacsray@gmail.com
+source ~/.mutt/passwd
+set imap_passive=yes
+set imap_keepalive=300
+
+macro generic \Cx0 "<enter-command>source ~/.mutt/local<enter>"
+macro generic \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
+source ~/.mutt/local
+
+set header_cache=~/.mutt/hcache
+set signature=~/.mutt/signature
+set message_cachedir=~/.mutt/bdcache
+set certificate_file =~/.mutt/certificates
+# 回信时是否包含原文。
+set include=yes
+# 回信的引文之前插入那个符号？
+set indent_str="> "
+# 当你按 "t" 或者 "D" 之类的标记操作时，是否自动把光标移动到下一封信件。
+set resolve=yes
+
+set alias_file="~/.mutt/alias"
+set sort_alias=alias
+set reverse_alias=yes
+source $alias_file
+set query_command="abook --mutt-query '%s'"
+
+macro pager \cu "|urlview\n"
+macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
+macro generic,index,pager \ca "<shell-escape>abook<return>" "launch abook"
+bind generic,index j next-entry
+bind generic,index k previous-entry
+bind index,pager J next-new-then-unread
+bind index,pager K previous-new-then-unread
+bind generic,pager h previous-line
+bind generic,pager l next-line
+bind pager H display-toggle-weed
+#bind index <tab> display-message
+bind browser <backtab> toggle-mailboxes
+#bind browser <tab> select-entry
+bind index h previous-page
+bind index / limit
+bind index <esc>/ show-limit
+bind index l next-page
+message-hook '!(~g|~G) ~b"^-----BEGIN\ PGP\ (SIGNED\ )?MESSAGE"' "exec check-traditional-pgp"
+set mail_check=120
+set sort=threads
+set sort_aux=reverse-last-date-received
+set pager_index_lines=10
+set imap_check_subscribed=yes
+alternative_order text/html text/enriched text/plain 
+set editor=vim
+set edit_headers
+set quit=yes
+lists toplanguage translate shlug arch kindle
+source ~/.mutt/mutt_color
+source ~/.mutt/gpg.rc
+auto_view text/html
+charset-hook ^us-ascii$ utf8
+charset-hook ^iso-8859-1$ utf8
+set markers=no 
+#charset-hook .* utf8
+set charset="utf8"
+set locale="zh_CN.utf8" 
+#set strict_mime=no
+set assumed_charset="GB18030:UTF-8" 
+set ssl_force_tls = yes
+set editor="vim -c \"set spell spelllang=en\""
+
+ macro   index   q       '<change-folder>?<toggle-mailboxes>'
+ macro   browser q       '<exit><quit>'
