@@ -1,0 +1,15 @@
+# DO NOT EDIT! This file will be overwritten by LXAppearance.
+# Any customization should be done in ~/.gtkrc-2.0.mine instead.
+
+#gtk-theme-name="SlicknesS-black"
+gtk-icon-theme-name="buuf2.30"
+gtk-font-name="文泉驿微米黑 17"
+gtk-cursor-theme-name="Pulse-Glass"
+gtk-cursor-theme-size=0
+gtk-toolbar-style=GTK_TOOLBAR_BOTH
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=1
+include "/usr/share/themes/Emacs/gtk-2.0-key/gtkrc"

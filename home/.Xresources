@@ -1,0 +1,82 @@
+! tvale
+*background: #000000
+*foreground: #FFFFFF
+!black
+*color0 : #222222
+*color8 : #454545
+!red
+*color1 : #B22222
+*color9 : #FA8072
+!green
+*color2 : #556B2F
+*color10: #9ACD32
+!yellow
+*color3 : #B8860B
+*color11: #DAA520
+!blue
+*color4 : #4682B4
+*color12: #6495ED
+!magenta
+*color5 : #9932CC
+*color13: #DA70D6
+!cyan
+*color6 : #87CEEB
+*color14: #B0E0E6
+!white
+*color7 : #C0C0C0
+*color15: #FFFFFF
+
+Xft.dpi:                96
+Xft.hinting:            1
+Xft.hintstyle:          hintslight
+Xft.antialias:          1
+Xft.rgba:               rgb
+
+! xterm
+xterm.termName: xterm-256color
+xterm.title:    Xterm
+xterm.vt100.allowTitleOps:  false
+xterm*geometry: 105x33
+xterm*scrollBar: false
+xterm*rightScrollBar: true
+xterm*loginshell: true
+xterm*borderLess: true
+xterm*colorUL: green
+xterm*colorBD: wheat
+xterm*colorBDMode: true
+xterm*colorULMode: false
+xterm*veryBoldColors: 4
+xterm*cursorBlink: false
+xterm*cursorUnderLine: False
+xterm*cursorColor: green
+
+xterm*saveLines: 1000
+xterm*fastScroll: true
+
+xterm*highlightSelection: true
+
+xterm*altSendsEscape: true
+xterm*eightBitInput: false
+xterm*trimSelection: true
+XTerm*VT100.Translations: #override \
+    ~Shift ~Ctrl<Btn2Up>: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
+    ~Shift <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
+    Meta <KeyPress> /: dabbrev-expand() \n
+! Mod1 <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
+
+xterm*locale: true
+xterm.utf8: true
+xterm*utf8Title: true
+xterm*fontMenu*fontdefault*Label: Default
+! xterm*faceName: Bitstream Vera Sans Mono:bold:antialias=True
+xterm*faceName: Monaco:bold:antialias=true
+xterm*faceNameDoublesize: WenQuanYi Micro Hei:bold:antialias=True:pixelsize=18
+xterm*xftAntialias: true
+xterm*faceSize: 13
+
+! allow selecting email/url by double click
+XTerm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
+
+XTerm*visualBell: false
+
+Xcursor.theme: Grounation
