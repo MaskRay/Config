@@ -4,7 +4,6 @@ net-analyzer/nmap
 net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient
-net-dialup/rp-l2tp
 net-firewall/arptables
 net-firewall/iptables
 net-fs/samba
