@@ -1,0 +1,7 @@
+KERNEL!="sd[b-z]?", GOTO="automount_exit"
+
+ACTION=="add", ATTRS{ID_MODEL}=="GT-I9001_Card", RUN+="echo hello"
+ACTION=="add", SUBSYSTEM=="block", RUN+="/bin/mkdir /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}", RUN+="/bin/mount -o uid=1000,user,codepage=936,utf8 $root/%k /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}"
+ACTION=="remove", SUBSYSTEM=="block", RUN+="/bin/umount /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}", RUN+="/bin/rmdir /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}"
+
+LABEL="automount_exit"
