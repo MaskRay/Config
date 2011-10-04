@@ -1,0 +1,14 @@
+app-editors/emacs
+app-editors/gvim
+app-editors/vim
+dev-haskell/cabal-install
+dev-lang/fpc
+dev-lang/ghc
+dev-scheme/guile
+dev-tcltk/expect
+dev-util/cscope
+dev-util/flawfinder
+dev-vcs/git
+dev-vcs/mercurial
+dev-vcs/tig
+sys-devel/gdb

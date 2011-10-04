@@ -1,0 +1,9 @@
+# compilers, interpreters
+dev-lang/ghc doc binary
+
+# vcs
+dev-vcs/git curl
+
+x11-libs/cairo X xcb opengl svg
+
+app-editors/emacs X gtk

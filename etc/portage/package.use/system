@@ -1,0 +1,5 @@
+app-arch/bzip2 static-libs
+app-arch/p7zip rar
+sys-libs/zlib static-libs
+dev-libs/DirectFB fbcon
+sys-fs/udev extras -acl

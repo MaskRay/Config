@@ -1,0 +1,9 @@
+app-emulation/qemu-kvm
+net-wireless/aircrack-ng
+net-wireless/wpa_supplicant
+sys-apps/ifplugd
+sys-power/acpi
+sys-power/acpid
+sys-power/cpufreqd
+sys-power/cpufrequtils
+x11-drivers/radeon-ucode
