@@ -7,3 +7,4 @@ sys-power/acpid
 sys-power/cpufreqd
 sys-power/cpufrequtils
 x11-drivers/radeon-ucode
+sys-apps/vbetool
