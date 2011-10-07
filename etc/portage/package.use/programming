@@ -7,3 +7,5 @@ dev-vcs/git curl
 x11-libs/cairo X xcb opengl svg
 
 app-editors/emacs X gtk
+
+dev-lang/tcl threads
