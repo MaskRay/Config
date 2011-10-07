@@ -411,7 +411,7 @@ export SAVEHIST=10000
 export HISTFILE=$HOME/.zsh_history
 export MENUCONFIG_COLOR=blackbg
 
-export PATH=$HOME/.cabal/bin:$HOME/bin:$PATH
+export PATH=$HOME/.cabal/bin:$HOME/bin:$HOME/bin/ssh:$PATH
 export EDITOR=vim
 export VISUAL=vim
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
@@ -493,6 +493,7 @@ alias x=xargs
 alias dropboxd=/opt/dropbox-daemon/dropboxd
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
+alias sv='sudo vim'
 
 alias -g EG='|& egrep'
 alias -g EH='|& head'
