@@ -1,5 +1,6 @@
 # compilers, interpreters
 dev-lang/ghc doc binary
+dev-lang/ruby doc examples threads 
 
 # vcs
 dev-vcs/git curl
