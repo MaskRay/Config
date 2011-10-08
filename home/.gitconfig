@@ -1,0 +1,28 @@
+[user]
+	name = MaskRay
+	email = emacsray@gmail.com
+[color]
+	diff = always
+	branch = auto
+	status = auto
+	grep = always
+[alias]
+	a   = add
+	b   = branch
+	c   = commit
+	d   = diff
+	l   = log
+	lc  = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+	lg  = log --graph
+	m   = merge
+	pl  = pull
+	pu  = push
+	s   = status -s
+	sb  = status -sb
+	t   = tag
+	untrack = rm -r --cached
+	merge-branch-file = checkout --merge 
+[merge]
+	tool = vimdiff
+[branch]
+	autosetuprebase = always
