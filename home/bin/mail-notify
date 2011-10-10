@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby19
+
+TIME = 5000 # notification timeout in milliseconds
+msg = `formail -X From: -X Subject:`
+
+msg =~ /From:\s*([^<]*)/
+from = $1
+msg =~ /Subject:((?>.(?!^From))*)/m
+sub = $1
+sub.gsub! /\s/, ""
+
+# handle MIME encoded-word syntax
+[from, sub].each do |ref|
+  ref.gsub!(/=\?([^?]+)\?([^?]+)\?([^?]+)\?=/) { |x|
+    charset, encoding, encoded = $1, $2, $3
+    case encoding
+    when 'Q'
+      `echo '#{encoded}' | recode #{charset}/qp..u8`
+    when 'B'
+      `echo '#{encoded}' | recode #{charset}/b64..u8`
+    end
+  }
+end
+
+`pgrep xmonad`.split.each { |pid|
+  dbus = `grep -z DBUS_SESSION_BUS_ADDRESS /proc/#{pid}/environ | sed 's/[^=]*=//'`.chop
+  IO.popen([{'DBUS_SESSION_BUS_ADDRESS' => dbus}, 'notify-send', '-c', 'mail', '-t', "#{TIME}", '--', from, sub])
+}

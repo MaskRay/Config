@@ -1,5 +1,6 @@
 app-emulation/qemu-kvm
 net-wireless/aircrack-ng
+net-wireless/bluez-firmware
 net-wireless/wpa_supplicant
 sys-apps/ifplugd
 sys-power/acpi
