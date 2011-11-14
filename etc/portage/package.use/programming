@@ -1,6 +1,10 @@
 # compilers, interpreters
 dev-lang/ghc doc binary
-dev-lang/ruby doc examples threads 
+dev-haskell/mtl doc hscolour
+dev-lang/ruby doc examples threads
+dev-lang/python sqlite
+app-editors/vim cscope vim-pager
+dev-lang/gprolog doc examples
 
 # vcs
 dev-vcs/git curl
@@ -10,3 +14,4 @@ x11-libs/cairo X xcb opengl svg
 app-editors/emacs X gtk
 
 dev-lang/tcl threads
+dev-haskell/hxt doc

@@ -60,6 +60,7 @@ xterm*eightBitInput: false
 xterm*trimSelection: true
 XTerm*VT100.Translations: #override \
     ~Shift ~Ctrl<Btn2Up>: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
+    Ctrl<KeyPress>Insert: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
     ~Shift <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
     Meta <KeyPress> /: dabbrev-expand() \n
 ! Mod1 <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
@@ -79,4 +80,4 @@ XTerm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35
 
 XTerm*visualBell: false
 
-Xcursor.theme: Grounation
+! Xcursor.theme: Grounation

@@ -5,7 +5,7 @@ media-libs/gd fontconfig
 #media-libs/lcms static-libs
 #media-libs/libpng static-libs apng
 media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xvid directfb a52 aac real xvmc
-media-video/ffmpeg vdpau threads
+media-video/ffmpeg vdpau threads v4l v4l2
 www-plugins/adobe-flash 64bit
 media-libs/freetype:1 kpathsea
 x11-base/xorg-server xnest xvfb

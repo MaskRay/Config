@@ -3,3 +3,6 @@ x11-misc/xbindkeys tk guile
 app-emulation/wine win32 win64 alsa
 net-wireless/wpa_supplicant qt4
 x11-drivers/nvidia-drivers gtk -acpi
+net-misc/networkmanager dhclient connection-sharing
+app-misc/screen multiuser
+net-mail/offlineimap doc
