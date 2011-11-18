@@ -4,6 +4,7 @@ dev-haskell/mtl doc hscolour
 dev-lang/ruby doc examples threads
 dev-lang/python sqlite
 app-editors/vim cscope vim-pager
+app-editors/gvim cscope vim-pager
 dev-lang/gprolog doc examples
 
 # vcs
