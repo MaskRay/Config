@@ -1,16 +1,17 @@
-Config {font = "xft:Josefin Sans Std-14:blod"
-       , bgColor = "2f2e2e"
-       , fgColor = "white"
-       , position = Top
-       , lowerOnStart = True
-       , commands = [ Run MultiCpu ["-L","10","-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000"] 50
-                    , Run Memory ["-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000","-t","Mem: <usedratio>%"] 50
-                    , Run Date "%H:%M %a %y-%m-%d " "date" 200
-                    , Run BatteryP ["BAT1"] ["-t","<left>","-L","30","-H","80","-l","red","-n","orange","-h","green"] 200
-                    , Run StdinReader
-                    ]
-       , sepChar = "%"
-       , alignSep = "}{"
-       , template = "%StdinReader% }{ %multicpu% <fc=#daff30>|</fc> %memory% <fc=#daff30>|</fc> Bat: %battery%  <fc=#e09000>%date%</fc>"
-       }
-
+Config { font = "xft:WenQuanYi Micro Hei-13:bold"
+    , border = NoBorder
+    , borderColor = "black"
+    , bgColor = "2f2e2e"
+    , fgColor = "white"
+    , position = Top
+    , lowerOnStart = True
+    , commands = [ Run MultiCpu ["-L","10","-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000"] 50
+                 , Run Memory ["-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000","-t","Mem: <usedratio>%"] 50
+                 , Run Date "%H:%M %a %y-%m-%d " "date" 200
+                 , Run BatteryP ["BAT1"] ["-t","<left>","-L","30","-H","80","-l","red","-n","orange","-h","green"] 200
+                 , Run StdinReader
+                 ]
+    , sepChar = "%"
+    , alignSep = "}{"
+    , template = "%StdinReader% }{ %multicpu% <fc=#daff30>|</fc> %memory% <fc=#daff30>|</fc> Bat: %battery%  <fc=#e09000>%date%</fc>"
+    }
