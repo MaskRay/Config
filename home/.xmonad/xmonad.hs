@@ -10,6 +10,7 @@ import Text.Regex
 import XMonad
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run
+import XMonad.Util.NamedWindows (getName)
 
 import XMonad.Prompt
 import XMonad.Prompt.Input
@@ -21,18 +22,23 @@ import XMonad.Prompt.Workspace
 
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.FloatKeys
 import XMonad.Actions.GridSelect
 import XMonad.Actions.Search
 import XMonad.Actions.Submap
+import XMonad.Actions.UpdatePointer
 import XMonad.Actions.TopicSpace
+import XMonad.Actions.WindowBringer
 import XMonad.Actions.WindowGo
 import XMonad.Actions.WindowMenu
 import XMonad.Actions.WithAll (killAll)
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.UrgencyHook
 
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
@@ -73,8 +79,6 @@ myLayout = avoidStruts $
     myTiled ||| Mag.magnifier Grid ||| TwoPane (3/100) (1/2)
     where
         myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
-    -- allLayouts
-    -- layoutHints $ tiled ||| Mirror tiled ||| Full
 
 myManageHook = composeAll $
     [ className =? c --> doCenterFloat | c <- myFloats]
@@ -86,6 +90,7 @@ myManageHook = composeAll $
     ]
     where
         myFloats = [ "feh"
+                   , "Display"
                    , "XClock"
                    , "Xmessage"
                    , "Floating"
@@ -129,6 +134,11 @@ myKeys =
                     ]
     ]
     ++
+    [("M-" ++ m ++ k, screenWorkspace sc >>= flip whenJust (windows . f))
+        | (k, sc) <- zip ["w", "e", "r"] [0..]
+        , (f, m) <- [(W.view, ""), (W.shift, "S-")]
+    ]
+    ++
     [ ("M-S-q", io exitFailure)
     , ("M-S-c", kill)
     , ("M-q", spawn "xmonad --recompile; xmonad --restart")
@@ -137,8 +147,11 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /screen.jpg")
     , ("M-s", spawnSelected defaultGSConfig ["xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
-    , ("M-p",   spawn "dmenu_run -i")
     , ("M-S-l", spawn "xscreensaver-command -lock")
+    , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+")
+    , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-")
+    , ("<XF86AudioMute>", spawn "amixer set Master mute")
+    , ("<XF86AudioUnmute>", spawn "amixer set Master unmute")
 
     -- window management
     , ("M-<Space>", sendMessage NextLayout)
@@ -148,12 +161,22 @@ myKeys =
     , ("M-,", sendMessage (IncMasterN 1))
     , ("M-.", sendMessage (IncMasterN (-1)))
     , ("M-b", sendMessage ToggleStruts)
+    , ("M-d", bringMenu)
+    , ("M-y", focusUrgent)
+    , ("M-<L>", withFocused (keysMoveWindow (-20,0))) -- move float left
+    , ("M-<R>", withFocused (keysMoveWindow (20,0))) -- move float right
+    , ("M-<U>", withFocused (keysMoveWindow (0,-20))) -- move float up
+    , ("M-<D>", withFocused (keysMoveWindow (0,20))) -- move float down
+    , ("M-S-<L>", withFocused (keysResizeWindow (-20,0) (0,0))) --shrink float at right
+    , ("M-S-<R>", withFocused (keysResizeWindow (20,0) (0,0))) --expand float at right
+    , ("M-S-<D>", withFocused (keysResizeWindow (0,20) (0,0))) --expand float at bottom
+    , ("M-S-<U>", withFocused (keysResizeWindow (0,-20) (0,0))) --shrink float at bottom
+    , ("M-C-<L>", withFocused (keysResizeWindow (20,0) (1,0))) --expand float at left
+    , ("M-C-<R>", withFocused (keysResizeWindow (-20,0) (1,0))) --shrink float at left
+    , ("M-C-<U>", withFocused (keysResizeWindow (0,20) (0,1))) --expand float at top
+    , ("M-C-<D>", withFocused (keysResizeWindow (0,-20) (0,1))) --shrink float at top
 
     -- workspace management
-    , ("M-<R>", moveTo Next HiddenNonEmptyWS)
-    , ("M-<L>", moveTo Prev HiddenNonEmptyWS)
-    , ("M-C-<R>", nextWS)
-    , ("M-C-<L>", prevWS)
     , ("C-; ;", toggleWS)
 
     -- dynamic workspace
@@ -168,7 +191,8 @@ myKeys =
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' o", namedScratchpadAction scratchpads "offlineimap")
-    , ("C-' m", namedScratchpadAction scratchpads "mutt")
+    , ("C-' r", namedScratchpadAction scratchpads "r2e")
+    , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-x",       sendMessage $ Toggle REFLECTX)
@@ -185,22 +209,30 @@ myKeys =
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     , ("M-/",   submap . mySearchMap $ myPromptSearch)
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
+
+
     ]
 
 scratchpads =
   [ NS "screen" "xterm -T screen -e 'screen -d -R'" (title =? "screen") mySPFloat
   , NS "ghci" "xterm -T ghci -e ghci" (title =? "ghci") mySPFloat
   , NS "htop" "xterm -T htop -e htop" (title =? "htop") mySPFloat
-  , NS "offlineimap" "xterm -T offlineimap -e 'offlineimap -o -d thread'" (title =? "offlineimap") mySPFloat
-  , NS "mutt" "xterm -T mutt -e mutt" (title =? "mutt") mySPFloat
+  , NS "offlineimap" "xterm -T offlineimap -e 'offlineimap -o -d thread'" (title =? "offlineimap") doTopRightFloat
+  , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
+  , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/5) (1/5) (3/5) (3/5)
+    doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
+    doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
+    doBottomLeftFloat = customFloating $ W.RationalRect 0 (2/3) (1/3) (1/3)
+    doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
+    doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
 main = do
      xmobar <- spawnPipe "/usr/bin/xmobar"
      checkTopicConfig myTopicNames myTopicConfig
-     xmonad $ ewmh $ defaultConfig {
+     xmonad $ ewmh $ withUrgencyHook LibNotifyUrgencyHook $ defaultConfig {
         terminal           = "xterm",
         focusFollowsMouse  = True,
         borderWidth        = 1,
@@ -212,13 +244,29 @@ main = do
         layoutHook         = myLayout,
         manageHook         = myManageHook,
         handleEventHook    = mempty,
-        logHook            = myLogHook xmobar,
+        logHook            = myLogHook xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5),
         startupHook        = spawn "~/bin/start-tiling"
     } `additionalKeysP` myKeys
 
+data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
+
+instance UrgencyHook LibNotifyUrgencyHook where
+    urgencyHook LibNotifyUrgencyHook w = do
+        name <- getName w
+        ws <- gets windowset
+        whenJust (W.findTag w ws) (flash name)
+      where flash name index =
+                safeSpawn "notify-send" [show name ++ " requests your attention on workspace " ++ index]
+
 myXPConfig = defaultXPConfig
-    { fgColor = "#a8a3f7"
-    , bgColor = "#3f3c6d"
+    { font = "xft:DejaVu Sans Mono:pixelsize=16"
+    , bgColor           = "#0c1021"
+    , fgColor           = "#f8f8f8"
+    , fgHLight          = "#f8f8f8"
+    , bgHLight          = "steelblue3"
+    , borderColor       = "DarkOrange"
+    , promptBorderWidth = 1
+    , position          = Top
     }
 
 
@@ -269,6 +317,7 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox")
     , TI "code" "" (spawn "gvim")
+    , TI "mail" "" (spawn "xterm -T mutt -e mutt")
     , TI "doc" "Documents/" (spawn "evince")
     , TI "net" "" (spawn "wpa_gui")
     , TI "dict" "" (spawn "goldendict")
