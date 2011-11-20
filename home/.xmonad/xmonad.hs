@@ -151,7 +151,6 @@ myKeys =
     , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+")
     , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-")
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
-    , ("<XF86AudioUnmute>", spawn "amixer set Master unmute")
 
     -- window management
     , ("M-<Space>", sendMessage NextLayout)
@@ -193,6 +192,7 @@ myKeys =
     , ("C-' o", namedScratchpadAction scratchpads "offlineimap")
     , ("C-' r", namedScratchpadAction scratchpads "r2e")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
+    , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-x",       sendMessage $ Toggle REFLECTX)
@@ -220,33 +220,37 @@ scratchpads =
   , NS "offlineimap" "xterm -T offlineimap -e 'offlineimap -o -d thread'" (title =? "offlineimap") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
+  , NS "eix-sync" "xterm -T eix-sync -e eix-sync" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/5) (1/5) (3/5) (3/5)
+    doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
     doBottomLeftFloat = customFloating $ W.RationalRect 0 (2/3) (1/3) (1/3)
     doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
+myConfig xmobar = ewmh $ withUrgencyHook LibNotifyUrgencyHook $ defaultConfig {
+    terminal           = "xterm",
+    focusFollowsMouse  = True,
+    borderWidth        = 1,
+    modMask            = mod4Mask,
+    workspaces         = myTopicNames,
+    normalBorderColor  = "#dddddd",
+    focusedBorderColor = "#ff0000",
+    mouseBindings      = myMouseBindings,
+    layoutHook         = myLayout,
+    manageHook         = myManageHook,
+    handleEventHook    = mempty,
+    logHook            = myLogHook xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5),
+    startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
+} `additionalKeysP` myKeys
+
 main = do
      xmobar <- spawnPipe "/usr/bin/xmobar"
      checkTopicConfig myTopicNames myTopicConfig
-     xmonad $ ewmh $ withUrgencyHook LibNotifyUrgencyHook $ defaultConfig {
-        terminal           = "xterm",
-        focusFollowsMouse  = True,
-        borderWidth        = 1,
-        modMask            = mod4Mask,
-        workspaces         = myTopicNames,
-        normalBorderColor  = "#dddddd",
-        focusedBorderColor = "#ff0000",
-        mouseBindings      = myMouseBindings,
-        layoutHook         = myLayout,
-        manageHook         = myManageHook,
-        handleEventHook    = mempty,
-        logHook            = myLogHook xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5),
-        startupHook        = spawn "~/bin/start-tiling"
-    } `additionalKeysP` myKeys
+     xmonad $ myConfig xmobar
 
 data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
 
