@@ -1,3 +1,9 @@
+{-# LANGUAGE
+    TypeSynonymInstances,
+    MultiParamTypeClasses,
+    DeriveDataTypeable
+    #-}
+
 import Control.Monad
 import Data.List ((\\))
 import qualified Data.Map as M
@@ -27,6 +33,7 @@ import XMonad.Actions.GridSelect
 import XMonad.Actions.Search
 import XMonad.Actions.Submap
 import XMonad.Actions.UpdatePointer
+import XMonad.Actions.SpawnOn
 import XMonad.Actions.TopicSpace
 import XMonad.Actions.WindowBringer
 import XMonad.Actions.WindowGo
@@ -40,6 +47,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.UrgencyHook
 
+import XMonad.Layout.AutoMaster
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
@@ -53,6 +61,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
+import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.TwoPane
@@ -64,11 +73,46 @@ import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Paste
 
+-- Colors
+--myFont              = "-misc-fixed-medium-r-semicondensed-*-16-110-75-75-c-60-*-*"
+myFont = "xft:DejaVu Sans Mono:pixelsize=16"
+colorBlack          = "#000000"
+colorBlackAlt       = "#050505"
+colorGray           = "#484848"
+colorGrayAlt        = "#b8bcb8"
+colorDarkGray       = "#161616"
+colorWhite          = "#ffffff"
+colorWhiteAlt       = "#9d9d9d"
+colorDarkWhite      = "#444444"
+colorMagenta        = "#8e82a2"
+colorMagentaAlt     = "#a488d9"
+colorBlue           = "#60a0c0"
+colorBlueAlt        = "#007b8c"
+colorRed            = "#d74b73"
+
+-- Tab theme
+myTabTheme = defaultTheme
+	{ fontName            = myFont
+	, inactiveBorderColor = colorGrayAlt
+	, inactiveColor       = colorGray
+	, inactiveTextColor   = colorGrayAlt
+	, activeBorderColor   = colorGrayAlt
+	, activeColor         = colorBlue
+	, activeTextColor     = colorDarkGray
+	, urgentBorderColor   = colorBlackAlt
+	, urgentTextColor     = colorWhite
+	, decoHeight          = 20
+	}
+
+data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
+instance Transformer TABBED Window where
+     transform _ x k = k (named "TABBED" (tabbedAlways shrinkText myTabTheme)) (const x)
 
 myLayout = avoidStruts $
     gaps (zip [U,D,L,R] (repeat 0)) $
     workspaceDir "~" $
     configurableNavigation (navigateColor "#00aa00") $
+    mkToggle1 TABBED $
     mkToggle1 NBFULL $
     mkToggle1 REFLECTX $
     mkToggle1 REFLECTY $
@@ -76,7 +120,7 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     smartBorders $
     onWorkspaces ["web","irc"] (Full ||| myTiled) $
-    myTiled ||| Mag.magnifier Grid ||| TwoPane (3/100) (1/2)
+    autoMaster 1 (1/20) (Mag.magnifier Grid) ||| myTiled ||| TwoPane (3/100) (1/2)
     where
         myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
@@ -88,6 +132,8 @@ myManageHook = composeAll $
     [ manageDocks
     , namedScratchpadManageHook scratchpads
     ]
+    ++
+    [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"]]
     where
         myFloats = [ "feh"
                    , "Display"
@@ -141,13 +187,14 @@ myKeys =
     ++
     [ ("M-S-q", io exitFailure)
     , ("M-S-c", kill)
-    , ("M-q", spawn "xmonad --recompile; xmonad --restart")
+    , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /screen.jpg")
     , ("M-s", spawnSelected defaultGSConfig ["xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
+    , ("M-S-k", spawn "xkill")
     , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+")
     , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-")
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
@@ -195,10 +242,11 @@ myKeys =
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
-    , ("M-C-x",       sendMessage $ Toggle REFLECTX)
-    , ("M-C-y",       sendMessage $ Toggle REFLECTY)
-    , ("M-C-m",       sendMessage $ Toggle MIRROR)
-    , ("M-C-b",       sendMessage $ Toggle NOBORDERS)
+    , ("M-C-t", sendMessage $ Toggle TABBED)
+    , ("M-C-x", sendMessage $ Toggle REFLECTX)
+    , ("M-C-y", sendMessage $ Toggle REFLECTY)
+    , ("M-C-m", sendMessage $ Toggle MIRROR)
+    , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
@@ -209,8 +257,6 @@ myKeys =
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     , ("M-/",   submap . mySearchMap $ myPromptSearch)
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
-
-
     ]
 
 scratchpads =
@@ -220,7 +266,7 @@ scratchpads =
   , NS "offlineimap" "xterm -T offlineimap -e 'offlineimap -o -d thread'" (title =? "offlineimap") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
-  , NS "eix-sync" "xterm -T eix-sync -e eix-sync" (title =? "eix-sync") doTopFloat
+  , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync'" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/5) (1/5) (3/5) (3/5)
@@ -271,6 +317,7 @@ myXPConfig = defaultXPConfig
     , borderColor       = "DarkOrange"
     , promptBorderWidth = 1
     , position          = Top
+    , historyFilter     = deleteConsecutive
     }
 
 
@@ -319,12 +366,12 @@ myTopicConfig = TopicConfig
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "firefox")
-    , TI "code" "" (spawn "gvim")
-    , TI "mail" "" (spawn "xterm -T mutt -e mutt")
-    , TI "doc" "Documents/" (spawn "evince")
-    , TI "net" "" (spawn "wpa_gui")
-    , TI "dict" "" (spawn "goldendict")
-    , TI "irc" "" (spawn "xterm -T irssi -e irssi")
-    , TI "org" "org/" (spawn "gvim ~/org/`date +%Y-%m-%d`.txt")
+    [ TI "web" "" (spawnOn "web" "firefox")
+    , TI "code" "" (spawnOn "code" "gvim")
+    , TI "mail" "" (spawnOn "mail" "xterm -T mutt -e mutt")
+    , TI "doc" "Documents/" (spawnOn "doc" "evince")
+    , TI "net" "" (spawnOn "net" "wpa_gui")
+    , TI "dict" "" (spawnOn "dict" "goldendict")
+    , TI "irc" "" (spawnOn "irc" "xterm -T irssi -e irssi")
+    , TI "org" "org/" (spawnOn "org" "gvim ~/org/`date +%Y-%m-%d`.txt")
     ]
