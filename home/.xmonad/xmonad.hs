@@ -19,6 +19,7 @@ import XMonad.Util.Run
 import XMonad.Util.NamedWindows (getName)
 
 import XMonad.Prompt
+import qualified XMonad.Prompt.AppLauncher as AL
 import XMonad.Prompt.Input
 import XMonad.Prompt.Man
 import XMonad.Prompt.RunOrRaise
@@ -100,14 +101,14 @@ myLayout = avoidStruts $
         myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
 myManageHook = composeAll $
-    [ className =? c --> doCenterFloat | c <- myFloats]
-    ++
-    [ title =? t --> doFloat | t <- myTFloats]
-    ++
-    [ manageDocks
-    , namedScratchpadManageHook scratchpads
-    ]
-    ++
+    [ className =? c --> doShift "web" | c <- ["Firefox"]] ++
+    [ className =? c --> doShift "code" | c <- ["Gvim", "Emacs"]] ++
+    [ className =? c --> doShift "doc" | c <- ["Evince"]] ++
+    [ className =? c --> doShift "net" | c <- ["Wpa_gui"]] ++
+    [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"]] ++
+    [ className =? c --> doCenterFloat | c <- myFloats] ++
+    [ title =? t --> doFloat | t <- myTFloats] ++
+    [ manageDocks , namedScratchpadManageHook scratchpads] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"]]
     where
         myFloats = [ "feh"
@@ -231,6 +232,8 @@ myKeys =
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
+    , ("M-p e", AL.launchApp myXPConfig "evince")
+    , ("M-p f", AL.launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     , ("M-/",   submap . mySearchMap $ myPromptSearch)
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
@@ -343,12 +346,12 @@ myTopicConfig = TopicConfig
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawnOn "web" "firefox")
-    , TI "code" "" (spawnOn "code" "gvim")
-    , TI "mail" "" (spawnOn "mail" "xterm -T mutt -e mutt")
-    , TI "doc" "Documents/" (spawnOn "doc" "evince")
-    , TI "net" "" (spawnOn "net" "wpa_gui")
-    , TI "dict" "" (spawnOn "dict" "goldendict")
-    , TI "irc" "" (spawnOn "irc" "xterm -T irssi -e irssi")
-    , TI "org" "org/" (spawnOn "org" "gvim ~/org/`date +%Y-%m-%d`.txt")
+    [ TI "web" "" (spawn "firefox")
+    , TI "code" "" (spawn "gvim")
+    , TI "mail" "" (spawn "xterm -T mutt -e mutt")
+    , TI "doc" "Documents/" (spawn "evince")
+    , TI "net" "" (spawn "wpa_gui")
+    , TI "dict" "" (spawn "goldendict")
+    , TI "irc" "" (spawn "xterm -T irssi -e irssi")
+    , TI "org" "org/" (spawn "gvim ~/org/`date +%Y-%m-%d`.txt")
     ]
