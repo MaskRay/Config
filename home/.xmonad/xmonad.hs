@@ -47,6 +47,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.UrgencyHook
 
+import XMonad.Layout.Mosaic
 import XMonad.Layout.AutoMaster
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
@@ -64,7 +65,6 @@ import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
-import XMonad.Layout.TwoPane
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import qualified XMonad.Layout.Magnifier as Mag
@@ -72,45 +72,20 @@ import qualified XMonad.Layout.Magnifier as Mag
 import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Paste
+import qualified XMonad.Util.Themes as Theme
 
--- Colors
---myFont              = "-misc-fixed-medium-r-semicondensed-*-16-110-75-75-c-60-*-*"
 myFont = "xft:DejaVu Sans Mono:pixelsize=16"
-colorBlack          = "#000000"
-colorBlackAlt       = "#050505"
-colorGray           = "#484848"
-colorGrayAlt        = "#b8bcb8"
-colorDarkGray       = "#161616"
-colorWhite          = "#ffffff"
-colorWhiteAlt       = "#9d9d9d"
-colorDarkWhite      = "#444444"
-colorMagenta        = "#8e82a2"
-colorMagentaAlt     = "#a488d9"
-colorBlue           = "#60a0c0"
-colorBlueAlt        = "#007b8c"
-colorRed            = "#d74b73"
 
--- Tab theme
-myTabTheme = defaultTheme
-	{ fontName            = myFont
-	, inactiveBorderColor = colorGrayAlt
-	, inactiveColor       = colorGray
-	, inactiveTextColor   = colorGrayAlt
-	, activeBorderColor   = colorGrayAlt
-	, activeColor         = colorBlue
-	, activeTextColor     = colorDarkGray
-	, urgentBorderColor   = colorBlackAlt
-	, urgentTextColor     = colorWhite
-	, decoHeight          = 20
-	}
+myTabTheme = (Theme.theme Theme.kavonChristmasTheme)
+    { fontName   = myFont
+    , decoHeight = 20
+    }
 
 data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
 instance Transformer TABBED Window where
      transform _ x k = k (named "TABBED" (tabbedAlways shrinkText myTabTheme)) (const x)
 
 myLayout = avoidStruts $
-    gaps (zip [U,D,L,R] (repeat 0)) $
-    workspaceDir "~" $
     configurableNavigation (navigateColor "#00aa00") $
     mkToggle1 TABBED $
     mkToggle1 NBFULL $
@@ -120,7 +95,7 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     smartBorders $
     onWorkspaces ["web","irc"] (Full ||| myTiled) $
-    autoMaster 1 (1/20) (Mag.magnifier Grid) ||| myTiled ||| TwoPane (3/100) (1/2)
+    mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| myTiled
     where
         myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
@@ -198,6 +173,8 @@ myKeys =
     , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+")
     , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-")
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
+    , ("M-S-a", sendMessage Taller)
+    , ("M-S-z", sendMessage Wider)
 
     -- window management
     , ("M-<Space>", sendMessage NextLayout)
@@ -279,7 +256,7 @@ scratchpads =
 
 myConfig xmobar = ewmh $ withUrgencyHook LibNotifyUrgencyHook $ defaultConfig {
     terminal           = "xterm",
-    focusFollowsMouse  = True,
+    focusFollowsMouse  = False,
     borderWidth        = 1,
     modMask            = mod4Mask,
     workspaces         = myTopicNames,
