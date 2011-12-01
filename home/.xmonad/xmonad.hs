@@ -5,9 +5,9 @@
     #-}
 
 import Control.Monad
-import Data.List ((\\))
+import Data.List
 import qualified Data.Map as M
-import Data.Maybe (isNothing, isJust, catMaybes)
+import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
 import Data.Monoid
 import System.Exit
 import System.IO
@@ -15,8 +15,14 @@ import Text.Regex
 
 import XMonad
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run
+import XMonad.Util.EZConfig
+import XMonad.Util.Loggers
 import XMonad.Util.NamedWindows (getName)
+import XMonad.Util.NamedScratchpad
+import XMonad.Util.Paste
+import XMonad.Util.Run
+import qualified XMonad.Util.Themes as Theme
+import XMonad.Util.WorkspaceCompare
 
 import XMonad.Prompt
 import qualified XMonad.Prompt.AppLauncher as AL
@@ -30,6 +36,7 @@ import XMonad.Prompt.Workspace
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
+import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
 import XMonad.Actions.Search
 import XMonad.Actions.Submap
@@ -46,39 +53,32 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.Place
 import XMonad.Hooks.UrgencyHook
 
 import XMonad.Layout.Mosaic
 import XMonad.Layout.AutoMaster
-import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
-import XMonad.Layout.IM
-import XMonad.Layout.LayoutHints
 import XMonad.Layout.Master
 import XMonad.Layout.Maximize
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
-import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
-import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import qualified XMonad.Layout.Magnifier as Mag
 
-import XMonad.Util.EZConfig
-import XMonad.Util.NamedScratchpad
-import XMonad.Util.Paste
-import qualified XMonad.Util.Themes as Theme
-
-myFont = "xft:DejaVu Sans Mono:pixelsize=16"
+{-
+ - TABBED
+ -}
 
 myTabTheme = (Theme.theme Theme.kavonChristmasTheme)
-    { fontName   = myFont
+    { fontName   = "DejaVu Sans Mono:pixelsize=16"
     , decoHeight = 20
     }
 
@@ -95,43 +95,55 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     smartBorders $
-    onWorkspaces ["web","irc"] (Full ||| myTiled) $
-    mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| myTiled
-    where
-        myTiled = named "Tall" $ ResizableTall 1 0.03 0.5 []
+    onWorkspaces ["web","irc"] Full $
+    Full ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
 
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox"]] ++
-    [ className =? c --> doShift "code" | c <- ["Gvim", "Emacs"]] ++
+    [ className =? c --> doShift "code" | c <- ["Gvim"]] ++
     [ className =? c --> doShift "doc" | c <- ["Evince"]] ++
     [ className =? c --> doShift "net" | c <- ["Wpa_gui"]] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"]] ++
-    [ className =? c --> doCenterFloat | c <- myFloats] ++
-    [ title =? t --> doFloat | t <- myTFloats] ++
+    [ className =? c --> doShift "office" | c <- ["libreoffice-writer"]] ++
+    [ myFloats --> doCenterFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"]]
-    where
-        myFloats = [ "feh"
-                   , "Display"
-                   , "XClock"
-                   , "Xmessage"
-                   , "Floating"
-                   ]
-        myTFloats = [ "Downloads", "Add-ons", "Firefox Preferences"]
+  where
+    myFloats = foldr1 (<||>)
+        [ className =? "Firefox" <&&> fmap (/="Navigator") appName
+        , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , flip fmap className $ flip elem
+            [ "feh"
+            , "Display"
+            , "XClock"
+            , "Xmessage"
+            , "Floating"
+            ]
+        ]
 
-myLogHook h = dynamicLogWithPP $ defaultPP {
-    ppHidden = xmobarColor "#00FF00" ""
-    , ppCurrent = xmobarColor "#FF0000" "" . wrap "[" "]"
-    , ppUrgent = xmobarColor "#FF0000" "" . wrap "*" "*"
-    , ppLayout = xmobarColor "#FF0000" "" .
-        flip (subRegex (mkRegex "ReflectX")) "[|]" .
-        flip (subRegex (mkRegex "ReflectY")) "[-]" .
-        flip (subRegex (mkRegex "Mirror")) "[+]"
-    , ppTitle = xmobarColor "#00FF00" "" . shorten 80
-    , ppOutput = hPutStrLn h
-    , ppSep = "<fc=#0033FF> | </fc>"
-    , ppSort = fmap (namedScratchpadFilterOutWorkspace.) (ppSort xmobarPP) -- hide "NSP" from the workspace list
-    }
+myDynamicLog h = dynamicLogWithPP $ defaultPP
+  { ppCurrent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
+  , ppHidden = ap clickable (wrap "^i(/home/ray/.xmonad/icons/gray/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
+  , ppUrgent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/highlight/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
+  , ppSep = dzenColor "#0033FF" "" " | "
+  , ppWsSep = ""
+  , ppTitle  = dzenColor "green" "" . shorten 45
+  , ppLayout = flip (subRegex (mkRegex "ReflectX")) "[|]" .
+      flip (subRegex (mkRegex "ReflectY")) "[-]" .
+      flip (subRegex (mkRegex "Mirror")) "[+]"
+  , ppOrder  = \(ws:l:t:exs) -> [t,l,ws]++exs
+  , ppSort   = fmap (namedScratchpadFilterOutWorkspace.) (ppSort byorgeyPP)
+  , ppExtras = [ dzenColorL "darkgreen" "" $ date "%H:%M %a %y-%m-%d"
+               , dzenColorL "orange" "" battery
+               ]
+  , ppOutput = hPutStrLn h
+  }
+  where
+    clickable w = wrap ("^ca(1,wmctrl -s `wmctrl -d | grep "++w++" | cut -d' ' -f1`)") "^ca()"
+
+{-
+ - Bindings
+ -}
 
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
@@ -176,6 +188,7 @@ myKeys =
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
+    , ("M-k", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
 
     -- window management
     , ("M-<Space>", sendMessage NextLayout)
@@ -187,18 +200,22 @@ myKeys =
     , ("M-b", sendMessage ToggleStruts)
     , ("M-d", bringMenu)
     , ("M-y", focusUrgent)
-    , ("M-<L>", withFocused (keysMoveWindow (-20,0))) -- move float left
-    , ("M-<R>", withFocused (keysMoveWindow (20,0))) -- move float right
-    , ("M-<U>", withFocused (keysMoveWindow (0,-20))) -- move float up
-    , ("M-<D>", withFocused (keysMoveWindow (0,20))) -- move float down
-    , ("M-S-<L>", withFocused (keysResizeWindow (-20,0) (0,0))) --shrink float at right
-    , ("M-S-<R>", withFocused (keysResizeWindow (20,0) (0,0))) --expand float at right
-    , ("M-S-<D>", withFocused (keysResizeWindow (0,20) (0,0))) --expand float at bottom
-    , ("M-S-<U>", withFocused (keysResizeWindow (0,-20) (0,0))) --shrink float at bottom
-    , ("M-C-<L>", withFocused (keysResizeWindow (20,0) (1,0))) --expand float at left
-    , ("M-C-<R>", withFocused (keysResizeWindow (-20,0) (1,0))) --shrink float at left
-    , ("M-C-<U>", withFocused (keysResizeWindow (0,20) (0,1))) --expand float at top
-    , ("M-C-<D>", withFocused (keysResizeWindow (0,-20) (0,1))) --shrink float at top
+    , ("M-<L>", withFocused (keysMoveWindow (-30,0))) -- move float left
+    , ("M-<R>", withFocused (keysMoveWindow (30,0))) -- move float right
+    , ("M-<U>", withFocused (keysMoveWindow (0,-30))) -- move float up
+    , ("M-<D>", withFocused (keysMoveWindow (0,30))) -- move float down
+    , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
+    , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
+    , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
+    , ("M-S-<U>", withFocused (keysResizeWindow (0,-30) (0,0))) --shrink float at bottom
+    , ("M-C-<L>", withFocused (keysResizeWindow (30,0) (1,0))) --expand float at left
+    , ("M-C-<R>", withFocused (keysResizeWindow (-30,0) (1,0))) --shrink float at left
+    , ("M-C-<U>", withFocused (keysResizeWindow (0,30) (0,1))) --expand float at top
+    , ("M-C-<D>", withFocused (keysResizeWindow (0,-30) (0,1))) --shrink float at top
+    , ("C-; <L>", withFocused $ snapMove L Nothing)
+    , ("C-; <R>", withFocused $ snapMove R Nothing)
+    , ("C-; <U>", withFocused $ snapMove U Nothing)
+    , ("C-; <D>", withFocused $ snapMove D Nothing)
 
     -- workspace management
     , ("C-; ;", toggleWS)
@@ -214,7 +231,7 @@ myKeys =
     , ("C-' s", namedScratchpadAction scratchpads "screen")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' o", namedScratchpadAction scratchpads "offlineimap")
+    , ("C-' m", namedScratchpadAction scratchpads "getmail")
     , ("C-' r", namedScratchpadAction scratchpads "r2e")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
@@ -243,7 +260,7 @@ scratchpads =
   [ NS "screen" "xterm -T screen -e 'screen -d -R'" (title =? "screen") mySPFloat
   , NS "ghci" "xterm -T ghci -e ghci" (title =? "ghci") mySPFloat
   , NS "htop" "xterm -T htop -e htop" (title =? "htop") mySPFloat
-  , NS "offlineimap" "xterm -T offlineimap -e 'offlineimap -o -d thread'" (title =? "offlineimap") doTopRightFloat
+  , NS "getmail" "xterm -T getmail -e 'getmail -r rc0 -r rc1'" (title =? "getmail") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync'" (title =? "eix-sync") doTopFloat
@@ -257,36 +274,21 @@ scratchpads =
     doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
-myConfig xmobar = ewmh $ withUrgencyHook LibNotifyUrgencyHook $ defaultConfig {
-    terminal           = "xterm",
-    focusFollowsMouse  = False,
-    borderWidth        = 1,
-    modMask            = mod4Mask,
-    workspaces         = myTopicNames,
-    normalBorderColor  = "#dddddd",
-    focusedBorderColor = "#ff0000",
-    mouseBindings      = myMouseBindings,
-    layoutHook         = myLayout,
-    manageHook         = myManageHook,
-    handleEventHook    = mempty,
-    logHook            = myLogHook xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5),
-    startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
+myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+    { terminal           = "xterm"
+    , focusFollowsMouse  = False
+    , borderWidth        = 1
+    , modMask            = mod4Mask
+    , workspaces         = myTopicNames
+    , normalBorderColor  = "#dbdbdb"
+    , focusedBorderColor = "#3939ff"
+    , mouseBindings      = myMouseBindings
+    , layoutHook         = myLayout
+    , manageHook         = myManageHook
+    , handleEventHook    = mempty
+    , logHook            = myDynamicLog xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5)
+    , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
-
-main = do
-     xmobar <- spawnPipe "/usr/bin/xmobar"
-     checkTopicConfig myTopicNames myTopicConfig
-     xmonad $ myConfig xmobar
-
-data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
-
-instance UrgencyHook LibNotifyUrgencyHook where
-    urgencyHook LibNotifyUrgencyHook w = do
-        name <- getName w
-        ws <- gets windowset
-        whenJust (W.findTag w ws) (flash name)
-      where flash name index =
-                safeSpawn "notify-send" [show name ++ " requests your attention on workspace " ++ index]
 
 myXPConfig = defaultXPConfig
     { font = "xft:DejaVu Sans Mono:pixelsize=16"
@@ -300,21 +302,25 @@ myXPConfig = defaultXPConfig
     , historyFilter     = deleteConsecutive
     }
 
+main = do
+    checkTopicConfig myTopicNames myTopicConfig
+    dzen <- spawnPipe "dzen2 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
+    spawn "killall trayer; trayer --align left --edge top --expand false --width 100 --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 22"
+    xmonad $ myConfig dzen
 
+{-
+ - SearchMap
+ -}
 
--- Perform a search, using the given method, based on a keypress
 mySearchMap method = M.fromList $
         [ ((0, xK_g), method google)
         , ((0, xK_w), method wikipedia)
         , ((0, xK_h), method hoogle)
         , ((shiftMask, xK_h), method hackage)
         , ((0, xK_s), method scholar)
-        , ((0, xK_m), method mathworld)
-        , ((0, xK_p), method maps)
-        , ((0, xK_d), method dictionary)
+        , ((0, xK_m), method maps)
         , ((0, xK_a), method alpha)
-        , ((0, xK_l), method lucky)
-        , ((0, xK_i), method images)
+        , ((0, xK_d), method $ searchEngine "Dict" "http://translate.google.com/#en|zh-CN|")
         ]
 
 myPromptSearch (SearchEngine _ site)
@@ -325,11 +331,14 @@ mySelectSearch eng = selectSearch eng >> viewWeb
 
 viewWeb = windows (W.view "web")
 
-
+{-
+ - Topic
+ -}
 
 data TopicItem = TI { topicName :: Topic
                     , topicDir  :: Dir
                     , topicAction :: X ()
+                    , topicIcon :: FilePath
                     }
 
 myTopicNames :: [Topic]
@@ -337,21 +346,24 @@ myTopicNames = map topicName myTopics
 
 myTopicConfig :: TopicConfig
 myTopicConfig = TopicConfig
-    { topicDirs = M.fromList $ map (\(TI n d _) -> (n,d)) myTopics
+    { topicDirs = M.fromList $ map (\(TI n d _ _) -> (n,d)) myTopics
     , defaultTopicAction = const (return ())
     , defaultTopic = "web"
     , maxTopicHistory = 10
-    , topicActions = M.fromList $ map (\(TI n _ a) -> (n,a)) myTopics
+    , topicActions = M.fromList $ map (\(TI n _ a _) -> (n,a)) myTopics
     }
+
+myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "firefox")
-    , TI "code" "" (spawn "gvim")
-    , TI "mail" "" (spawn "xterm -T mutt -e mutt")
-    , TI "doc" "Documents/" (spawn "evince")
-    , TI "net" "" (spawn "wpa_gui")
-    , TI "dict" "" (spawn "goldendict")
-    , TI "irc" "" (spawn "xterm -T irssi -e irssi")
-    , TI "org" "org/" (spawn "gvim ~/org/`date +%Y-%m-%d`.txt")
+    [ TI "web" "" (spawn "firefox") "firefox.xpm"
+    , TI "code" "" (spawn "gvim") "gvim.xpm"
+    , TI "mail" "" (spawn "xterm -T mutt -e mutt") "thunderbird.xpm"
+    , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
+    , TI "net" "" (spawn "wpa_gui") "gtk-network.xpm"
+    , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
+    , TI "irc" "" (spawn "xterm -T irssi -e irssi") "irssi.xpm"
+    , TI "diary" "org/" (spawn "emacsclient -c ~/org/`date +%Y-%m-%d`.org") "emacs.xpm"
+    , TI "office" "Documents/" (spawn "libreoffice") "libreoffice34-base.xpm"
     ]
