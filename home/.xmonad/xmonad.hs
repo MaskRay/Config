@@ -73,6 +73,9 @@ import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import qualified XMonad.Layout.Magnifier as Mag
 
+import XMonad.Prompt.MPD
+import qualified Network.MPD as MPD
+
 {-
  - TABBED
  -}
@@ -99,15 +102,15 @@ myLayout = avoidStruts $
     Full ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
 
 myManageHook = composeAll $
-    [ className =? c --> doShift "web" | c <- ["Firefox"]] ++
-    [ className =? c --> doShift "code" | c <- ["Gvim"]] ++
-    [ className =? c --> doShift "doc" | c <- ["Evince"]] ++
-    [ className =? c --> doShift "net" | c <- ["Wpa_gui"]] ++
-    [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"]] ++
-    [ className =? c --> doShift "office" | c <- ["libreoffice-writer"]] ++
+    [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
+    [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
+    [ className =? c --> doShift "doc" | c <- ["Evince"] ] ++
+    [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
+    [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
+    [ fmap (isPrefixOf "libreoffice") className --> doShift "office" ] ++
     [ myFloats --> doCenterFloat ] ++
-    [ manageDocks , namedScratchpadManageHook scratchpads] ++
-    [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"]]
+    [ manageDocks , namedScratchpadManageHook scratchpads ] ++
+    [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
   where
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
@@ -217,9 +220,6 @@ myKeys =
     , ("C-; <U>", withFocused $ snapMove U Nothing)
     , ("C-; <D>", withFocused $ snapMove D Nothing)
 
-    -- workspace management
-    , ("C-; ;", toggleWS)
-
     -- dynamic workspace
     , ("M-n", addWorkspacePrompt myXPConfig)
     , ("M-C-r", removeWorkspace)
@@ -246,12 +246,12 @@ myKeys =
     -- prompts
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", prompt ("xterm -e") myXPConfig)
-    , ("M-p m", manPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", AL.launchApp myXPConfig "evince")
     , ("M-p f", AL.launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
+    , ("M-p m", addAndPlay MPD.withMPD myXPConfig [MPD.Title, MPD.Artist, MPD.Album])
     , ("M-/",   submap . mySearchMap $ myPromptSearch)
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
     ]
