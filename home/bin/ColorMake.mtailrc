@@ -1,0 +1,80 @@
+# sample .mtailrc
+#
+# matt hellige (matt@immute.net)
+#
+# the format of this config file is pretty straightforward, and pretty concise.
+# this sample is long and ugly only because it is copiously commented. comments
+# must be on their own line. whitespace (apart from newlines) is ignored.  all
+# regexps in this sample file use '/' as the separator, but any non-whitespace
+# and non-alphanumeric character will do... to embed the separator in the
+# regexp, escape it with a backslash. apart from that, regular expressions are
+# as in python.
+#
+# the file consists of zero or more 'files:' blocks interleaved with zero or
+# more 'ansi:' blocks. order of 'files:' blocks is important (first block with
+# a matching regexp is used) while order of 'ansi:' blocks is irrelevant: they
+# are treated as if they were defined as one at the top of the file.
+
+# the 'files:' directive indicates the start of a new 'files:' block. it must
+# be followed by a whitespace-separated list of file regexps to match this
+# config. of course, you could put all the regexps in one and separate them
+# with |, but this syntax is a little more pleasant, and i combine them anyway
+# as i read the file. the token "stdin" is special and indicates that this
+# config may  be used to color standard input. it is not a regexp, and regexps
+# that match stdin (e.g., /stdin.*/) will not cause a config to be used for
+# standard input.  the token "default" is treated similarly, but causes that
+# config to be used when no other config matches (see below).
+files: stdin
+###files: stdin /stdout\.log/
+   # an optional block of regexps to use for pre-color filtering. they are 
+   # applied in order, so bear in mind that later regexps are applied to the 
+   # output of earlier ones. the second part is substituted for the first 
+   # part. you can use \1, \2, and so on to refer to groups.
+   filters:
+###      /continuum/c0nTiNuUm/
+   # an optional block of regexps and associated colors. they are matched in 
+   # order, with later matches coloring over earlier ones. expressions should 
+   # have 0 or 1 groups... if an expression has zero groups, the whole match 
+   # is colored, if it has one group, only the portion of the line matching 
+   # the group is colored. this is a very simple-minded coloring system, and 
+   # should probably be improved.
+   # an unrecognized color name causes that line to be ignored.
+   # built-in color names are: black, red, green, yellow, blue, magenta, cyan,
+   #    white, brightblack, brightred, brightgreen, brightyellow, brightblue,
+   #    brightmagenta, and brightcyan.
+   colors:
+      /^.*$/ white
+      /^make.*:.*$/    brightblue
+      /^make.*:.* Error [0-9]*$/    brightred
+      /[ \t]-o [^ ]*/           cyan
+      /.*: In function .*/ brightred
+      /[A-Za-z0-9._]*:[0-9]*: .*/ brightred
+	/\(.*\)/ white
+      /`[^ ]*'/    green
+      /^.*[Ww]arning.*$/       brightyellow
+#      /.*[Ee]rror.*/         brightred
+      /:[0-9]*:/ brightwhite
+
+# a simple config to use for everything not covered above. if no default
+# config is given, the default defaults to empty (no colors, no filters).
+###files: default
+###   colors:
+###      /^.*$/             brightblack
+
+# if you really want to override or extend the ansi escape sequences used, you
+# can do so like this. an 'ansi:' block terminates a 'files:' block. it may
+# appear before, between, or after any 'files:' blocks, and multiple ansi
+# blocks will be concatenated and processed as one big one. if the same name
+# is assigned multiple times, the last one is used. be aware than not all 
+# ansi attributes are supported on all terminals. for instance, on my linux
+# machine, blink (as in the following) works on the console, but not in an
+# an xterm. also, be aware that you could really shoot yourself in the foot by
+# setting the ansi sequences to key-remapping codes or something.
+#
+# note that you could also use this functionality to change the entire 
+# behavior of mtail, printing out, e.g., html font tags instead of ansi 
+# sequences. in that usage, it will help to know that the name "reset" is
+# used for the sequence which terminates a block of colored text, and can
+# also be overridden. by default, it is set to "[0m".
+ansi: 
+	/brightredblink/[5;1;31m/
