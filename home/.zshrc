@@ -51,6 +51,7 @@ for i in red green blue yellow magenta cyan white black; {eval pfg_$i="%{$fg[$i]
 #}}}
 
 # 设置参数 {{{
+setopt pushdminus
 setopt complete_aliases         #do not expand aliases _before_ completion has finished
 setopt auto_cd                  # if not a command, try to cd to it.
 setopt auto_pushd               # automatically pushd directories on dirstack
@@ -79,7 +80,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 
 #remove / and . from WORDCHARS to allow alt-backspace to delete word
-WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
+WORDCHARS='*?_[]~&;!#$%^(){}<>'
 
 #report to me when people login/logout
 watch=(notme)
@@ -89,7 +90,7 @@ watch=(notme)
 #is-at-least 4.3.0 &&
 
 # 自动加载自定义函数
-fpath=($HOME/.zfunctions $fpath)
+fpath=($HOME/.zsh/site-functions/ $fpath)
 # 需要设置了extended_glob才能glob到所有的函数，为了补全能用，又需要放在compinit前面
 autoload -U ${fpath[1]}/*(:t)
 # }}}
@@ -409,7 +410,7 @@ export HISTSIZE=10000
 # number of lines saved in the history after logout
 export SAVEHIST=10000
 # location of history
-export HISTFILE=$HOME/.zsh_history
+export HISTFILE=/tmp/.zsh_history_$UID
 export MENUCONFIG_COLOR=blackbg
 
 export PATH=$HOME/.cabal/bin:$HOME/bin:$HOME/bin/ssh:$PATH
@@ -618,6 +619,5 @@ export MASTER_SITE_OVERRIDE=ftp://ftp.freebsdchina.org/pub/FreeBSD/ports/distfil
 bindkey -s '^zh' "htop\n"
 bindkey -s '^zl' "ls\n"
 bindkey -s '^zL' "l\n"
-bindkey -s '^zv' "vim "
 bindkey -s '^zp' "import /tmp/screen.jpg\n"
 bindkey -s '^zP' "sleep 3 && import -window root /tmp/screen.jpg\n"
