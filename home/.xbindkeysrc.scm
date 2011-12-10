@@ -8,31 +8,21 @@
   (first-binding)
   (grab-all-keys))
 
+(define (bind key command)
+  (xbindkey-function key
+                     (lambda() (run-command command)
+                               (reset-first-binding)))
+  )
+
 (define (C-semicolon)
   (ungrab-all-keys)
   (remove-all-keys)
-  (xbindkey-function 'c
-		     (lambda ()
-		       (run-command "wmctrl -xa XTerm || xterm")
-		       (reset-first-binding)))
-  (xbindkey-function 'v
-		     (lambda ()
-		       (run-command "wmctrl -xa Gvim || gvim")
-		       (reset-first-binding)))
-  (xbindkey-function 'e
-		     (lambda ()
-		       (run-command "wmctrl -xa Emacs || emacsclient -c -n")
-		       (reset-first-binding)))
-  (xbindkey-function 'f
-		     (lambda ()
-		       (run-command "wmctrl -xa Firefox || firefox")
-		       (reset-first-binding)))
-  (xbindkey-function 'i
-		     (lambda ()
-		       (run-command "wmctrl -xa Evince || evince")
-		       (reset-first-binding)))
+  (bind 'c "wmctrl -xa XTerm || xterm")
+  (bind 'e "wmctrl -xa Emacs || emacsclient -c -n")
+  (bind 'v "wmctrl -xa Vim || gvim")
+  (bind 'f "wmctrl -xa Firefox || firefox")
+  (bind 'i "wmctrl -xa Evince || evince")
   (xbindkey-function '(control g) reset-first-binding)
-  (debug)
   (grab-all-keys))
 
 (first-binding)

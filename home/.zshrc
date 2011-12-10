@@ -497,6 +497,8 @@ alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias sv='sudo vim'
 alias eme='sudo emerge -1'
+alias emel='tail -f /var/log/emerge.log'
+alias emef='tail -f /var/log/emerge.log'
 
 alias -g EG='|& egrep'
 alias -g EH='|& head'
