@@ -7,3 +7,4 @@ net-misc/networkmanager dhclient connection-sharing
 app-misc/screen multiuser
 net-mail/offlineimap doc
 x11-misc/dzen xinerama xpm
+app-i18n/sunpinyin xim

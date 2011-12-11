@@ -8,6 +8,7 @@ app-misc/screen
 app-misc/tmux
 app-shells/autojump
 app-text/dvipng
+app-text/htmldoc
 app-text/pandoc
 app-text/recode
 app-text/tree
