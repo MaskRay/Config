@@ -497,8 +497,10 @@ alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias sv='sudo vim'
 alias eme='sudo emerge -1'
+alias peme='sudo proxychains emerge -1'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge.log'
+alias ei='eix -uI --only-names'
 
 alias -g EG='|& egrep'
 alias -g EH='|& head'
@@ -622,4 +624,5 @@ bindkey -s '^zh' "htop\n"
 bindkey -s '^zl' "ls\n"
 bindkey -s '^zL' "l\n"
 bindkey -s '^zp' "import /tmp/screen.jpg\n"
+bindkey -s "^zw" "(ip l sh wlan0 | grep -q DOWN; a=\${\${?/0/up}/1/down}; ip l s wlan0 \$a; echo \$a)\n"
 bindkey -s '^zP' "sleep 3 && import -window root /tmp/screen.jpg\n"
