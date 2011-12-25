@@ -11,6 +11,7 @@ import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
 import Data.Monoid
 import System.Exit
 import System.IO
+import System.Process
 import Text.Regex
 
 import XMonad
@@ -38,9 +39,9 @@ import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
+import XMonad.Actions.Navigation2D
 import XMonad.Actions.Search
 import XMonad.Actions.Submap
-import XMonad.Actions.UpdatePointer
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.TopicSpace
 import XMonad.Actions.WindowBringer
@@ -50,7 +51,6 @@ import XMonad.Actions.WithAll (killAll)
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
@@ -72,9 +72,6 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import qualified XMonad.Layout.Magnifier as Mag
-
-import XMonad.Prompt.MPD
-import qualified Network.MPD as MPD
 
 {-
  - TABBED
@@ -107,6 +104,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "doc" | c <- ["Evince"] ] ++
     [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
+    [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
     [ fmap (isPrefixOf "libreoffice") className --> doShift "office" ] ++
     [ myFloats --> doCenterFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
@@ -116,9 +114,7 @@ myManageHook = composeAll $
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
         , flip fmap className $ flip elem
-            [ "feh"
-            , "Display"
-            , "XClock"
+            [ "XClock"
             , "Xmessage"
             , "Floating"
             ]
@@ -191,7 +187,7 @@ myKeys =
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
-    , ("M-k", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
+    , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
 
     -- window management
     , ("M-<Space>", sendMessage NextLayout)
@@ -203,10 +199,11 @@ myKeys =
     , ("M-b", sendMessage ToggleStruts)
     , ("M-d", bringMenu)
     , ("M-y", focusUrgent)
-    , ("M-<L>", withFocused (keysMoveWindow (-30,0))) -- move float left
-    , ("M-<R>", withFocused (keysMoveWindow (30,0))) -- move float right
-    , ("M-<U>", withFocused (keysMoveWindow (0,-30))) -- move float up
-    , ("M-<D>", withFocused (keysMoveWindow (0,30))) -- move float down
+    , ("M-;", switchLayer)
+    , ("M-h", windowGo L True)
+    , ("M-j", windowGo D True)
+    , ("M-k", windowGo U True)
+    , ("M-l", windowGo R True)
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
     , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
     , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
@@ -228,7 +225,6 @@ myKeys =
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
-    , ("C-' s", namedScratchpadAction scratchpads "screen")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
@@ -251,14 +247,12 @@ myKeys =
     , ("M-p e", AL.launchApp myXPConfig "evince")
     , ("M-p f", AL.launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
-    , ("M-p m", addAndPlay MPD.withMPD myXPConfig [MPD.Title, MPD.Artist, MPD.Album])
     , ("M-/",   submap . mySearchMap $ myPromptSearch)
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
     ]
 
 scratchpads =
-  [ NS "screen" "xterm -T screen -e 'screen -d -R'" (title =? "screen") mySPFloat
-  , NS "ghci" "xterm -T ghci -e ghci" (title =? "ghci") mySPFloat
+  [ NS "ghci" "xterm -T ghci -e ghci" (title =? "ghci") mySPFloat
   , NS "htop" "xterm -T htop -e htop" (title =? "htop") mySPFloat
   , NS "getmail" "xterm -T getmail -e 'getmail -r rc0 -r rc1'" (title =? "getmail") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
@@ -266,7 +260,7 @@ scratchpads =
   , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync'" (title =? "eix-sync") doTopFloat
   ]
   where
-    mySPFloat = customFloating $ W.RationalRect (1/5) (1/5) (3/5) (3/5)
+    mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
@@ -274,7 +268,7 @@ scratchpads =
     doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
-myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig xmobar = ewmh $ withNavigation2DConfig defaultNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "xterm"
     , focusFollowsMouse  = False
     , borderWidth        = 1
@@ -286,7 +280,7 @@ myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , layoutHook         = myLayout
     , manageHook         = myManageHook
     , handleEventHook    = mempty
-    , logHook            = myDynamicLog xmobar <+> fadeInactiveLogHook 0.4 <+> updatePointer (Relative 0.5 0.5)
+    , logHook            = myDynamicLog xmobar
     , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
 
@@ -305,6 +299,8 @@ myXPConfig = defaultXPConfig
 main = do
     checkTopicConfig myTopicNames myTopicConfig
     dzen <- spawnPipe "dzen2 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
+    -- remind <- fmap (tail . filter null . lines) $ readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
+    -- remind <- readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
     spawn "killall trayer; trayer --align left --edge top --expand false --width 100 --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 22"
     xmonad $ myConfig dzen
 
@@ -359,11 +355,11 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
-    , TI "mail" "" (spawn "xterm -T mutt -e mutt") "thunderbird.xpm"
+    , TI "term" "" (spawn "xterm -T screen -e 'screen -d -R'") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
-    , TI "net" "" (spawn "wpa_gui") "gtk-network.xpm"
-    , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
-    , TI "irc" "" (spawn "xterm -T irssi -e irssi") "irssi.xpm"
-    , TI "diary" "org/" (spawn "emacsclient -c ~/org/`date +%Y-%m-%d`.org") "emacs.xpm"
     , TI "office" "Documents/" (spawn "libreoffice") "libreoffice34-base.xpm"
+    , TI "irc" "" (spawn "xterm -T irssi -e irssi") "irssi.xpm"
+    , TI "mail" "" (spawn "xterm -T mutt -e mutt") "thunderbird.xpm"
+    , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
+    , TI "media" "" (return ()) "imagemagick.xpm"
     ]
