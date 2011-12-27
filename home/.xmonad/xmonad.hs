@@ -105,6 +105,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
     [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
+    [ className =? c --> doShift "emacs" | c <- ["Emacs"] ] ++
     [ fmap (isPrefixOf "libreoffice") className --> doShift "office" ] ++
     [ myFloats --> doCenterFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
@@ -357,9 +358,10 @@ myTopics =
     , TI "code" "" (spawn "gvim") "gvim.xpm"
     , TI "term" "" (spawn "xterm -T screen -e 'screen -d -R'") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
-    , TI "office" "Documents/" (spawn "libreoffice") "libreoffice34-base.xpm"
+    , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "irc" "" (spawn "xterm -T irssi -e irssi") "irssi.xpm"
     , TI "mail" "" (spawn "xterm -T mutt -e mutt") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
+    , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
     ]
