@@ -5,6 +5,7 @@
     #-}
 
 import Control.Monad
+import Codec.Binary.UTF8.String (encodeString)
 import Data.List
 import qualified Data.Map as M
 import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
@@ -12,6 +13,8 @@ import Data.Monoid
 import System.Exit
 import System.IO
 import System.Process
+import System.Posix.Process (executeFile)
+import System.Posix.Types (ProcessID)
 import Text.Regex
 
 import XMonad
@@ -266,7 +269,7 @@ scratchpads =
   , NS "getmail" "xterm -T getmail -e 'getmail -r rc0 -r rc1'" (title =? "getmail") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
-  , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync'" (title =? "eix-sync") doTopFloat
+  , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync && read'" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
@@ -305,11 +308,15 @@ myXPConfig = defaultXPConfig
     , historyFilter     = deleteConsecutive
     }
 
+-- | Like 'spawn', but uses bash and returns the 'ProcessID' of the launched application
+spawnBash :: MonadIO m => String -> m ProcessID
+spawnBash x = xfork $ executeFile "/bin/bash" False ["-c", encodeString x] Nothing
+
 main = do
     checkTopicConfig myTopicNames myTopicConfig
-    dzen <- spawnPipe "dzen2 -x 100 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
-    -- remind <- fmap (tail . filter null . lines) $ readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
-    -- remind <- readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
+    dzen <- spawnPipe "killall dzen2; dzen2 -x 600 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
+    -- remind <http://www.roaringpenguin.com/products/remind>
+    dzenRem <- spawnBash "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x 100 -w 500 -h 22 -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14' -l ${#b[@]}; }"
     spawn "killall trayer; trayer --align left --edge top --expand false --width 100 --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 22"
     xmonad $ myConfig dzen
 
