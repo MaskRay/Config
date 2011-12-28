@@ -86,6 +86,14 @@ data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
 instance Transformer TABBED Window where
      transform _ x k = k (named "TABBED" (tabbedAlways shrinkText myTabTheme)) (const x)
 
+{-
+ - Navigation2D
+ -}
+
+myNavigation2DConfig = defaultNavigation2DConfig { layoutNavigation   = [("Full", centerNavigation)]
+                                                 , unmappedWindowRect = [("Full", singleWindowRect)]
+                                                 }
+
 myLayout = avoidStruts $
     configurableNavigation (navigateColor "#00aa00") $
     mkToggle1 TABBED $
@@ -106,7 +114,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
     [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
     [ className =? c --> doShift "emacs" | c <- ["Emacs"] ] ++
-    [ fmap (isPrefixOf "libreoffice") className --> doShift "office" ] ++
+    [ fmap (isPrefixOf "libreoffice" <||> isPrefixOf "LibreOffice") className --> doShift "office" ] ++
     [ myFloats --> doCenterFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
@@ -269,7 +277,7 @@ scratchpads =
     doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
-myConfig xmobar = ewmh $ withNavigation2DConfig defaultNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "xterm"
     , focusFollowsMouse  = False
     , borderWidth        = 1
@@ -299,7 +307,7 @@ myXPConfig = defaultXPConfig
 
 main = do
     checkTopicConfig myTopicNames myTopicConfig
-    dzen <- spawnPipe "dzen2 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
+    dzen <- spawnPipe "dzen2 -x 100 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
     -- remind <- fmap (tail . filter null . lines) $ readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
     -- remind <- readProcess "rem" [] "" -- http://www.roaringpenguin.com/products/remind
     spawn "killall trayer; trayer --align left --edge top --expand false --width 100 --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 22"
