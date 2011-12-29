@@ -9,3 +9,4 @@ net-mail/offlineimap doc
 x11-misc/dzen xinerama xpm
 app-i18n/sunpinyin xim
 mail-mta/sendmail sasl
+net-nds/openldap -minimal syslog

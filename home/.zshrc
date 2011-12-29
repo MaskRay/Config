@@ -499,7 +499,7 @@ alias sv='sudo vim'
 alias eme='sudo emerge -1'
 alias peme='sudo proxychains emerge -1'
 alias emel='tail -f /var/log/emerge.log'
-alias emef='tail -f /var/log/emerge.log'
+alias emef='tail -f /var/log/emerge-fetch.log'
 alias ei='eix -uI --only-names'
 
 alias -g EG='|& egrep'

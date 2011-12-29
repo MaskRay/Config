@@ -4,3 +4,4 @@ dev-libs/lzo static-libs # sys-power/suspend
 sys-apps/grep pcre
 sys-fs/udev extras -acl
 sys-libs/zlib minizip
+sys-devel/m4 examples

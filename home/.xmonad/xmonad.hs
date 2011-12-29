@@ -269,7 +269,7 @@ scratchpads =
   , NS "getmail" "xterm -T getmail -e 'getmail -r rc0 -r rc1'" (title =? "getmail") doTopRightFloat
   , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
-  , NS "eix-sync" "xterm -T eix-sync -e 'sudo eix-sync && read'" (title =? "eix-sync") doTopFloat
+  , NS "eix-sync" "xterm -T eix-sync -e 'screen -m sh -c \"sudo eix-sync; read\"'" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
