@@ -168,20 +168,20 @@ myKeys =
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "1234567890-="
         , (f, m) <- [ (switchTopic myTopicConfig, "")
-                    , (windows . W.shift, "S-")
+                    , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
     ]
     ++
     [ ("C-; " ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "asdfghjkl;'\""
         , (f, m) <- [ (switchTopic myTopicConfig, "")
-                    , (windows . W.shift, "S-")
+                    , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
     ]
     ++
     [("M-" ++ m ++ k, screenWorkspace sc >>= flip whenJust (windows . f))
         | (k, sc) <- zip ["w", "e", "r"] [0..]
-        , (f, m) <- [(W.view, ""), (W.shift, "S-")]
+        , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
     ]
     ++
     [ ("M-S-q", io exitFailure)
@@ -202,6 +202,7 @@ myKeys =
     , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
 
     -- window management
+    , ("M-n", doTo Next EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
     , ("M-<Space>", sendMessage NextLayout)
     , ("M-i", sendMessage Shrink)
     , ("M-o", sendMessage Expand)
@@ -230,7 +231,7 @@ myKeys =
     , ("C-; <D>", withFocused $ snapMove D Nothing)
 
     -- dynamic workspace
-    , ("M-n", addWorkspacePrompt myXPConfig)
+    , ("M-C-n", addWorkspacePrompt myXPConfig)
     , ("M-C-r", removeWorkspace)
     , ("M-C-S-r", killAll >> removeWorkspace)
 
@@ -314,9 +315,9 @@ spawnBash x = xfork $ executeFile "/bin/bash" False ["-c", encodeString x] Nothi
 
 main = do
     checkTopicConfig myTopicNames myTopicConfig
-    dzen <- spawnPipe "killall dzen2; dzen2 -x 600 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
+    dzen <- spawnPipe "killall dzen2; dzen2 -x 500 -h 22 -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14'"
     -- remind <http://www.roaringpenguin.com/products/remind>
-    dzenRem <- spawnBash "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x 100 -w 500 -h 22 -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14' -l ${#b[@]}; }"
+    dzenRem <- spawnBash "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x 100 -w 400 -h 22 -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-14' -l ${#b[@]}; }"
     spawn "killall trayer; trayer --align left --edge top --expand false --width 100 --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 22"
     xmonad $ myConfig dzen
 
