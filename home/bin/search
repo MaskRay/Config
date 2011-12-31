@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+# -*- coding: UTF-8 -*-
+require 'uri'
+
+engines = {
+  'google' => 'http://www.google.com/search?num=100&q=',
+  'wikipedia' => 'http://en.wikipedia.org/wiki/Special:Search?go=Go&search=',
+  'hoogle' => 'http://www.haskell.org/hoogle/?q=',
+}
+
+engine, s = gets.chomp.split(/:/, 2)
+if s and engines.has_key? engine
+  exec 'firefox', engines[engine] + URI::escape(s)
+end
