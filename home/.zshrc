@@ -467,6 +467,7 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -iv'
 alias psg='ps aux|grep'
+alias clip='xsel -ib <'
 if [ `uname` = 'Linux' ]; then
     alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
     alias l='ls -l'

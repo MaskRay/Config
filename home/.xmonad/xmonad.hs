@@ -189,14 +189,18 @@ myKeys =
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
-    , ("C-<Print>", spawn "import -window root /screen.jpg")
+    , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-s", spawnSelected defaultGSConfig ["xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
     , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+")
     , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-")
+    , ("<XF86AudioNext>", spawn "mpc seek +10")
+    , ("<XF86AudioPrev>", spawn "mpc seek -10")
     , ("<XF86AudioMute>", spawn "amixer set Master mute")
+    , ("<XF86AudioPlay>", spawn "mpc toggle")
+    , ("<XF86Eject>", spawn "eject")
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
     , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
@@ -225,6 +229,10 @@ myKeys =
     , ("M-C-<R>", withFocused (keysResizeWindow (-30,0) (1,0))) --shrink float at left
     , ("M-C-<U>", withFocused (keysResizeWindow (0,30) (0,1))) --expand float at top
     , ("M-C-<D>", withFocused (keysResizeWindow (0,-30) (0,1))) --shrink float at top
+    , ("M-<L>", withFocused (keysMoveWindow (-30,0)))
+    , ("M-<R>", withFocused (keysMoveWindow (30,0)))
+    , ("M-<U>", withFocused (keysMoveWindow (0,-30)))
+    , ("M-<D>", withFocused (keysMoveWindow (0,30)))
     , ("C-; <L>", withFocused $ snapMove L Nothing)
     , ("C-; <R>", withFocused $ snapMove R Nothing)
     , ("C-; <U>", withFocused $ snapMove U Nothing)
@@ -380,4 +388,5 @@ myTopics =
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
+    , TI "net" "" (return ()) "gtk-network.xpm"
     ]

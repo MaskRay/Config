@@ -16,3 +16,4 @@ app-editors/emacs X gtk
 
 # databases
 dev-db/sqlite doc
+dev-haskell/* doc
