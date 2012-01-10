@@ -1,0 +1,14 @@
+#!/bin/bash
+case "$1" in
+  forward)
+    param=+10%;;
+  backward)
+    param=-10%;;
+  *)
+    exit 1;;
+esac
+
+progress=( `mpc seek $param | awk 'NR==2{gsub(/\\(|\\)|%/,"",\$4); print \$3 " " \$4}'` )
+echo ${progress[1]}
+killall osd_cat
+osd_cat -f '-adobe-helvetica-bold-*-*-*-30-*-*-*-*-*-*-*' -c orange -A center -o 400 -T "progress: ${progress[0]}" -b percentage -P ${progress[1]} -d 2 &

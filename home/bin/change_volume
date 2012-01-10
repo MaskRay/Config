@@ -1,0 +1,13 @@
+#!/bin/sh
+case "$1" in
+  up)
+    param=5%+;;
+  down)
+    param=5%-;;
+  *)
+    exit 1;;
+esac
+
+volume=`amixer set Master $param | grep -oP '\w*(?=%)'`
+killall osd_cat
+osd_cat -f '-adobe-helvetica-bold-*-*-*-30-*-*-*-*-*-*-*' -c orange -A center -o 400 -T "volume: $volume" -b percentage -P $volume -d 2 &
