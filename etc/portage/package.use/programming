@@ -1,5 +1,5 @@
 # compilers, interpreters
-dev-lang/ghc doc binary
+dev-lang/ghc doc
 dev-haskell/mtl doc hscolour
 dev-lang/python sqlite
 app-editors/vim cscope vim-pager
@@ -13,7 +13,9 @@ dev-vcs/git curl
 x11-libs/cairo X xcb opengl svg
 
 app-editors/emacs X gtk
+app-editors/vim python
 
 # databases
 dev-db/sqlite doc
-dev-haskell/* doc
+dev-haskell/* doc hoogle
+dev-haskell/haddock -doc

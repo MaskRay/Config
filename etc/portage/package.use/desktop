@@ -10,3 +10,4 @@ x11-misc/dzen xinerama xpm
 app-i18n/sunpinyin xim
 mail-mta/sendmail sasl
 net-nds/openldap -minimal syslog
+media-gfx/fbida fbcon imagemagick
