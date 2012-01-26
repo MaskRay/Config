@@ -82,3 +82,16 @@ XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 
 ! Xcursor.theme: Grounation
+!
+URxvt.preeditType: OffTheSpot
+URxvt.scrollBar: False
+URxvt.geometry: 105x33
+URxvt.font: xft:Monaco:bold:size=11,xft:WenQuanYi Micro Hei:bold:antialias=True
+
+URxvt.depth: 32
+URxvt.background: black
+URxvt.foreground: white
+URxvt.cursorColor: green
+URxvt.cursorBlink: False
+
+URxvt.iso14755_52: False
