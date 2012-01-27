@@ -502,6 +502,7 @@ alias peme='sudo proxychains emerge -1'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge-fetch.log'
 alias ei='eix -uI --only-names'
+alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
 
 alias -g EG='|& egrep'
 alias -g EH='|& head'
@@ -602,12 +603,7 @@ get_repos_info()
 my_prompt()
 {
     echo -en "\n\e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}in \e${BLUE}%d"
-    echo
-    if [[ $UID == "0" ]]; then
-	echo "%{\e${RED}%}# %{\e${RESET}%}"
-    else
-	echo "%{\e${RED}%}%% %{\e${RESET}%}"
-    fi
+    echo '\n%(?..[$: %?] )%{\e${RED}%}%(#.#.%%) %{\e${RESET}%}'
 }
 
 autoload -U promptinit colors

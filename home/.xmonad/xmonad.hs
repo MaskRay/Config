@@ -190,7 +190,7 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "urxvtc -T tmux -e tmux attach")
+    , ("M-<Return>", spawn "urxvtc -T tmux -e tmux attach -t default")
     , ("M-s", spawnSelected defaultGSConfig ["urxvtc", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -279,7 +279,7 @@ scratchpads =
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "r2e" "urxvtc -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
-  , NS "eix-sync" "urxvtc -T eix-sync -e screen -m sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
+  , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
@@ -387,10 +387,10 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
-    , TI "term" "" (spawn "urxvtc -T tmux -e tmux attach") "xterm.xpm"
+    , TI "term" "" (spawn "urxvtc -T tmux -e tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "irc" "" (spawn "urxvtc -T irssi -e irssi") "irssi.xpm"
+    , TI "irc" "" (spawn "urxvtc -T irssi -e tmux attach -t irssi \\; select-window -t irssi") "irssi.xpm"
     , TI "mail" "" (spawn "urxvtc -T mutt -e mutt") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
