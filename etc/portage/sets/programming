@@ -6,14 +6,13 @@ dev-db/sqlite
 dev-haskell/cabal-install
 dev-lang/fpc
 dev-lang/ghc
-dev-lang/gprolog
-dev-lang/swi-prolog
 dev-python/markdown
 dev-scheme/guile
 dev-tcltk/expect
 dev-tex/latex-beamer
 dev-util/cscope
 dev-util/flawfinder
+dev-util/valgrind
 dev-vcs/git
 dev-vcs/mercurial
 dev-vcs/tig
@@ -23,4 +22,3 @@ sys-devel/gdb
 app-vim/neocomplcache
 app-vim/surround
 app-vim/colorschemes
-dev-haskell/hxt

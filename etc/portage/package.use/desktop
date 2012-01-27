@@ -11,3 +11,4 @@ app-i18n/sunpinyin xim
 mail-mta/sendmail sasl
 net-nds/openldap -minimal syslog
 media-gfx/fbida fbcon imagemagick
+x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla

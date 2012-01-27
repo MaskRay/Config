@@ -190,7 +190,8 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-s", spawnSelected defaultGSConfig ["xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-<Return>", spawn "urxvtc -T tmux -e tmux attach")
+    , ("M-s", spawnSelected defaultGSConfig ["urxvtc", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -262,7 +263,7 @@ myKeys =
 
     -- prompts
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
-    , ("M-p c", prompt ("xterm -e") myXPConfig)
+    , ("M-p c", prompt ("urxvtc -e") myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", AL.launchApp myXPConfig "evince")
@@ -273,12 +274,12 @@ myKeys =
     ]
 
 scratchpads =
-  [ NS "ghci" "xterm -T ghci -e ghci" (title =? "ghci") mySPFloat
-  , NS "htop" "xterm -T htop -e htop" (title =? "htop") mySPFloat
-  , NS "getmail" "xterm -T getmail -e 'getmail -r rc0 -r rc1'" (title =? "getmail") doTopRightFloat
-  , NS "r2e" "xterm -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
-  , NS "alsamixer" "xterm -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
-  , NS "eix-sync" "xterm -T eix-sync -e 'screen -m sh -c \"sudo eix-sync; read\"'" (title =? "eix-sync") doTopFloat
+  [ NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
+  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
+  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "r2e" "urxvtc -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
+  , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
+  , NS "eix-sync" "urxvtc -T eix-sync -e screen -m sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   ]
   where
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
@@ -290,7 +291,7 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
 
 myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
-    { terminal           = "xterm"
+    { terminal           = "urxvtc"
     , focusFollowsMouse  = False
     , borderWidth        = 1
     , modMask            = mod4Mask
@@ -386,11 +387,11 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
-    , TI "term" "" (spawn "xterm -T screen -e 'screen -d -R'") "xterm.xpm"
+    , TI "term" "" (spawn "urxvtc -T tmux -e tmux attach") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "irc" "" (spawn "xterm -T irssi -e irssi") "irssi.xpm"
-    , TI "mail" "" (spawn "xterm -T mutt -e mutt") "thunderbird.xpm"
+    , TI "irc" "" (spawn "urxvtc -T irssi -e irssi") "irssi.xpm"
+    , TI "mail" "" (spawn "urxvtc -T mutt -e mutt") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"

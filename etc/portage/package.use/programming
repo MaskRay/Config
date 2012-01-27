@@ -14,8 +14,11 @@ x11-libs/cairo X xcb opengl svg
 
 app-editors/emacs X gtk
 app-editors/vim python
+app-editors/gvim python
 
 # databases
 dev-db/sqlite doc
 dev-haskell/* doc hoogle
 dev-haskell/haddock -doc
+
+dev-libs/boost python # for sage
