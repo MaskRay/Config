@@ -602,7 +602,7 @@ get_repos_info()
 
 my_prompt()
 {
-    echo -en "\n\e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}in \e${BLUE}%d"
+    echo -en "\e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}in \e${BLUE}%d"
     echo '\n%(?..[$: %?] )%{\e${RED}%}%(#.#.%%) %{\e${RESET}%}'
 }
 

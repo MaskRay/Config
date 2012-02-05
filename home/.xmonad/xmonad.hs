@@ -248,6 +248,7 @@ myKeys =
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
+    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
     , ("C-' r", namedScratchpadAction scratchpads "r2e")
@@ -275,6 +276,7 @@ myKeys =
 
 scratchpads =
   [ NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
+  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
   , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "r2e" "urxvtc -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat

@@ -6,6 +6,8 @@ dev-db/sqlite
 dev-haskell/cabal-install
 dev-lang/fpc
 dev-lang/ghc
+dev-lang/ocaml
+dev-lisp/sbcl
 dev-python/markdown
 dev-scheme/guile
 dev-tcltk/expect

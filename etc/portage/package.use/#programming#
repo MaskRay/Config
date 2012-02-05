@@ -1,9 +1,9 @@
-# compilers, interpreters
+G# COMPILERS, interpreters
 dev-lang/ghc doc
 dev-haskell/mtl doc hscolour
 dev-lang/python sqlite
-app-editors/vim cscope vim-pager ruby
-app-editors/gvim cscope vim-pager ruby
+app-editors/vim cscope vim-pager
+app-editors/gvim cscope vim-pager
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
 
@@ -20,5 +20,3 @@ app-editors/gvim python
 dev-db/sqlite doc
 dev-haskell/* doc hoogle
 dev-haskell/haddock -doc
-
-dev-libs/boost python # for sage
