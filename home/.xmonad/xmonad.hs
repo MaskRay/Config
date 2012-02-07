@@ -144,7 +144,7 @@ myDynamicLog h = dynamicLogWithPP $ defaultPP
       flip (subRegex (mkRegex "Mirror")) "[+]"
   , ppOrder  = \(ws:l:t:exs) -> [t,l,ws]++exs
   , ppSort   = fmap (namedScratchpadFilterOutWorkspace.) (ppSort byorgeyPP)
-  , ppExtras = [ dzenColorL "darkgreen" "" $ date "%H:%M %a %y-%m-%d"
+  , ppExtras = [ dzenColorL "violet" "" $ date "%R %a %y-%m-%d"
                , dzenColorL "orange" "" battery
                ]
   , ppOutput = hPutStrLn h
