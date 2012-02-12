@@ -602,8 +602,8 @@ get_repos_info()
 
 my_prompt()
 {
-    echo -en "\e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}in \e${BLUE}%d"
-    echo '\n%(?..[$: %?] )%{\e${RED}%}%(#.#.%%) %{\e${RESET}%}'
+    echo -en "\e${BLUE}\u256d\u2500\e${CYAN}\e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}in \e${BLUE}%d"
+    echo '\n\u2570\u2500%(?..[$: %?] )%{\e${RED}%}%(#.#.%%) %{\e${RESET}%}'
 }
 
 autoload -U promptinit colors

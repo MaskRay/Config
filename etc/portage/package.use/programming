@@ -1,9 +1,9 @@
 # compilers, interpreters
-dev-lang/ghc doc
+dev-lang/ghc doc llvm ghcbootstrap
 dev-haskell/mtl doc hscolour
 dev-lang/python sqlite
-app-editors/vim cscope vim-pager ruby
-app-editors/gvim cscope vim-pager ruby
+app-editors/vim cscope vim-pager ruby perl python
+app-editors/gvim cscope vim-pager ruby perl python
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
 
