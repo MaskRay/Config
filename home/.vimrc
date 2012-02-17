@@ -11,10 +11,11 @@ set hlsearch
 set incsearch
 set ruler
 set showcmd
+set number
 set title
 set wildmenu
 set wildmode=list,longest
-set wildignore=*.o,*.bak,*~
+set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi
 set autochdir
 set lazyredraw          " faster for macros
 set ttyfast             " better for xterm
@@ -39,6 +40,7 @@ set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 set dictionary+=/usr/share/dict/words
 set whichwrap=b,s,<,>,[,],h,l
 set spellsuggest=10
+let mapleader = ","
 
 if version >= 703
     set undodir=~/.vim/undo
@@ -55,7 +57,6 @@ if has("gui_running")
   set cursorcolumn
   set cursorline
   set nowrap
-  set relativenumber
   set spell
 
   " Ctrl-F12 Toggle Menubar and Toolbar
@@ -91,9 +92,9 @@ if has("gui_running")
   " ir_black
   " http://blog.infinitered.com/entries/show/8
   " http://blog.infinitered.com/entry_files/8/ir_black.vim
-  colorscheme ir_black
+  "colorscheme ir_black
   "colorscheme fruity
-  "colorscheme molokai
+  colorscheme molokai
   "colorscheme murphy
   "colorscheme peaksea
   " Lighter Themes ------------------------------------ {{{2
@@ -110,7 +111,7 @@ if has("gui_running")
   "colorscheme jhlight
   " }}}2
 else
-  colorscheme tir_black
+  colorscheme bocau
 endif
 
 " Autocommands ---------------------------------------- {{{1
@@ -303,12 +304,31 @@ Bundle 'vim-powerline'
 Bundle 'EasyMotion'
 Bundle 'snipMate'
 Bundle 'vimproc'
-Bundle 'ghcmod-vim'
+"Bundle 'ghcmod-vim'
 Bundle 'neco-ghc'
 Bundle 'gist'
 Bundle 'syntastic'
 Bundle 'preview'
+"Bundle 'rainbow_parentheses'
 filetype plugin indent on    " required!
+" EasyMotion ------------------------------------------ {{{2
+let g:EasyMotion_do_mapping = 0
+nnoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
+onoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
+vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
+
+nnoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
+onoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
+vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
+
+nnoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
+onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
+vnoremap <silent> <Leader>t :<C-U>:call EasyMotion#T(1, 0)<CR>
+
+nnoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
+onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
+vnoremap <silent> <Leader>T :<C-U>call EasyMotion#T(1, 1)<CR>
+
 " FuzzyFinder ----------------------------------------- {{{2
 " vim-l9 is the requirement of fuzzyfinder 4.*
 " http://www.vim.org/scripts/script.php?script_id=3252
@@ -458,7 +478,7 @@ let g:Powerline_symbols = 'fancy'
 " syntastic
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
-noremap <F6> :SyntasticCheck<CR>
+noremap <Leader><Space> :SyntasticCheck<CR>
 
 " NeoComplCache
 " Use neocomplcache.
@@ -480,7 +500,32 @@ let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 autocmd BufRead,BufNewFile imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 " Commands, Mappings and Functions ------------------------------ {{{1
-" DiffOrig -------------------------------------------- {{{2
+" ErrorsToggle & QFixToggle ------------------------------------- {{{2
+command! ErrorsToggle call ErrorsToggle()
+function! ErrorsToggle()
+  if exists("w:is_error_window")
+    unlet w:is_error_window
+    exec "q"
+  else
+    exec "Errors"
+    lopen
+    let w:is_error_window = 1
+  endif
+endfunction
+
+command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
+function! QFixToggle(forced)
+  if exists("g:qfix_win") && a:forced == 0
+    cclose
+    unlet g:qfix_win
+  else
+    botright copen 5
+    let g:qfix_win = bufnr("$")
+  endif
+endfunction
+nnoremap <Leader>e :ErrorsToggle<CR>
+nnoremap <Leader>q :QFixToggle<CR>
+" DiffOrig ------------------------------------------------------ {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
@@ -513,11 +558,6 @@ endfunction
 "  \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 " Misc --------------------- {{{1
-let mapleader = ","
-nnoremap <Leader><space> :make<CR>:cw 3<CR>
-nnoremap <Leader>r :!./%:r<CR>
-nnoremap <Leader>w :botright cw 3<CR>
-nnoremap <Leader>x :ccl<CR>
 nnoremap <Leader>h :nohls<CR>
 nnoremap <Leader>p "+p<CR>
 nnoremap <Leader>P "+P<CR>
@@ -532,6 +572,15 @@ inoremap <m-h> <left>
 inoremap <m-l> <Right>
 inoremap <m-j> <C-o>gj
 inoremap <m-k> <C-o>gk
+
+" Error navigation
+nnoremap <m-j> :lnext<cr>zvzz
+inoremap <m-j> <esc>:lnext<cr>zvzz
+nnoremap <m-k> :lprevious<cr>zvzz
+inoremap <m-k> <esc>:lprevious<cr>zvzz
+nnoremap <m-Down> :cnext<cr>zvzz
+nnoremap <m-Down> :cnext<cr>zvzz
+nnoremap <m-Up> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
 vmap / y/<C-R>"<CR>
@@ -555,6 +604,15 @@ nnoremap <C-\>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
 " Grep
 nnoremap <F1> :Rgrep<CR>
+
+" Beginning & End
+noremap H ^
+noremap L g_
+inoremap <C-a> <esc>I
+inoremap <C-e> <esc>A
+
+" Open a Quickfix window for the last search.
+nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
 
 " Save & Make
 nnoremap <F5> :w<CR>:make!<CR>
@@ -595,4 +653,3 @@ augroup LargeFile
             \|echomsg "***note*** handling a large file"
         \|endif
 augroup END
-
