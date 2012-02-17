@@ -30,7 +30,7 @@ function is-at-least {
     done
 }
 
-export SHELL=`which zsh`
+SHELL=`which zsh`
 
 # 定义颜色 {{{
 if [[ ("$TERM" = *256color || "$TERM" = screen*) && -f $HOME/.lscolor256 ]]; then
@@ -80,7 +80,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 
 #remove / and . from WORDCHARS to allow alt-backspace to delete word
-WORDCHARS='*?_[]~&;!#$%^(){}<>'
+WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 
 #report to me when people login/logout
 watch=(notme)
@@ -128,6 +128,11 @@ zstyle ':completion:*:descriptions' format $'\e[33m == \e[1;7;36m %d \e[m\e[33m 
 zstyle ':completion:*:messages' format $'\e[33m == \e[1;7;36m %d \e[m\e[0;33m ==\e[m'
 zstyle ':completion:*:warnings' format $'\e[33m == \e[1;7;31m No Matches Found \e[m\e[0;33m ==\e[m'
 zstyle ':completion:*:corrections' format $'\e[33m == \e[1;7;37m %d (errors: %e) \e[m\e[0;33m ==\e[m'
+# dabbrev for zsh!! M-/ M-,
+zstyle ':completion:*:history-words' stop yes
+zstyle ':completion:*:history-words' remove-all-dups yes
+zstyle ':completion:*:history-words' list false
+zstyle ':completion:*:history-words' menu yes select
 
 #autoload -U compinit
 autoload -Uz compinit
@@ -336,9 +341,29 @@ fi
 
 # }}}
 
-# 自定义widget {{{
-#from linuxtoy.org:
-#   pressing TAB in an empty command makes a cd command with completion list
+# 键绑定  {{{
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "" history-beginning-search-backward-end
+bindkey "" history-beginning-search-forward-end
+bindkey -M viins "" history-beginning-search-backward-end
+bindkey -M viins "" history-beginning-search-forward-end
+bindkey '[1;5D' backward-word     # C-left
+bindkey '[1;5C' forward-word      # C-right
+
+autoload -U edit-command-line
+zle -N      edit-command-line
+bindkey '\ee' edit-command-line
+# }}}
+
+# }}}
+
+# ZLE 自定义widget {{{
+#
+
+# {{{ pressing TAB in an empty command makes a cd command with completion list
+# from linuxtoy.org
 dumb-cd(){
     if [[ -n $BUFFER ]] ; then # 如果该行有内容
         zle expand-or-complete # 执行 TAB 原来的功能
@@ -351,7 +376,7 @@ dumb-cd(){
 zle -N dumb-cd
 bindkey "\t" dumb-cd #将上面的功能绑定到 TAB 键
 
-# colorize command as blue if found in path or defined.
+# {{{ colorize commands
 TOKENS_FOLLOWED_BY_COMMANDS=('|' '||' ';' '&' '&&' 'sudo' 'do' 'time' 'strace')
 
 recolor-cmd() {
@@ -386,10 +411,10 @@ check-cmd-backward-delete-char() { zle .backward-delete-char && recolor-cmd }
 zle -N self-insert check-cmd-self-insert
 zle -N backward-delete-char check-cmd-backward-delete-char
 
-#拼音补全
+# 拼音补全
 function _pinyin() { reply=($($HOME/bin/chsdir 0 $*)) }
 
-#add sudo to current buffer
+# {{{ double ESC to prepend "sudo"
 sudo-command-line() {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
@@ -398,9 +423,25 @@ sudo-command-line() {
 zle -N sudo-command-line
 #定义快捷键为： [Esc] [Esc]
 bindkey "\e\e" sudo-command-line
+# }}}
 
-#c-z to continue as well
-#bindkey -s "" "fg\n"
+# {{{ c-z to continue
+bindkey -s "" "fg\n"
+# }}}
+
+# {{{ esc-enter to run program in screen split region
+function run-command-in-split-screen() {
+    screen -X eval \
+        "focus bottom" \
+        split \
+        "focus bottom" \
+        "screen $HOME/bin/screen_run $BUFFER" \
+        "focus top"
+    zle kill-buffer
+}
+zle -N run-command-in-split-screen
+bindkey "\e\r" run-command-in-split-screen
+# }}}
 
 # }}}
 
@@ -413,10 +454,11 @@ export SAVEHIST=10000
 export HISTFILE=/tmp/.zsh_history_$UID
 export MENUCONFIG_COLOR=blackbg
 
-export PATH=$HOME/.cabal/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
 export EDITOR=vim
 export VISUAL=vim
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
+export INPUTRC=$HOME/.inputrc
 
 #MOST like colored man pages
 export PAGER=less
@@ -455,9 +497,8 @@ export READNULLCMD=less
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 # }}}
 
-typeset -U PATH
-
-# {{{1 command aliases
+# 命令别名 {{{
+# alias and listing colors
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -477,6 +518,51 @@ else
     alias l="ls -l"
     alias la='l -A'
 fi
+alias -g A="|awk"
+alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
+alias -g C="|wc"
+alias -g E="|sed"
+alias -g G='|GREP_COLOR=$(echo 3$[$(date +%N)%6+1]'\'';1;7'\'') egrep -i --color=always'
+alias -g H="|head -n $(($LINES-2))"
+alias -g L="|less"
+alias -g P="|column -t"
+alias -g R="|tac"
+alias -g S="|sort"
+alias -g T="|tail -n $(($LINES-2))"
+alias -g X="|xargs"
+alias -g N="> /dev/null"
+alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
+
+# tmux or screen ?
+(bin-exist tmux) && alias s=tmux || alias s=screen
+
+#file types
+(bin-exist apvlv) && alias -s pdf=apvlv
+alias -s ps=gv
+for i in jpg png;           alias -s $i=gqview
+for i in avi rmvb wmv;      alias -s $i=mplayer
+for i in rar zip 7z lzma;   alias -s $i="7z x"
+
+#no correct for mkdir mv and cp
+for i in mkdir mv cp;       alias $i="nocorrect $i"
+alias find='noglob find'        # noglob for find
+alias grep='grep -I --color=auto'
+alias egrep='egrep -I --color=auto'
+alias cal='cal -3'
+alias freeze='kill -STOP'
+alias ls=$'ls -h --color=auto -X --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
+alias vi='vim'
+alias df='df -Th'
+alias du='du -h'
+#show directories size
+alias dud='du -s *(/)'
+#date for US and CN
+alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done'
+#bloomberg radio
+alias bloomberg='mplayer mms://media2.bloomberg.com/wbbr_sirus.asf'
+alias pyprof='python -m cProfile'
+alias python='nice python'
+alias info='info --vi-keys'
 alias rsync='rsync --progress --partial'
 alias port='netstat -ntlp'
 alias grep='grep --color=auto'
@@ -485,7 +571,7 @@ alias e='emacsclient -c -t'
 alias v=vi
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
-alias -g N="*(oc[1])"
+alias -g N='> /dev/null'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias df='df -hT'
