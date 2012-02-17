@@ -1,0 +1,8 @@
+dev-haskell/cmdargs
+dev-haskell/conduit
+dev-haskell/hakyll
+dev-haskell/hakyll-contrib
+dev-haskell/parallel
+dev-haskell/gtk2hs-buildtools
+dev-haskell/hdbc-sqlite
+dev-haskell/hxt

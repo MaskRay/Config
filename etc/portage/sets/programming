@@ -1,6 +1,4 @@
 app-editors/emacs
-app-editors/gvim
-app-editors/vim
 app-text/texlive
 dev-db/sqlite
 dev-haskell/cabal-install
@@ -20,7 +18,3 @@ dev-vcs/mercurial
 dev-vcs/tig
 sys-devel/crossdev
 sys-devel/gdb
-
-app-vim/neocomplcache
-app-vim/surround
-app-vim/colorschemes
