@@ -1,1 +1,2 @@
 dev-haskell/* doc hoogle hscolour
+dev-haskell/haddock -hscolour

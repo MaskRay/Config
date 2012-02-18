@@ -345,8 +345,8 @@ fi
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
-bindkey "" history-beginning-search-backward-end
-bindkey "" history-beginning-search-forward-end
+#bindkey "" history-beginning-search-backward-end
+#bindkey "" history-beginning-search-forward-end
 bindkey -M viins "" history-beginning-search-backward-end
 bindkey -M viins "" history-beginning-search-forward-end
 bindkey '[1;5D' backward-word     # C-left
