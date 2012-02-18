@@ -12,6 +12,7 @@ set incsearch
 set ruler
 set showcmd
 set number
+set shiftround
 set title
 set wildmenu
 set wildmode=list,longest
@@ -39,6 +40,7 @@ set statusline+=%*
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 set dictionary+=/usr/share/dict/words
 set whichwrap=b,s,<,>,[,],h,l
+set showbreak=↪
 set spellsuggest=10
 let mapleader = ","
 
@@ -303,31 +305,15 @@ Bundle 'gmarik/vundle'
 Bundle 'vim-powerline'
 Bundle 'EasyMotion'
 Bundle 'snipMate'
-Bundle 'vimproc'
 "Bundle 'ghcmod-vim'
 Bundle 'neco-ghc'
 Bundle 'gist'
 Bundle 'syntastic'
-Bundle 'preview'
 "Bundle 'rainbow_parentheses'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
-let g:EasyMotion_do_mapping = 0
-nnoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-onoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
-
-nnoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-onoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
-
-nnoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
-onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
-vnoremap <silent> <Leader>t :<C-U>:call EasyMotion#T(1, 0)<CR>
-
-nnoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
-onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
-vnoremap <silent> <Leader>T :<C-U>call EasyMotion#T(1, 1)<CR>
+let g:EasyMotion_do_mapping = 1
+let g:EasyMotion_leader_key = g:mapleader
 
 " FuzzyFinder ----------------------------------------- {{{2
 " vim-l9 is the requirement of fuzzyfinder 4.*
@@ -523,7 +509,7 @@ function! QFixToggle(forced)
     let g:qfix_win = bufnr("$")
   endif
 endfunction
-nnoremap <Leader>e :ErrorsToggle<CR>
+nnoremap <Leader>l :ErrorsToggle<CR>
 nnoremap <Leader>q :QFixToggle<CR>
 " DiffOrig ------------------------------------------------------ {{{2
 " Convenient command to see the difference between the current buffer and the
@@ -564,7 +550,6 @@ nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
 inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
-inoremap <C-D> <C-x><C-D>
 nmap gf <C-W>gf
 
 " move in insert mode
@@ -604,6 +589,17 @@ nnoremap <C-\>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
 " Grep
 nnoremap <F1> :Rgrep<CR>
+
+" Edit (bang)
+command! -bang E e<bang>
+command! -bang Q q<bang>
+command! -bang W w<bang>
+command! -bang QA qa<bang>
+command! -bang Qa qa<bang>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>
+command! -bang Wq wq<bang>
+command! -bang WQ wq<bang>
 
 " Beginning & End
 noremap H ^
