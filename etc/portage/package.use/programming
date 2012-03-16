@@ -8,7 +8,7 @@ dev-lang/gprolog doc examples
 dev-lang/tcl threads
 
 # vcs
-dev-vcs/git curl
+dev-vcs/git curl subversion doc tk
 
 x11-libs/cairo X xcb opengl svg
 
@@ -22,3 +22,6 @@ dev-haskell/* doc hoogle
 dev-haskell/haddock -doc
 
 dev-libs/boost python # for sage
+
+>=dev-libs/boehm-gc-7.2_alpha4-r1 threads
+dev-scheme/racket doc future jit

@@ -1,5 +1,5 @@
 sci-mathematics/octave doc
-sci-visualization/gnuplot wxwidgets
+sci-visualization/gnuplot wxwidgets examples doc
 sci-mathematics/sage mpc
 
 #required by sci-mathematics/sage-4.7.2, required by sci-mathematics/sage-notebook-0.8.23-r1

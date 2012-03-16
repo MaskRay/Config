@@ -454,7 +454,7 @@ export SAVEHIST=10000
 export HISTFILE=/tmp/.zsh_history_$UID
 export MENUCONFIG_COLOR=blackbg
 
-export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:/opt/jdk1.7.0_03/bin:$HOME/bin/ssh:$PATH
 export EDITOR=vim
 export VISUAL=vim
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
@@ -504,9 +504,9 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....=../../../..
 alias pg='pgrep -l'
-alias cp='cp -iv'
-alias mv='mv -iv'
-alias rm='rm -iv'
+alias cp='cp -i -v'
+alias mv='mv -i -v'
+alias rm='rm -i -v'
 alias psg='ps aux|grep'
 alias clip='xsel -ib <'
 if [ `uname` = 'Linux' ]; then
@@ -530,7 +530,7 @@ alias -g R="|tac"
 alias -g S="|sort"
 alias -g T="|tail -n $(($LINES-2))"
 alias -g X="|xargs"
-alias -g N="> /dev/null"
+alias -g N='> /dev/null'
 alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
 
 # tmux or screen ?
@@ -544,14 +544,13 @@ for i in avi rmvb wmv;      alias -s $i=mplayer
 for i in rar zip 7z lzma;   alias -s $i="7z x"
 
 #no correct for mkdir mv and cp
-for i in mkdir mv cp;       alias $i="nocorrect $i"
+#for i in mkdir mv cp;       alias $i="nocorrect $i"
 alias find='noglob find'        # noglob for find
 alias grep='grep -I --color=auto'
 alias egrep='egrep -I --color=auto'
 alias cal='cal -3'
 alias freeze='kill -STOP'
 alias ls=$'ls -h --color=auto -X --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
-alias vi='vim'
 alias df='df -Th'
 alias du='du -h'
 #show directories size
@@ -568,10 +567,9 @@ alias port='netstat -ntlp'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias e='emacsclient -c -t'
-alias v=vi
+alias v='vim --servername GVIM --remote-tab-silent'
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
-alias -g N='> /dev/null'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias df='df -hT'
@@ -697,7 +695,7 @@ promptinit
 colors
 
 typeset -ga chpwd_functions
-export PROMPT="$(my_prompt)"
+PROMPT="$(my_prompt)"
 #chpwd_functions+='get_repos_info'
 
 MAIL=/var/spool/mail/ray && export MAIL
