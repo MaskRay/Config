@@ -443,7 +443,7 @@ function! QFixToggle()
     let g:qfix_win = 1
   endif
 endfunction
-nnoremap <Leader>e :call ErrorsToggle()<CR>
+nnoremap <Leader>l :call ErrorsToggle()<CR>
 nnoremap <Leader>q :call QFixToggle()<CR>
 " DiffOrig ------------------------------------------------------ {{{2
 " Convenient command to see the difference between the current buffer and the

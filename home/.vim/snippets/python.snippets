@@ -1,0 +1,271 @@
+# python snippets for snipMate(http://www.vim.org/scripts/script.php?script_id=2540)
+## {{{1 Imports
+## im import statement
+snippet im
+	import ${1:sys}
+	${2}
+## ia import ... as statement
+snippet ia
+	import ${1:unittest} as ${2:ut}
+	${3}
+## fr from ... import statement
+snippet fr
+	from ${1:urllib2} import ${2:urlopen}
+	${3}
+## fa from ... import ... as statement
+snippet fa
+	from ${1:tempfile} import ${2:TemporayFile} as ${3:TempFile}
+	${4}
+## {{{1 Comments
+## #! shebang line for python
+snippet #!
+	#!/usr/bin/env python
+	${1}
+## #e shebang and encoding
+snippet #e
+	#!/usr/bin/env python
+	# -*- coding: ${1:utf-8} -*-
+	${2}
+## ## horizontal ruler
+snippet ##
+	`repeat('#',72)`
+	${1}
+## #- horizontal seperator
+snippet #-
+	#---------------8<-----------------8<------------------8<---------------
+	${1}
+## #$ comments on right side
+snippet #$
+	`repeat(' ', 60-strlen(getline('.')))`# ${1}
+## #{ opening folding marker
+snippet #{
+	# ${1:Code Block} {{{${2:1}
+	${3}
+## #} closing folding marker
+snippet #}
+	# }}}${1:1}
+	${2}
+## #{} folding marker pair
+snippet #{}
+	# ${1:Code Block} {{{${2:1}
+	${3:# code...}
+	# $1 }}}$2
+	${4}
+## {{{1 Control Flow Statements
+## if if statement
+snippet if
+	if ${1:True}:
+		${2:pass}
+	${3}
+## else else statement
+snippet else
+	else:
+		${1:pass}
+	${2}
+## elif elif statement
+snippet elif
+	elif ${1:True}:
+		${2:pass}
+	${3}
+## ife if ... else
+snippet ife
+	if ${1:True}:
+		${2:pass}
+	else:
+		${3:pass}
+	${4}
+## ?: ternary operation
+snippet ?:
+	${2:True} if ${1:Expression} else ${3:False}${4}
+## {{{1 Loops
+## for for loop
+snippet for
+	for ${1:each} in ${2:sequence}:
+		${3:pass}
+	${4}
+## fori for i in range() loop
+snippet fori
+	for ${1:i} in range(${2:42}):
+		${3:pass}
+	${4}
+## fore for ... else loop
+snippet fore
+	for ${1:each} in ${2:sequence}:
+		${3:pass}
+	else:
+		${4:pass  # No break in loop.}
+	${5}
+## while while loop
+snippet while
+	while ${1:True}:
+		${2:pass}
+	${3}
+## whilee while ... else loop
+snippet whilee
+	while ${1:True}:
+		${2:pass}
+	else:
+		${3:pass  # No break in loop.}
+	${4}
+## {{{1 Functions and Methods
+## def define function
+snippet def define function
+	def ${1:function_name}(${2}):
+		"""${3:docstring for $1}"""
+		${4:pass}
+	${5}
+## def define method
+snippet def define method
+	def ${1:method_name}(self${2}):
+		"""${3:docstring for $1}"""
+		${4:pass}
+	${5}
+## def define class method
+snippet def define class method
+	@classmethod
+	def ${1:ClassMethodName}(${2:cls}, ${3:args}):
+		"""${4:docstring for $1}"""
+		${5:pass}
+	${6}
+## def define static method
+snippet def define static method
+	@staticmethod
+	def ${1:StaticMethodName}(${2})
+		"""${3:docstring for $1}"""
+		${4:pass}
+	${5}
+## {{{1 Context Management
+## with with statement
+snippet with with
+	with ${1:Expression}:
+		${2:pass}
+	${3}
+## with with ... as statement
+snippet with with ... as
+	with ${1:Expression} as ${2:Target}:
+		${3:pass}
+	${4}
+## {{{1 Exception Handling
+## try try ... except
+snippet try try ... except
+	try:
+		${1:pass}
+	except ${2:Exception}, ${3:e}:
+		${4:raise $3}
+	${5}
+## try try ... finally
+snippet try try ... finally
+	try:
+		${1:pass}
+	finally:
+		${2:pass}
+	${3}
+## try try ... except ... else
+snippet try try ... except ... else
+	try:
+		${1:pass}
+	except ${2:Exception}, ${3:e}:
+		${4:raise $3}
+	else:
+		${5:pass}
+	${6}
+## try try ... except ... finally
+snippet try try ... except ... finally
+	try:
+		${1:pass}
+	except ${2:Exception}, ${3:e}:
+		${4:raise $3}
+	finally:
+		${5:pass}
+	${6}
+## try try ... except ... else ... finally
+snippet try try ... except ... else ... finally
+	try:
+		${1:pass}
+	except ${2:Exception}, ${3:e}:
+		${4:raise $3}
+	else:
+		${5:pass}
+	finally:
+		${6:pass}
+	${7}
+## except except statement
+snippet except
+	except ${1:Exception}, ${2:e}:
+		${3:raise $2}
+	${4}
+## finally finally statement
+snippet finally
+	finally:
+		${1:pass}
+	${2}
+## {{{1 Classes
+## class class definition
+snippet class
+	class ${1:ClassName}(${2:object}):
+		"""${3:docstring for $1}"""
+		def __init__(self${4}):
+			${5:super($1, self).__init__()}
+			${6}
+## {{{1 Functional Styles, list/dict Comprehensions, generator expressions
+## ld lambda form
+snippet ld
+	lambda ${1:x} : ${2:$1}
+## [ list comprehension
+snippet [
+	[${3:$1} for ${1:i} in ${2:sequence}]${4}
+## [? list comprehension with condiction
+snippet [?
+	[${4:$1} for ${1:i} in ${2:sequence} if ${3:$1}]${5}
+## ge generator expression
+snippet ge
+	${3:$1} for ${1:i} in ${2:sequence}${4}
+## ge? generator expression with condition
+snippet ge?
+	${4:$1} for ${1:i} in ${2:sequence} if ${3:$1}${5}
+## { dict comprehension
+snippet {
+	{${4:$1}: ${5:$2} for ${1:k}, ${2:v} in ${3:stuff}}${6}
+## {{{1 Code Snippets
+## ifmain if __name__ == '__main__':
+snippet ifmain
+	if __name__ == '__main__':
+		${1:main()}
+## new_ new program
+snippet new_
+	#!/usr/bin/env python
+	# -*- coding: ${1:utf-8} -*-
+	
+	import ${2:sys}
+	
+	def main():
+		${4:pass}
+	
+	if __name__ == '__main__':
+		${3:main()}
+## unittest_ unit test
+snippet unittest_
+	if __name__ == '__main__':
+		import unittest
+	
+		class ${1:CaseName}Test(unittest.TestCase):
+			def setUp(self):
+				${2:pass}
+	
+			def runTest(self):
+				${3:pass}
+## {{{1 Other Shortcuts
+## % string formatting
+snippet %
+	'${1:%s}' % (${2:'\n'})${3}
+## %{ string formatting with dict
+snippet %{
+	'${1:%(name)s}' % {${2:'name': 'Joe Shmoe'}}${3}
+## . self.
+snippet .
+	self.
+## __ __magic__
+snippet __
+	__${1:init}__${2}
+# }}}
+# vim: set fdm=marker fml=3:
