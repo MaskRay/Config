@@ -5,6 +5,7 @@ dev-haskell/cabal-install
 dev-lang/fpc
 dev-lang/ghc
 dev-lang/ocaml
+dev-lang/gnu-smalltalk
 dev-lisp/sbcl
 dev-python/markdown
 dev-scheme/guile

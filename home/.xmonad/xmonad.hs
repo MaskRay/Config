@@ -250,10 +250,11 @@ myKeys =
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' o", namedScratchpadAction scratchpads "ocaml")
     , ("C-' i", namedScratchpadAction scratchpads "irb")
-    , ("C-' p", namedScratchpadAction scratchpads "python3")
+    , ("C-' p", namedScratchpadAction scratchpads "ipython")
+    , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
-    , ("C-' r", namedScratchpadAction scratchpads "r2e")
+    , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
 
@@ -280,10 +281,11 @@ scratchpads =
   [ NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
   , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
   , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
-  , NS "python3" "urxvtc -T python3 -e python3" (title =? "python3") mySPFloat
+  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
+  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
   , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
-  , NS "r2e" "urxvtc -T r2e -e r2e run" (title =? "r2e") doBottomRightFloat
+  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   ]

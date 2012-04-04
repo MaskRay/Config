@@ -6,15 +6,17 @@ app-editors/vim cscope vim-pager ruby perl python
 app-editors/gvim cscope vim-pager ruby perl python
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
+dev-lang/gnu-smalltalk gmp emacs tk
 
 # vcs
 dev-vcs/git curl subversion doc tk
 
 x11-libs/cairo X xcb opengl svg
 
+# editors
 app-editors/emacs X gtk
-app-editors/vim python
-app-editors/gvim python
+app-editors/vim python ruby
+app-editors/gvim python ruby
 
 # databases
 dev-db/sqlite doc
@@ -25,3 +27,4 @@ dev-libs/boost python # for sage
 
 >=dev-libs/boehm-gc-7.2_alpha4-r1 threads
 dev-scheme/racket doc future jit
+
