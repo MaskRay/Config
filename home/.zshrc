@@ -355,6 +355,9 @@ bindkey '[1;5C' forward-word      # C-right
 autoload -U edit-command-line
 zle -N      edit-command-line
 bindkey '\ee' edit-command-line
+
+autoload -U url-quote-magic
+zle -N self-insert url-quote-magic
 # }}}
 
 # }}}
@@ -454,7 +457,9 @@ export SAVEHIST=10000
 export HISTFILE=/tmp/.zsh_history_$UID
 export MENUCONFIG_COLOR=blackbg
 
-export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:/opt/jdk1.7.0_03/bin:$HOME/bin/ssh:$PATH
+export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+export PATH=$PATH:/opt/scala-2.10.0-M2/bin
+export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
 export EDITOR=vim
 export VISUAL=vim
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '

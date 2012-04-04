@@ -1,6 +1,4 @@
 " -*- vim: set sts=2 sw=2 et fdm=marker: -------------  vim modeline -*-
-" [Pathogen] ------------------------------------------ {{{1
-" call pathogen#infect()
 
 " Basic Settings -------------------------------------- {{{1
 syntax on
@@ -12,13 +10,12 @@ set incsearch
 set ruler
 set showcmd
 set number
+set shiftround
 set title
 set wildmenu
 set wildmode=list,longest
 set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi
 set autochdir
-set lazyredraw          " faster for macros
-set ttyfast             " better for xterm
 set winaltkeys=no
 set listchars=nbsp:¬,eol:¶,tab:>-,extends:»,precedes:«,trail:•
 set scrolloff=3
@@ -31,14 +28,15 @@ set backspace=indent,eol,start
 set history=200
 
 set laststatus=2
-set statusline=%<[%{getcwd()}]\ %f\ %y%h%w%m%r%=[0x%02B]\ [%l,%c]\ [%o]\ -\ [%p%%]
-set statusline+=%#warningmsg#
+set statusline=%<%#ColorColumn#%2n%*»%#DiffChange#%{getcwd()}/%*%#DiffAdd#%f%*%#DiffText#%m%r%*»%#Title#%y%*»%#CursorLine#(%l/%L,%c)%*»%=«%#Cursor#%02B%*«%#ErrorMsg#%o%*«%#ModeMsg#%3p%%%*
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 set dictionary+=/usr/share/dict/words
+set grepprg=ack\ -a
 set whichwrap=b,s,<,>,[,],h,l
+set showbreak=↪
 set spellsuggest=10
 let mapleader = ","
 
@@ -54,8 +52,6 @@ if has('mouse')
 endif
 
 if has("gui_running")
-  set cursorcolumn
-  set cursorline
   set nowrap
   set spell
 
@@ -80,7 +76,8 @@ match ExtraWhitespace /\s\+$/
 if has("gui_running")
   " Envy Code R
   " http://damieng.com/blog/2008/05/26/envy-code-r-preview-7-coding-font-released
-  set guifont=Monaco\ 15
+  " set guifont=Monaco\ 15
+  set guifont=Inconsolata\ 17
   set guifontwide=WenQuanYi\ Micro\ Hei\ 13
 endif
 
@@ -95,6 +92,7 @@ if has("gui_running")
   "colorscheme ir_black
   "colorscheme fruity
   colorscheme molokai
+  hi Normal       guifg=White guibg=Black
   "colorscheme murphy
   "colorscheme peaksea
   " Lighter Themes ------------------------------------ {{{2
@@ -123,161 +121,99 @@ if has("autocmd")
   autocmd BufNewFile *.sh 0put=\"#!/bin/bash\<nl># vim:fdm=marker\<nl>\"
   au BufWritePost * if getline(1) =~ "^#!/bin/[a-z]*sh" | silent !chmod a+x <afile> | endif
 
+  autocmd BufWritePost    * call Lilydjwg_chmodx()
+
   " Ruby Support -------------------------------------- {{{2
-  autocmd BufNewFile *.rb 0put=\"#!/usr/bin/env ruby\<nl># coding: utf-8\<nl>\"
-  let g:ruby_no_comment_fold=1
-  autocmd FileType ruby set shiftwidth=2 softtabstop=2
+  augroup ruby_support
+    au!
+    autocmd FileType ruby inoreab <buffer> #! #!/usr/bin/env ruby
+    autocmd FileType ruby inoreab <buffer> #e # coding: utf-8
 
   " Python Support ------------------------------------ {{{2
-  autocmd BufNewFile *.py 0put=\"#!/usr/bin/env python\<nl># -*- coding: UTF-8 -*-\<nl>\"
+  augroup python_support
+    au!
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType python inoreab <buffer> #! #!/usr/bin/env python
+    autocmd FileType python inoreab <buffer> #e # -*- coding: utf-8 -*-
 
-  " Vala/Genie Support -------------------------------- {{{2
-  " get vala.vim here:
-  " https://live.gnome.org/Vala/Vim
-  autocmd BufRead *.vala set efm=%f:%l.%c-%[%^:]%#:\ %t%[%^:]%#:\ %m
-  autocmd BufRead *.vapi set efm=%f:%l.%c-%[%^:]%#:\ %t%[%^:]%#:\ %m
-  autocmd BufRead,BufNewFile *.vala setfiletype vala
-  autocmd BufRead,BufNewFile *.vapi setfiletype vala
-  autocmd FileType vala setlocal cindent
-
-  " indentation for genie: genie.vim
-  " http://www.vim.org/scripts/script.php?script_id=2349
-  " This will overrule the default filetype grads
-  autocmd BufRead,BufNewFile *.gs setlocal filetype=genie
-
-  autocmd FileType vala,genie setlocal formatoptions+=croql
+  " Java Support -------------------------------------- {{{2
+  augroup java_suppoer
+    au!
+    autocmd FileType *.java setlocal omnifunc=javacomplete#Complete
 
   " Abbreviations for vim modeline -------------------- {{{2
-  autocmd FileType c,cpp,vala,genie inoreab <buffer> /*v /* -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*- */
-  autocmd FileType c,cpp,vala,genie inoreab <buffer> //v // -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*-
-  autocmd FileType python inoreab <buffer> #v ## -*- vim: set sts=4 sw=4 et fdm=marker tw=72: ------- vim modeline -*-
-  autocmd FileType rst inoreab <buffer> ..v .. -*- vim: set sts=2 sw=2 et fdm=marker: ---------------- vim modeline -*-
-  autocmd FileType html,htmldjango inoreab <buffer> {#v {# -*- vim: set sts=2 sw=2 et fdm=marker ft=htmldjango: -- vim modeline -*- #}
-  autocmd FileType lisp,scheme inoreab <buffer> ;;v ;; -*- vim: set fdm=marker: ------------------------------ vim modeline -*-
-
-  " Mappings for reStructuredText: Section Headers ---- {{{2
-  " Normal Mode: Headings with # overline and underline
-  autocmd FileType rst nnoremap <buffer> <C-S>3 yyPVr#yyjp
-  " Normal Mode: Headings with * overline and underline
-  autocmd FileType rst nnoremap <buffer> <C-S>8 yyPVr*yyjp
-  " Normal Mode: Headings with = underline
-  autocmd FileType rst nnoremap <buffer> <C-S>= yypVr=
-  " Normal Mode: Headings with - underline
-  autocmd FileType rst nnoremap <buffer> <C-S>- yypVr-
-  " Normal Mode: Headings with ^ underline
-  autocmd FileType rst nnoremap <buffer> <C-S>6 yypVr^
-  " Normal Mode: Headings with " underline, for easier typing, ' instead of "
-  autocmd FileType rst nnoremap <buffer> <C-S>' yypVr"
-  " Normal Mode: Headings with ; underline
-  autocmd FileType rst nnoremap <buffer> <C-S>; yypVr;
-  " Insert Mode: Headings with # overline and underline
-  autocmd FileType rst inoremap <buffer> <C-S>3 <ESC>yyPVr#yyjpo
-  " Insert Mode: Headings with * overline and underline
-  autocmd FileType rst inoremap <buffer> <C-S>8 <ESC>yyPVr*yyjpo
-  " Insert Mode: Headings with = underline
-  autocmd FileType rst inoremap <buffer> <C-S>= <ESC>yypVr=o
-  " Insert Mode: Headings with - underline
-  autocmd FileType rst inoremap <buffer> <C-S>- <ESC>yypVr-o
-  " Insert Mode: Headings with ^ underline
-  autocmd FileType rst inoremap <buffer> <C-S>6 <ESC>yypVr^o
-  " Insert Mode: Headings with " underline, for easier typing, ' instead of "
-  autocmd FileType rst inoremap <buffer> <C-S>' <ESC>yypVr"o
-  " Insert Mode: Headings with ; underline
-  autocmd FileType rst inoremap <buffer> <C-S>; <ESC>yypVr;o
-
-  " Mappings for Django Templates: -------------------- {{{2
-  autocmd FileType htmldjango,django inoremap <buffer> {{ {{  }}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {% {%  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {# {#  #}<left><left><left>
-
-  autocmd FileType htmldjango,django inoremap <buffer> {bs {{ block.super }}
-  autocmd FileType htmldjango,django inoremap <buffer> {c {% comment %}<cr>{% endcomment %}<C-o>O
-  autocmd FileType htmldjango,django inoremap <buffer> {ae+ {% autoescape on %}<cr>{% endautoescape %}<C-o>O
-  autocmd FileType htmldjango,django inoremap <buffer> {ae- {% autoescape off %}<cr>{% endautoescape %}<C-o>O
-  autocmd FileType htmldjango,django inoremap <buffer> {sl {% spaceless %}<cr>{% endspaceless %}<C-o>O
-  autocmd FileType htmldjango,django inoremap <buffer> {bt {% blocktrans %}<cr>{% endblocktrans %}<C-o>O
-  autocmd FileType htmldjango,django inoremap <buffer> {bT {% blocktrans %}{% endblocktrans %}<C-o>%
-
-  autocmd FileType htmldjango,django inoremap <buffer> {l {% load  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {u {% url  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {x {% extends "" %}<left><left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {X {% extends  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {t {% trans "" %}<left><left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {T {% trans  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {inc {% include "" %}<left><left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {INC {% include  %}<left><left><left>
-
-  autocmd FileType htmldjango,django inoremap <buffer> {ic {% ifchanged  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> ic} {% endifchanged %}
-
-  autocmd FileType htmldjango,django inoremap <buffer> {== {% ifequal  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> ==} {% endifequal %}
-  autocmd FileType htmldjango,django inoremap <buffer> {!= {% ifnotequal  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> !=} {% endifnotequal %}
-
-  autocmd FileType htmldjango,django inoremap <buffer> {b {% block  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> b} {% endblock %}
-
-  autocmd FileType htmldjango,django inoremap <buffer> {i {% if  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> {e {% else %}
-  autocmd FileType htmldjango,django inoremap <buffer> i} {% endif %}
-
-  autocmd FileType htmldjango,django inoremap <buffer> {f {% for  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> f} {% endfor %}
-  autocmd FileType htmldjango,django inoremap <buffer> {w {% with  %}<left><left><left>
-  autocmd FileType htmldjango,django inoremap <buffer> w} {% endwith %}
+  augroup vim_modeline
+    au!
+    autocmd FileType c,cpp,vala,genie inoreab <buffer> /*v /* -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*- */
+    autocmd FileType c,cpp,vala,genie inoreab <buffer> //v // -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*-
+    autocmd FileType python inoreab <buffer> #v # -*- vim: set sts=4 sw=4 et fdm=marker tw=72: -------- vim modeline -*-
+    autocmd FileType rst inoreab <buffer> ..v .. -*- vim: set sts=2 sw=2 et fdm=marker: ---------------- vim modeline -*-
+    autocmd FileType html,htmldjango inoreab <buffer> {#v {# -*- vim: set sts=2 sw=2 et fdm=marker ft=htmldjango: -- vim modeline -*- #}
+    autocmd FileType lisp,scheme inoreab <buffer> ;;v ;; -*- vim: set fdm=marker: ------------------------------ vim modeline -*-
 
   " Default tab settings for different file types ----- {{{2
-  autocmd FileType asciidoc setlocal sw=2 sts=2
-  autocmd FileType c setlocal sw=4 sts=4 et
-  autocmd FileType cpp setlocal sw=4 sts=4 et
-  autocmd FileType css setlocal sw=4 sts=4 et
-  autocmd FileType expect setlocal sw=4 sts=4 et
-  autocmd FileType haskell setlocal sw=4 sts=4 et
-  autocmd FileType html setlocal sw=2 sts=2 et
-  autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
-  autocmd FileType htmldjango setlocal sw=2 sts=2 et
-  autocmd FileType java setlocal sw=4 sts=4 et
-  autocmd FileType javascript setlocal sw=2 sts=2 et
-  autocmd FileType tex setlocal sw=2 sts=2 et
-  autocmd FileType make set noet
-  autocmd FileType mason setlocal sw=2 sts=2 et
-  autocmd FileType ocaml setlocal sw=2 sts=2 et
-  autocmd FileType perl setlocal sw=4 sts=4 et
-  autocmd FileType php setlocal sw=4 sts=4 et
-  autocmd FileType rst setlocal sw=2 sts=2 et
-  autocmd FileType ruby setlocal sw=2 sts=2 et
-  autocmd FileType python setlocal sw=4 sts=4 et tw=72
-  autocmd FileType scheme setlocal sw=2 sts=2 et
-  autocmd FileType sql setlocal et
-  autocmd FileType vala setlocal sw=4 sts=4 et
-  autocmd FileType xhtml setlocal sw=2 sts=2 et
-  autocmd FileType xml setlocal sw=2 sts=2 et
-  autocmd FileType text setlocal textwidth=78
-  autocmd FileType vim setlocal sw=4 sts=4 et
+  augroup tab_settings
+    au!
+    autocmd FileType asciidoc setlocal sw=2 sts=2
+    autocmd FileType c setlocal sw=4 sts=4 et
+    autocmd FileType cpp setlocal sw=4 sts=4 et
+    autocmd FileType css setlocal sw=4 sts=4 et
+    autocmd FileType haskell setlocal sw=4 sts=4 et
+    autocmd FileType html setlocal sw=2 sts=2 et
+    autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
+    autocmd FileType htmldjango setlocal sw=2 sts=2 et
+    autocmd FileType java setlocal sw=4 sts=4 et
+    autocmd FileType javascript setlocal sw=2 sts=2 et
+    autocmd FileType make set noet
+    autocmd FileType mason setlocal sw=2 sts=2 et
+    autocmd FileType ocaml setlocal sw=2 sts=2 et
+    autocmd FileType perl setlocal sw=4 sts=4 et
+    autocmd FileType php setlocal sw=4 sts=4 et
+    autocmd FileType rst setlocal sw=2 sts=2 et
+    autocmd FileType ruby setlocal sw=2 sts=2 et
+    autocmd FileType python setlocal sw=4 sts=4 et tw=72
+    autocmd FileType scheme setlocal sw=2 sts=2 et
+    autocmd FileType sql setlocal et
+    autocmd FileType vala setlocal sw=4 sts=4 et
+    autocmd FileType xhtml setlocal sw=2 sts=2 et
+    autocmd FileType xml setlocal sw=2 sts=2 et
+    autocmd FileType text setlocal textwidth=78
 
-  " Leave insert mode after 15 seconds of no input ---- {{{2
-  " nice trick by winzo
-  " http://www.reddit.com/r/vim/comments/kz84u/what_are_some_simple_yet_mindblowing_tweaks_to/c2ol6wd
-"  autocmd CursorHoldI * stopinsert
-"  autocmd InsertEnter * let updaterestore=&updatetime | set updatetime=15000
-"  autocmd InsertLeave * let &updatetime=updaterestore
+  " Show trailing whitespaces when necessary ---------- {{{2
+  " That is, most of the cases other than editing source code in Whitespace,
+  " the programming language.
+  augroup show_whitespaces
+    au!
+    " Make sure this will not be cleared by colorscheme
+    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+    autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+    autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+    autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+    autocmd BufWinLeave * call clearmatches()
 
   " Misc ---------------------------------------------- {{{2
-  " remove trailing whitespaces
-  autocmd BufWritePre * call StripTrailingWhitespace()
+  augroup editing
+    au!
+    " Toggling between number and relativenumber when entering/leaving insert mode
+    autocmd InsertEnter * set number
+    autocmd InsertLeave * set relativenumber
+    " remove trailing whitespaces
+    autocmd BufWritePre * call StripTrailingWhitespace()
 
-  " Make sure this will not be cleared by colorscheme
-  autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-  " Show trailing whitespaces when necessary, that is, when not editing
-  " source code in Whitespace (the programming language)
-  autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-  autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-  autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-  autocmd BufWinLeave * call clearmatches()
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    " Also don't do it when the mark is in the first line, that is the default
+    " position when opening a file.
+    autocmd BufReadPost *
+      \ if line("'\"") > 1 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
 
-  " --------------------------------------------------- }}}2
-  augroup END
+    " turn on spell checker for email
+    autocmd FileType mail setlocal spell
+
+  augroup END " --------------------------------------- }}}2
 else
   set autoindent
 endif " has("autocmd")
@@ -301,33 +237,19 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'vim-powerline'
-Bundle 'EasyMotion'
-Bundle 'snipMate'
-Bundle 'vimproc'
-"Bundle 'ghcmod-vim'
+Bundle 'ctrlp'
+Bundle 'tabular'
 Bundle 'neco-ghc'
-Bundle 'gist'
 Bundle 'syntastic'
-Bundle 'preview'
+Bundle 'EasyMotion'
+Bundle 'javacomplete'
+Bundle 'vim-sparkup'
 "Bundle 'rainbow_parentheses'
+Bundle 'tasklist'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
-let g:EasyMotion_do_mapping = 0
-nnoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-onoremap <silent> <Leader>f      :call EasyMotion#F(0, 0)<CR>
-vnoremap <silent> <Leader>f :<C-U>call EasyMotion#F(1, 0)<CR>
-
-nnoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-onoremap <silent> <Leader>F      :call EasyMotion#F(0, 1)<CR>
-vnoremap <silent> <Leader>F :<C-U>call EasyMotion#F(1, 1)<CR>
-
-nnoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
-onoremap <silent> <Leader>t      :call EasyMotion#T(0, 0)<CR>
-vnoremap <silent> <Leader>t :<C-U>:call EasyMotion#T(1, 0)<CR>
-
-nnoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
-onoremap <silent> <Leader>T      :call EasyMotion#T(0, 1)<CR>
-vnoremap <silent> <Leader>T :<C-U>call EasyMotion#T(1, 1)<CR>
+let g:EasyMotion_do_mapping = 1
+let g:EasyMotion_leader_key = g:mapleader
 
 " FuzzyFinder ----------------------------------------- {{{2
 " vim-l9 is the requirement of fuzzyfinder 4.*
@@ -354,10 +276,6 @@ map <F2> :NERDTreeToggle<CR>
 " let SuperTabContextDefaultCompletionType = "context"
 
 " dot.vim --------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=1225
-  " Mapping for reStructuredText
-  autocmd FileType rst nmap <buffer> <F8> :DotOutlineTree<CR>
-  autocmd FileType rst imap <buffer> <F8> <ESC>:DotOutlineTree<CR>
 
 " Tagbar ---------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=3465
@@ -467,7 +385,7 @@ let g:sparkupNextMapping = '<tab><tab>'
 " Slimv ----------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=2531
 " https://bitbucket.org/kovisoft/slimv/
-let g:slimv_swank_cmd = '! gnome-terminal -e "sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-swank.lisp" &'
+" let g:slimv_swank_cmd = '! xterm -e "sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-swank.lisp" &'
 
 " Rainbow Parentheses --------------------------------- {{{2
 " https://github.com/kien/rainbow_parentheses.vim
@@ -498,33 +416,35 @@ if !exists('g:neocomplcache_keyword_patterns')
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = "~/.vim/snippets"
-autocmd BufRead,BufNewFile imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <C-k> <Plug>(neocomplcache_snippets_expand)
+imap <C-k> <Plug>(neocomplcache_snippets_expand)
 " Commands, Mappings and Functions ------------------------------ {{{1
+" <Space> in Normal mode ------------------------------ {{{2
+" Quick command mode
+nnoremap <Space> :
 " ErrorsToggle & QFixToggle ------------------------------------- {{{2
-command! ErrorsToggle call ErrorsToggle()
 function! ErrorsToggle()
-  if exists("w:is_error_window")
-    unlet w:is_error_window
-    exec "q"
+  if exists("g:is_error_window")
+    lclose
+    unlet g:is_error_window
   else
-    exec "Errors"
-    lopen
-    let w:is_error_window = 1
+    botright lwindow 5
+    let g:is_error_window = 1
   endif
 endfunction
 
-command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
-function! QFixToggle(forced)
-  if exists("g:qfix_win") && a:forced == 0
+"command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
+function! QFixToggle()
+  if exists("g:qfix_win")
     cclose
     unlet g:qfix_win
   else
     botright copen 5
-    let g:qfix_win = bufnr("$")
+    let g:qfix_win = 1
   endif
 endfunction
-nnoremap <Leader>e :ErrorsToggle<CR>
-nnoremap <Leader>q :QFixToggle<CR>
+nnoremap <Leader>e :call ErrorsToggle()<CR>
+nnoremap <Leader>q :call QFixToggle()<CR>
 " DiffOrig ------------------------------------------------------ {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -557,6 +477,63 @@ endfunction
 "inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
 "  \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
+" automatically chmod +x {{{2
+function Lilydjwg_chmodx()
+  if strpart(getline(1), 0, 2) == '#!'
+    let f = expand("%:p")
+    if stridx(getfperm(f), 'x') != 2
+      call system("chmod +x ".shellescape(f))
+      e!
+      filetype detect
+      nmap <buffer> <S-F5> :!%:p<CR>
+    endif
+  endif
+endfunction
+
+" open url with firefox {{{2
+function Lilydjwg_get_pattern_at_cursor(pat)
+  let col = col('.') - 1
+  let line = getline('.')
+  let ebeg = -1
+  let cont = match(line, a:pat, 0)
+  while (ebeg >= 0 || (0 <= cont) && (cont <= col))
+    let contn = matchend(line, a:pat, cont)
+    if (cont <= col) && (col < contn)
+      let ebeg = match(line, a:pat, cont)
+      let elen = contn - ebeg
+      break
+    else
+      let cont = match(line, a:pat, contn)
+    endif
+  endwhile
+  if ebeg >= 0
+    return strpart(line, ebeg, elen)
+  else
+    return ""
+  endif
+endfunction
+
+function Lilydjwg_open_url()
+  let s:url = Lilydjwg_get_pattern_at_cursor('\v(https?://|ftp://|file:/{3}|www\.)(\w|[.-])+(:\d+)?(/(\w|[~@#$%^&+=/.?:-])+)?')
+  if s:url == ""
+    echohl WarningMsg
+    echomsg '在光标处未发现URL！'
+    echohl None
+  else
+    echo '打开URL：' . s:url
+    if !(has("win32") || has("win64"))
+      " call system("gnome-open " . s:url)
+      call system("setsid firefox '" . s:url . "' &")
+    else
+      " start 不是程序，所以无效。并且，cmd 只能使用双引号
+      " call system("start '" . s:url . "'")
+      call system("cmd /q /c start \"" . s:url . "\"")
+    endif
+  endif
+  unlet s:url
+endfunction
+nmap <silent> tf :call Lilydjwg_open_url()<CR>
+
 " Misc --------------------- {{{1
 nnoremap <Leader>h :nohls<CR>
 nnoremap <Leader>p "+p<CR>
@@ -564,8 +541,10 @@ nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
 inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
-inoremap <C-D> <C-x><C-D>
 nmap gf <C-W>gf
+noremap gz :bdelete<cr>
+noremap gb :bnext<cr>
+noremap gB :bprev<cr>
 
 " move in insert mode
 inoremap <m-h> <left>
@@ -575,9 +554,7 @@ inoremap <m-k> <C-o>gk
 
 " Error navigation
 nnoremap <m-j> :lnext<cr>zvzz
-inoremap <m-j> <esc>:lnext<cr>zvzz
 nnoremap <m-k> :lprevious<cr>zvzz
-inoremap <m-k> <esc>:lprevious<cr>zvzz
 nnoremap <m-Down> :cnext<cr>zvzz
 nnoremap <m-Down> :cnext<cr>zvzz
 nnoremap <m-Up> :cprevious<cr>zvzz
@@ -592,18 +569,26 @@ nmap to :tabnew<cr>
 nmap tc :tabclose<cr>
 
 " Cscope mappings
-nnoremap <C-w>\ :scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>s :scs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>g :scs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>d :scs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>c :scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>t :scs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>e :scs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <C-\>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <C-w>\ :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <C-\>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
-" Grep
-nnoremap <F1> :Rgrep<CR>
+" Edit (bang)
+command! -bang E e<bang>
+command! -bang Q q<bang>
+command! -bang W w<bang>
+command! -bang QA qa<bang>
+command! -bang Qa qa<bang>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>
+command! -bang Wq wq<bang>
+command! -bang WQ wq<bang>
 
 " Beginning & End
 noremap H ^
@@ -612,7 +597,7 @@ inoremap <C-a> <esc>I
 inoremap <C-e> <esc>A
 
 " Open a Quickfix window for the last search.
-nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
+nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
 
 " Save & Make
 nnoremap <F5> :w<CR>:make!<CR>
@@ -627,29 +612,3 @@ cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
-
-"big files?
-let g:LargeFile = 0.3	"in megabyte
-augroup LargeFile
-    au!
-    au BufReadPre *
-        \let f=expand("<afile>")
-        \|if getfsize(f) >= g:LargeFile*1023*1024 || getfsize(f) <= -2
-            \|let b:eikeep = &ei
-            \|let b:ulkeep = &ul
-            \|let b:bhkeep = &bh
-            \|let b:fdmkeep= &fdm
-            \|let b:swfkeep= &swf
-            \|set ei=FileType
-            \|setlocal noswf bh=unload fdm=manual
-            \|let f=escape(substitute(f,'\','/','g'),' ')
-            \|exe "au LargeFile BufEnter ".f." set ul=-1"
-            \|exe "au LargeFile BufLeave ".f." let &ul=".b:ulkeep."|set ei=".b:eikeep
-            \|exe "au LargeFile BufUnload ".f." au! LargeFile * ". f
-            \|echomsg "***note*** handling a large file"
-        \|endif
-    au BufReadPost *
-        \if &ch < 2 && getfsize(expand("<afile>")) >= g:LargeFile*1024*1024
-            \|echomsg "***note*** handling a large file"
-        \|endif
-augroup END
