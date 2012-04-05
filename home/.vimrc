@@ -219,18 +219,6 @@ else
 endif " has("autocmd")
 
 " Plugins --------------------------------------------- {{{1
-" cscope ---------------------------------------------- {{{2
-" Use both cscope and ctag
-set cscopetag
-
-" Show msg when cscope db added
-set cscopeverbose
-
-" Use tags for definition search first
-set cscopetagorder=1
-
-" Use quickfix window to show cscope results
-set cscopequickfix=s-,g-,d-,c-,t-,e-,f-,i-
 " Vundle ---------------------------------------------- {{{2
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -534,6 +522,57 @@ function Lilydjwg_open_url()
 endfunction
 nmap <silent> tf :call Lilydjwg_open_url()<CR>
 
+" cscope ---------------------------------------------- {{{2
+if has('cscope')
+  function LoadCscopeOut()
+    let parent = 0
+    let dir = "."
+    while parent < 5
+      if filereadable(dir . "/cscope.out")
+        if exists("b:cscope_prepend") && cscope_connection(3, "out", b:cscope_prepend)
+          break
+        end
+        if cscope_connection()
+          exe "cs kill " . 0
+        endif
+        exe "cs add " . dir . "/cscope.out" . " " . dir
+        let b:cscope_prepend = dir
+        break
+      endif
+      let parent += 1
+      let dir = "../" . dir
+    endwhile
+  endfunc
+
+  augroup autoload_cscope
+    au!
+    au BufEnter *.[ch] call LoadCscopeOut()
+    au FileType *.hpp call LoadCscopeOut()
+    au FileType *.cc call LoadCscopeOut()
+    au FileType *.cpp call LoadCscopeOut()
+    au FileType *.cxx call LoadCscopeOut()
+  augroup END
+
+  " Use both cscope and ctag
+  set cscopetag
+  " Show msg when cscope db added
+  set cscopeverbose
+  " Use tags for definition search first
+  set cscopetagorder=1
+  " Use quickfix window to show cscope results
+  set cscopequickfix=s-,g-,d-,c-,t-,e-,f-,i-
+
+  " Cscope mappings
+  nnoremap <C-w>\ :cs find c <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+  nnoremap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  nnoremap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+endif
 " Misc --------------------- {{{1
 nnoremap <Leader>h :nohls<CR>
 nnoremap <Leader>p "+p<CR>
@@ -543,8 +582,8 @@ inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
 nmap gf <C-W>gf
 noremap gz :bdelete<cr>
-noremap gb :bnext<cr>
-noremap gB :bprev<cr>
+noremap gn :bnext<cr>
+noremap gb :bprev<cr>
 
 " move in insert mode
 inoremap <m-h> <left>
@@ -568,16 +607,6 @@ nmap tn :tabnext<cr>
 nmap to :tabnew<cr>
 nmap tc :tabclose<cr>
 
-" Cscope mappings
-nnoremap <C-w>\ :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <C-\>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <C-\>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
 " Edit (bang)
 command! -bang E e<bang>
@@ -612,3 +641,4 @@ cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
+
