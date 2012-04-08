@@ -7,6 +7,7 @@ app-editors/gvim cscope vim-pager ruby perl python
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
 dev-lang/gnu-smalltalk gmp emacs tk
+dev-scheme/racket doc future jit
 
 # vcs
 dev-vcs/git curl subversion doc tk
@@ -23,8 +24,5 @@ dev-db/sqlite doc
 dev-haskell/* doc hoogle
 dev-haskell/haddock -doc
 
-dev-libs/boost python # for sage
-
->=dev-libs/boehm-gc-7.2_alpha4-r1 threads
-dev-scheme/racket doc future jit
-
+# guile dependency
+dev-libs/boehm-gc threads

@@ -87,7 +87,7 @@ URxvt.preeditType: OffTheSpot
 URxvt.scrollBar: False
 URxvt.geometry: 105x33
 URxvt.font: xft:Monaco:bold:size=11,xft:WenQuanYi Micro Hei:bold:antialias=True
-! URxvt.font: xft:Monofur:bold:size=15,xft:WenQuanYi Micro Hei:bold:antialias=True
+! URxvt.font: xft:Monaco:bold:size=15,xft:WenQuanYi Micro Hei:bold:antialias=True
 
 URxvt.depth: 32
 URxvt.background: black
@@ -96,3 +96,6 @@ URxvt.cursorColor: green
 URxvt.cursorBlink: False
 
 URxvt.iso14755_52: False
+
+Xcursor.theme: gentoo
+Xcursor.size: 32

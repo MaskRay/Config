@@ -395,13 +395,15 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
-    , TI "term" "" (spawn "urxvtc -T tmux -e tmux attach -t default") "xterm.xpm"
+    , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "irc" "" (spawn "urxvtc -T irssi -e tmux attach -t irssi \\; select-window -t irssi") "irssi.xpm"
-    , TI "mail" "" (spawn "urxvtc -T mutt -e mutt") "thunderbird.xpm"
+    , TI "mail" "" (urxvt "mutt" >> urxvt "newsbeuter") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
     , TI "net" "" (return ()) "gtk-network.xpm"
     ]
+  where
+    urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""

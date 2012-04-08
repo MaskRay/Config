@@ -537,6 +537,7 @@ alias -g T="|tail -n $(($LINES-2))"
 alias -g X="|xargs"
 alias -g N='> /dev/null'
 alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
+alias -g MOU='-o users,uid=1000,gid=1000,codepage=936,utf8'
 
 # tmux or screen ?
 (bin-exist tmux) && alias s=tmux || alias s=screen

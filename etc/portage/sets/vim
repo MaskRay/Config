@@ -11,3 +11,5 @@ app-vim/supertab
 app-vim/surround
 app-vim/tagbar
 app-vim/taglist
+app-vim/vimpython
+app-vim/zencoding-vim

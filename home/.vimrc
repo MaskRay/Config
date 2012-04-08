@@ -14,7 +14,7 @@ set shiftround
 set title
 set wildmenu
 set wildmode=list,longest
-set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi
+set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
 set autochdir
 set winaltkeys=no
 set listchars=nbsp:¬,eol:¶,tab:>-,extends:»,precedes:«,trail:•
@@ -117,7 +117,11 @@ if has("autocmd")
   augroup vimrcEx
   au!
 
-  " Shell Support ---------------------------------------------- {{{2
+  " C Support ----------------------------------------- {{{2
+  augroup c_support
+    set cinoptions+=:0,g0
+
+  " Shell Support ------------------------------------- {{{2
   autocmd BufNewFile *.sh 0put=\"#!/bin/bash\<nl># vim:fdm=marker\<nl>\"
   au BufWritePost * if getline(1) =~ "^#!/bin/[a-z]*sh" | silent !chmod a+x <afile> | endif
 
@@ -370,6 +374,10 @@ let g:sparkupNextMapping = '<tab><tab>'
 " This one has more features, I am not using this one right now.
 " It doesn't honor my sw, sts settings.
 
+" CtrlP
+let g:ctrlp_custom_ignore = '\.neocon$\|Maildir$'
+noremap <C-k> :CtrlPBuffer<CR>
+
 " Slimv ----------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=2531
 " https://bitbucket.org/kovisoft/slimv/
@@ -547,10 +555,10 @@ if has('cscope')
   augroup autoload_cscope
     au!
     au BufEnter *.[ch] call LoadCscopeOut()
-    au FileType *.hpp call LoadCscopeOut()
-    au FileType *.cc call LoadCscopeOut()
-    au FileType *.cpp call LoadCscopeOut()
-    au FileType *.cxx call LoadCscopeOut()
+    au BufEnter *.hpp call LoadCscopeOut()
+    au BufEnter *.cc call LoadCscopeOut()
+    au BufEnter *.cpp call LoadCscopeOut()
+    au BufEnter *.cxx call LoadCscopeOut()
   augroup END
 
   " Use both cscope and ctag
