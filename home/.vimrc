@@ -168,6 +168,7 @@ if has("autocmd")
     autocmd FileType htmldjango setlocal sw=2 sts=2 et
     autocmd FileType java setlocal sw=4 sts=4 et
     autocmd FileType javascript setlocal sw=2 sts=2 et
+    autocmd FileType lua setlocal sw=2 sts=2 et
     autocmd FileType make set noet
     autocmd FileType mason setlocal sw=2 sts=2 et
     autocmd FileType ocaml setlocal sw=2 sts=2 et
@@ -277,7 +278,8 @@ nnoremap <silent> <F8> :TagbarToggle<CR>
 " Taglist --------------------------------------------- {{{2
 " http://vim-taglist.sourceforge.net/
 nnoremap <silent> <C-F8> :TlistToggle<CR>
-map <F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+" map <F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+map <F12> :!cscope -Rbk<CR>
 " add python tags
 " ctags file is generated like this:
 " ctags -R -f ~/.vim/tags/python.ctags --c-kinds=+p --fields=+S /usr/lib/python2.6/
@@ -414,6 +416,11 @@ let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 smap <C-k> <Plug>(neocomplcache_snippets_expand)
 imap <C-k> <Plug>(neocomplcache_snippets_expand)
+
+" Gentoo Syntax --------------------------------- {{{2
+" FIXME Get rid of nmap <Leader>bug
+let g:loaded_bugsummary=1
+
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
 " Quick command mode
@@ -649,4 +656,3 @@ cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
-

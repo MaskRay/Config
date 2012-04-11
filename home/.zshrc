@@ -538,6 +538,7 @@ alias -g X="|xargs"
 alias -g N='> /dev/null'
 alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
 alias -g MOU='-o users,uid=1000,gid=1000,codepage=936,utf8'
+alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 
 # tmux or screen ?
 (bin-exist tmux) && alias s=tmux || alias s=screen

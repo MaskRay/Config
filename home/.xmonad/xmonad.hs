@@ -252,6 +252,7 @@ myKeys =
     , ("C-' i", namedScratchpadAction scratchpads "irb")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' s", namedScratchpadAction scratchpads "gst")
+    , ("C-' l", namedScratchpadAction scratchpads "lua")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
@@ -283,6 +284,7 @@ scratchpads =
   , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
   , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
   , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
+  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") mySPFloat
   , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
