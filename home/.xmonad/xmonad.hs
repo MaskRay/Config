@@ -247,17 +247,17 @@ myKeys =
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
+    , ("C-' f", namedScratchpadAction scratchpads "falcon")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
-    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
-    , ("C-' i", namedScratchpadAction scratchpads "irb")
-    , ("C-' p", namedScratchpadAction scratchpads "ipython")
-    , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' l", namedScratchpadAction scratchpads "lua")
-    , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' m", namedScratchpadAction scratchpads "getmail")
+    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
+    , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
+    , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
+    , ("C-' m", namedScratchpadAction scratchpads "getmail")
+    , ("C-' h", namedScratchpadAction scratchpads "htop")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
@@ -279,19 +279,21 @@ myKeys =
     ]
 
 scratchpads =
-  [ NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
-  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
-  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
-  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
+  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") mySPFloat
+  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
   , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
+  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
+  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
   , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") mySPFloat
-  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
-  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
   , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
+  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
   ]
   where
+    urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
@@ -408,4 +410,4 @@ myTopics =
     , TI "net" "" (return ()) "gtk-network.xpm"
     ]
   where
-    urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+    urxvt prog = spawn . ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""

@@ -13,6 +13,7 @@ media-sound/alsa-tools
 media-sound/alsa-utils
 media-video/mplayer
 net-news/newsbeuter
+sys-apps/renameutils
 www-plugins/adobe-flash
 x11-apps/setxkbmap
 x11-apps/xclipboard
