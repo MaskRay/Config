@@ -52,7 +52,7 @@ if has('mouse')
 endif
 
 if has("gui_running")
-  set nowrap
+  set wrap
   set spell
 
   " Ctrl-F12 Toggle Menubar and Toolbar
@@ -78,6 +78,7 @@ if has("gui_running")
   " http://damieng.com/blog/2008/05/26/envy-code-r-preview-7-coding-font-released
   " set guifont=Monaco\ 15
   set guifont=Inconsolata\ 17
+  set guifont=Monofur\ 18
   set guifontwide=WenQuanYi\ Micro\ Hei\ 13
 endif
 
@@ -162,6 +163,7 @@ if has("autocmd")
     autocmd FileType c setlocal sw=4 sts=4 et
     autocmd FileType cpp setlocal sw=4 sts=4 et
     autocmd FileType css setlocal sw=4 sts=4 et
+    autocmd FileType falcon setlocal sw=2 sts=2 et
     autocmd FileType haskell setlocal sw=4 sts=4 et
     autocmd FileType html setlocal sw=2 sts=2 et
     autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
@@ -232,13 +234,15 @@ Bundle 'gmarik/vundle'
 Bundle 'vim-powerline'
 Bundle 'ctrlp'
 Bundle 'tabular'
-Bundle 'neco-ghc'
 Bundle 'syntastic'
+Bundle 'neco-ghc'
 Bundle 'EasyMotion'
 Bundle 'javacomplete'
 Bundle 'vim-sparkup'
+Bundle 'indent-guides'
 "Bundle 'rainbow_parentheses'
 Bundle 'tasklist'
+Bundle 'UltiSnips'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
 let g:EasyMotion_do_mapping = 1
@@ -384,6 +388,7 @@ noremap <C-k> :CtrlPBuffer<CR>
 " http://www.vim.org/scripts/script.php?script_id=2531
 " https://bitbucket.org/kovisoft/slimv/
 " let g:slimv_swank_cmd = '! xterm -e "sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-swank.lisp" &'
+let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-ecl.lisp &'
 
 " Rainbow Parentheses --------------------------------- {{{2
 " https://github.com/kien/rainbow_parentheses.vim
@@ -559,17 +564,17 @@ if has('cscope')
     endwhile
   endfunc
 
-  augroup autoload_cscope
-    au!
-    au BufEnter *.[ch] call LoadCscopeOut()
-    au BufEnter *.hpp call LoadCscopeOut()
-    au BufEnter *.cc call LoadCscopeOut()
-    au BufEnter *.cpp call LoadCscopeOut()
-    au BufEnter *.cxx call LoadCscopeOut()
-  augroup END
+  "augroup autoload_cscope
+    "au!
+    "au BufEnter *.[ch] call LoadCscopeOut()
+    "au BufEnter *.hpp call LoadCscopeOut()
+    "au BufEnter *.cc call LoadCscopeOut()
+    "au BufEnter *.cpp call LoadCscopeOut()
+    "au BufEnter *.cxx call LoadCscopeOut()
+  "augroup END
 
   " Use both cscope and ctag
-  set cscopetag
+  "set cscopetag
   " Show msg when cscope db added
   set cscopeverbose
   " Use tags for definition search first
