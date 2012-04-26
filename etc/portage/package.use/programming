@@ -26,3 +26,5 @@ dev-haskell/haddock -doc
 
 # guile dependency
 dev-libs/boehm-gc threads
+
+app-doc/doxygen latex dot
