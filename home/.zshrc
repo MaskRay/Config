@@ -4,7 +4,19 @@
 # 预配置 {{{
 # 如果不是交互shell就直接结束 (unix power tool, 2.11)
 if [[  "$-" != *i* ]]; then return 0; fi
-source /etc/profile.d/autojump.zsh
+
+# server?
+if [[ $(hostname) != t* ]]; then
+  EPREFIX=
+  MYSELF=true
+else
+  export EPREFIX=~/gentoo
+  export PATH="$EPREFIX/usr/bin:$EPREFIX/bin:$EPREFIX/tmp/usr/bin:$EPREFIX/tmp/bin:$PATH"
+  export LD_LIBRARY_PATH="$EPREFIX/usr/lib:$EPREFIX/lib"
+  alias cabali="cabal install --extra-include-dirs=$EPREFIX/usr/include --extra-lib-dirs=$EPREFIX/lib --extra-lib-dirs=$EPREFIX/usr/lib"
+fi
+
+source $EPREFIX/etc/profile.d/autojump.zsh
 
 # 为兼容旧版本定义 is-at-least 函数
 function is-at-least {
@@ -454,7 +466,7 @@ export HISTSIZE=10000
 # number of lines saved in the history after logout
 export SAVEHIST=10000
 # location of history
-export HISTFILE=/tmp/.zsh_history_$UID
+export HISTFILE=~/tmp/.zsh_history
 export MENUCONFIG_COLOR=blackbg
 
 export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
@@ -575,7 +587,13 @@ alias port='netstat -ntlp'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias e='emacsclient -c -t'
-alias v='vim --servername GVIM --remote-tab-silent'
+if [[ -n $MYSELF ]]; then
+  alias v='vim --servername GVIM --remote-tab-silent'
+  alias eme='sudo emerge -1'
+else
+  alias v='vim'
+  alias eme='emerge -1'
+fi
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 alias g2u='iconv -f GBK -t UTF-8'
@@ -589,7 +607,6 @@ alias dropboxd=/opt/dropbox/dropboxd
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias sv='sudo vim'
-alias eme='sudo emerge -1'
 alias peme='sudo proxychains emerge -1'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge-fetch.log'
@@ -618,6 +635,7 @@ hash -d p="/home/ray/projects"
 hash -d u='/usr'
 hash -d us='/usr/share'
 hash -d usd='/usr/share/doc'
+hash -d h='/var/lib/layman/haskell'
 #export CDPATH=$HOME:/usr/share:$HOME/Documents:$HOME/algo
 # }}}1
 

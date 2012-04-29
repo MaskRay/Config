@@ -1,2 +1,3 @@
 :m Data.List Control.Monad
 :set prompt "\x256d\x2500%s\n\x2570\x2500"
+:set -XOverloadedStrings
