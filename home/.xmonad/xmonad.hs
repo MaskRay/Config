@@ -247,13 +247,17 @@ myKeys =
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
+    , ("C-' f", namedScratchpadAction scratchpads "falcon")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
+    , ("C-' l", namedScratchpadAction scratchpads "lua")
     , ("C-' o", namedScratchpadAction scratchpads "ocaml")
-    , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' m", namedScratchpadAction scratchpads "getmail")
-    , ("C-' r", namedScratchpadAction scratchpads "r2e")
+    , ("C-' p", namedScratchpadAction scratchpads "ipython")
+    , ("C-' r", namedScratchpadAction scratchpads "pry")
+    , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
+    , ("C-' m", namedScratchpadAction scratchpads "getmail")
+    , ("C-' h", namedScratchpadAction scratchpads "htop")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
@@ -275,15 +279,21 @@ myKeys =
     ]
 
 scratchpads =
-  [ NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
+  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") mySPFloat
+  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
+  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
+  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
+  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
+  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") mySPFloat
   , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
-  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
-  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
-  , NS "r2e" "urxvtc -T r2e -e 'r2e run'" (title =? "r2e") doBottomRightFloat
+  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
+  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
   ]
   where
+    urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
     mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
@@ -389,13 +399,15 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
-    , TI "term" "" (spawn "urxvtc -T tmux -e tmux attach -t default") "xterm.xpm"
+    , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "irc" "" (spawn "urxvtc -T irssi -e tmux attach -t irssi \\; select-window -t irssi") "irssi.xpm"
-    , TI "mail" "" (spawn "urxvtc -T mutt -e mutt") "thunderbird.xpm"
+    , TI "mail" "" (urxvt "mutt" >> urxvt "newsbeuter") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
     , TI "net" "" (return ()) "gtk-network.xpm"
     ]
+  where
+    urxvt prog = spawn . ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""

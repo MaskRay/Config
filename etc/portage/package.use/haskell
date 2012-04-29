@@ -1,2 +1,4 @@
 dev-haskell/* doc hoogle hscolour
 dev-haskell/haddock -hscolour
+x11-wm/xmonad doc
+x11-wm/xmonad-contrib doc

@@ -13,3 +13,15 @@ gtk-menu-images=1
 gtk-enable-event-sounds=1
 gtk-enable-input-feedback-sounds=1
 include "/usr/share/themes/Emacs/gtk-2.0-key/gtkrc"
+
+style "no-resize-handle" {
+    GtkWindow::resize-grip-height = 0
+    GtkWindow::resize-grip-width = 0
+}
+
+style "vimfix" {
+    bg[NORMAL] = "#1b1d1e"
+}
+
+widget "vim-main-window.*GtkForm" style "vimfix"
+class "GtkWidget" style "no-resize-handle"

@@ -1,0 +1,27 @@
+#!/usr/bin/env ocaml
+
+Random.self_init ();;
+
+(* randomly choose a wallpaper *)
+let pics = Sys.readdir "/home/ray/wallpapers";;
+let pic = "feh --bg-scale /home/ray/wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &";;
+
+let singleton s =
+  let comm =
+    try String.sub s 0 (String.index s ' ')
+    with Not_found -> s
+  in "ps -ef " ^ comm ^ " | grep " ^ comm ^ " || " ^ s;;
+
+List.map Sys.command [
+  (* resident *)
+  singleton "tmux new -d -s irssi -n irssi irssi \\; new -d -s default -t irssi \\; new-window"
+  ; singleton "parcellite &"
+  ; singleton "gtk-redshift -l 39.9:116.4 &"
+  ; singleton "fcitx &"
+
+  (* one-shot *)
+  ; "xrdb ~/.Xresources"
+  ; "setxkbmap -option ctrl:nocaps"
+  ; pic
+  ; "urxvtd -f -q"
+];;

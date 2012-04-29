@@ -1,0 +1,46 @@
+# reStructuredText snippets for snipMate(http://www.vim.org/scripts/script.php?script_id=2540)
+## {{{1 Directives
+## .. directives
+snippet ..
+	.. ${1:contents}::${2}
+		${3}
+	${4}
+## == section header
+snippet ==
+	`repeat('=', strlen(getline(line('.')-1)))`
+	${1}
+## -- section header
+snippet --
+	`repeat('-', strlen(getline(line('.')-1)))`
+	${1}
+## ^^ section header
+snippet ^^
+	`repeat('^', strlen(getline(line('.')-1)))`
+	${1}
+## "" section header
+snippet ""
+	`repeat('"', strlen(getline(line('.')-1)))`
+	${1}
+## '' section header
+snippet ''
+	`repeat('\'', strlen(getline(line('.')-1)))`
+	${1}
+## ;; section header
+snippet ;;
+	`repeat(';', strlen(getline(line('.')-1)))`
+	${1}
+## .{ opening folding marker
+snippet .{
+	.. ${1:Block} {{{${2:1}
+	${3}
+## .} closing folding marker
+snippet .}
+	.. }}}${1:1}
+	${2}
+## .{} folding marker pair
+snippet .{}
+	.. ${1:Block} {{{${2:1}
+	${3}
+	.. $1 }}}$2
+	${4}
+# vim: set fdm=marker fml=3:
