@@ -1,8 +1,8 @@
 # DO NOT EDIT! This file will be overwritten by LXAppearance.
 # Any customization should be done in ~/.gtkrc-2.0.mine instead.
 
-#gtk-theme-name="SlicknesS-black"
-gtk-icon-theme-name="buuf2.30"
+gtk-theme-name="SlicknesS-black"
+#gtk-icon-theme-name="buuf2.30"
 gtk-font-name="文泉驿微米黑 17"
 gtk-cursor-theme-name="Pulse-Glass"
 gtk-cursor-theme-size=0

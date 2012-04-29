@@ -84,9 +84,11 @@ XTerm*bellIsUrgent: true
 ! Xcursor.theme: Grounation
 !
 URxvt.preeditType: OffTheSpot
+URxvt.inputMethod:fcitx
 URxvt.scrollBar: False
 URxvt.geometry: 105x33
-URxvt.font: xft:Monaco:bold:size=11,xft:WenQuanYi Micro Hei:bold:antialias=True
+URxvt.imFont: -microsoft-microsoft yahei-medium-r-normal–0-0-0-0-p-0-iso10646-1
+URxvt.font: xft:Monaco:bold:size=12,xft:WenQuanYi Micro Hei:bold:antialias=True
 
 URxvt.depth: 32
 URxvt.background: black

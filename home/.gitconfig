@@ -26,3 +26,6 @@
 	tool = vimdiff
 [branch]
 	autosetuprebase = always
+[github]
+	user = MaskRay
+	token = 80e8afa7dae1be9613144fbda762048f
