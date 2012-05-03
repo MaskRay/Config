@@ -17,6 +17,7 @@ net-misc/bridge-utils
 net-misc/dhcp
 net-misc/dhcpcd
 net-misc/openntpd
+net-misc/openssh
 net-misc/openvpn
 net-misc/proxychains
 net-misc/socat

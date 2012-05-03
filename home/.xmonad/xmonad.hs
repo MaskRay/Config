@@ -118,13 +118,14 @@ myManageHook = composeAll $
     [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
     [ className =? c --> doShift "emacs" | c <- ["Emacs"] ] ++
     [ fmap (isPrefixOf "libreoffice" <||> isPrefixOf "LibreOffice") className --> doShift "office" ] ++
-    [ myFloats --> doCenterFloat ] ++
+    [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
   where
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , fmap (isPrefixOf "Gnuplot") title
         , flip fmap className $ flip elem
             [ "XClock"
             , "Xmessage"
@@ -278,23 +279,24 @@ myKeys =
     , ("M-C-/", submap . mySearchMap $ mySelectSearch)
     ]
 
+doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
+
 scratchpads =
-  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") mySPFloat
-  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
-  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
-  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
-  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
-  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") mySPFloat
-  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
-  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
+  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") doSPFloat
+  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") doSPFloat
+  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") doSPFloat
+  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") doSPFloat
+  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") doSPFloat
+  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") doSPFloat
+  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
+  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") doSPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
-  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
+  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") doSPFloat
   ]
   where
     urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
-    mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
@@ -308,7 +310,7 @@ myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgen
     , borderWidth        = 1
     , modMask            = mod4Mask
     , workspaces         = myTopicNames
-    , normalBorderColor  = "#dbdbdb"
+    , normalBorderColor  = "#000000"
     , focusedBorderColor = "#3939ff"
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
