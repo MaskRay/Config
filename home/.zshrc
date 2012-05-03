@@ -503,9 +503,11 @@ export READNULLCMD=less
 
 # }}}
 
+source $EPREFIX/etc/profile.d/autojump.zsh
 eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
-unalias z
-alias j='fasd_cd -d'
+bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
+bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
+bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
 
 # 读入其他配置 {{{
 
