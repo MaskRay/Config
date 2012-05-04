@@ -1,0 +1,10 @@
+#!/bin/sh
+maildir=$1
+tmpdir=/tmp/.notmuch
+mkdir -p "$tmpdir/cur"
+mkdir -p "$tmpdir/new"
+mkdir -p "$tmpdir/tmp"
+rm -f "$tmpdir/*"
+echo 'notmuch search terms:'
+read
+notmuch search --output=files "$REPLY" . | xargs -r ln -st "$tmpdir"/cur

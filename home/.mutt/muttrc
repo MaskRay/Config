@@ -2,14 +2,18 @@ ignore *
 unignore From Subject Lines
 hdr_order From Subject Lines
 
+set realname="Ray Song"
 set imap_user=emacsray@gmail.com
 source ~/.mutt/passwd
 set imap_passive=yes
 set imap_keepalive=300
+my_hdr Bcc: $imap_user
+send-hook tunet_admin@googlegroups.com "my_hdr Cc: issues.tuna@gmail.com"
 
 macro generic \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro generic \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
 source ~/.mutt/local
+source ~/.mutt/hook
 
 set header_cache=~/.mutt/hcache
 set signature=~/.mutt/signature
@@ -21,6 +25,7 @@ set include=yes
 set indent_str="> "
 # 当你按 "t" 或者 "D" 之类的标记操作时，是否自动把光标移动到下一封信件。
 set resolve=yes
+set wait_key=no
 
 set alias_file="~/.mutt/alias"
 set sort_alias=alias
@@ -49,26 +54,43 @@ message-hook '!(~g|~G) ~b"^-----BEGIN\ PGP\ (SIGNED\ )?MESSAGE"' "exec check-tra
 set mail_check=120
 set sort=threads
 set sort_aux=reverse-last-date-received
-set pager_index_lines=10
+set pager_index_lines=5
 set imap_check_subscribed=yes
-alternative_order text/html text/enriched text/plain 
-set editor=vim
+alternative_order text/html text/enriched text/plain
+set editor="vim +'sil! g/^\\(>>\\? \\)\\+\\s*--/,/^>\\( >>\\?\\)*\\s*$/d' +'g/^\s*$/d' %s"
 set edit_headers
 set quit=yes
-lists toplanguage translate shlug arch kindle
+lists Toplanguage Shlug
 source ~/.mutt/mutt_color
-source ~/.mutt/gpg.rc
+# source ~/.mutt/gpg.rc
 auto_view text/html
 charset-hook ^us-ascii$ utf8
 charset-hook ^iso-8859-1$ utf8
-set markers=no 
+charset-hook ^gb2312$ gbk
+set markers=no
 #charset-hook .* utf8
 set charset="utf8"
-set locale="zh_CN.utf8" 
+set locale="zh_CN.utf8"
 #set strict_mime=no
-set assumed_charset="GB18030:UTF-8" 
+set assumed_charset="GB18030:UTF-8"
 set ssl_force_tls = yes
-set editor="vim -c \"set spell spelllang=en\""
 
  macro   index   q       '<change-folder>?<toggle-mailboxes>'
  macro   browser q       '<exit><quit>'
+
+macro index ,i "<change-folder>!<return>" "go to inbox"
+macro index ,h "<change-folder>=Haskell<return>" "go to =Haskell"
+macro index ,t "<change-folder>=Top	<return>" "go to =Toplanguage"
+macro index ,p "<pipe-message>cat > ~/" "save message as"
+macro index ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
+macro index ,r "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
+macro index ,R "<collapse-all><tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return><collapse-all>" "mark all as read (collapsed)"
+macro index ,v "<collapse-thread>" "collapse/uncollapse thread"
+macro index ,V "<collapse-all>" "collapse/uncollapse all threads"
+macro attach s "<save-entry><kill-line>/tmp/<enter>a" "Save attachment"
+#macro index ,s \
+#  "<enter-command>set my_cmd = \`$HOME/.mutt/msearch\`<return><enter-command>push \$my_cmd<return>" \
+#  "search mail (using mairix)"
+macro index ,s \
+  "<enter-command>unset wait_key<enter><shell-escape>~/bin/mutt-notmuch<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
+  "search mail (using notmuch)"
