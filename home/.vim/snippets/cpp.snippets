@@ -1,260 +1,125 @@
-# c++ snippets for snipMate(http://www.vim.org/scripts/script.php?script_id=2540)
-## {{{1 Preprocessor
-## ii #include <>, include header
-## extc #ifdef __cplusplus, extern "C" linkage
-snippet extc
-	#ifdef __cplusplus
-	extern "C" {
-	#endif /* ifdef __cplusplus */
-	${1}
-	#ifdef __cplusplus
-	}
-	#endif /* ifdef __cplusplus */${2}
-## {{{1 Functions
-## con constructor
-snippet con
-	${1:ClassName}::$1(${2})${3}
-	{
-		${4:/* intentionally left empty */}
-	}${5}
-## des destructor
-snippet des
-	${1:ClassName}::~$1()
-	{
-		${2:/* intentionally left empty */}
-	}${3}
-## mf member function
-snippet mf
-	${1:void} ${2:ClassName}::${3:MemberFunc}(${4})${5}
-	{
-		${6:/* intentionally left empty */}
-	}${7}
-## {{{1 Types
-## cast const_cast
-snippet cast const_cast
-	const_cast<${1:type}>(${2:object})${3}
-## cast dynamic_cast
-snippet cast dynamic_cast
-	dynamic_cast<${1:type}>(${2:object})${3}
-## cast static_cast
-snippet cast static_cast
-	static_cast<${1:type}>(${2:object})${3}
-## cast reinterpret_cast
-snippet cast reinterpret_cast
-	reinterpret_cast<${1:type}>(${2:object})${3}
-## ccast const_cast
-snippet ccast
-	const_cast<${1:type}>(${2:object})${3}
-## dcast dynamic_cast
-snippet dcast
-	dynamic_cast<${1:type}>(${2:object})${3}
-## scast static_cast
-snippet scast
-	static_cast<${1:type}>(${2:object})${3}
-## rcast reinterpret_cast
-snippet rcast
-	reinterpret_cast<${1:type}>(${2:object})${3}
-## {{{1 Namespaces
-## ns namespace { ... }
-snippet ns
-	namespace ${1:`Filename('', 'foo')`}`g:cs`{
-		${2}
-	} /* namespace $1 */${3}
-## using using namespace ...;
-snippet using
-	using namespace ${1:std};
-	${2}
-## {{{1 Exception Handling
-## try try clause
-snippet try try
-	try`g:cs`{
-		${1:/* intentionally left empty */}
-	}`g:ce`${2}
-## try try ... catch
-snippet try try ... catch
-	try`g:cs`{
-		${1:/* intentionally left empty */}
-	}`g:cs`catch (${2:...})`g:cs`{
-		${3:/* intentionally left empty */}
-	}`g:ce`${4}
-## try function try block
-snippet try function try block
-	${1:void} ${2:func}(${3})
-	try`g:cs`{
-		${4:/* intentionally left empty */}
-	}`g:cs`catch (${5:...})`g:cs`{
-		${6:/* intentionally left empty */}
-	}`g:ce`${7}
-## try constructor try block
-snippet try constructor try block
-	${1:ClassName}::$1(${2})${3}
-	try : ${4:ref_count(1)}
-	{
-		${5:/* intentionally left empty */}
-	}`g:cs`catch (${6:...})`g:cs`{
-		${7:/* intentionally left empty */}
-	}`g:ce`${8}
-## catch catch clause
-snippet catch
-	catch (${1:exception} &${2:e})`g:cs`{
-		${3:/* intentionally left empty */}
-	}`g:ce`${4}
-## catch catch all clause
-snippet catchall
-	catch (...)`g:cs`{
-		${1:/* intentionally left empty */}
-	}`g:ce`${2}
-## {{{1 Class
-## class class
-snippet class class
-	class ${1:`Filename('$1', 'name')`}
-	{
-	public:
-		$1(${2});
-		virtual ~$1();
-	protected:${3}
-	private:${4}
-	} ;${5}
-## class derived class
-snippet class derived class
-	class ${1:DerivedClass} : ${2:public} ${3:BaseClass}
-	{
-	public:
-		$1(${4});
-		virtual ~$1();
-	protected:${5}
-	private:${6}
-	} ;${7}
-## {{{1 Templates
-## template template <typename T>
-snippet template template <typename T>
-	template <typename ${1:T}>${2}
-## template template <typename T1, typename T2>
-snippet template template <typename T1, typename T2>
-	template <typename ${1:T1}, typename ${2:T2}>${3}
-## template template <typename T1, typename T2, typename T3>
-snippet template template <typename T1, typename T2, typename T3>
-	template <typename ${1:T1}, typename ${2:T2}, typename ${3:T3}>${4}
-## {{{1 STL
-## iter iterator
-snippet iter iter
-	${1:vector}<${2:int}>::iterator ${3:it}${4}
-## iter const_iterator
-snippet iter const_iterator
-	${1:vector}<${2:int}>::const_iterator ${3:it}${4}
-## iter reverse_iterator
-snippet iter reverse_iterator
-	${1:vector}<${2:string}>::reverse_iterator ${3:it}${4}
-## iter const_reverse_iterator
-snippet iter const_reverse_iterator
-	${1:vector}<${2:string}>::const_reverse_iterator ${3:it}${4}
-## citer const_iterator
-snippet citer
-	${1:vector}<${2:string}>::const_iterator ${3:it}${4}
-## riter reverse_iterator
-snippet riter
-	${1:vector}<${2:string}>::reverse_iterator ${3:it}${4}
-## criter const_reverse_iterator
-snippet criter
-	${1:vector}<${2:string}>::const_reverse_iterator ${3:it}${4}
-## pair pair
+extends c
+
+snippet bend "$1.begin(), $1.end()"
+${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
+endsnippet
+
 snippet pair
-	pair<${1:T1}, ${2:$1}> ${3:$1_$2_p}${4}
-## map map
-snippet map
-	map<${1:key}, ${2:value}> ${3:$1_$2_m}${4}
-## vector vector
-snippet vector
-	vector<${1:char}> ${2:$1_v}${3}
-# }}}
-## {{{1 Algorithm
-## fenwick fenwick_tree
+typedef std::pair<${2:int}, ${3:int}> `!p snip.rv = 'p'+t[1][0]+t[2][0]`
+endsnippet
+
+snippet cl "class .. (class)"
+class ${1:`!p snip.rv = snip.basename or "name"`}
+{
+public:
+	${1/(\w+).*/$1/}(${2:arguments});
+	virtual ~${1/(\w+).*/$1/} ();
+private:
+	${0:/* data */}
+};
+endsnippet
+
+snippet map "std::map (map)"
+std::map<${1:key}, ${2:value}> map$0;
+endsnippet
+
+snippet vector "std::vector (v)"
+std::vector<${1:char}> v$0;
+endsnippet
+
+snippet tp "template <typename ..> (template)"
+template <typename ${1:_InputIter}>
+endsnippet
+
 snippet fenwick
-	void fenwickAdd(vector<int> &fenwick, int x, int delta)
-	{
-	    for (; x < fenwick.size(); x |= x+1)
-	        fenwick[x] += delta;
-	}
+void fenwickAdd(vector<int> &fenwick, int x, int delta)
+{
+    for (; x < fenwick.size(); x |= x+1)
+        fenwick[x] += delta;
+}
 
-	void fenwickGetSum(vector<int> &fenwick, int x)
-	{
-	    int ret = 0;
-	    for (; x; x &= x-1)
-	        ret += fenwick[x-1];
-	    return ret;
-	}
-## heavylight heavylight
+void fenwickGetSum(vector<int> &fenwick, int x)
+{
+    int ret = 0;
+    for (; x; x &= x-1)
+        ret += fenwick[x-1];
+    return ret;
+}
+endsnippet
+
 snippet heavylight
-	vector<int> e[${1:N}];
-	vector<int> fenwick[$1];
-	int vc[$1], // vertex to chain index
-	    vpos[$1], // vertex to chain position
-	    cp[$1]; // chain parent
+vector<int> e[${1:N}];
+vector<int> fenwick[$1];
+int vc[$1], // vertex to chain index
+    vpos[$1], // vertex to chain position
+    cp[$1]; // chain parent
 
-	pii hang(int u, int p)
-	{
-	    int size = 1;
-	    pii ret(0, -1);
-	    for (vector<int>::const_iterator it = e[u].begin(); it != e[u].end(); ++it)
-	        if (*it != p) {
-	            pii t = hang(*it, u);
-	            size += t.first;
-	            ret = max(ret, t);
-	        }
+pii hang(int u, int p)
+{
+    int size = 1;
+    pii ret(0, -1);
+    for (vector<int>::const_iterator it = e[u].begin(); it != e[u].end(); ++it)
+        if (*it != p) {
+            pii t = hang(*it, u);
+            size += t.first;
+            ret = max(ret, t);
+        }
 
-	    e[u].clear();
-	    if (size == 1) ret.second = u;
-	    e[ret.second].push_back(u);
-	    cp[ret.second] = p;
+    e[u].clear();
+    if (size == 1) ret.second = u;
+    e[ret.second].push_back(u);
+    cp[ret.second] = p;
 
-	    ret.first = size;
-	    return ret;
-	}
+    ret.first = size;
+    return ret;
+}
 
-	void heavyLight(int n)
-	{
-	    hang(0, -1);
-	    for (int i = 0; i < n; ++i)
-	        for (int j = 0; j < e[i].size(); ++j) {
-	            vc[e[i][j]] = i;
-	            vpos[e[i][j]] = j;
-	        }
-	}
+void heavyLight(int n)
+{
+    hang(0, -1);
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < e[i].size(); ++j) {
+            vc[e[i][j]] = i;
+            vpos[e[i][j]] = j;
+        }
+}
 
-	struct ChainPart
-	{
-	    ChainPart(int chain, int lo, int hi) : chain(chain), lo(lo), hi(hi) {}
-	    int chain, lo, hi;
-	};
+struct ChainPart
+{
+    ChainPart(int chain, int lo, int hi) : chain(chain), lo(lo), hi(hi) {}
+    int chain, lo, hi;
+};
 
-	vector<ChainPart> chainPath(int u, int v)
-	{
-	    vector<pii> cu, cv;
-	    for (; u != -1; u = cp[vc[u]])
-	        cu.push_back(pii(vc[u], vpos[u]));
-	    reverse(cu.begin(), cu.end());
-	    for (; v != -1; v = cp[vc[v]])
-	        cv.push_back(pii(vc[v], vpos[v]));
-	    reverse(cv.begin(), cv.end());
-	    if (cu.size() > cv.size())
-	        cu.swap(cv);
+vector<ChainPart> chainPath(int u, int v)
+{
+    vector<pii> cu, cv;
+    for (; u != -1; u = cp[vc[u]])
+        cu.push_back(pii(vc[u], vpos[u]));
+    reverse(cu.begin(), cu.end());
+    for (; v != -1; v = cp[vc[v]])
+        cv.push_back(pii(vc[v], vpos[v]));
+    reverse(cv.begin(), cv.end());
+    if (cu.size() > cv.size())
+        cu.swap(cv);
 
-	    vector<ChainPart> ret;
-	    int i;
-	    for (i = 0; i < cu.size() && cu[i] == cv[i]; ++i);
-	    if (i == cu.size())
-	        ;
-	    else if (cu[i].first == cv[i].first) {
-	        ret.push_back( ChainPart(cu[i].first
-	                     , min(cu[i].second, cv[i].second)
-	                     , max(cu[i].second, cv[i].second)
-	                     ));
-	        ++i;
-	    }
-	    for (int j = i; j < cu.size(); ++j)
-	        ret.push_back(ChainPart(cu[j].first, cu[j].second, e[cu[j].first].size()));
-	    for (int j = i; j < cv.size(); ++j)
-	        ret.push_back(ChainPart(cv[j].first, cv[j].second, e[cv[j].first].size()));
-	    return ret;
-	}
+    vector<ChainPart> ret;
+    int i;
+    for (i = 0; i < cu.size() && cu[i] == cv[i]; ++i);
+    if (i == cu.size())
+        ;
+    else if (cu[i].first == cv[i].first) {
+        ret.push_back( ChainPart(cu[i].first
+                     , min(cu[i].second, cv[i].second)
+                     , max(cu[i].second, cv[i].second)
+                     ));
+        ++i;
+    }
+    for (int j = i; j < cu.size(); ++j)
+        ret.push_back(ChainPart(cu[j].first, cu[j].second, e[cu[j].first].size()));
+    for (int j = i; j < cv.size(); ++j)
+        ret.push_back(ChainPart(cv[j].first, cv[j].second, e[cv[j].first].size()));
+    return ret;
+}
+endsnippet
 
+# vim:ft=snippets:

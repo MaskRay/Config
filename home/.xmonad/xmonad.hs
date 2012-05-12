@@ -125,6 +125,7 @@ myManageHook = composeAll $
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , fmap (isPrefixOf "sun-") appName
         , flip fmap className $ flip elem
             [ "XClock"
             , "Xmessage"
@@ -243,6 +244,10 @@ myKeys =
     , ("M-C-n", addWorkspacePrompt myXPConfig)
     , ("M-C-r", removeWorkspace)
     , ("M-C-S-r", killAll >> removeWorkspace)
+
+    -- play
+    , ("C-; 1", spawn "sh ~/Show/sort.sh")
+    , ("C-; 2", spawn "sh ~/Show/network.sh")
 
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')

@@ -164,7 +164,7 @@ if has("autocmd")
     autocmd FileType cpp setlocal sw=4 sts=4 et
     autocmd FileType css setlocal sw=4 sts=4 et
     autocmd FileType falcon setlocal sw=2 sts=2 et
-    autocmd FileType haskell setlocal sw=4 sts=4 et
+    autocmd FileType haskell setlocal sw=2 sts=2 et
     autocmd FileType html setlocal sw=2 sts=2 et
     autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
     autocmd FileType htmldjango setlocal sw=2 sts=2 et
@@ -243,6 +243,7 @@ Bundle 'indent-guides'
 "Bundle 'rainbow_parentheses'
 Bundle 'tasklist'
 Bundle 'UltiSnips'
+Bundle 'DotOutlineTree'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
 let g:EasyMotion_do_mapping = 1
@@ -418,10 +419,12 @@ if !exists('g:neocomplcache_keyword_patterns')
   let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-let g:neocomplcache_snippets_dir = "~/.vim/snippets"
-smap <C-k> <Plug>(neocomplcache_snippets_expand)
-imap <C-k> <Plug>(neocomplcache_snippets_expand)
+"let g:neocomplcache_snippets_dir = "~/.vim/snippets"
+"smap <C-k> <Plug>(neocomplcache_snippets_expand)
+"imap <C-k> <Plug>(neocomplcache_snippets_expand)
 
+" UltiSnips ------------------------------------- {{2
+let g:UltiSnipsSnippetDirectories=["snippets"]
 " Gentoo Syntax --------------------------------- {{{2
 " FIXME Get rid of nmap <Leader>bug
 let g:loaded_bugsummary=1

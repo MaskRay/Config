@@ -1,270 +1,54 @@
-# c snippets for snipMate(http://www.vim.org/scripts/script.php?script_id=2540)
-## {{{1 Preprocessor
-## ii #include <...>, include header, system dir
-snippet ii
-	#include <${1:stdio.h}>${2}
-## inc #include <...>, include header, system dir
-snippet inc
-	#include <${1:stdio.h}>${2}
-## ic #include "...", include header, current dir
-snippet ic
-	#include "${1:`Filename("$1.h")`}"${2}
-## Inc #include "...", include header, current dir
-snippet Inc
-	#include "${1:`Filename("$1.h")`}"${2}
-## once header include guard
-snippet once
-	#ifndef ${1:`''.toupper(Filename('', 'UNTITLED')).'_H_'`}
-	#define $1
+snippet inc "#include local header (inc)"
+#include "${1:`!p snip.rv = snip.basename + '.h'`}"
+endsnippet
 
-	${2}
+snippet Inc "#include <> (Inc)"
+#include <${1:.h}>
+endsnippet
 
-	#endif
-## once? header include guard, with randomized id, original TextMate version
-snippet once?
-	#ifndef ${1:`toupper(Filename('', 'UNTITLED').'_'.system("/usr/bin/ruby -e 'print (rand * 2821109907455).round.to_s(36)'"))`}
-	#define $1
+snippet once "Include header once only guard"
+#ifndef ${1:`!p
+if not snip.c:
+	import random, string
+	name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
+	rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
+	snip.rv = ('%s_%s' % (name,rand)).upper()
+else:
+    snip.rv = snip.c`}
+#define $1
 
-	${2}
+${0}
 
-	#endif
-## #d #define
-snippet #d
-	#define ${1:SYMBOL} ${2:value}
-	${3}
-## #def #ifndef ... #define ... #endif
-snippet #def
-	#ifndef $1
-	#define ${1:SYMBOL} ${2:value}
-	#endif
-## #ifdef #ifdef, conditional compilation
-snippet #ifdef
-	#ifdef ${1:TRACE}
-	${2}
-	#endif /* #ifdef $1 */${3}
-## #ifndef #ifndef, conditional compilation
-snippet #ifndef
-	#ifndef ${1:TRACE}
-	${2}
-	#endif /* #ifndef $1 */${3}
-## #ide #ifdef ... #else, conditional compilation
-snippet #ide
-	#ifdef ${1:TRACE}
-	${2}
-	#else
-	${3}
-	#endif /* #ifdef $1 */${4}
-## #inde #ifndef ... #else, conditional compilation
-snippet #inde
-	#ifndef ${1:TRACE}
-	${2}
-	#else
-	${3}
-	#endif /* #ifndef $1 */${4}
-## #if #if, conditional compilation
-snippet #if
-	#if ${1:0}
-	${2}
-	#endif /* #if $1 */${3}
-## D# debug build, conditional compilation
-snippet D#
-	#ifndef NDEBUG
-	${1:/* Codes in Debug Build */}
-	#endif /* ifndef NDEBUG */${2}
-## R# release build, conditional compilation
-snippet R#
-	#ifdef NDEBUG
-	${1:/* Codes in Release Build */}
-	#endif /* ifdef NDEBUG */${2}
-## {{{1 Comments
-## /* /*    */
-snippet /*
-	/* ${1} */${2}
-## /*/ /**   */
-snippet /*/
-	/** ${1} */${2}
-## /** horizontal ruler /***************************/
-snippet /**
-	/* `repeat('*', 68)` */
-	${1}
-## /- horizontal seperator
-snippet /-
-	/* ---------------8<----------------8<----------------8<--------------- */
-	${1}
-## /r comments on right side
-snippet /r
-	`repeat(' ', 60-strlen(getline('.')))`/* ${1} */${2}
-## /{ opening folding marker
-snippet /{
-	/* ${1:Code Block} {{{${2:1} */
-	${3}
-## /} closing folding marker
-snippet /}
-	/* }}}${1:1} */
-	${2}
-## /{} folding marker pair
-snippet /{}
-	/* ${1:Code Block} {{{${2:1} */
-	${3}
-	/* $1 }}}$2 */
-## {{{1 Control Flow Statements
-## if if statement
-snippet if
-	if (${1:0})`g:cs`{
-		${2:/* intentionally left empty */}
-	}`g:ce`${3}
-## else else statement
-snippet else
-	else`g:cs`{
-		${1:/* intentionally left empty */}
-	}`g:ce`${2}
-## elif else if
-snippet elif
-	else if (${1:0})`g:cs`{
-		${2:/* intentionally left empty */}
-	}`g:ce`${3}
-## ife if ... else
-snippet ife
-	if (${1:0})`g:cs`{
-		${2:/* intentionally left empty */}
-	} `g:ce`else`g:cs`{
-		${3:/* intentionally left empty */}
-	}`g:ce`${4}
-## switch switch statement
-snippet switch
-	switch (${1:0})`g:cs`{
-	case ${2:0}:
-		${3:break;}
-	default:
-		${4:break;}
-	}${5}
-## ?: ternary operator
-snippet ?:
-	${1:/* expression */} ? ${2:/* true */} : ${3:/* false */}
-## (?: ternary operator with parentheses
-snippet (?:
-	(${1:/* expression */}) ? (${2:/* true */}) : (${3:/* false */})${4}
-## {{{1 Loops
-## for for loop
-snippet for
-	for (${1}; ${2}; ${3})`g:cs`{
-		${4:/* intentionally left empty */}
-	}${5}
-## fo for loop
-snippet fo
-	for (${1}; ${2}; ${3})
-		${4:/* intentionally left empty */}
-## fori for loop, iteration
-snippet fori
-	for (${1:int} ${2:i} = ${3:0}; $2 < ${4:count}; ++$2)`g:cs`{
-		${5:/* intentionally left empty */}
-	}${6}
-## foi for loop, iteration
-snippet foi
-	for (${1:int} ${2:i} = ${3:0}; $2 < ${4:count}; ++$2)
-		${5:/* intentionally left empty */}
-## forit for loop, iteration
-snippet forit
-	for (${1:vector}<${2:int}>::const_iterator ${3:it} = ${4:a}.begin(); $3 != $4.end(); $3++)`g:cs`{
-		${5:/* intentionally left empty */}
-	}${6}
-## foit for loop, iteration
-snippet foit
-	for (${1:vector}<${2:int}>::const_iterator ${3:it} = ${4:a}.begin(); $3 != $4.end(); ++$3)
-		${5:/* intentionally left empty */}
-## forrit for loop, iteration
-snippet forrit
-	for (${1:vector}<${2:int}>::const_reverse_iterator ${3:it} = ${4:a}.rbegin(); $3 != $4.rend(); ++$3)`g:cs`{
-		${5:/* intentionally left empty */}
-	}${6}
-## while while loop
-snippet wh
-	while (${1:1})`g:cs`{
-		${2:/* intentionally left empty */}
-	}${3}
-## do do ... while loop
-snippet do
-	do`g:cs`{
-		${2:/* intentionally left empty */}
-	}`g:cs`while (${1:0});${3}
-## {{{1 Functions
-## fs function signature
-snippet fs
-	${1:void} ${2:function_name}(${3:void});${4}
-## fi function implementation
-snippet fi
-	${1:void} ${2:function_name}(${3:void})
-	{
-		${4:/* intentionally left empty */}
-	}${5}
-## {{{1 Types
-## struct structure
-snippet struct
-	struct ${1:`Filename('$1_t', 'name')`}
-	{
-		${2:/* intentionally left empty */}
-	}${3: };${4}
-## union union
-snippet union
-	union ${1:`Filename('$1_t', 'name')`}
-	{
-		${2:/* intentionally left empty */}
-	}${3: };${4}
-## enum enumeration
-snippet enum
-	enum ${1:BOOL} { ${2:FALSE, TRUE} } ;${3}
-## so sizeof operator
-snippet so
-	sizeof(${1:int})${2}
-## td typedef statement
-snippet td
-	typedef ${1:unsigned int} ${2:uint};${3}
-## tds typedef struct
-snippet tds
-	typedef struct ${1:`Filename('$1', 'name')`}
-	{
-		${3:/* intentionally left empty */}
-	} ${2:$1_t} ;${4}
-## fp function point
-snippet fp
-	${1:void} (*${2:fp})(${3:void})${4}
-## tdfp typedef function point
-snippet tdfp
-	typedef ${1:void} (*${2:fp_t})(${3:void});${4}
-## {{{1 Other Shortcuts
-## main main function
-snippet main
-	int main(int argc, char* argv[])
-	{
-		${1}
-		return 0;
-	}
-## hello_ hello world
-snippet hello_
-	#include <stdio.h>
-	#include <stdlib.h>
+#endif /* end of include guard: $1 */
 
-	int main(int argc, char* argv[])
-	{
-		(void)argc;
-		(void)argv;
-		printf("%s\n", "Hello, world!");
-		return EXIT_SUCCESS;
-	}
-## pr printf function
-snippet pr
-	printf("${1:\n}"${2});${3}
-## fpr fprintf function
-snippet fpr
-	fprintf(${1:stderr}, "${2:\n}"${3});${4}
-## snpr snprintf function
-snippet snpr
-	snprintf(${1:buffer}, ${2:sizeof($1)}, "${3:\n}"${4});${5}
-## malloc malloc function
-snippet malloc
-	(${1:char}*)malloc(${2:1024} * sizeof($1));${3}
-## calloc calloc function
-snippet calloc
-	(${1:char}*)calloc(${2:1024}, sizeof($1));${3}
-# }}}
-# vim: set fdm=marker fml=3:
+endsnippet
+
+snippet main "main() (main)"
+int main(int argc, const char* argv[])
+{
+	${0:/* code */}
+	return 0;
+}
+endsnippet
+
+snippet foi "for int loop (foi)"
+foi (${4:int} ${2:i} = 0; $2 < ${1:n}; ${3:++$2})
+	${0:/* code */}
+endsnippet
+
+snippet fori "for int loop (fori)"
+fori (${4:int} ${2:i} = 0; $2 < ${1:n}; ${3:++$2})
+{
+	${0:/* code */}
+}
+endsnippet
+
+snippet printf
+printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+endsnippet
+
+snippet scanf
+printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+endsnippet
+
+# vim:ft=snippets:

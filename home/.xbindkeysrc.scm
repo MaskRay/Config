@@ -60,7 +60,7 @@
   )
 
 (register '((control semicolon) x) (simple "xterm"))
-(register '((control semicolon) u) "wmctrl tmux || -T tmux -e tmux attach -t default")
+(register '((control semicolon) u) "wmctrl -xa urxvt || urxvtc -e tmux attach -t default")
 (register '((control semicolon) e) "wmctrl -xa Emacs || emacsclient -c -n")
 (register '((control semicolon) v) "wmctrl -xa Vim || gvim")
 (register '((control semicolon) f) (simple "firefox"))

@@ -470,8 +470,10 @@ export HISTFILE=~/tmp/.zsh_history
 export MENUCONFIG_COLOR=blackbg
 
 export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
-export PATH=$PATH:/opt/scala-2.10.0-M2/bin
-export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
+PATH=/opt/jruby-1.6.7.2/bin:$PATH
+unset RUBYOPT
+#export PATH=$PATH:/opt/scala-2.10.0-M2/bin
+#export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
 export EDITOR=vim
 export VISUAL=vim
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
@@ -525,7 +527,7 @@ alias cp='cp -i -v'
 alias mv='mv -i -v'
 alias rm='rm -i -v'
 alias psg='ps aux|grep'
-alias clip='xsel -ib <'
+alias clip='xsel -ib'
 if [ `uname` = 'Linux' ]; then
     alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
     alias l='ls -l'
