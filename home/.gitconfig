@@ -21,12 +21,11 @@
 	sb  = status -sb
 	t   = tag
 	untrack = rm -r --cached
-	merge-branch-file = checkout --merge 
+	merge-branch-file = checkout --merge
 	ix = diff --cached
 [merge]
 	tool = vimdiff
 [branch]
 	autosetuprebase = always
-	autosetupmerge = on
 [github]
 	user = MaskRay

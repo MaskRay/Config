@@ -17,7 +17,7 @@ import System.Posix.Process (executeFile)
 import System.Posix.Types (ProcessID)
 import Text.Regex
 
-import XMonad
+import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
 import XMonad.Util.EZConfig
 import XMonad.Util.Loggers
@@ -62,6 +62,7 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.Mosaic
 import XMonad.Layout.AutoMaster
 import XMonad.Layout.Grid
+import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
 import XMonad.Layout.Maximize
 import XMonad.Layout.MultiToggle
@@ -71,6 +72,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
+import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
@@ -87,7 +89,7 @@ myTabTheme = (Theme.theme Theme.kavonChristmasTheme)
 
 data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
 instance Transformer TABBED Window where
-     transform _ x k = k (named "TABBED" (tabbedAlways shrinkText myTabTheme)) (const x)
+     transform _ x k = k (renamed [Replace "TABBED"] (tabbedAlways shrinkText myTabTheme)) (const x)
 
 {-
  - Navigation2D
@@ -107,8 +109,9 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     smartBorders $
     onWorkspaces ["web","irc"] Full $
-    Full ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
+    Full ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
 
+doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
@@ -118,7 +121,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
     [ className =? c --> doShift "emacs" | c <- ["Emacs"] ] ++
     [ fmap (isPrefixOf "libreoffice" <||> isPrefixOf "LibreOffice") className --> doShift "office" ] ++
-    [ myFloats --> doCenterFloat ] ++
+    [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
   where
@@ -126,6 +129,7 @@ myManageHook = composeAll $
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
         , fmap (isPrefixOf "sun-") appName
+        , fmap (isPrefixOf "Gnuplot") title
         , flip fmap className $ flip elem
             [ "XClock"
             , "Xmessage"
@@ -182,7 +186,8 @@ myKeys =
     ++
     [("M-" ++ m ++ k, screenWorkspace sc >>= flip whenJust (windows . f))
         | (k, sc) <- zip ["w", "e", "r"] [0..]
-        , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
+        --, (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
+        , (f, m) <- [(W.view, ""), (W.shift, "S-")]
     ]
     ++
     [ ("M-S-q", io exitFailure)
@@ -191,8 +196,8 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "urxvtc -T tmux -e tmux attach -t default")
-    , ("M-s", spawnSelected defaultGSConfig ["urxvtc", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -284,22 +289,21 @@ myKeys =
     ]
 
 scratchpads =
-  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") mySPFloat
-  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") mySPFloat
-  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") mySPFloat
-  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") mySPFloat
-  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") mySPFloat
-  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") mySPFloat
-  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") mySPFloat
-  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") mySPFloat
+  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") doSPFloat
+  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") doSPFloat
+  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") doSPFloat
+  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") doSPFloat
+  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") doSPFloat
+  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") doSPFloat
+  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
+  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") doSPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
-  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") mySPFloat
+  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") doSPFloat
   ]
   where
     urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
-    mySPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)

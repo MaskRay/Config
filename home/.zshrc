@@ -16,8 +16,6 @@ else
   alias cabali="cabal install --extra-include-dirs=$EPREFIX/usr/include --extra-lib-dirs=$EPREFIX/lib --extra-lib-dirs=$EPREFIX/usr/lib"
 fi
 
-source $EPREFIX/etc/profile.d/autojump.zsh
-
 # 为兼容旧版本定义 is-at-least 函数
 function is-at-least {
     local IFS=".-" min_cnt=0 ver_cnt=0 part min_ver version
@@ -506,6 +504,12 @@ export READNULLCMD=less
 (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
 
 # }}}
+
+source $EPREFIX/etc/profile.d/autojump.zsh
+eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
+bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
+bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
+bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
 
 # 读入其他配置 {{{
 

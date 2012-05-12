@@ -1,3 +1,6 @@
 :m Data.List Control.Monad
 :set prompt "\x256d\x2500%s\n\x2570\x2500"
 :set -XOverloadedStrings
+
+--:def rl (\_ -> System.Process.system "make -C ~/Hython Parser/Lexer.hs" >>= \rr -> case rr of { System.Exit.ExitSuccess -> return ":load Hython.Parser.Lexer" ; _ -> return "" })
+--:def rh (\_ -> System.Process.system "make -C ~/Hython Parser/Parser.hs" >>= \rr -> case rr of { System.Exit.ExitSuccess -> return ":load Hython.Parser.Parser" ; _ -> return "" })
