@@ -468,7 +468,6 @@ export HISTFILE=~/tmp/.zsh_history
 export MENUCONFIG_COLOR=blackbg
 
 export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
-PATH=/opt/jruby-1.6.7.2/bin:$PATH
 unset RUBYOPT
 #export PATH=$PATH:/opt/scala-2.10.0-M2/bin
 #export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
@@ -549,7 +548,6 @@ alias -g G='|GREP_COLOR=$(echo 3$[$(date +%N)%6+1]'\'';1;7'\'') egrep -i --color
 alias -g H="|head -n $(($LINES-2))"
 alias -g L="|less"
 alias -g P="|column -t"
-alias -g R="|tac"
 alias -g S="|sort"
 alias -g T="|tail -n $(($LINES-2))"
 alias -g X="|xargs"
@@ -595,15 +593,17 @@ alias egrep='egrep --color=auto'
 alias e='emacsclient -c -t'
 if [[ -n $MYSELF ]]; then
   alias v='vim --servername GVIM --remote-tab-silent'
-  alias eme='sudo emerge -1'
+  alias eme='sudo emerge -1 --keep-going'
 else
   alias v='vim'
-  alias eme='emerge -1'
+  alias eme='emerge -1 --keep-going'
 fi
+alias disp='sudo dispatch-conf'
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
+alias ntp='sudo /etc/init.d/ntp-client start'
 alias df='df -hT'
 alias luit='luit -encoding gbk'
 alias c=cat
@@ -739,3 +739,5 @@ bindkey -s '^zL' "l\n"
 bindkey -s '^zp' "import /tmp/screen.jpg\n"
 bindkey -s "^zw" "(ip l sh wlan0 | grep -q DOWN; a=\${\${?/0/up}/1/down}; ip l s wlan0 \$a; echo \$a)\n"
 bindkey -s '^zP' "sleep 3 && import -window root /tmp/screen.jpg\n"
+cowfiles=(/usr/share/cowsay-3.03/cows/*)
+bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fortune -s | cowsay -f${cowfiles[$RANDOM % ${#cowfiles[@]} + 1]}; sleep 0.3; done'"\n"

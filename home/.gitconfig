@@ -29,3 +29,7 @@
 	autosetuprebase = always
 [github]
 	user = MaskRay
+[diff "lisp"]
+    xfuncname="^(\\((def|test).*)$"
+[diff "python"]
+    xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"

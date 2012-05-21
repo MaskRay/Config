@@ -15,6 +15,7 @@ import System.IO
 import System.Process
 import System.Posix.Process (executeFile)
 import System.Posix.Types (ProcessID)
+import Text.Printf
 import Text.Regex
 
 import XMonad hiding ((|||))
@@ -43,10 +44,11 @@ import XMonad.Actions.FloatKeys
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
 import XMonad.Actions.Navigation2D
-import XMonad.Actions.Search
+import qualified XMonad.Actions.Search as S
 import XMonad.Actions.Submap
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.TopicSpace
+import XMonad.Actions.UpdatePointer
 import XMonad.Actions.WindowBringer
 import XMonad.Actions.WindowGo
 import XMonad.Actions.WindowMenu
@@ -61,6 +63,7 @@ import XMonad.Hooks.UrgencyHook
 
 import XMonad.Layout.Mosaic
 import XMonad.Layout.AutoMaster
+import XMonad.Layout.DragPane
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
@@ -108,23 +111,25 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     smartBorders $
-    onWorkspaces ["web","irc"] Full $
-    Full ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
+    --onWorkspaces ["web","irc"] Full $
+    Full ||| dragPane Horizontal 0.1 0.3 ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Evince"] ] ++
-    [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
+    [ className =? c --> doShift "net" | c <- ["Wpa_gui", "TUNET64"] ] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
-    [ className =? c --> doShift "media" | c <- ["feh", "Display"] ] ++
-    [ className =? c --> doShift "emacs" | c <- ["Emacs"] ] ++
-    [ fmap (isPrefixOf "libreoffice" <||> isPrefixOf "LibreOffice") className --> doShift "office" ] ++
+    [ className =? c --> viewShift "media" | c <- ["feh", "Display"] ] ++
+    -- [ prefixTitle "emacs" --> doShift "emacs" ] ++
+    [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
   where
+    prefixTitle prefix = fmap (prefix `isPrefixOf`) title
+    viewShift = doF . liftM2 (.) W.greedyView W.shift
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
@@ -220,7 +225,8 @@ myKeys =
     , ("M-t", withFocused $ windows . W.sink)
     , ("M-,", sendMessage (IncMasterN 1))
     , ("M-.", sendMessage (IncMasterN (-1)))
-    , ("M-b", sendMessage ToggleStruts)
+    , ("M-b", windowPromptBring myXPConfig)
+    , ("M-B", sendMessage ToggleStruts)
     , ("M-d", bringMenu)
     , ("M-y", focusUrgent)
     , ("M-;", switchLayer)
@@ -251,8 +257,10 @@ myKeys =
     , ("M-C-S-r", killAll >> removeWorkspace)
 
     -- play
-    , ("C-; 1", spawn "sh ~/Show/sort.sh")
-    , ("C-; 2", spawn "sh ~/Show/network.sh")
+    , ("C-; 1", spawn "ln -sf ~/Show/sort.c /tmp/x")
+    , ("C-; 2", spawn "ln -sf ~/Show/add.hs /tmp/x")
+    , ("C-; 3", spawn "cp ~/Show/sort.c /tmp/")
+    , ("C-; 4", spawn "cp ~/Show/add.hs /tmp/")
 
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
@@ -264,7 +272,8 @@ myKeys =
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' s", namedScratchpadAction scratchpads "gst")
-    , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
+    , ("C-' a", namedScratchpadAction scratchpads "agenda")
+    , ("C-' c", namedScratchpadAction scratchpads "capture")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
@@ -280,13 +289,13 @@ myKeys =
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", prompt ("urxvtc -e") myXPConfig)
     , ("M-p d", changeDir myXPConfig)
+    , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", AL.launchApp myXPConfig "evince")
     , ("M-p f", AL.launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
-    , ("M-/",   submap . mySearchMap $ myPromptSearch)
-    , ("M-C-/", submap . mySearchMap $ mySelectSearch)
-    ]
+    ] ++
+    searchBindings
 
 scratchpads =
   [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") doSPFloat
@@ -298,6 +307,8 @@ scratchpads =
   , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") doSPFloat
   , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
+  , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
+  , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") doSPFloat
@@ -310,6 +321,7 @@ scratchpads =
     doBottomLeftFloat = customFloating $ W.RationalRect 0 (2/3) (1/3) (1/3)
     doBottomRightFloat = customFloating $ W.RationalRect (2/3) (2/3) (1/3) (1/3)
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
+    orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
 myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvtc"
@@ -323,9 +335,25 @@ myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgen
     , layoutHook         = myLayout
     , manageHook         = myManageHook
     , handleEventHook    = mempty
-    , logHook            = myDynamicLog xmobar
+    , logHook            = updatePointer (Relative 0.5 0.5) >> myDynamicLog xmobar
     , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
+
+myPromptKeymap = M.union defaultXPKeymap $ M.fromList
+                 [
+                   ((controlMask, xK_g), quit)
+                 , ((controlMask, xK_m), setSuccess True >> setDone True)
+                 , ((controlMask, xK_j), setSuccess True >> setDone True)
+                 , ((controlMask, xK_h), deleteString Prev)
+                 , ((controlMask, xK_f), moveCursor Next)
+                 , ((controlMask, xK_b), moveCursor Prev)
+                 , ((controlMask, xK_p), moveHistory W.focusDown')
+                 , ((controlMask, xK_n), moveHistory W.focusUp')
+                 , ((mod1Mask, xK_p), moveHistory W.focusDown')
+                 , ((mod1Mask, xK_n), moveHistory W.focusUp')
+                 , ((mod1Mask, xK_b), moveWord Prev)
+                 , ((mod1Mask, xK_f), moveWord Next)
+                 ]
 
 myXPConfig = defaultXPConfig
     { font = "xft:DejaVu Sans Mono:pixelsize=16"
@@ -337,6 +365,7 @@ myXPConfig = defaultXPConfig
     , promptBorderWidth = 1
     , position          = Top
     , historyFilter     = deleteConsecutive
+    , promptKeymap = myPromptKeymap
     }
 
 -- | Like 'spawn', but uses bash and returns the 'ProcessID' of the launched application
@@ -361,24 +390,37 @@ main = do
  - SearchMap
  -}
 
-mySearchMap method = M.fromList $
-        [ ((0, xK_g), method google)
-        , ((0, xK_w), method wikipedia)
-        , ((0, xK_h), method hoogle)
-        , ((shiftMask, xK_h), method hackage)
-        , ((0, xK_s), method scholar)
-        , ((0, xK_m), method maps)
-        , ((0, xK_a), method alpha)
-        , ((0, xK_d), method $ searchEngine "Dict" "http://translate.google.com/#en|zh-CN|")
-        ]
+searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
+                 [ ("M-/ " ++ name, S.promptSearch myXPConfig e) | e@(S.SearchEngine name _) <- engines, length name == 1 ]
+  where
+    promptSearch (S.SearchEngine _ site)
+      = inputPrompt myXPConfig "Search" ?+ \s ->
+      (S.search "firefox" site s >> viewWeb)
+    viewWeb = windows (W.view "web")
 
-myPromptSearch (SearchEngine _ site)
-  = inputPrompt myXPConfig "Search" ?+ \s ->
-      (search "firefox" site s >> viewWeb)
-
-mySelectSearch eng = selectSearch eng >> viewWeb
-
-viewWeb = windows (W.view "web")
+    mk = S.searchEngine
+    engines = [ mk "h" "http://www.haskell.org/hoogle/?q="
+      , mk "g" "http://www.google.com/search?num=100&q="
+      , mk "d" "http://duckduckgo.com/?q="
+      , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
+      , mk "s" "https://scholar.google.de/scholar?q="
+      , mk "dict" "http://www.dict.cc/?s="
+      , mk "imdb" "http://www.imdb.com/find?s=all&q="
+      , mk "i" "https://ixquick.com/do/search?q="
+      , mk "def" "http://www.google.com/search?q=define:"
+      , mk "img" "http://images.google.com/images?q="
+      , mk "ruby" "http://www.ruby-doc.org/search.html?sa=Search&q="
+      , mk "gh" "https://github.com/search?q="
+      , mk "bb" "https://bitbucket.org/repo/all?name="
+      , mk "alpha" "http://www.wolframalpha.com/input/i="
+      , mk "ud" "http://www.urbandictionary.com/define.php?term="
+      , mk "rtd" "http://readthedocs.org/search/project/?q="
+      , mk "null" "http://nullege.com/codes/search/"
+      , mk "sf" "http://sourceforge.net/search/?q="
+      , mk "acm" "https://dl.acm.org/results.cfm?query="
+      , mk "math" "http://mathworld.wolfram.com/search/?query="
+      ]
+    multi = S.namedEngine "multi" $ foldr1 (S.!>) engines
 
 {-
  - Topic

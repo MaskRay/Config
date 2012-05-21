@@ -81,21 +81,39 @@ XTerm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35
 XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 
-! Xcursor.theme: Grounation
+
 URxvt.preeditType: OffTheSpot
 URxvt.inputMethod: fcitx
 URxvt.imFont: -misc-wenquanyi micro hei-medium-r-normal--0-0-0-0-p-0-gb18030.2000-0
 URxvt.scrollBar: False
-URxvt.geometry: 105x33
+URxvt.geometry: 105x45
+URxvt.xftAntialias: true
 URxvt.font: xft:Monaco:bold:size=11,xft:WenQuanYi Micro Hei:bold:antialias=True
+
+! mark-yank-urls bindings (see http://www.jukie.net/~bart/blog/urxvt-url-yank)
+!==========
+! Alt-u: Enter yank mode
+! Esc: Exit yank mode
+! y: copy to clipboard
+! Enter: Launch Browser
+! Ctrl-n: select next url
+! Ctrl-p: select previous url
+!==========
+
+URxvt.perl-lib: /home/ray/.urxvt/
+URxvt.perl-ext: option-popup,matcher,selection,mark-yank-urls
+URxvt.urlLauncher: firefox
+URxvt.underlineURLs: true
+URxvt.keysym.M-u:       perl:mark-yank-urls:activate_mark_mode
+
+URxvt.cutchars: `"()'*<>[]{|}"
 
 
 URxvt.depth: 32
 URxvt.background: black
 URxvt.foreground: white
-URxvt.cursorColor: green
 URxvt.cursorBlink: False
-
+URxvt.cursorColor: green
 URxvt.iso14755_52: False
 
 Xcursor.theme: gentoo

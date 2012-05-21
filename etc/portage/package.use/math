@@ -1,5 +1,5 @@
 sci-mathematics/octave doc
-sci-visualization/gnuplot wxwidgets examples doc
+sci-visualization/gnuplot emacs wxwidgets examples doc
 sci-mathematics/sage mpc
 sci-mathematics/maxima latex ecl
 

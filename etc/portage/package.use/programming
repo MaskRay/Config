@@ -7,6 +7,7 @@ app-editors/gvim cscope vim-pager ruby perl python
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
 dev-lang/gnu-smalltalk gmp emacs tk
+dev-lang/swi-prolog doc gmp
 dev-scheme/racket doc future jit
 
 # vcs

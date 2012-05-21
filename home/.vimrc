@@ -231,7 +231,7 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
-Bundle 'vim-powerline'
+"Bundle 'vim-powerline'
 Bundle 'ctrlp'
 Bundle 'tabular'
 Bundle 'syntastic'
