@@ -401,6 +401,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
     mk = S.searchEngine
     engines = [ mk "h" "http://www.haskell.org/hoogle/?q="
       , mk "g" "http://www.google.com/search?num=100&q="
+      , mk "w" "http://en.wikipedia.org/wiki/Special:Search?go=Go&search="
       , mk "d" "http://duckduckgo.com/?q="
       , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "s" "https://scholar.google.de/scholar?q="

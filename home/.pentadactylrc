@@ -1,20 +1,104 @@
-" based on beslayed's pentadactyl configuration with Emacs bindings
-" source: * http://babbagefiles.blogspot.com
-
+" Theme
 source ~/.pentadactyl/desert.penta
 
-set nextpattern=\s*下一页|下一张|下页\s*,\bnext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
-set previouspattern=\s*上一页|上一张|上页\s*,\bprev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
+" Hints
+set hintkeys=asdfg;lkjh
+hi -a Hint text-transform: uppercase
 
-noremap q gT
-noremap w gt
+" Toggle menu toolbar
+nmap <C-F1> :set guioptions!=m<CR>
+" toggle bookmarks toolbar
+nmap <C-F2> :set guioptions!=B<CR>
 
-" {{{ Options
-"
+" Search
+command! -nargs=* g tabopen http://www.google.com/search?q=<args>
+command! -nargs=* d tabopen https://duckduckgo.com/?q=<args>&v=
 
-" determine which tabs open with focus
-set activate=addons,bookmarks,diverted,extoptions,help,homepage,quickmark
+" C-g as ESC
+map  -g user <C-g> <ESC>
+imap -g user <C-g> <ESC>
 
-" pentadactyl gui options
-set go=Cns
+" sidebar
+command! bookstack sidebar! Bookstack
+map -g user ,b -ex bookstack
+map -g user ,c -ex sbclose
 
+" Bookmarks
+map -g user <A-a> -silent -ex dialog addbookmark
+map -g user <A-b> -silent -ex tabopen chrome://browser/content/places/places.xul
+map -g user <C-l> -silent -ex nohlfind
+
+" Tabs
+map -g user ,, -silent -ex tabnext
+map -g user ,. -silent -ex tabnext
+map -g user ,f -silent -ex tabrewind
+map -g user ,l -silent -ex tablast
+map -g user ,d -silent -ex tabduplicate
+
+set nextpattern=\s*下一页|下一张|下页\s*,\bNext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
+set previouspattern=\s*上一页|上一张|上页\s*,\bPrev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
+set defsearch=google
+set maxitems=5
+
+nnoremap q gT
+nnoremap w gt
+nnoremap j 4j
+nnoremap k 4k
+nnoremap <C-e> 10<C-e>
+nnoremap <C-y> 10<C-e>
+
+" Instapaper -- depends on instapaper bookmarklet with `readlater' keyword
+command! instapaper open readlater
+map -g user ,r -ex instapaper
+" Instapaper text -- depends on instapaper bookmarklet with `text' keyword
+command! instatext open text
+map -g user ,t -ex instatext
+
+" Org
+command! store-link -javascript
+   \ -desc 'Store link for Orgmode'
+   \ io.system('emacsclient -c "org-protocol:/store-link:/'
+   \ + encodeURIComponent(buffer.URL) + '/'
+   \ + encodeURIComponent(buffer.title) + '"')
+command! capture -javascript
+   \ -desc 'Capture URL with selection in Orgmode.'
+   \ io.system('emacsclient -c "org-protocol:/capture:/x/'
+   \ + encodeURIComponent(buffer.URL) + '/'
+   \ + encodeURIComponent(buffer.title) + '/'
+   \ + encodeURIComponent(window.getSelection()) + '"')
+
+command! save-link -javascript
+   \ -desc 'Save link in Orgmode.'
+   \ io.system('emacsclient -c "org-protocol:/capture:/s/'
+   \ + encodeURIComponent(buffer.URL) + '/'
+   \ + encodeURIComponent(buffer.title) + '"')
+
+map -g user ,w -ex save-link
+map -g user ,e -ex store-link
+
+
+command! wide-margin -javascript -desc 'set wide margin on left and right'
+   \ let body = buffer.doc.getElementsByTagName('body')[0];
+   \ body.style.marginLeft = '20%';
+   \ body.style.marginRight = '30%';
+
+command! small-margin -javascript -desc 'set small margin on left and right'
+   \ let body = buffer.doc.getElementsByTagName('body')[0];
+   \ body.style.marginLeft = '10%';
+   \ body.style.marginRight = '15%';
+
+command! no-margin -javascript -desc 'set no margin on left and right'
+   \ let body = buffer.doc.getElementsByTagName('body')[0];
+   \ body.style.marginLeft = '0';
+   \ body.style.marginRight = '0';
+
+map -g user ,m -ex wide-margin
+map -g user ,M -ex no-margin
+
+command! strip-anchor -javascript -desc 'reopen current url with anchor stripped'
+   \ let url = buffer.URL;
+   \ let anchor = url.indexOf('#');
+   \ if (anchor > 0)
+   \   dactyl.open(url.substring(0, anchor));
+
+map -g user ,s -ex strip-anchor

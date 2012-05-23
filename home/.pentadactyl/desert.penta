@@ -1,0 +1,35 @@
+" Pentadactyl color scheme
+" Name: Desert
+" Thanks: Based on the Vim color file "Desert" by Hans Fugal at http://hans.fugal.net/vim/colors/desert.vim
+" Maintainer: Jozsef Bakosi <jbakosi@gmail.com>
+" Last Change: $Date: 2011/01/04 $
+
+hi StatusLine color: #ffffff !important; background-color: #000000 !important; font-weight: bold !important;
+hi Normal color: #ffffff; background: #333333; font-weight: bold !important;
+hi CompItem[selected] color: #f0e685; background: #6b8e23;
+hi CompDesc color: #c6c6c6; width: 50%; font-weight: normal !important;
+hi CompTitle color: #78cee4 !important; background: #000000 !important;
+hi GradientLeft background-color: white;
+hi GradientRight background-color: black;
+hi Title color: #78cee4; background: #333333; font-weight: bold;
+hi NonText color: #add8e6; background: #4d4d4d; min-height: 16px; padding-left: 2px;
+hi Enabled color: #6b8e23;
+hi Disabled color: #bb493b;
+hi Boolean color: #ffa0a0;
+hi Number color: #ffa0a0;
+hi Null color: #ffa0a0;
+hi Function color: #ffffff;
+hi Object color: #ffffff;
+hi String color: #ffa0a0; white-space: pre;
+hi LineNr color: #78cee4 !important; background: white !important;
+hi Hint font-family: Verdana; font-size: 14px; font-weight: bold; color: red; background-color: white; border-style: solid; padding: 0px 1px 0px 1px;
+hi Indicator color: #c6c6c6; width: 1.5em; text-align: center;
+hi URL text-decoration: none; color: #78cee4; background: inherit;
+hi URL:hover text-decoration: underline; cursor: pointer;
+hi InfoMsg color: #ffffff !important; background: #333333 !important;
+hi LineNr color: #78cee4 !important; background: #333333 !important;
+hi ModeMsg color: #ffffff !important; background: #333333 !important;
+hi MoreMsg color: #6b8e23 !important; background: #333333 !important;
+hi Question color: #6b8e23 !important; background: #333333 !important; font-weight: bold !important;
+hi WarningMsg color: #ffa0a0 !important; background: #333333 !important;
+hi StatusQuestion color: #6b8e23 !important; background: inherit !important;
