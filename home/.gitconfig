@@ -23,6 +23,7 @@
 	untrack = rm -r --cached
 	merge-branch-file = checkout --merge
 	ix = diff --cached
+	dupes = !git ls-tree -r HEAD | cut -c 13- | sort | uniq -D -w 40
 [merge]
 	tool = vimdiff
 [branch]

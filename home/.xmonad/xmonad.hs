@@ -119,10 +119,12 @@ myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Evince"] ] ++
-    [ className =? c --> doShift "net" | c <- ["Wpa_gui", "TUNET64"] ] ++
+    [ title =? "newsbeuter" --> doShift "news"] ++
+    [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
     [ className =? c --> viewShift "media" | c <- ["feh", "Display"] ] ++
-    -- [ prefixTitle "emacs" --> doShift "emacs" ] ++
+    [ prefixTitle "emacs" --> doShift "emacs" ] ++
+    [ className =? c --> doShift "net" | c <- ["Wpa_gui", "TUNET64"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
@@ -202,7 +204,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "LC_ALL= LC_CTYPE=zh_CN.UTF-8 emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -268,10 +270,12 @@ myKeys =
     , ("C-' f", namedScratchpadAction scratchpads "falcon")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' l", namedScratchpadAction scratchpads "lua")
+
     , ("C-' o", namedScratchpadAction scratchpads "ocaml")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' s", namedScratchpadAction scratchpads "gst")
+    , ("C-' j", namedScratchpadAction scratchpads "node")
     , ("C-' a", namedScratchpadAction scratchpads "agenda")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
@@ -301,6 +305,7 @@ scratchpads =
   [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") doSPFloat
   , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") doSPFloat
   , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") doSPFloat
+  , NS "node" (urxvt "node") (title =? "node") doSPFloat
   , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") doSPFloat
   , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") doSPFloat
   , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") doSPFloat
@@ -454,7 +459,7 @@ myTopics =
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "irc" "" (spawn "urxvtc -T irssi -e tmux attach -t irssi \\; select-window -t irssi") "irssi.xpm"
+    , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
     , TI "mail" "" (urxvt "mutt" >> urxvt "newsbeuter") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
