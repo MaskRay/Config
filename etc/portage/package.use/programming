@@ -1,9 +1,6 @@
 # compilers, interpreters
-dev-lang/ghc doc llvm ghcbootstrap
-dev-haskell/mtl doc hscolour
+sys-devel/gcc:4.7 go
 dev-lang/python sqlite
-app-editors/vim cscope vim-pager ruby perl python
-app-editors/gvim cscope vim-pager ruby perl python
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
 dev-lang/gnu-smalltalk gmp emacs tk
@@ -16,14 +13,11 @@ dev-vcs/git curl subversion doc tk
 x11-libs/cairo X xcb opengl svg
 
 # editors
-app-editors/emacs X gtk
-app-editors/vim python ruby
-app-editors/gvim python ruby
+app-editors/vim cscope ruby python
+app-editors/gvim cscope ruby python
 
 # databases
 dev-db/sqlite doc
-dev-haskell/* doc hoogle
-dev-haskell/haddock -doc
 
 # guile dependency
 dev-libs/boehm-gc threads

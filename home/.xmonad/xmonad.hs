@@ -276,7 +276,7 @@ myKeys =
     , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' j", namedScratchpadAction scratchpads "node")
-    , ("C-' a", namedScratchpadAction scratchpads "agenda")
+    , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
     , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
@@ -408,6 +408,8 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       , mk "g" "http://www.google.com/search?num=100&q="
       , mk "w" "http://en.wikipedia.org/wiki/Special:Search?go=Go&search="
       , mk "d" "http://duckduckgo.com/?q="
+      , mk "m" "https://developer.mozilla.org/en-US/search?q="
+      , mk "r" "http://www.ruby-doc.org/search.html?sa=Search&q="
       , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "s" "https://scholar.google.de/scholar?q="
       , mk "dict" "http://www.dict.cc/?s="
@@ -415,7 +417,6 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       , mk "i" "https://ixquick.com/do/search?q="
       , mk "def" "http://www.google.com/search?q=define:"
       , mk "img" "http://images.google.com/images?q="
-      , mk "ruby" "http://www.ruby-doc.org/search.html?sa=Search&q="
       , mk "gh" "https://github.com/search?q="
       , mk "bb" "https://bitbucket.org/repo/all?name="
       , mk "alpha" "http://www.wolframalpha.com/input/i="

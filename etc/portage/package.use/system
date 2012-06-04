@@ -7,3 +7,4 @@ sys-libs/zlib minizip
 sys-devel/m4 examples
 sys-libs/zlib minizip
 >=sys-apps/pciutils-3.1.8 -zlib
+sys-apps/busybox sep-usr

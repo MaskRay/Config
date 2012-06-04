@@ -469,6 +469,7 @@ export MENUCONFIG_COLOR=blackbg
 
 export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
 unset RUBYOPT
+export PATH=$PATH:~/.npm/coffee-script/1.3.3/package/bin
 #export PATH=$PATH:/opt/scala-2.10.0-M2/bin
 #export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
 export EDITOR=vim
@@ -601,6 +602,8 @@ fi
 alias disp='sudo dispatch-conf'
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
+alias doc2pdf='libreoffice --headless --convert-to pdf'
+alias xls2csv='libreoffice --headless --convert-to csv'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias ntp='sudo /etc/init.d/ntp-client start'
