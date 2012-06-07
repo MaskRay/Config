@@ -232,18 +232,17 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 "Bundle 'vim-powerline'
-Bundle 'ctrlp'
-Bundle 'tabular'
+"Bundle 'ctrlp'
+"Bundle 'tabular'
 Bundle 'syntastic'
-Bundle 'neco-ghc'
-Bundle 'EasyMotion'
-Bundle 'javacomplete'
-Bundle 'vim-sparkup'
-Bundle 'indent-guides'
+"Bundle 'neco-ghc'
+"Bundle 'EasyMotion'
+"Bundle 'javacomplete'
+"Bundle 'vim-sparkup'
+"Bundle 'indent-guides'
 "Bundle 'rainbow_parentheses'
-Bundle 'tasklist'
-Bundle 'UltiSnips'
-Bundle 'DotOutlineTree'
+"Bundle 'tasklist'
+"Bundle 'UltiSnips'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
 let g:EasyMotion_do_mapping = 1

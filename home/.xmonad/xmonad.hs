@@ -258,11 +258,10 @@ myKeys =
     , ("M-C-r", removeWorkspace)
     , ("M-C-S-r", killAll >> removeWorkspace)
 
-    -- play
-    , ("C-; 1", spawn "ln -sf ~/Show/sort.c /tmp/x")
-    , ("C-; 2", spawn "ln -sf ~/Show/add.hs /tmp/x")
-    , ("C-; 3", spawn "cp ~/Show/sort.c /tmp/")
-    , ("C-; 4", spawn "cp ~/Show/add.hs /tmp/")
+    -- Volume
+    , ("C-; 9", spawn "change_volume down")
+    , ("C-; 0", spawn "change_volume up")
+    , ("C-; m", spawn "change_volume toggle")
 
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')

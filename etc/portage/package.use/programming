@@ -17,7 +17,7 @@ app-editors/vim cscope ruby python
 app-editors/gvim cscope ruby python
 
 # databases
-dev-db/sqlite doc
+dev-db/sqlite doc soundex
 
 # guile dependency
 dev-libs/boehm-gc threads
