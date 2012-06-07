@@ -15,52 +15,12 @@ else
   export LD_LIBRARY_PATH="$EPREFIX/usr/lib:$EPREFIX/lib"
   alias cabali="cabal install --extra-include-dirs=$EPREFIX/usr/include --extra-lib-dirs=$EPREFIX/lib --extra-lib-dirs=$EPREFIX/usr/lib"
 fi
-
-# 为兼容旧版本定义 is-at-least 函数
-function is-at-least {
-    local IFS=".-" min_cnt=0 ver_cnt=0 part min_ver version
-
-    min_ver=(${=1})
-    version=(${=2:-$ZSH_VERSION} 0)
-
-    while (( $min_cnt <= ${#min_ver} )); do
-      while [[ "$part" != <-> ]]; do
-        (( ++ver_cnt > ${#version} )) && return 0
-        part=${version[ver_cnt]##*[^0-9]}
-      done
-
-      while true; do
-        (( ++min_cnt > ${#min_ver} )) && return 0
-        [[ ${min_ver[min_cnt]} = <-> ]] && break
-      done
-
-      (( part > min_ver[min_cnt] )) && return 0
-      (( part < min_ver[min_cnt] )) && return 1
-      part=''
-    done
-}
-
-SHELL=`which zsh`
-
-# 定义颜色 {{{
-if [[ ("$TERM" = *256color || "$TERM" = screen*) && -f $HOME/.lscolor256 ]]; then
-    #use prefefined colors
-    eval $(dircolors -b $HOME/.lscolor256)
-    use_256color=1
-    export TERMCAP=${TERMCAP/Co\#8/Co\#256}
-else
-    [[ -f $HOME/.lscolor ]] && eval $(dircolors -b $HOME/.lscolor)
+if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
+    eval $(dircolors -b ~/.lscolor256)
+else if [[ -f $HOME/.lscolor ]];
+    eval $(dircolors -b ~/.lscolor)
 fi
 
-#color defined for prompts and etc
-autoload colors
-[[ $terminfo[colors] -ge 8 ]] && colors
-pR="%{$reset_color%}%u%b" pB="%B" pU="%U"
-for i in red green blue yellow magenta cyan white black; {eval pfg_$i="%{$fg[$i]%}" pbg_$i="%{$bg[$i]%}"}
-#}}}
-#}}}
-
-# 设置参数 {{{
 setopt pushdminus
 setopt complete_aliases         #do not expand aliases _before_ completion has finished
 setopt auto_cd                  # if not a command, try to cd to it.
@@ -89,23 +49,10 @@ setopt inc_append_history       # append to history once executed
 setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 
-#remove / and . from WORDCHARS to allow alt-backspace to delete word
-WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 
-#report to me when people login/logout
-watch=(notme)
-#replace the default beep with a message
-#ZBEEP="\e[?5h\e[?5l"        # visual beep
-
-#is-at-least 4.3.0 &&
-
-# 自动加载自定义函数
 fpath=($HOME/.zsh/site-functions/ $fpath)
-# 需要设置了extended_glob才能glob到所有的函数，为了补全能用，又需要放在compinit前面
 autoload -U ${fpath[1]}/*(:t)
-# }}}
 
-# 命令补全参数{{{
 #   zsytle ':completion:*:completer:context or command:argument:tag'
 zmodload -i zsh/complist        # for menu-list completion
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" "ma=${${use_256color+1;7;38;5;143}:-1;7;33}"
@@ -116,7 +63,6 @@ zstyle ':completion:*' menu select=2
 #zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete _match #_user_expand
 zstyle ':completion:*:match:*' original only
-#zstyle ':completion:*' user-expand _pinyin
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 ## case-insensitive (uppercase from lowercase) completion
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
@@ -155,12 +101,7 @@ _force_rehash() {
     return 1    # Because we did not really complete anything
 }
 
-# }}}
-
-# 自定义函数 {{{
-
-# 普通自定义函数 {{{
-#show 256 color tab
+# show 256 color tab
 256tab() {
     for k in `seq 0 1`;do
         for j in `seq $((16+k*18)) 36 $((196+k*18))`;do
@@ -171,14 +112,6 @@ _force_rehash() {
     done
 }
 
-#alarm using atd
-alarm() {
-    echo "msg ${argv[2,-1]} && aplay -q ~/.sounds/MACSound/System\ Notifi.wav" | at now + $1 min
-}
-
-#calculator
-calc()  { awk "BEGIN{ print $* }" ; }
-
 #check if a binary exists in path
 bin-exist() {[[ -n ${commands[$1]} ]]}
 
@@ -188,156 +121,23 @@ bin-exist() {[[ -n ${commands[$1]} ]]}
 #ccze for log viewing
 (bin-exist ccze) && lless() { tac $* |ccze -A |less }
 
-#man page to pdf
-(bin-exist ps2pdf) && man2pdf() {  man -t ${1:?Specify man as arg} | ps2pdf -dCompatibility=1.3 - - > ${1}.pdf; }
-
-# }}}
-
-
-#{{{-----------------functions to set gnu screen title----------------------
-# active command as title in terminals
-case $TERM in
-    xterm*|rxvt*)
-        function title() { print -nP "\e]0;$1\a" }
-        ;;
-    screen*)
-        #only set screen title if it is in a local shell
-        if [ -n $STY ] && (screen -ls |grep $STY &>/dev/null); then
-            function title()
-            {
-                #modify screen title
-                print -nP "\ek$1\e\\"
-                #modify window title bar
-                #print -nPR $'\033]0;'$2$'\a'
-            }
-        elif [ -n $TMUX ]; then       # actually in tmux !
-            function title() {  print -nP "\e]2;$1\a" }
-        else
-            function title() {}
-        fi
-        ;;
-    *)
-        function title() {}
-        ;;
-esac
-
-#set screen title if not connected remotely
-#if [ "$STY" != "" ]; then
-screen_precmd() {
-    #a bell, urgent notification trigger
-    #echo -ne '\a'
-    #title "`print -Pn "%~" | sed "s:\([~/][^/]*\)/.*/:\1...:"`" "$TERM $PWD"
-    title "`print -Pn "%~" |sed "s:\([~/][^/]*\)/.*/:\1...:;s:\([^-]*-[^-]*\)-.*:\1:"`" "$TERM $PWD"
-    echo -ne '\033[?17;0;127c'
-}
-
-screen_preexec() {
-    local -a cmd; cmd=(${(z)1})
-    case $cmd[1]:t in
-        'ssh')          title "@""`echo $cmd[2]|sed 's:.*@::'`" "$TERM $cmd";;
-        'sudo')         title "#"$cmd[2]:t "$TERM $cmd[3,-1]";;
-        'for')          title "()"$cmd[7] "$TERM $cmd";;
-        'ls'|'ll')      ;;
-        *)              title $cmd[1]:t "$TERM $cmd[2,-1]";;
-    esac
-}
-
-#}}}
-
-#{{{-----------------define magic function arrays--------------------------
-if ! (is-at-least 4.3); then
-    #the following solution should work on older version <4.3 of zsh.
-    #The "function" keyword is essential for it to work with the old zsh.
-    #NOTE these function fails dynamic screen title, not sure why
-    #CentOS stinks.
-    function precmd() {
-        screen_precmd
-    }
-
-    function preexec() {
-        screen_preexec
-        pwd_color_preexec
-    }
-
-    function chpwd() {
-        pwd_color_chpwd
-    }
-else
-    #this works with zsh 4.3.*, will remove the above ones when possible
-    typeset -ga preexec_functions precmd_functions chpwd_functions
-    precmd_functions+=screen_precmd
-    preexec_functions+=screen_preexec
-    preexec_functions+=pwd_color_preexec
-    chpwd_functions+=pwd_color_chpwd
-fi
-
-#}}}
-
-# }}}
-
-# 提示符 {{{
-if [ "$SSH_TTY" = "" ]; then
-    local host="$pB$pfg_magenta%m$pR"
-else
-    local host="$pB$pfg_red%m$pR"
-fi
-local user="$pB%(!:$pfg_red:$pfg_green)%n$pR"       #different color for privileged sessions
-local symbol="$pB%(!:$pfg_red# :$pfg_yellow> )$pR"
-local job="%1(j,$pfg_red:$pfg_blue%j,)$pR"
-#PROMPT='$user$pfg_yellow@$pR$host$job$symbol'
-#PROMPT2="$PROMPT$pfg_cyan%_$pR $pB$pfg_black>$pR$pfg_green>$pB$pfg_green>$pR "
-#NOTE  **DO NOT** use double quote , it does not work
-typeset -A altchar
-set -A altchar ${(s..)terminfo[acsc]}
-PR_SET_CHARSET="%{$terminfo[enacs]%}"
-PR_SHIFT_IN="%{$terminfo[smacs]%}"
-PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
-#PR_RSEP=$PR_SET_CHARSET$PR_SHIFT_IN${altchar[\`]:-|}$PR_SHIFT_OUT
-#RPROMPT='$__PROMPT_PWD'
-
-# SPROMPT - the spelling prompt
-SPROMPT="${pfg_yellow}zsh$pR: correct '$pfg_red$pB%R$pR' to '$pfg_green$pB%r$pR' ? ([${pfg_cyan}Y$pR]es/[${pfg_cyan}N$pR]o/[${pfg_cyan}E$pR]dit/[${pfg_cyan}A$pR]bort) "
-
-#行编辑高亮模式 {{{
-if (is-at-least 4.3); then
-    zle_highlight=(region:bg=magenta
-                   special:bold,fg=magenta
-                   default:bold
-                   isearch:underline
-                   )
-fi
-#}}}
-
-# }}}
-
-# 键盘定义及键绑定 {{{
-#bindkey "\M-v" "\`xclip -o\`\M-\C-e\""
-# 设置键盘 {{{
-# create a zkbd compatible hash;
-# to add other keys to this hash, see: man 5 terminfo
 autoload -U zkbd
-bindkey -e      #use emacs style keybindings :(
-typeset -A key  #define an array
-
-#if zkbd definition exists, use defined keys instead
-if [[ -f ~/.zkbd/${TERM}-${DISPLAY:-$VENDOR-$OSTYPE} ]]; then
-    source ~/.zkbd/$TERM-${DISPLAY:-$VENDOR-$OSTYPE}
-else
-    key[Home]=${terminfo[khome]}
-    key[End]=${terminfo[kend]}
-    key[Insert]=${terminfo[kich1]}
-    key[Delete]=${terminfo[kdch1]}
-    key[Up]=${terminfo[kcuu1]}
-    key[Down]=${terminfo[kcud1]}
-    key[Left]=${terminfo[kcub1]}
-    key[Right]=${terminfo[kcuf1]}
-    key[PageUp]=${terminfo[kpp]}
-    key[PageDown]=${terminfo[knp]}
-    for k in ${(k)key} ; do
+bindkey -e      # emacs style
+typeset -A key
+key[Home]=${terminfo[khome]}
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+for k in ${(k)key} ; do
         # $terminfo[] entries are weird in ncurses application mode...
-        [[ ${key[$k]} == $'\eO'* ]] && key[$k]=${key[$k]/O/[}
-    done
-fi
+  [[ ${key[$k]} == $'\eO'* ]] && key[$k]=${key[$k]/O/[}
+done
 
 # setup key accordingly
 [[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
@@ -349,34 +149,11 @@ fi
 [[ -n "${key[Left]}"    ]]  && bindkey  "${key[Left]}"    backward-char
 [[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
 
-# }}}
-
-# 键绑定  {{{
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-#bindkey "" history-beginning-search-backward-end
-#bindkey "" history-beginning-search-forward-end
-bindkey -M viins "" history-beginning-search-backward-end
-bindkey -M viins "" history-beginning-search-forward-end
-bindkey '[1;5D' backward-word     # C-left
-bindkey '[1;5C' forward-word      # C-right
-
 autoload -U edit-command-line
 zle -N      edit-command-line
 bindkey '\ee' edit-command-line
 
-autoload -U url-quote-magic
-zle -N self-insert url-quote-magic
-# }}}
-
-# }}}
-
-# ZLE 自定义widget {{{
-#
-
-# {{{ pressing TAB in an empty command makes a cd command with completion list
-# from linuxtoy.org
+# pressing TAB in an empty command makes a cd command with completion list
 dumb-cd(){
     if [[ -n $BUFFER ]] ; then # 如果该行有内容
         zle expand-or-complete # 执行 TAB 原来的功能
@@ -389,7 +166,7 @@ dumb-cd(){
 zle -N dumb-cd
 bindkey "\t" dumb-cd #将上面的功能绑定到 TAB 键
 
-# {{{ colorize commands
+# colorize commands
 TOKENS_FOLLOWED_BY_COMMANDS=('|' '||' ';' '&' '&&' 'sudo' 'do' 'time' 'strace')
 
 recolor-cmd() {
@@ -424,10 +201,7 @@ check-cmd-backward-delete-char() { zle .backward-delete-char && recolor-cmd }
 zle -N self-insert check-cmd-self-insert
 zle -N backward-delete-char check-cmd-backward-delete-char
 
-# 拼音补全
-function _pinyin() { reply=($($HOME/bin/chsdir 0 $*)) }
-
-# {{{ double ESC to prepend "sudo"
+# double ESC to prepend "sudo"
 sudo-command-line() {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
@@ -436,92 +210,42 @@ sudo-command-line() {
 zle -N sudo-command-line
 #定义快捷键为： [Esc] [Esc]
 bindkey "\e\e" sudo-command-line
-# }}}
 
-# {{{ c-z to continue
-bindkey -s "" "fg\n"
-# }}}
 
-# {{{ esc-enter to run program in screen split region
-function run-command-in-split-screen() {
-    screen -X eval \
-        "focus bottom" \
-        split \
-        "focus bottom" \
-        "screen $HOME/bin/screen_run $BUFFER" \
-        "focus top"
-    zle kill-buffer
-}
-zle -N run-command-in-split-screen
-bindkey "\e\r" run-command-in-split-screen
-# }}}
+PROMPT=$'%F{blue}\u256d\u2500\e%F{CYAN}\e%B%F{cyan}%n \e%F{white}@ \e%B%F{magenta}%m \e%F{white}>>= \e%B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{\e%F{red}%}%# %{\e${RESET}%}'
+WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/tmp/.zsh_history
 
-# }}}
-
-# 环境变量及其他参数 {{{
-# number of lines kept in history
-export HISTSIZE=10000
-# number of lines saved in the history after logout
-export SAVEHIST=10000
-# location of history
-export HISTFILE=~/tmp/.zsh_history
 export MENUCONFIG_COLOR=blackbg
+export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 
 export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+PATH=$PATH:~/.npm/coffee-script/1.3.3/package/bin
 unset RUBYOPT
-export PATH=$PATH:~/.npm/coffee-script/1.3.3/package/bin
-#export PATH=$PATH:/opt/scala-2.10.0-M2/bin
-#export PATH=$PATH:/opt/icedtea-bin-7.2.0/bin
-export EDITOR=vim
-export VISUAL=vim
-export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
-export INPUTRC=$HOME/.inputrc
 
-#MOST like colored man pages
-export PAGER=less
-# export LESS_TERMCAP_md=$'\E[1;31m'      #bold1
-# export LESS_TERMCAP_mb=$'\E[1;31m'
-# export LESS_TERMCAP_me=$'\E[m'
-# export LESS_TERMCAP_so=$'\E[01;7;34m'  #search highlight
-# export LESS_TERMCAP_se=$'\E[m'
-# export LESS_TERMCAP_us=$'\E[1;2;32m'    #bold2
-# export LESS_TERMCAP_ue=$'\E[m'
 export LESS="-M -i -R --shift 5"
 export LESSCHARSET=utf-8
-export READNULLCMD=less
-# In archlinux the pipe script is in PATH, how ever in debian it is not
-(bin-exist src-hilite-lesspipe.sh) && export LESSOPEN="| src-hilite-lesspipe.sh %s"
-[ -x /usr/share/source-highlight/src-hilite-lesspipe.sh ] && export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
-
-#for ConTeX
-#source $HOME/.context_env /home/roylez/soft/ConTeXt/tex
-
-#for gnuplot, avoid locate!!!
-#export GDFONTPATH=$(dirname `locate DejaVuSans.ttf | tail -1`)
-[[ -n $DISPLAY ]] && export GDFONTPATH=/usr/share/fonts/TTF
 
 # redefine command not found
 (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
 
-# }}}
-
-source $EPREFIX/etc/profile.d/autojump.zsh
 eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
 bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
 bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
 bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
+alias o='fasd -fe xdg-open'
+alias sv='fasd -fe "sudo vim"'
+alias e='fasd -fe "emacsclient -c -n"'
+alias j='fasd_cd -d'
+alias m='fasd -fe mplayer'
+if [[ -n $MYSELF ]]; then
+  alias v='fasd -fe "vim --servername GVIM --remote-tab-silent"'
+else
+  alias v='fasd -fe vim'
+fi
 
-# 读入其他配置 {{{
-
-# 主机特定的配置，前置的主要原因是有可能需要提前设置PATH等环境变量
-#   例如在aix主机，需要把 /usr/linux/bin
-#   置于PATH最前以便下面的配置所调用的命令是linux的版本
-[[ -f $HOME/.zshrc.$HOST ]] && source $HOME/.zshrc.$HOST
-[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
-# }}}
-
-# 命令别名 {{{
-# alias and listing colors
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -532,15 +256,15 @@ alias mv='mv -i -v'
 alias rm='rm -i -v'
 alias psg='ps aux|grep'
 alias clip='xsel -ib'
+
 if [ `uname` = 'Linux' ]; then
     alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
-    alias l='ls -l'
-    alias la='l -A'
 else
     alias ls="ls -F"
-    alias l="ls -l"
-    alias la='l -A'
 fi
+alias l="ls -l"
+alias la='l -A'
+
 alias -g A="|awk"
 alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
 alias -g C="|wc"
@@ -552,54 +276,27 @@ alias -g P="|column -t"
 alias -g S="|sort"
 alias -g T="|tail -n $(($LINES-2))"
 alias -g X="|xargs"
-alias -g N='> /dev/null'
 alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
 alias -g MOU='-o users,uid=1000,gid=1000,codepage=936,utf8'
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias fh='firefox ~/haskell/index.html'
 
-# tmux or screen ?
-(bin-exist tmux) && alias s=tmux || alias s=screen
-
-#file types
-(bin-exist apvlv) && alias -s pdf=apvlv
-alias -s ps=gv
-for i in jpg png;           alias -s $i=gqview
-for i in avi rmvb wmv;      alias -s $i=mplayer
-for i in rar zip 7z lzma;   alias -s $i="7z x"
-
-#no correct for mkdir mv and cp
-#for i in mkdir mv cp;       alias $i="nocorrect $i"
-alias find='noglob find'        # noglob for find
-alias grep='grep -I --color=auto'
-alias egrep='egrep -I --color=auto'
-alias cal='cal -3'
-alias freeze='kill -STOP'
-alias ls=$'ls -h --color=auto -X --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
+alias c=cat
+alias L=less
+alias g='grep -I --color=auto'
+alias eg='egrep -I --color=auto'
 alias df='df -Th'
 alias du='du -h'
-#show directories size
-alias dud='du -s *(/)'
-#date for US and CN
-alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done'
-#bloomberg radio
-alias bloomberg='mplayer mms://media2.bloomberg.com/wbbr_sirus.asf'
-alias pyprof='python -m cProfile'
-alias python='nice python'
-alias info='info --vi-keys'
+alias dud='du -s *(/)' #show directories size
+alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
 alias rsync='rsync --progress --partial'
 alias port='netstat -ntlp'
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias e='emacsclient -c -t'
 if [[ -n $MYSELF ]]; then
-  alias v='vim --servername GVIM --remote-tab-silent'
   alias eme='sudo emerge -1 --keep-going'
 else
-  alias v='vim'
+  alias v='fasd -fe vim'
   alias eme='emerge -1 --keep-going'
 fi
-alias disp='sudo dispatch-conf'
 alias wgetpaste='wgetpaste -C'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 alias 2pdf='libreoffice --headless --convert-to pdf'
@@ -607,139 +304,45 @@ alias 2csv='libreoffice --headless --convert-to csv'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias ntp='sudo /etc/init.d/ntp-client start'
-alias df='df -hT'
 alias luit='luit -encoding gbk'
-alias c=cat
-alias L=less
-alias x=xargs
 alias dropboxd=/opt/dropbox/dropboxd
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
-alias sv='sudo vim'
+
+# gentoo specific
 alias peme='sudo proxychains emerge -1'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge-fetch.log'
 alias ei='eix -uI --only-names'
 alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
+alias disp='sudo dispatch-conf'
 
+# global aliases
 alias -g EG='|& egrep'
 alias -g EH='|& head'
 alias -g ET='|& tail'
 alias -g G='| egrep'
 alias -g H='| head'
 alias -g T='| tail'
-alias -g NUL='>&- 2>&-'
+alias -g N='> /dev/null'
+alias -g NN='>&- 2>&-'
 alias -g X='| xargs'
 alias -g X0='| xargs -0'
 
-# }}}1
-
-# {{{1 path aliases
-# cd ~p <=> cd /home/ray/projects
-hash -d e='/etc'
-hash -d t='/tmp'
-hash -d d="/home/ray/Documents"
-hash -d a="/home/ray/algo"
-hash -d p="/home/ray/projects"
-hash -d u='/usr'
-hash -d us='/usr/share'
-hash -d usd='/usr/share/doc'
-hash -d h='/var/lib/layman/haskell'
-#export CDPATH=$HOME:/usr/share:$HOME/Documents:$HOME/algo
-# }}}1
-
-# {{{1 suffix aliases
-for i in jpg png gif; alias -s $i=display
-for i in rar zip 7z lzma; alias -s $i="7z x"
-for i in odf doc; alias -s $i=lowriter
-for i in c cpp h; alias -s $i=e
+# suffix aliases
+for i in jpg png gif; alias -s $i=feh
+for i in avi rmvb wmv; alias -s $i=mplayer
+for i in xlsx xls ppt pptx docx doc; alias -s $i=libreoffice
 for i in pdf ps; alias -s $i=evince
 for i in html htm xml; alias -s $i=firefox
-# }}}1
 
+zle_highlight=(region:bg=magenta
+  special:bold,fg=magenta
+  default:bold
+  isearch:underline
+)
 
-
-
-RESET='[00m'
-RED='[01;31m'
-GREEN='[01;32m'
-YELLOW='[01;33m'
-BLUE='[01;34m'
-MAGENTA='[01;35m'
-CYAN='[01;36m'
-WHITE='[01;37m'
-UNDERLINE='[04m'
-
-header()
-{
-  begin_str=">>>"
-  end_str=">>>"
-  banner="Gentoo Linux"
-  length=$((${COLUMNS} - 1 - ${#begin_str} - ${#end_str} - ${#banner} - 2))
-  half=$(($length / 2))
-  line=`printf '%*s' $half`
-  echo -en "%{\e${RED}%}${begin_str}\e${WHITE}${line// /-}[\e${MAGENTA}${banner}\e${WHITE}]${line// /-}\e${RED}${end_str}\e${RESET}"
-}
-
-get_hg_repos_id()
-{
-  hg id -bint 2> /dev/null
-}
-
-get_git_repos_branch()
-{
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1/"
-}
-
-get_git_repos_id()
-{
-  git log --oneline -1
-}
-
-repos_info()
-{
-  HG_REPOS_ID="$(get_hg_repos_id)"
-  if [ "${HG_REPOS_ID}" ]
-  then
-    echo "\n\e${WHITE}[\e${CYAN}Mercurial\e${WHITE}] Revision ID \e${YELLOW}${HG_REPOS_ID}"
-  else
-    GIT_REPOS_BRANCH="$(get_git_repos_branch)"
-    if [ "${GIT_REPOS_BRANCH}" ]
-    then
-	GIT_REPOS_ID="$(get_git_repos_id)"
-	echo "\n\e${WHITE}[\e${CYAN}Git\e${WHITE}] Current Branch \e${YELLOW}${GIT_REPOS_BRANCH}\e${WHITE} Commit SHA1 \e${YELLOW}${GIT_REPOS_ID}"
-    else
-      echo
-    fi
-  fi
-}
-
-get_repos_info()
-{
-    echo "$(repos_info)"
-}
-
-my_prompt()
-{
-    echo -en "\e${BLUE}\u256d\u2500\e${CYAN}\e${GREEN}%n \e${RESET}at \e${WHITE}%m \e${RESET}>>= \e${BLUE}%d"
-    echo '\n\u2570\u2500%(?..[$: %?] )%{\e${RED}%}%(#.#.%%) %{\e${RESET}%}'
-}
-
-autoload -U promptinit colors
-promptinit
-colors
-
-typeset -ga chpwd_functions
-PROMPT="$(my_prompt)"
-#chpwd_functions+='get_repos_info'
-
-MAIL=/var/spool/mail/ray && export MAIL
-export MASTER_SITE_OVERRIDE=ftp://ftp.freebsdchina.org/pub/FreeBSD/ports/distfiles/${DIST_SUBDIR}/
-
-bindkey -s '^zh' "htop\n"
-bindkey -s '^zl' "ls\n"
-bindkey -s '^zL' "l\n"
-bindkey -s '^zp' "import /tmp/screen.jpg\n"
+bindkey -s "" "fg\n"
 bindkey -s "^zw" "(ip l sh wlan0 | grep -q DOWN; a=\${\${?/0/up}/1/down}; ip l s wlan0 \$a; echo \$a)\n"
 bindkey -s '^zP' "sleep 3 && import -window root /tmp/screen.jpg\n"
 cowfiles=(/usr/share/cowsay-3.03/cows/*)
