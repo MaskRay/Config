@@ -1,5 +1,6 @@
 # compilers, interpreters
 sys-devel/gcc:4.7 go
+dev-lang/erlang doc hipe
 dev-lang/python sqlite
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
@@ -23,3 +24,5 @@ dev-db/sqlite doc soundex
 dev-libs/boehm-gc threads
 
 app-doc/doxygen latex dot
+
+dev-lang/R doc

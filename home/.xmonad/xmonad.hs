@@ -266,18 +266,18 @@ myKeys =
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
-    , ("C-' f", namedScratchpadAction scratchpads "falcon")
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' l", namedScratchpadAction scratchpads "lua")
 
     , ("C-' o", namedScratchpadAction scratchpads "ocaml")
+    , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' j", namedScratchpadAction scratchpads "node")
+    , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
-    , ("C-' e", namedScratchpadAction scratchpads "eix-sync")
     , ("C-' m", namedScratchpadAction scratchpads "getmail")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
 
@@ -301,24 +301,16 @@ myKeys =
     searchBindings
 
 scratchpads =
-  [ NS "falcon" (urxvt "falcon -i") (title =? "falcon") doSPFloat
-  , NS "ghci" "urxvtc -T ghci -e ghci" (title =? "ghci") doSPFloat
-  , NS "gst" "urxvtc -T gst -e gst" (title =? "gst") doSPFloat
-  , NS "node" (urxvt "node") (title =? "node") doSPFloat
-  , NS "ipython" "urxvtc -T ipython -e ipython" (title =? "ipython") doSPFloat
-  , NS "irb" "urxvtc -T irb -e rlwrap irb" (title =? "irb") doSPFloat
-  , NS "lua" "urxvtc -T lua -e lua" (title =? "lua") doSPFloat
-  , NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
-  , NS "pry" "urxvtc -T pry -e pry run" (title =? "pry") doSPFloat
-  , NS "alsamixer" "urxvtc -T alsamixer -e alsamixer" (title =? "alsamixer") doLeftFloat
+  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop"] ++
+  [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
-  , NS "htop" "urxvtc -T htop -e htop" (title =? "htop") doSPFloat
   ]
   where
     urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+    f s = NS s (urxvt s) (title =? s) doSPFloat
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)

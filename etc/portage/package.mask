@@ -1,0 +1,7 @@
+sys-kernel/*-sources
+>dev-lang/ghc-7.4.1
+>app-emulation/wine-1.5.3
+>app-office/libreoffice-bin-3.5.2.2
+>app-emulation/qemu-kvm-1.0-r2
+>sys-libs/glibc-2.15-r1
+

@@ -3,9 +3,11 @@ app-text/texlive
 dev-db/sqlite
 dev-haskell/cabal-install
 dev-lang/fpc
+dev-lang/erlang
 dev-lang/ghc
 dev-lang/ocaml
 dev-lang/gnu-smalltalk
+dev-lang/R
 dev-lisp/sbcl
 dev-python/markdown
 dev-scheme/guile
