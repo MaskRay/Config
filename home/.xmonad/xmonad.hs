@@ -176,6 +176,19 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
     ]
 
+-- A customized prompt
+data AppPrompt = AppPrompt String
+instance XPrompt AppPrompt where
+    showXPrompt (AppPrompt n) = n ++ " "
+
+{- | Get the user's response to a prompt an launch an application using the
+   input as command parameters of the application.-}
+launchApp :: XPConfig -> String -> X ()
+launchApp config app = mkXPrompt (AppPrompt app) config (getShellCompl []) $ launch app
+  where
+    launch :: MonadIO m => String -> String -> m ()
+    launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
+
 myKeys =
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "1234567890-="
@@ -193,8 +206,7 @@ myKeys =
     ++
     [("M-" ++ m ++ k, screenWorkspace sc >>= flip whenJust (windows . f))
         | (k, sc) <- zip ["w", "e", "r"] [0..]
-        --, (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
-        , (f, m) <- [(W.view, ""), (W.shift, "S-")]
+        , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
     ]
     ++
     [ ("M-S-q", io exitFailure)
@@ -294,8 +306,8 @@ myKeys =
     , ("M-p d", changeDir myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p e", AL.launchApp myXPConfig "evince")
-    , ("M-p f", AL.launchApp myXPConfig "feh")
+    , ("M-p e", launchApp myXPConfig "evince")
+    , ("M-p f", launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
@@ -400,6 +412,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       , mk "w" "http://en.wikipedia.org/wiki/Special:Search?go=Go&search="
       , mk "d" "http://duckduckgo.com/?q="
       , mk "m" "https://developer.mozilla.org/en-US/search?q="
+      , mk "e" "http://erldocs.com/R15B/mnesia/mnesia.html?search="
       , mk "r" "http://www.ruby-doc.org/search.html?sa=Search&q="
       , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "s" "https://scholar.google.de/scholar?q="

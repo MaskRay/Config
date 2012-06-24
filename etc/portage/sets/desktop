@@ -25,8 +25,6 @@ x11-apps/xlsfonts
 x11-base/xorg-server
 x11-libs/libnotify
 x11-misc/dmenu
-x11-misc/gmrun
-x11-misc/slim
 x11-misc/wmctrl
 x11-misc/x11vnc
 x11-misc/xbindkeys
@@ -34,6 +32,7 @@ x11-misc/xcalib
 x11-misc/xdotool
 x11-misc/xscreensaver
 x11-misc/xsel
+x11-terms/rxvt-unicode
 x11-terms/xterm
 x11-wm/xmonad
 x11-wm/xmonad-contrib

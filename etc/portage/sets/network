@@ -4,13 +4,11 @@ net-analyzer/nmap
 net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient
-net-firewall/arptables
 net-firewall/iptables
 net-fs/samba
 net-ftp/lftp
-net-ftp/vsftpd
 net-im/bitlbee
-net-irc/irssi
+net-irc/weechat
 net-misc/aria2
 net-misc/autossh
 net-misc/bridge-utils

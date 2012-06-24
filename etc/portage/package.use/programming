@@ -1,6 +1,6 @@
 # compilers, interpreters
 sys-devel/gcc:4.7 go
-dev-lang/erlang doc hipe
+dev-lang/erlang doc hipe kpoll
 dev-lang/python sqlite
 dev-lang/gprolog doc examples
 dev-lang/tcl threads
