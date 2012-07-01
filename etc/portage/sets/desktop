@@ -1,7 +1,6 @@
 app-emulation/wine
 app-i18n/fcitx
 app-i18n/fcitx-configtool
-app-i18n/fcitx-sunpinyin
 app-office/libreoffice-bin
 app-text/evince
 app-text/poppler-data

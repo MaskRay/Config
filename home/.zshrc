@@ -293,6 +293,7 @@ alias rsync='rsync --progress --partial'
 alias port='netstat -ntlp'
 if [[ -n $MYSELF ]]; then
   alias eme='sudo emerge -1 --keep-going'
+  alias deme='sudo FEATURE=distcc emerge -1 --keep-going'
 else
   alias v='fasd -fe vim'
   alias eme='emerge -1 --keep-going'

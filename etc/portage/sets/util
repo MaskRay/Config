@@ -18,6 +18,7 @@ games-misc/bsd-games
 games-misc/cowsay
 games-misc/fortune-mod
 media-gfx/imagemagick
+net-misc/unison
 sys-apps/mlocate
 sys-devel/bc
 sys-fs/encfs

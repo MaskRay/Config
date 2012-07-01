@@ -1,9 +1,7 @@
 sys-kernel/*-sources
 >dev-lang/ghc-7.4.1
 >app-emulation/wine-1.5.3
->app-office/libreoffice-bin-3.5.2.2
->app-emulation/qemu-kvm-1.0-r2
 >sys-libs/glibc-2.15-r1
-dev-lang/mono
 >dev-lang/v8-3.9.24.28
-dev-libs/boost
+
+>=net-analyzer/wireshark-1.8.0
