@@ -15,7 +15,7 @@ for f in $files; do
   mkdir -p "${g%/*}"
   if ! [[ -L "$g" ]]; then
     if [[ ! -f "$g" || "$f" -nt "$g" ]]; then
-      cp "$f" "$g"
+      ln -sf "$PWD/$f" "$g"
     else
       if ! diff -q "$f" "$g"; then
 	vimdiff "$f" "$g"
