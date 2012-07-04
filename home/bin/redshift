@@ -1,0 +1,2 @@
+#!/bin/sh
+pkill -f -0 gtk-redshift || gtk-redshift -l 39.9:116.4 &

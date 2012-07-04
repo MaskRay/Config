@@ -1,0 +1,7 @@
+#!/usr/bin/env ocaml
+
+Random.self_init ();;
+
+(* randomly choose a wallpaper *)
+let pics = Sys.readdir "/home/ray/wallpapers";;
+Sys.command ("feh --bg-scale /home/ray/wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &")

@@ -10,18 +10,20 @@ let singleton s =
   let comm =
     try String.sub s 0 (String.index s ' ')
     with Not_found -> s
-  in "ps -ef " ^ comm ^ " | grep " ^ comm ^ " || " ^ s;;
+  in "killall -0 -r " ^ comm ^ " || " ^ s;;
 
 List.map Sys.command [
   (* resident *)
-  singleton "tmux new -d -s irssi -n irssi irssi \\; new -d -s default -t irssi \\; new-window"
+  singleton "tmux new -d -s weechat -n weechat weechat-curses \\; new -d -s default -t weechat\\; new-window"
   ; singleton "parcellite &"
-  ; singleton "gtk-redshift -l 39.9:116.4 &"
   ; singleton "fcitx &"
 
   (* one-shot *)
+  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI-0 --mode 1920x1080 --output LVDS --right-of HDMI-0 --off; }"
+  ; "LC_ALL= LC_CTYPE=zh_CN.UTF-8 emacs --daemon"
   ; "xrdb ~/.Xresources"
-  ; "setxkbmap -option ctrl:nocaps"
+  ; "setxkbmap -option ctrl:nocaps -option keypad:pointerkeys"
   ; pic
-  ; "urxvtd -f -q"
+  ; "redshift"
+  ; "urxvtd -f -q -o"
 ];;
