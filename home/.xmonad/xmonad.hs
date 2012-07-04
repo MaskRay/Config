@@ -6,6 +6,7 @@
 
 import Control.Monad
 import Codec.Binary.UTF8.String (encodeString)
+import Data.Char
 import Data.List
 import qualified Data.Map as M
 import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
@@ -21,6 +22,7 @@ import Text.Regex
 
 import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
+import XMonad.Util.ExtensibleState as XS
 import XMonad.Util.EZConfig
 import XMonad.Util.Loggers
 import XMonad.Util.NamedWindows (getName)
@@ -31,7 +33,6 @@ import qualified XMonad.Util.Themes as Theme
 import XMonad.Util.WorkspaceCompare
 
 import XMonad.Prompt
-import qualified XMonad.Prompt.AppLauncher as AL
 import XMonad.Prompt.Input
 import XMonad.Prompt.Man
 import XMonad.Prompt.RunOrRaise
@@ -57,6 +58,7 @@ import XMonad.Actions.WindowMenu
 import XMonad.Actions.WithAll (killAll)
 
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -178,14 +180,6 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
     ]
 
-{- | Get the user's response to a prompt an launch an application using the
-   input as command parameters of the application.-}
-launchApp :: XPConfig -> String -> X ()
-launchApp config app = mkXPrompt (TitledPrompt app) config (getShellCompl []) $ launch app
-  where
-    launch :: MonadIO m => String -> String -> m ()
-    launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
-
 myKeys =
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "1234567890-="
@@ -287,7 +281,7 @@ myKeys =
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
-    , ("C-' m", namedScratchpadAction scratchpads "getmail")
+    , ("C-' m", namedScratchpadAction scratchpads "mpc")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
@@ -299,19 +293,19 @@ myKeys =
 
     -- prompts
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
-    -- , ("M-p c", prompt ("urxvtc -e") myXPConfig)
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
+    , ("M-p f", fadePrompt myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", launchApp myXPConfig "evince")
-    , ("M-p f", launchApp myXPConfig "feh")
+    , ("M-p F", launchApp myXPConfig "feh")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
 
 scratchpads =
-  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop"] ++
+  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview"] ++
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
@@ -330,7 +324,7 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
-myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig dzen = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvtc"
     , focusFollowsMouse  = False
     , borderWidth        = 1
@@ -341,10 +335,25 @@ myConfig xmobar = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgen
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = mempty
-    , logHook            = updatePointer (Relative 0.5 0.5) >> myDynamicLog xmobar
-    , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling"
+    , logHook            = fadeOutLogHook myFadeHook >> updatePointer (Relative 0.5 0.5) >> myDynamicLog dzen
+    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
+
+defaultFade = 8/10
+data FadeState = FadeState Rational (M.Map Window Rational) deriving (Typeable,Read,Show)
+instance ExtensionClass FadeState where
+  initialValue = FadeState defaultFade M.empty
+  extensionType = PersistentExtension
+
+myFadeHook :: Query Rational
+myFadeHook = do
+  w <- ask
+  FadeState fadeUnfocused fadeSet <- liftX XS.get 
+  case M.lookup w fadeSet of
+    Just v -> return v
+    Nothing -> do
+      b <- isUnfocused
+      return $ if b then fadeUnfocused else 1
 
 myPromptKeymap = M.union defaultXPKeymap $ M.fromList
                  [
@@ -477,7 +486,17 @@ myTopics =
 myCommands =
     [ ("getmail", namedScratchpadAction scratchpads "getmail")
     , ("wallpaper", safeSpawn "change-wallpaper" [])
+    , ("fade", fadePrompt myXPConfig)
     ]
+
+fadePrompt xpc = withFocused $ \w -> do
+  mkXPrompt (TitledPrompt "fade to") xpc (\s -> return [show x | x <- [0..10], s `isPrefixOf` show x]) $ \i -> do
+    let v = read i :: Int
+    FadeState u s <- XS.get
+    XS.put . FadeState u $ if all isDigit i && 0 <= v && v <= 10
+      then M.insert w (toRational v/10) s
+      else M.delete w s
+
 
 data TitledPrompt = TitledPrompt String
 
@@ -495,3 +514,11 @@ mkCommandPrompt xpc cs = do
 mainCommandPrompt xpc = do
   defs <- defaultCommands
   mkCommandPrompt xpc $ nubBy ((==) `on` fst) $ myCommands ++ defs
+
+{- | Get the user's response to a prompt an launch an application using the
+   input as command parameters of the application.-}
+launchApp :: XPConfig -> String -> X ()
+launchApp config app = mkXPrompt (TitledPrompt app) config (getShellCompl []) $ launch app
+  where
+    launch :: MonadIO m => String -> String -> m ()
+    launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
