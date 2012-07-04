@@ -9,6 +9,7 @@ import Codec.Binary.UTF8.String (encodeString)
 import Data.List
 import qualified Data.Map as M
 import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
+import Data.Function
 import Data.Monoid
 import System.Exit
 import System.IO
@@ -38,6 +39,7 @@ import XMonad.Prompt.Shell
 import XMonad.Prompt.Window
 import XMonad.Prompt.Workspace
 
+import XMonad.Actions.Commands
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
@@ -176,15 +178,10 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
     ]
 
--- A customized prompt
-data AppPrompt = AppPrompt String
-instance XPrompt AppPrompt where
-    showXPrompt (AppPrompt n) = n ++ " "
-
 {- | Get the user's response to a prompt an launch an application using the
    input as command parameters of the application.-}
 launchApp :: XPConfig -> String -> X ()
-launchApp config app = mkXPrompt (AppPrompt app) config (getShellCompl []) $ launch app
+launchApp config app = mkXPrompt (TitledPrompt app) config (getShellCompl []) $ launch app
   where
     launch :: MonadIO m => String -> String -> m ()
     launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
@@ -302,7 +299,8 @@ myKeys =
 
     -- prompts
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
-    , ("M-p c", prompt ("urxvtc -e") myXPConfig)
+    -- , ("M-p c", prompt ("urxvtc -e") myXPConfig)
+    , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
@@ -317,6 +315,7 @@ scratchpads =
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
+  , NS "mpc" "urxvtc -T mpc -e ncmpcpp" (title =? "mpc") doCenterFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   ]
@@ -473,3 +472,26 @@ myTopics =
     ]
   where
     urxvt prog = spawn . ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+
+
+myCommands =
+    [ ("getmail", namedScratchpadAction scratchpads "getmail")
+    , ("wallpaper", safeSpawn "change-wallpaper" [])
+    ]
+
+data TitledPrompt = TitledPrompt String
+
+instance XPrompt TitledPrompt where
+    showXPrompt (TitledPrompt t)  = t ++ ": "
+    commandToComplete _ c   = c
+    nextCompletion    _     = getNextCompletion
+
+mkCommandPrompt :: XPConfig -> [(String, X ())] -> X ()
+mkCommandPrompt xpc cs = do
+    mkXPrompt (TitledPrompt "Command") xpc compl $ \i -> whenJust (find ((==i) . fst) cs) snd
+  where
+    compl s = return . filter (searchPredicate xpc s) . map fst $ cs
+
+mainCommandPrompt xpc = do
+  defs <- defaultCommands
+  mkCommandPrompt xpc $ nubBy ((==) `on` fst) $ myCommands ++ defs
