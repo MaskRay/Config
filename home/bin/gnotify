@@ -1,3 +1,8 @@
-#!/usr/bin/env python2
-import gntp.notifier, sys
-gntp.notifier.mini(sys.stdin.read())
+#!/usr/bin/env ruby19
+# title: ARGV[0]
+# message: ARGV[1] || STDIN.read
+
+require 'ruby-growl'
+g = Growl.new 'localhost', 'ruby-growl'
+g.add_notification 'a'
+g.notify 'a', ARGV[0], ARGV[1] || STDIN.read

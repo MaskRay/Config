@@ -1,5 +1,5 @@
 # compilers, interpreters
-sys-devel/gcc:4.7 go
+sys-devel/gcc:4.7 go gcj
 dev-lang/erlang doc hipe kpoll
 dev-lang/python sqlite
 dev-lang/gprolog doc examples

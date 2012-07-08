@@ -130,6 +130,7 @@ myManageHook = composeAll $
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "net" | c <- ["Wpa_gui", "TUNET64"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
+    [ className =? "Do" --> doIgnore ] ++
     [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
@@ -422,6 +423,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       , mk "m" "https://developer.mozilla.org/en-US/search?q="
       , mk "e" "http://erldocs.com/R15B/mnesia/mnesia.html?search="
       , mk "r" "http://www.ruby-doc.org/search.html?sa=Search&q="
+      , mk "p" "http://docs.python.org/search.html?check_keywords=yes&area=default&q="
       , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "s" "https://scholar.google.de/scholar?q="
       , mk "dict" "http://www.dict.cc/?s="

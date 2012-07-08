@@ -3,6 +3,10 @@ sci-visualization/gnuplot emacs wxwidgets examples doc
 sci-mathematics/sage mpc
 sci-mathematics/maxima latex ecl
 
+dev-python/matplotlib doc
+dev-python/scipy doc
+dev-python/numpy doc
+
 #required by sci-mathematics/sage-4.7.2, required by sci-mathematics/sage-notebook-0.8.23-r1
 =sci-libs/linbox-1.1.6-r4 sage
 #required by sci-mathematics/sage-4.7.2, required by sci-mathematics/sage-notebook-0.8.23-r1
