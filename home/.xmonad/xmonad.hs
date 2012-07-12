@@ -41,6 +41,7 @@ import XMonad.Prompt.Window
 import XMonad.Prompt.Workspace
 
 import XMonad.Actions.Commands
+import XMonad.Actions.CycleRecentWS
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
@@ -224,6 +225,7 @@ myKeys =
     , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
 
     -- window management
+    , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
     , ("M-n", doTo Next EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
     , ("M-<Space>", sendMessage NextLayout)
     , ("M-i", sendMessage Shrink)
@@ -282,7 +284,7 @@ myKeys =
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
-    , ("C-' m", namedScratchpadAction scratchpads "mpc")
+    , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
@@ -299,18 +301,17 @@ myKeys =
     , ("M-p f", fadePrompt myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p e", launchApp myXPConfig "evince")
-    , ("M-p F", launchApp myXPConfig "feh")
+    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
+    , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
 
 scratchpads =
-  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview"] ++
+  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
-  , NS "mpc" "urxvtc -T mpc -e ncmpcpp" (title =? "mpc") doCenterFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   ]
@@ -517,10 +518,15 @@ mainCommandPrompt xpc = do
   defs <- defaultCommands
   mkCommandPrompt xpc $ nubBy ((==) `on` fst) $ myCommands ++ defs
 
+getFilesWithExt :: [String] -> String -> IO [String]
+getFilesWithExt exts s = fmap lines $ runProcessWithInput "sh" [] ("ls -d -- " ++ s ++ "*/ " ++ s ++ "*." ++ f ++ "\n")
+  where
+    f = if length exts == 1 then head exts else ('{':) . (++"}") $ intercalate "," exts
+
 {- | Get the user's response to a prompt an launch an application using the
    input as command parameters of the application.-}
-launchApp :: XPConfig -> String -> X ()
-launchApp config app = mkXPrompt (TitledPrompt app) config (getShellCompl []) $ launch app
+launchApp :: XPConfig -> String -> [String] -> X ()
+launchApp config app exts = mkXPrompt (TitledPrompt app) config (getFilesWithExt exts) $ launch app
   where
     launch :: MonadIO m => String -> String -> m ()
     launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
