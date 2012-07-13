@@ -123,7 +123,7 @@ doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
-    [ className =? c --> doShift "doc" | c <- ["Evince"] ] ++
+    [ className =? c --> doShift "doc" | c <- ["Okular", "Evince"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
@@ -301,7 +301,7 @@ myKeys =
     , ("M-p f", fadePrompt myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
+    , ("M-p o", launchApp myXPConfig "okular" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
@@ -473,10 +473,10 @@ myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
-    , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
+    , TI "doc" "Documents/" (spawn "okular") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
-    , TI "mail" "" (urxvt "mutt" >> urxvt "newsbeuter") "thunderbird.xpm"
+    , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
     , TI "media" "" (return ()) "imagemagick.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
