@@ -1,6 +1,0 @@
-dev-lang/ruby doc examples threads
-dev-ruby/mechanize doc
-dev-ruby/nokogiri doc
-dev-ruby/actionmailer doc
-dev-ruby/tmail doc
-dev-java/jruby -ssl

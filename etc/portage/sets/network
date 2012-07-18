@@ -1,6 +1,8 @@
 net-analyzer/dsniff
+net-analyzer/mtr
 net-analyzer/netcat6
 net-analyzer/nmap
+net-analyzer/scapy
 net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient

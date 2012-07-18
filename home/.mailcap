@@ -1,0 +1,9 @@
+application/msword; catdoc %s; copiousoutput
+
+image/*; feh %s; test=test -n "$DISPLAY"
+image/*; fbi %s
+
+application/pdf; okular %s; test=test -n "$DISPLAY"
+application/pdf; pdftotext -enc UTF-8 %s /dev/stdout; copiousoutput
+
+text/html; t=%{charset} \; w3m -dump -ppc 9 -I ${t/2312/18030} -T text/html %s | sed -n '/[^[:blank:]]/,/^[[:blank:]]*$/p'; copiousoutput

@@ -1,7 +1,9 @@
 set folder=imaps://imap.gmail.com
 unmailboxes *
 mailboxes =INBOX =[Gmail]/Drafts =[Gmail]/'Sent Mail' =[Gmail]/Spam
+set sendmail="sendmail"
 set spoolfile=+INBOX \
+    record=+ \
     postponed=+[Gmail]/Drafts \
     record=+[Gmail]/Drafts \
     smtp_url=smtps://emacsray@smtp.gmail.com \

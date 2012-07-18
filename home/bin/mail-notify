@@ -3,11 +3,16 @@
 TIME = 5000 # notification timeout in milliseconds
 msg = `formail -X From: -X Subject:`
 
-msg =~ /From:\s*([^<]*)/
-from = $1
-msg =~ /Subject:((?>.(?!^From))*)/m
-sub = $1
-sub.gsub! /\s/, ""
+if m = /From:\s*([^<\n]*)/.match(msg)
+  from = m.captures[0]
+else
+  exit 1
+end
+if m = /Subject:((?>.(?!^From))*)/m.match(msg)
+  sub = m.captures[0].gsub /\s/, ''
+else
+  exit 1
+end
 
 # handle MIME encoded-word syntax
 [from, sub].each do |ref|
@@ -24,5 +29,6 @@ end
 
 `pgrep xmonad`.split.each { |pid|
   dbus = `grep -z DBUS_SESSION_BUS_ADDRESS /proc/#{pid}/environ | sed 's/[^=]*=//'`.chop
-  IO.popen([{'DBUS_SESSION_BUS_ADDRESS' => dbus}, 'notify-send', '-c', 'mail', '-t', "#{TIME}", '--', from, sub])
+  IO.popen([{'DBUS_SESSION_BUS_ADDRESS' => dbus}, 'notify-send', '-i', '/home/ray/Icons/mutt-128x128.png', '-c', 'mail', '-t', "#{TIME}", '--', from, sub])
 }
+#IO.popen ['gnotify', from, sub]

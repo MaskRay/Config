@@ -1,5 +1,4 @@
 # compilers, interpreters
-sys-devel/gcc:4.7 go gcj
 dev-lang/erlang doc hipe kpoll
 dev-lang/python sqlite
 dev-lang/gprolog doc examples
@@ -7,9 +6,12 @@ dev-lang/tcl threads
 dev-lang/gnu-smalltalk gmp emacs tk
 dev-lang/swi-prolog doc gmp
 dev-scheme/racket doc future jit
+sys-devel/gcc gcj
 
 # vcs
 dev-vcs/git curl subversion doc tk
+dev-vcs/subversion -dso perl
+
 
 x11-libs/cairo X xcb opengl svg
 

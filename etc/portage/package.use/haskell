@@ -1,8 +1,2 @@
-dev-lang/ghc doc llvm ghcbootstrap
-dev-haskell/* doc hoogle hscolour
-dev-haskell/haddock -hscolour -doc
-dev-haskell/data-lens
-dev-haskell/yesod
-x11-wm/xmonad -doc
-x11-wm/xmonad-contrib -doc
+dev-lang/ghc llvm ghcbootstrap
 app-emacs/ghc-mod emacs

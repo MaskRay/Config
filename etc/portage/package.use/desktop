@@ -15,4 +15,5 @@ media-gfx/fbida fbcon imagemagick
 x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla
 media-gfx/imagemagick webp graphviz
 net-irc/weechat ruby
-net-ftp/proftpd ssl openssl authfile
+net-ftp/proftpd -acl ssl openssl authfile
+dev-java/icedtea-bin nsplugin
