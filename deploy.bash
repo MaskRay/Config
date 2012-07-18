@@ -14,12 +14,11 @@ for f in $files; do
   g="$target/${f/home\//}"
   mkdir -p "${g%/*}"
   if ! [[ -L "$g" ]]; then
-    if [[ ! -f "$g" || "$f" -nt "$g" ]]; then
-      ln -sf "$PWD/$f" "$g"
-    else
+    if [[ -f "$g" || "$f" -ot "$g" ]]; then
       if ! diff -q "$f" "$g"; then
 	vimdiff "$f" "$g"
       fi
     fi
+    ln -sf "$PWD/$f" "$g"
   fi
 done
