@@ -1,9 +1,11 @@
 set folder=~/Maildir
+set realname="Ray Song"
 unmailboxes *
-mailboxes =inbox =drafts =drafts =codejam =gentoo-china =haskell-beginners =contest =shlug =school =toplanguage =rss
-set spoolfile=+inbox \
-    postponed=+drafts \
-    record=+sent \
-    smtp_url=smtps://emacsray@smtp.gmail.com \
-    smtp_pass=$imap_pass \
-    from=emacsray@gmail.com
+mailboxes =INBOX =Tunet =Drafts =Gentoo-china =Haskell =Erlang =Contest =Shlug =School =Toplanguage =Lesson =Ruby =SRT
+set sendmail="sendmail"
+set spoolfile=+INBOX \
+    record=+Sent \
+    postponed=+Drafts
+#    smtp_url=smtps://emacsray@smtp.gmail.com \
+#    smtp_pass=$imap_pass \
+#    from=emacsray@gmail.com

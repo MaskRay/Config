@@ -7,8 +7,6 @@ set imap_user=emacsray@gmail.com
 source ~/.mutt/passwd
 set imap_passive=yes
 set imap_keepalive=300
-my_hdr Bcc: $imap_user
-send-hook tunet_admin@googlegroups.com "my_hdr Cc: issues.tuna@gmail.com"
 
 macro generic \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro generic \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
@@ -50,6 +48,7 @@ bind index h previous-page
 bind index / limit
 bind index <esc>/ show-limit
 bind index l next-page
+bind index <esc>n next-unread-mailbox
 message-hook '!(~g|~G) ~b"^-----BEGIN\ PGP\ (SIGNED\ )?MESSAGE"' "exec check-traditional-pgp"
 set mail_check=120
 set sort=threads
@@ -92,5 +91,5 @@ macro attach s "<save-entry><kill-line>/tmp/<enter>a" "Save attachment"
 #  "<enter-command>set my_cmd = \`$HOME/.mutt/msearch\`<return><enter-command>push \$my_cmd<return>" \
 #  "search mail (using mairix)"
 macro index ,s \
-  "<enter-command>unset wait_key<enter><shell-escape>~/bin/mutt-notmuch<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
+  "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output /tmp/mutt_results --prompt search<enter><change-folder-readonly>/tmp/mutt_results<enter>" \
   "search mail (using notmuch)"
