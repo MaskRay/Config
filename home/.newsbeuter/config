@@ -14,7 +14,3 @@ refresh-on-startup yes
 external-url-viewer "urlview"
 
 urls-source "local"
-
-urls-source "googlereader"
-googlereader-login "your login"
-googlereader-password "your password"
