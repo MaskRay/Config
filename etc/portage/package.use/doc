@@ -1,2 +1,3 @@
 dev-haskell/* doc hoogle hscolour
 dev-lang/ruby doc examples
+net-analyzer/munin doc

@@ -275,6 +275,7 @@ myKeys =
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' l", namedScratchpadAction scratchpads "lua")
 
+    , ("C-' q", namedScratchpadAction scratchpads "swipl")
     , ("C-' o", namedScratchpadAction scratchpads "ocaml")
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
@@ -301,14 +302,14 @@ myKeys =
     , ("M-p f", fadePrompt myXPConfig)
     , ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p o", launchApp myXPConfig "okular" ["pdf","ps"])
+    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
 
 scratchpads =
-  map f ["erl", "ghci", "gst", "node", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
+  map f ["erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
@@ -473,7 +474,7 @@ myTopics =
     [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
-    , TI "doc" "Documents/" (spawn "okular") "evince.xpm"
+    , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
     , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "thunderbird.xpm"
