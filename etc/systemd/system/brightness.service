@@ -1,0 +1,9 @@
+[Unit]
+Description=Set brightness
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "echo 1000 > /sys/class/backlight/intel_backlight/brightness"
+
+[Install]
+WantedBy=multi-user.target

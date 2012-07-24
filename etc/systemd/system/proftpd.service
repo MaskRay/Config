@@ -1,0 +1,11 @@
+[Unit]
+Description=ProFTPd FTP Server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/proftpd
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
