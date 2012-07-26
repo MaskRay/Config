@@ -1,13 +1,8 @@
-app-cdr/cdrkit
-app-shells/bash-completion
 app-shells/zsh
-app-shells/zsh-completion
-net-ftp/vsftpd
 sys-apps/lshw
 sys-apps/man-db
 sys-apps/openrc
 sys-apps/pciutils
-sys-apps/preload
+sys-apps/usbutils
 sys-fs/ntfs3g
 sys-kernel/module-rebuild
-www-servers/nginx

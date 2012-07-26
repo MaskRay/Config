@@ -1,6 +1,5 @@
 app-editors/emacs
 app-text/texlive
-dev-db/mongodb
 dev-db/sqlite
 dev-haskell/cabal-install
 dev-lang/fpc

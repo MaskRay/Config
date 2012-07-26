@@ -1,12 +1,10 @@
+app-text/pandoc
 dev-haskell/cmdargs
 dev-haskell/conduit
+dev-haskell/filesystem-conduit
 dev-haskell/hakyll
 dev-haskell/hakyll-contrib
 dev-haskell/parallel
 dev-haskell/gtk2hs-buildtools
-dev-haskell/hdbc-sqlite
 dev-haskell/hxt
 dev-haskell/pcre-light
-
-
-dev-haskell/filesystem-conduit

@@ -1,5 +1,5 @@
 set folder=~/Maildir
-set realname="Ray Song"
+set realname="Ray"
 unmailboxes *
 mailboxes =INBOX =Tunet =Drafts =Gentoo-china =Haskell =Erlang =Contest =Shlug =School =Toplanguage =Lesson =Ruby =Python =SRT
 set sendmail="sendmail"

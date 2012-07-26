@@ -1,4 +1,6 @@
 app-admin/sudo
+app-shells/bash-completion
+app-shells/zsh-completion
 app-arch/atool
 app-arch/p7zip
 app-misc/abook
