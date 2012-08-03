@@ -79,7 +79,7 @@ set ssl_force_tls = yes
 
 macro index ,i "<change-folder>!<return>" "go to inbox"
 macro index ,h "<change-folder>=Haskell<return>" "go to =Haskell"
-macro index ,t "<change-folder>=Top	<return>" "go to =Toplanguage"
+macro index ,t "<change-folder>=Tunet<return>" "go to =Tunet"
 macro index ,p "<pipe-message>cat > ~/" "save message as"
 macro index ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
 macro index ,r "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"

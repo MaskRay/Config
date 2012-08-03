@@ -9,7 +9,7 @@ dev-scheme/racket doc future jit
 sys-devel/gcc gcj
 
 # vcs
-dev-vcs/git curl subversion doc tk
+dev-vcs/git curl subversion doc tk cgi
 dev-vcs/subversion -dso perl
 
 
