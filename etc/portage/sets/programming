@@ -9,6 +9,7 @@ dev-lang/ocaml
 dev-lang/gnu-smalltalk
 dev-lang/R
 dev-lisp/sbcl
+dev-python/ipython
 dev-python/markdown
 dev-scheme/guile
 dev-tcltk/expect

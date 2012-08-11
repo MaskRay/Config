@@ -209,7 +209,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "LC_ALL= LC_CTYPE=zh_CN.UTF-8 emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -351,7 +351,7 @@ instance ExtensionClass FadeState where
 myFadeHook :: Query Rational
 myFadeHook = do
   w <- ask
-  FadeState fadeUnfocused fadeSet <- liftX XS.get 
+  FadeState fadeUnfocused fadeSet <- liftX XS.get
   case M.lookup w fadeSet of
     Just v -> return v
     Nothing -> do

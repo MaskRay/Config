@@ -20,12 +20,12 @@ List.map Sys.command [
   ; singleton "fcitx &"
 
   (* one-shot *)
-  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI-0 --mode 1920x1080 --output LVDS --right-of HDMI-0 --off; }"
-  ; "LC_ALL= LC_CTYPE=zh_CN.UTF-8 emacs --daemon"
+  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1 --off; }"
   ; "xrdb ~/.Xresources"
   ; "setxkbmap -option ctrl:nocaps -option keypad:pointerkeys"
   ; pic
   ; "redshift"
+  ; "emacs --daemon"
   ; "xcompmgr -c &"
   ; "urxvtd -f -q -o"
 ];;

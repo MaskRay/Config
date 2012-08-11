@@ -104,6 +104,7 @@ URxvt.perl-ext: option-popup,matcher,selection,mark-yank-urls
 URxvt.urlLauncher: firefox
 URxvt.underlineURLs: true
 URxvt.keysym.M-u:       perl:mark-yank-urls:activate_mark_mode
+URxvt.keysym.M-y: perl:mark-and-yank:activate_mark_mode
 
 URxvt.cutchars: `"()'*<>[]{|}"
 

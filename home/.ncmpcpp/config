@@ -1,1 +1,5 @@
 enable_window_title = no
+visualizer_fifo_path = "/run/mpd.fifo"
+visualizer_output_name = "my_fifo"
+visualizer_sync_interval = "1"
+visualizer_type = "spectrum"

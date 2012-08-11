@@ -18,6 +18,7 @@ www-plugins/adobe-flash
 x11-apps/setxkbmap
 x11-apps/xdpyinfo
 x11-apps/xev
+x11-apps/xhost
 x11-apps/xinput
 x11-apps/xkill
 x11-apps/xlsfonts

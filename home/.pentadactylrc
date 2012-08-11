@@ -40,12 +40,12 @@ set previouspattern=\s*上一页|上一张|上页\s*,\bPrev|previous\b,^<$,^(<<|
 set defsearch=google
 set maxitems=5
 
-nnoremap q gT
-nnoremap w gt
-nnoremap j 4j
-nnoremap k 4k
-nnoremap <C-e> 10<C-e>
-nnoremap <C-y> 10<C-e>
+nmap -builtin q gT
+nmap -builtin w gt
+nmap -builtin j 4j
+nmap -builtin k 4k
+nmap -builtin <C-e> 10<C-e>
+nmap -builtin <C-y> 10<C-e>
 
 " Instapaper -- depends on instapaper bookmarklet with `readlater' keyword
 command! instapaper open readlater

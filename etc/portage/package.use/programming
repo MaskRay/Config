@@ -13,6 +13,7 @@ dev-vcs/git curl subversion doc tk cgi
 dev-vcs/subversion -dso perl
 
 
+dev-python/PyQt4 webkit
 x11-libs/cairo X xcb opengl svg
 
 # editors
