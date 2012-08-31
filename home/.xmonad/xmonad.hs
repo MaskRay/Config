@@ -40,6 +40,7 @@ import XMonad.Prompt.Shell
 import XMonad.Prompt.Window
 import XMonad.Prompt.Workspace
 
+import qualified XMonad.Actions.FlexibleManipulate as Flex
 import XMonad.Actions.Commands
 import XMonad.Actions.CycleRecentWS
 import XMonad.Actions.CycleWS
@@ -53,10 +54,11 @@ import XMonad.Actions.Submap
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.TopicSpace
 import XMonad.Actions.UpdatePointer
+import XMonad.Actions.Warp
 import XMonad.Actions.WindowBringer
 import XMonad.Actions.WindowGo
 import XMonad.Actions.WindowMenu
-import XMonad.Actions.WithAll (killAll)
+import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.FadeInactive
@@ -69,6 +71,7 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.Mosaic
 import XMonad.Layout.AutoMaster
 import XMonad.Layout.DragPane
+import qualified XMonad.Layout.HintedGrid as HintedGrid
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
@@ -84,6 +87,8 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
+import XMonad.Layout.WindowSwitcherDecoration
+import XMonad.Layout.DraggingVisualizer
 import qualified XMonad.Layout.Magnifier as Mag
 
 {-
@@ -117,7 +122,7 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     smartBorders $
     --onWorkspaces ["web","irc"] Full $
-    Full ||| dragPane Horizontal 0.1 0.3 ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid)
+    Full ||| dragPane Horizontal 0.1 0.3 ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| HintedGrid.GridRatio (4/3) False
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
@@ -175,11 +180,9 @@ myDynamicLog h = dynamicLogWithPP $ defaultPP
  -}
 
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
-    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster))
-    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster))
+    [ ((modm, button1), (\w -> focus w >> Flex.mouseWindow Flex.position w))
+    , ((modm, button2), (\w -> focus w >> Flex.mouseWindow Flex.linear w))
+    , ((modm, button3), (\w -> focus w >> Flex.mouseWindow Flex.resize w))
     ]
 
 myKeys =
@@ -209,7 +212,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-s", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -234,8 +237,8 @@ myKeys =
     , ("M-,", sendMessage (IncMasterN 1))
     , ("M-.", sendMessage (IncMasterN (-1)))
     , ("M-b", windowPromptBring myXPConfig)
-    , ("M-B", sendMessage ToggleStruts)
-    , ("M-d", bringMenu)
+    , ("M-S-b", banishScreen LowerRight)
+    , ("M-s", sinkAll)
     , ("M-y", focusUrgent)
     , ("M-;", switchLayer)
     , ("M-h", windowGo L True)
@@ -420,17 +423,18 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
     mk = S.searchEngine
     engines = [ mk "h" "http://www.haskell.org/hoogle/?q="
       , mk "g" "http://www.google.com/search?num=100&q="
+      , mk "t" "http://developer.gnome.org/search?q="
       , mk "w" "http://en.wikipedia.org/wiki/Special:Search?go=Go&search="
       , mk "d" "http://duckduckgo.com/?q="
       , mk "m" "https://developer.mozilla.org/en-US/search?q="
       , mk "e" "http://erldocs.com/R15B/mnesia/mnesia.html?search="
       , mk "r" "http://www.ruby-doc.org/search.html?sa=Search&q="
       , mk "p" "http://docs.python.org/search.html?check_keywords=yes&area=default&q="
-      , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "s" "https://scholar.google.de/scholar?q="
+      , mk "i" "https://ixquick.com/do/search?q="
+      , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "dict" "http://www.dict.cc/?s="
       , mk "imdb" "http://www.imdb.com/find?s=all&q="
-      , mk "i" "https://ixquick.com/do/search?q="
       , mk "def" "http://www.google.com/search?q=define:"
       , mk "img" "http://images.google.com/images?q="
       , mk "gh" "https://github.com/search?q="

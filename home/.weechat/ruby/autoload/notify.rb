@@ -14,6 +14,6 @@ def notify data, signal, message
   #g.add_notification 'weechat'
   channel, message = message.split "\t", 2
   #g.notify 'weechat', channel, message
-  IO.popen ['notify-send', '-i', '/home/ray/Icons/weechat.png', '-c', 'irc', '-t', TIME.to_s, '--', channel, message].close
+  IO.popen ['notify-send', '-i', '/home/ray/Icons/weechat.png', '-c', 'irc', '-t', TIME.to_s, '--', channel, message]
   Weechat::WEECHAT_RC_OK
 end

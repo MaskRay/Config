@@ -18,6 +18,7 @@ List.map Sys.command [
   ; singleton "parcellite &"
   ; singleton "gol &"
   ; singleton "fcitx &"
+  (*; singleton "ibus-daemon -d"*)
 
   (* one-shot *)
   ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1 --off; }"

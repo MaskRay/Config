@@ -1,4 +1,5 @@
 app-emulation/wine
+app-misc/toilet
 app-i18n/fcitx
 app-i18n/fcitx-configtool
 app-office/libreoffice-bin
@@ -37,5 +38,6 @@ x11-misc/xscreensaver
 x11-misc/xsel
 x11-terms/rxvt-unicode
 x11-terms/xterm
+x11-themes/gentoo-xcursors
 x11-wm/xmonad
 x11-wm/xmonad-contrib

@@ -1,9 +1,9 @@
-bind-key K      prev-unread
-bind-key J      next-unread
+bind-key k      prev-unread
+bind-key j      next-unread
 bind-key p      prev-feed
 bind-key n      next-feed
-bind-key j      next
-bind-key k      prev
+bind-key J      next
+bind-key K      prev
 bind-key SPACE  open
 bind-key h      pageup
 bind-key l      pagedown

@@ -6,12 +6,12 @@ msg = `formail -X From: -X Subject:`
 if m = /From:\s*([^<\n]*)/.match(msg)
   from = m.captures[0]
 else
-  exit 1
+  exit
 end
 if m = /Subject:((?>.(?!^From))*)/m.match(msg)
   sub = m.captures[0].gsub /\s/, ''
 else
-  exit 1
+  exit
 end
 
 # handle MIME encoded-word syntax

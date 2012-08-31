@@ -29,3 +29,7 @@ dev-libs/boehm-gc threads
 app-doc/doxygen latex dot
 
 dev-lang/R doc
+
+sci-mathematics/maxima
+
+sys-cluster/openmpi threads mpi-threads

@@ -24,3 +24,4 @@ dev-python/numpy doc
 #required by sci-mathematics/sage-4.7.2, required by sci-mathematics/sage-notebook-0.8.23-r1
 >=sci-mathematics/maxima-5.26.0 ecls
 media-gfx/tachyon threads
+

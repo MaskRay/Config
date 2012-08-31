@@ -1,7 +1,29 @@
-KERNEL!="sd[b-z]?", GOTO="automount_exit"
+# start at sdc to ignore the system hard drive
+KERNEL!="sd[c-z]*", GOTO="my_media_automount_end"
+ACTION=="add", PROGRAM!="/sbin/blkid %N", GOTO="my_media_automount_end"
 
-ACTION=="add", ATTRS{ID_MODEL}=="GT-I9001_Card", RUN+="echo hello"
-ACTION=="add", SUBSYSTEM=="block", RUN+="/bin/mkdir /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}", RUN+="/bin/mount -o uid=1000,user,codepage=936,utf8 $root/%k /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}"
-ACTION=="remove", SUBSYSTEM=="block", RUN+="/bin/umount /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}", RUN+="/bin/rmdir /media/%E{ID_FS_LABEL}-%E{ID_FS_UUID}"
+# import some useful filesystem info as variables
+IMPORT{program}="/sbin/blkid -o udev -p %N"
 
-LABEL="automount_exit"
+# get the label if present, otherwise assign one based on device/partition
+ENV{ID_FS_LABEL}!="", ENV{dir_name}="%E{ID_FS_LABEL}"
+ENV{ID_FS_LABEL}=="", ENV{dir_name}="usbhd-%k"
+
+# create the dir in /media and symlink it to /mnt
+ACTION=="add", RUN+="/bin/mkdir -p '/media/%E{dir_name}'"
+
+# global mount options
+ACTION=="add", ENV{mount_options}="relatime"
+# filesystem-specific mount options (777/666 dir/file perms for ntfs/vfat)
+ACTION=="add", ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{mount_options}="$env{mount_options},uid=1000,gid=1000,dmask=000,fmask=111,iocharset=cp936,utf8"
+
+# automount ntfs filesystems using ntfs-3g driver
+ACTION=="add", ENV{ID_FS_TYPE}=="ntfs", RUN+="/bin/mount -t ntfs-3g -o %E{mount_options} /dev/%k '/media/%E{dir_name}'"
+# automount all other filesystems
+ACTION=="add", ENV{ID_FS_TYPE}!="ntfs", RUN+="/bin/mount -t auto -o %E{mount_options} /dev/%k '/media/%E{dir_name}'"
+
+# clean up after device removal
+ACTION=="remove", ENV{dir_name}!="", RUN+="/bin/umount -l '/media/%E{dir_name}'", RUN+="/bin/rmdir '/media/%E{dir_name}'"
+
+# exit
+LABEL="my_media_automount_end"

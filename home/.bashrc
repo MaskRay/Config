@@ -15,10 +15,6 @@ function header()
 {
   begin_str=">>>"
   end_str=">>>"
-  banner="Gentoo Linux"
-  length=$(($(tput cols) - ${#begin_str} - ${#end_str} - ${#banner} - 2))
-  half=$(($length / 2))
-  printf -v line '%*s' "$half"
   echo -en "\e${RED}${begin_str}\e${WHITE}${line// /-}[\e${MAGENTA}${banner}\e${WHITE}]${line// /-}\e${RED}${end_str}\e${RESET}"
 }
 
@@ -39,7 +35,7 @@ function repos_info()
   then
     echo
     echo -en "\e${WHITE}[\e${CYAN}Mercurial\e${WHITE}] Revision ID \e${YELLOW}${HG_REPOS_ID}"
-  else 
+  else
     GIT_REPOS_BRANCH="$(get_git_repos_branch)"
     if [ "${GIT_REPOS_BRANCH}" ]
     then
@@ -49,7 +45,7 @@ function repos_info()
   fi
 }
 
-export PS1='$(header)$(repos_info)\n\
+export PS1='$(repos_info)\n\
 \e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}\u \e${RESET}at \e${WHITE}\h \e${RESET}in \e${BLUE}\w\n\
 \[\e${RED}\]\$\[\e${RESET}\] '
 

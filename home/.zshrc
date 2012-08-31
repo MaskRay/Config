@@ -212,11 +212,11 @@ zle -N sudo-command-line
 bindkey "\e\e" sudo-command-line
 
 
-PROMPT=$'%F{blue}\u256d\u2500\e%F{CYAN}\e%B%F{cyan}%n \e%F{white}@ \e%B%F{magenta}%m \e%F{white}>>= \e%B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{\e%F{red}%}%# %{\e${RESET}%}'
+PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %{${RESET}%}'
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/tmp/.zsh_history
+HISTFILE=~/.zsh_history
 
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '

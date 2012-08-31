@@ -5,20 +5,17 @@ syntax on
 set nocompatible
 filetype plugin indent on
 
+set hidden
 set hlsearch
 set incsearch
 set ruler
 set showcmd
-set number
-set shiftround
 set title
 set wildmenu
-set wildmode=list,longest
+set wildmode=list:longest,list:full
 set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
 set autochdir
 set winaltkeys=no
-set listchars=nbsp:¬,eol:¶,tab:>-,extends:»,precedes:«,trail:•
-set scrolloff=3
 
 set backup
 set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
@@ -27,50 +24,71 @@ set directory=~/.tmp,~/tmp,/var/tmp,/tmp
 set backspace=indent,eol,start
 set history=200
 
-set laststatus=2
-set statusline=%<%#ColorColumn#%2n%*»%#DiffChange#%{getcwd()}/%*%#DiffAdd#%f%*%#DiffText#%m%r%*»%#Title#%y%*»%#CursorLine#(%l/%L,%c)%*»%=«%#Cursor#%02B%*«%#ErrorMsg#%o%*«%#ModeMsg#%3p%%%*
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
-set dictionary+=/usr/share/dict/words
-set grepprg=ack\ -a
-set whichwrap=b,s,<,>,[,],h,l
-set showbreak=↪
-set spellsuggest=10
-let mapleader = ","
 
-if version >= 703
-    set undodir=~/.vim/undo
-    set undofile
-    set undolevels=100
-    set undoreload=1000
-endif
+set dictionary+=/usr/share/dict/words
+
+set grepprg=ack\ -a
+
+" tabs and eols
+set listchars+=tab:▸\ ,eol:¬
+" spaces
+set listchars+=trail:⋅,nbsp:⋅
 
 if has('mouse')
   set mouse=a
 endif
 
 if has("gui_running")
-  set wrap
-  set spell
+"  set cursorcolumn
+"  set cursorline
+  set nowrap
+  set relativenumber
+  " set spell
 
   " Ctrl-F12 Toggle Menubar and Toolbar
-  nmap <silent> <C-F12> :
+  nnoremap <silent> <C-F12> :
     \ if &guioptions =~# 'T' <Bar>
+      \ set guioptions-=T <Bar>
       \ set guioptions-=m <Bar>
     \ else <Bar>
+      \ set guioptions+=T <Bar>
       \ set guioptions+=m <Bar>
     \ endif<CR>
 
   set guioptions-=T
   set guioptions-=m
+  " no scroll bars
   set guioptions-=r
+  set guioptions-=L
 endif
 
-" Mark extra whitespaces in red
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
+" Status Line ----------------------------------------- {{{1
+set laststatus=2
+
+set statusline=%#ColorColumn#%2n              " buffer number
+set statusline+=%*»                           " separator
+set statusline+=%<                            " truncate here
+set statusline+=%#DiffChange#%{PWDName()}%*   " current working directory
+set statusline+=%#DiffAdd#%f%*                " path to the file in the buffer
+set statusline+=%#DiffOrig#%{CurrentTag()}%*  " current tag
+set statusline+=%*»                           " separator
+set statusline+=%#Title#%{ReposType()}%*      " current repository type
+set statusline+=%*»                           " separator
+set statusline+=%#ModeMsg#%{RevisionInfo()}%* " current revision info
+set statusline+=%#DiffText#%m                 " modified flag
+set statusline+=%r                            " readonly flag
+set statusline+=%*»                           " separator
+set statusline+=%#CursorLine#(%l/%L,%c)%*»    " line no./no. of lines,col no.
+set statusline+=%=«                           " right align the rest
+set statusline+=%#Cursor#%02B                 " value of current char in hex
+set statusline+=%*«                           " separator
+set statusline+=%#ErrorMsg#%o                 " byte offset
+set statusline+=%*«                           " separator
+set statusline+=%#Title#%y                    " filetype
+set statusline+=%*«                           " separator
+set statusline+=%#ModeMsg#%3p%%               " % through file in lines
+set statusline+=%*                            " restore normal highlight
 
 " Fonts ----------------------------------------------- {{{1
 if has("gui_running")
@@ -92,8 +110,6 @@ if has("gui_running")
   " http://blog.infinitered.com/entry_files/8/ir_black.vim
   "colorscheme ir_black
   "colorscheme fruity
-  colorscheme molokai
-  hi Normal       guifg=White guibg=Black
   "colorscheme murphy
   "colorscheme peaksea
   " Lighter Themes ------------------------------------ {{{2
@@ -115,18 +131,42 @@ endif
 
 " Autocommands ---------------------------------------- {{{1
 if has("autocmd")
-  augroup vimrcEx
-  au!
+  " Show trailing whitespaces when necessary ---------- {{{2
+  " That is, most of the cases other than editing source code in Whitespace,
+  " the programming language.
+  augroup show_whitespaces
+    au!
+    " Make sure this will not be cleared by colorscheme
+    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+    " Highlight unwanted whitespaces
+    autocmd BufWinEnter,WinEnter,InsertLeave * call MatchUnwantedWhitespaces()
+    " In insert mode, show trailing whitespaces except when typing at the end
+    " of a line
+    autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+    " Show whitespaces in insert mode
+    autocmd InsertEnter * set list
+    " and turn it off when leave insert mode
+    autocmd InsertLeave * set nolist
+    " Clear highlight when lose focus
+    autocmd WinLeave * call clearmatches()
 
-  " C Support ----------------------------------------- {{{2
-  augroup c_support
-    set cinoptions+=:0,g0
+  " Vala/Genis Support -------------------------------- {{{2
+  " get vala.vim here:
+  " https://live.gnome.org/Vala/Vim
+  augroup vala_support
+    au!
+    autocmd BufRead *.vala set efm=%f:%l.%c-%[%^:]%#:\ %t%[%^:]%#:\ %m
+    autocmd BufRead *.vapi set efm=%f:%l.%c-%[%^:]%#:\ %t%[%^:]%#:\ %m
+    autocmd BufRead,BufNewFile *.vala setfiletype vala
+    autocmd BufRead,BufNewFile *.vapi setfiletype vala
+    autocmd FileType vala setlocal cindent
 
-  " Shell Support ------------------------------------- {{{2
-  autocmd BufNewFile *.sh 0put=\"#!/bin/bash\<nl># vim:fdm=marker\<nl>\"
-  au BufWritePost * if getline(1) =~ "^#!/bin/[a-z]*sh" | silent !chmod a+x <afile> | endif
+    " indentation for genie: genie.vim
+    " http://www.vim.org/scripts/script.php?script_id=2349
+    " This will overrule the default filetype grads
+    autocmd BufRead,BufNewFile *.gs setlocal filetype=genie
 
-  autocmd BufWritePost    * call Lilydjwg_chmodx()
+    autocmd FileType vala,genie setlocal formatoptions+=croql
 
   " Ruby Support -------------------------------------- {{{2
   augroup ruby_support
@@ -137,66 +177,103 @@ if has("autocmd")
   " Python Support ------------------------------------ {{{2
   augroup python_support
     au!
-    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType python set omnifunc=pythoncomplete#Complete
     autocmd FileType python inoreab <buffer> #! #!/usr/bin/env python
-    autocmd FileType python inoreab <buffer> #e # -*- coding: utf-8 -*-
+    autocmd FileType python inoreab <buffer> #e # -*- coding: utf=8 -*-
+    " Setting 'python_space_error_highlight' = 1 will only highlight mixed
+    " tabs and spaces, I go as far as mark all tabs as error.
+    autocmd Syntax python syn match ExtraWhitespace /\t/
+
+  " py.test Support ----------------------------------- {{{2
+  augroup pytest
+    au!
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tf <Esc>:Pytest function looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tc <Esc>:Pytest class looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tm <Esc>:Pytest method looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tt <Esc>:Pytest file looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tC <Esc>:Pytest clear<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>te <Esc>:Pytest error<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tn <Esc>:Pytest next<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tp <Esc>:Pytest previous<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>tF <Esc>:Pytest fails<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <localleader>ts <Esc>:Pytest session<CR>
+
+  " Mappings for reStructuredText: Section Headers ---- {{{2
+  augroup restructuredtext
+    au!
+    " Normal Mode: Headings with overline and underline adornments
+    autocmd FileType rst nnoremap <buffer> <localleader>h :call MarkReSTSessionTitle(1)<CR>
+    " Normal Mode: Sessions with underline adornment
+    autocmd FileType rst nnoremap <buffer> <localleader>s :call MarkReSTSessionTitle(0)<CR>
+    " Insert Mode: Headings with overline and underline adornments
+    autocmd FileType rst inoremap <buffer> <C-]> <C-\><C-O>:call MarkReSTSessionTitle(1)<CR>
+    " Insert Mode: Headings with underline adornment
+    autocmd FileType rst inoremap <buffer> <C-J> <C-\><C-O>:call MarkReSTSessionTitle(0)<CR>
+    " Mapping for plugin DOT
+    autocmd FileType rst nnoremap <buffer> <localleader>dot :DotOutlineTree<CR>
 
   " Java Support -------------------------------------- {{{2
   augroup java_suppoer
     au!
     autocmd FileType *.java setlocal omnifunc=javacomplete#Complete
 
-  " Abbreviations for vim modeline -------------------- {{{2
-  augroup vim_modeline
-    au!
-    autocmd FileType c,cpp,vala,genie inoreab <buffer> /*v /* -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*- */
-    autocmd FileType c,cpp,vala,genie inoreab <buffer> //v // -*- vim: set sts=4 sw=4 et fdm=marker tw=78 ----------- vim modeline -*-
-    autocmd FileType python inoreab <buffer> #v # -*- vim: set sts=4 sw=4 et fdm=marker tw=72: -------- vim modeline -*-
-    autocmd FileType rst inoreab <buffer> ..v .. -*- vim: set sts=2 sw=2 et fdm=marker: ---------------- vim modeline -*-
-    autocmd FileType html,htmldjango inoreab <buffer> {#v {# -*- vim: set sts=2 sw=2 et fdm=marker ft=htmldjango: -- vim modeline -*- #}
-    autocmd FileType lisp,scheme inoreab <buffer> ;;v ;; -*- vim: set fdm=marker: ------------------------------ vim modeline -*-
-
   " Default tab settings for different file types ----- {{{2
   augroup tab_settings
     au!
-    autocmd FileType asciidoc setlocal sw=2 sts=2
-    autocmd FileType c setlocal sw=4 sts=4 et
-    autocmd FileType cpp setlocal sw=4 sts=4 et
+    " Indentation with hard tabs:
+    " set 'shiftwidth' and 'tabstop' to the same amount, usually less than 8
+    " for better viewing, leaving 'softtabstop' unset and 'expandtab' at
+    " default value
+    autocmd FileType c setlocal sw=2 ts=2
+    autocmd FileType cpp setlocal sw=2 ts=2
+    autocmd FileType go setlocal sw=2 ts=2
+    autocmd FileType java setlocal sw=2 ts=2
+    autocmd FileType php setlocal sw=2 ts=2
+    autocmd FileType rust setlocal sw=2 ts=2
+    " Indentation with spaces:
+    " set 'shiftwidth' and 'softtabstop' to the same amount, usually turn on
+    " 'expandtab' to avoid mixing spaces and tabs, leaving 'tabstop' at
+    " default value.
+    autocmd FileType asciidoc setlocal sw=2 sts=2 et
+    autocmd FileType coffee setlocal sw=2 sts=2 et tw=79
     autocmd FileType css setlocal sw=4 sts=4 et
     autocmd FileType falcon setlocal sw=2 sts=2 et
     autocmd FileType haskell setlocal sw=2 sts=2 et
     autocmd FileType html setlocal sw=2 sts=2 et
     autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
     autocmd FileType htmldjango setlocal sw=2 sts=2 et
-    autocmd FileType java setlocal sw=4 sts=4 et
     autocmd FileType javascript setlocal sw=2 sts=2 et
-    autocmd FileType lua setlocal sw=2 sts=2 et
-    autocmd FileType make set noet
+    autocmd FileType jinja setlocal sw=2 sts=2 et
+    autocmd FileType jinja2 setlocal sw=2 sts=2 et
     autocmd FileType mason setlocal sw=2 sts=2 et
     autocmd FileType ocaml setlocal sw=2 sts=2 et
     autocmd FileType perl setlocal sw=4 sts=4 et
-    autocmd FileType php setlocal sw=4 sts=4 et
     autocmd FileType rst setlocal sw=2 sts=2 et
     autocmd FileType ruby setlocal sw=2 sts=2 et
     autocmd FileType python setlocal sw=4 sts=4 et tw=72
     autocmd FileType scheme setlocal sw=2 sts=2 et
-    autocmd FileType sql setlocal et
-    autocmd FileType vala setlocal sw=4 sts=4 et
+    autocmd FileType vala setlocal sw=4 sts=4 et tw=78
     autocmd FileType xhtml setlocal sw=2 sts=2 et
     autocmd FileType xml setlocal sw=2 sts=2 et
-    autocmd FileType text setlocal textwidth=78
+    " Others with special requirements
+    autocmd FileType make setlocal noet
+    autocmd FileType sql setlocal et
+    autocmd FileType text setlocal textwidth=72
 
-  " Show trailing whitespaces when necessary ---------- {{{2
-  " That is, most of the cases other than editing source code in Whitespace,
-  " the programming language.
-  augroup show_whitespaces
+
+  " Update repository and revision info --------------- {{{2
+  augroup update_rev_info
     au!
-    " Make sure this will not be cleared by colorscheme
-    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-    autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-    autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-    autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-    autocmd BufWinLeave * call clearmatches()
+    autocmd BufReadPost,BufWritePost,FileChangedShellPost * call UpdateRevisionInfo()
+
+  " Leave insert mode after 15 seconds of no input ---- {{{2
+  augroup auto_escape
+    au!
+    " nice trick by winzo
+    " http://www.reddit.com/r/vim/comments/kz84u/what_are_some_simple_yet_mindblowing_tweaks_to/c2ol6wd
+    "autocmd CursorHoldI * stopinsert
+    "autocmd InsertEnter * let updaterestore=&updatetime | set updatetime=15000
+    "autocmd InsertLeave * let &updatetime=updaterestore
 
   " Misc ---------------------------------------------- {{{2
   augroup editing
@@ -217,13 +294,81 @@ if has("autocmd")
       \   exe "normal! g`\"" |
       \ endif
 
-    " turn on spell checker for email
-    autocmd FileType mail setlocal spell
+    " turn on spell checker for email and plain text file
+    autocmd FileType mail,text setlocal spell
 
   augroup END " --------------------------------------- }}}2
 else
   set autoindent
 endif " has("autocmd")
+
+" Colorschemes ---------------------------------------- {{{1
+" get them from: http://www.vim.org/
+" also: http://code.google.com/p/vimcolorschemetest/ (recommanded)
+"
+" ColorScheme Table ----------------------------------- {{{2
+" Name          | Background | C/C++ | HTML | CSS | Javascript | Django | Haskell | Lisp | Python
+" badwolf       | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" bocau         | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" candycode     | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" clarity       | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" cloudy        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" fruity        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" hemisu        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" inkpot        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" ir_black      | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✗       | ✓    | ✓
+" jellybeans    | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✗       | ✓    | ✓
+" kib_darktango | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" koehler       | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" mint          | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✗       | ✓    | ✓
+" molokai       | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" murphy        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" native        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" navajo-night  | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" neverness     | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" northsky      | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" oceanblack    | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" peppers       | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" redblack      | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✗       | ✓    | ✓
+" relaxedgreen  | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" sift          | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" slate         | dark       | ✓     | ✓    | ✓   | ✓          | ✗      | ✓       | ✓    | ✓
+" pablo         | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" twilight      | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✗       | ✓    | ✓
+" vj            | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" vividchalk    | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" wintersday    | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" wombat        | dark       | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" solarized     | light/dark | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+" kib_plastic   | light      | ✓     | ✓    | ✓   | ✓          | ✓      | ✓       | ✓    | ✓
+
+" hemisu:
+" only works in gVim
+"
+" ir_black:
+" http://blog.infinitered.com/entries/show/8
+" http://blog.infinitered.com/entry_files/8/ir_black.vim
+"
+" solarized:
+" http://ethanschoonover.com/solarized
+"
+" badwolf:
+" http://stevelosh.com/projects/badwolf/
+" https://bitbucket.org/sjl/badwolf/
+" hg clone https://bitbucket.org/sjl/badwolf
+"
+" }}}2
+
+if has("gui_running")
+  set background=dark
+  "colorscheme molokai
+  "hi Normal       guifg=White guibg=Black
+  colorscheme badwolf
+else
+  set t_Co=256
+  set background=dark
+  colorscheme bocau
+endif
 
 " Plugins --------------------------------------------- {{{1
 " Vundle ---------------------------------------------- {{{2
@@ -231,147 +376,263 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
+Bundle 'ack.vim'
 "Bundle 'vim-powerline'
-"Bundle 'ctrlp'
-"Bundle 'tabular'
+Bundle 'ctrlp'
+Bundle 'tabular'
 Bundle 'syntastic'
-"Bundle 'neco-ghc'
-"Bundle 'EasyMotion'
+Bundle 'neco-ghc'
+Bundle 'EasyMotion'
 "Bundle 'javacomplete'
 "Bundle 'vim-sparkup'
+Bundle 'zencoding-vim'
+Bundle 'JavaScript-Indent'
+Bundle 'vim-matchit'
 "Bundle 'indent-guides'
 "Bundle 'rainbow_parentheses'
-"Bundle 'tasklist'
-"Bundle 'UltiSnips'
+Bundle 'tasklist'
+Bundle 'UltiSnips'
+Bundle 'badwolf'
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
+let g:mapleader = ","
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_leader_key = g:mapleader
+" Ctrl-P ---------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3736
+" http://kien.github.com/ctrlp.vim/
+" https://bitbucket.org/kien/ctrlp.vim
+" git clone git://github.com/kien/ctrlp.vim.git
+"
+" Mappings:
+" let g:ctrlp_map = '<C-P>'
+" Search from project root:
+" let g:ctrlp_working_path_mode = 2
+" Exclude VCS cache dir, either:
+" set wildignore+=*/.git/*,*/.hg/*,*/.svn/*   " for Linux/MacOSX
+" or:
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.neocom$\|Maildir$',
+  \ 'file': '\.pyc$\|\.so$\|\.o$',
+  \ }
+" Match window, top of the screen:
+" let g:ctrlp_match_window_bottom = 0
+" switching between buffers
+nnoremap <C-N> :CtrlPBuffer<CR>
+" works in gvim and some terminals.
+nnoremap <C-A-P> :CtrlPMixed<CR>
+
+" Cute Python ----------------------------------------- {{{2
+" https://github.com/ehamberg/vim-cute-python
+" #git clone git://github.com/ehamberg/vim-cute-python.git
+
+" dot.vim ------------------------------------------- {{{2
+" https://bitbucket.org/shu/dotoutlinetree
+" http://www.vim.org/scripts/script.php?script_id=1225
 
 " FuzzyFinder ----------------------------------------- {{{2
 " vim-l9 is the requirement of fuzzyfinder 4.*
 " http://www.vim.org/scripts/script.php?script_id=3252
 " http://bitbucket.org/ns9tks/vim-l9/
-"set runtimepath+=~/projects/vim-l9/
+" #hg clone https://bitbucket.org/ns9tks/vim-l9
+"
 " http://www.vim.org/scripts/script.php?script_id=1984
 " http://bitbucket.org/ns9tks/vim-fuzzyfinder/
+" #hg clone https://bitbucket.org/ns9tks/vim-fuzzyfinder
+"
 " mapping for FuzzyFinder
 " use V 3.4
-"set runtimepath+=~/projects/vim-fuzzyfinder/
-"map <F3> :FufFile ~/projects/<CR>
+"nnoremap <leader>ff :FufFile ~/projects/<CR>
 " search from cwd
-map <F3> :FufFile<CR>
-map <F4> :FufBuffer<CR>
+nnoremap <leader>gf :FufFile<CR>
+nnoremap <leader>gb :FufBuffer<CR>
+
+" Gundo ----------------------------------------------- {{{2
+" http://sjl.bitbucket.org/gundo.vim/
+" hg clone https://bitbucket.org/sjl/gundo.vim
+nnoremap <leader>u :GundoToggle<CR>
+
+" Haskell Conceal ------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3200
+" https://github.com/Twinside/vim-haskellConceal
+" #git clone git://github.com/Twinside/vim-haskellConceal.git
+
+" Indent Guides --------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3361
+" https://github.com/nathanaelkane/vim-indent-guides
+" git clone git://github.com/vim-scripts/Indent-Guides.git
 
 " NERDTree -------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=1658
 " https://github.com/scrooloose/nerdtree
-map <F2> :NERDTreeToggle<CR>
+" git clone git://github.com/scrooloose/nerdtree.git
+nnoremap <leader>nt :NERDTreeToggle<CR>
 
-" SuperTab -------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=1643
-" let SuperTabContextDefaultCompletionType = "context"
+" Pathogen -------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2332
+" https://github.com/tpope/vim-pathogen
+" git clone git://github.com/tpope/vim-pathogen.git
 
-" dot.vim --------------------------------------------- {{{2
+" py.test --------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3424
+" https://github.com/alfredodeza/pytest.vim.git
+" git clone git://github.com/alfredodeza/pytest.vim.git
 
-" Tagbar ---------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=3465
-" http://github.com/majutsushi/tagbar
-nnoremap <silent> <F8> :TagbarToggle<CR>
+" Rainbow Parentheses --------------------------------- {{{2
+" https://github.com/kien/rainbow_parentheses.vim
+" #git clone git://github.com/kien/rainbow_parentheses.vim.git
 
-" Taglist --------------------------------------------- {{{2
-" http://vim-taglist.sourceforge.net/
-nnoremap <silent> <C-F8> :TlistToggle<CR>
-" map <F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-map <F12> :!cscope -Rbk<CR>
-" add python tags
-" ctags file is generated like this:
-" ctags -R -f ~/.vim/tags/python.ctags --c-kinds=+p --fields=+S /usr/lib/python2.6/
-"set tags+=$HOME/.vim/tags/python.ctags
-" for C/C++ with signature
-" ctags -R -f ~/.vim/tags/c.ctags --c-kinds=+p --fields=+S /usr/include/
-" ctags -R -f ~/.vim/tags/cpp.ctags --c++-kinds=+p --fields=+iaS --extra=+q /usr/include
-"set tags+=$HOME/.vim/tags/cpp.ctags
+" Splice ---------------------------------------------- {{{2
+" https://bitbucket.org/sjl/splice.vim
+" https://github.com/sjl/splice.vim
+" hg clone https://bitbucket.org/sjl/splice.vim
 
-" TaskList -------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=2607
-map <F9> <Plug>TaskList
-
-" VimIm ----------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=2506
-" vimim settings, show menu background color
-"let g:vimim_wildcard_search=1
-"let g:vimim_sexy_onekey=1
-"let g:vimim_chinese_frequency=10
-"let g:vimim_custom_color=0
-"let g:vimim_mode = 'static'
-"let g:vimim_map= 'no-gi'
-
-" Conque ---------------------------------------------- {{{2
-" http://code.google.com/p/conque/
-" interactive shell in vim buffer
-" Bash
-" nmap <C-F5> :ConqueTerm zsh<CR>
-" nmap <F5> :ConqueTermSplit zsh<CR>
-" Python Shell
-" nmap <C-F6> :ConqueTerm python<CR>
-" nmap <F6> :ConqueTermSplit python<CR>
-" gdb
-" nmap <C-F7> :ConqueTerm gdb<CR>
-" nmap <F7> :ConqueTermSplit gdb<CR>
+" Slimv ----------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2531
+" https://bitbucket.org/kovisoft/slimv/
+" hg clone https://bitbucket.org/kovisoft/slimv
+let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-ecl.lisp &'
 
 " snipMate -------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=2540
 " http://github.com/msanders/snipmate.vim
-
-" use my mod. version snippet
-" http://code.google.com/p/8up/source/browse/#hg/utils/snipmate_ext
-"
-let g:snips_cstyle = "K&R"
-
-" for c coding style
-if !exists("g:snips_cstyle")
-  let g:snips_cstyle = "ANSI"
-endif
-
-let g:cs = " "
-let g:ce = '\n'
-
-if g:snips_cstyle ==? "ANSI"
-  let g:cs = '\n'
-  let g:ce = '\n'
-elseif g:snips_cstyle ==? "K&R"
-  " seperate cs and ce to avoid excessive trailing spaces
-  let g:cs = ' '
-  let g:ce = ''
-endif
-
-"set runtimepath+=~/projects/snipmate
-"set runtimepath+=~/projects/snipmate/after
-
-" xpt, XP Templates ----------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=2611
-" http://code.google.com/p/xptemplate
-
-" use <Tab> key as trigger
-" let g:xptemplate_key = '<Tab>'
-" no spaces inside ()
-" let g:xptemplate_vars = "SParg="
-
-" not going to set it now.
-" let g:xptemplate_vars = "author=somebody&email=nobody@gmail.com"
-
-" set runtimepath+=~/projects/xpt
-" set runtimepath+=~/projects/xpt/after
+" #git clone git://github.com/msanders/snipmate.vim.git
 
 " Sparkup --------------------------------------------- {{{2
 " You can write HTML in a CSS-like syntax, and have Sparkup handle the
 " expansion to full HTML code.
 " http://github.com/rstacruz/sparkup
+" git clone git://github.com/rstacruz/sparkup.git
+"
 " try this:
 " ihtml:xxs>#wrapper>#nav>h2{navigation}+ul>li#id_$*3>a<<<#main{Page Content}+div#footer{Footer}<c-tab>
-let g:sparkupExecuteMapping = '<c-tab>'
-let g:sparkupNextMapping = '<tab><tab>'
+let g:sparkupExecuteMapping = '<C-]>'
+let g:sparkupNextMapping = '<C-J>'
+
+" SuperTab -------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=1643
+" https://github.com/ervandew/supertab
+" #git clone git://github.com/ervandew/supertab.git
+
+" Surround -------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=1697
+" https://github.com/tpope/vim-surround
+" git clone git://github.com/tpope/vim-surround.git
+
+" Syntastic ------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2736
+" https://github.com/scrooloose/syntastic
+" git clone git://github.com/scrooloose/syntastic.git
+let g:syntastic_loc_list_height=5
+let g:syntastic_stl_format="Err:%fe %e,%w"
+nnoremap <leader>st :SyntasticToggleMode<CR>
+
+" Tabular --------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3464
+" https://github.com/godlygeek/tabular
+" git clone git://github.com/godlygeek/tabular.git
+
+" Tagbar ---------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3465
+" http://github.com/majutsushi/tagbar
+" git clone git://github.com/majutsushi/tagbar.git
+nnoremap <leader>tb :TagbarToggle<CR>
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_autoshowtag = 1
+
+let g:tagbar_type_vala = {
+  \ 'ctagstype': 'c#',
+  \ 'kinds': [
+    \ 'c:class',
+    \ 'd:macro',
+    \ 'E:event',
+    \ 'g:enum',
+    \ 'i:interface',
+    \ 'm:method',
+    \ 'n:namespace',
+    \ 'p:properties',
+    \ 's:struct',
+  \ ]
+\ }
+
+" Taglist --------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=273
+" http://vim-taglist.sourceforge.net/
+"nnoremap <leader>tl :TlistToggle<CR>
+
+" TaskList -------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2607
+nnoremap <leader>tl :TaskList<CR>
+
+" UltiSnips ------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2715
+" official mirror: https://github.com/sirver/ultisnips
+" git clone git://github.com/vim-scripts/UltiSnips.git
+"
+" TextMate style:
+let g:UltiSnipsExpandTrigger = "<Tab>"
+let g:UltiSnipsJumpForwardTrigger = "<Tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+" local snippets only:
+"let g:UltiSnipsSnippetDirectories = ["snippets"]
+" Snippets dir
+let g:UltiSnipsSnippetDirectories = ["UltiSnips", "snippets"]
+" vsplit the snippets edit window
+let g:UltiSnipsEditSplit = 'vertical'
+
+" Vim CSS Color --------------------------------------- {{{2
+" https://github.com/skammer/vim-css-color
+" #git clone git://github.com/skammer/vim-css-color.git
+"
+" ap's clone, this one has way shorter startup time.
+" https://github.com/ap/vim-css-color
+" git clone git://github.com/ap/vim-css-color.git
+"
+" let g:cssColorVimDoNotMessMyUpdatetime = 1
+
+" vim-coffee-script ----------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3590
+" https://github.com/kchmck/vim-coffee-script
+" git clone git://github.com/kchmck/vim-coffee-script.git
+
+" vim-commentary -------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3695
+" https://github.com/tpope/vim-commentary
+" git clone git://github.com/tpope/vim-commentary.git
+
+" vim-indent-object ----------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=3037
+" https://github.com/michaeljsmith/vim-indent-object
+" git clone git://github.com/michaeljsmith/vim-indent-object.git
+
+" VimIm ----------------------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2506
+" http://code.google.com/p/vimim/
+" https://github.com/vimim/vimim
+" #svn checkout https://vimim.googlecode.com/svn/trunk/ vimim
+" git clone git://github.com/vimim/vimim.git
+"
+" vimim settings, show menu background color
+let g:vimim_cloud = -1
+"let g:vimim_map = 'c-bslash'
+"let g:vimim_mode = 'static'
+"let g:vimim_mycloud = 0
+let g:vimim_toggle = 'pinyin'
+
+" xpt, XP Templates ----------------------------------- {{{2
+" http://www.vim.org/scripts/script.php?script_id=2611
+" http://code.google.com/p/xptemplate
+" https://github.com/drmingdrmer/xptemplate
+" #git clone git://github.com/drmingdrmer/xptemplate.git
+"
+" use <Tab> key as trigger
+" let g:xptemplate_key = '<Tab>'
+" no spaces inside ()
+" let g:xptemplate_vars = "SParg="
+"
+" not going to set it now.
+" let g:xptemplate_vars = "author=somebody&email=nobody@gmail.com"
 
 " ZenCoding.vim --------------------------------------- {{{2
 " vim plugins for HTML and CSS hi-speed coding.
@@ -379,27 +640,6 @@ let g:sparkupNextMapping = '<tab><tab>'
 " http://mattn.github.com/zencoding-vim/
 " This one has more features, I am not using this one right now.
 " It doesn't honor my sw, sts settings.
-
-" CtrlP
-let g:ctrlp_custom_ignore = '\.neocon$\|Maildir$'
-noremap <C-k> :CtrlPBuffer<CR>
-
-" Slimv ----------------------------------------------- {{{2
-" http://www.vim.org/scripts/script.php?script_id=2531
-" https://bitbucket.org/kovisoft/slimv/
-" let g:slimv_swank_cmd = '! xterm -e "sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-swank.lisp" &'
-let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv/slime/start-ecl.lisp &'
-
-" Rainbow Parentheses --------------------------------- {{{2
-" https://github.com/kien/rainbow_parentheses.vim
-
-" Powerline
-let g:Powerline_symbols = 'fancy'
-
-" syntastic
-let g:syntastic_loc_list_height=5
-let g:syntastic_stl_format="Err:%fe %e,%w"
-noremap <Leader><Space> :SyntasticCheck<CR>
 
 " NeoComplCache
 " Use neocomplcache.
@@ -418,20 +658,17 @@ if !exists('g:neocomplcache_keyword_patterns')
   let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+"let g:neocomplcache_include_paths['cpp']= "/usr/include/gtkmm-3.0,/usr/include/cairomm-1.0"
 "let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 "smap <C-k> <Plug>(neocomplcache_snippets_expand)
 "imap <C-k> <Plug>(neocomplcache_snippets_expand)
 
-" UltiSnips ------------------------------------- {{2
-let g:UltiSnipsSnippetDirectories=["snippets"]
 " Gentoo Syntax --------------------------------- {{{2
 " FIXME Get rid of nmap <Leader>bug
 let g:loaded_bugsummary=1
 
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
-" Quick command mode
-nnoremap <Space> :
 " ErrorsToggle & QFixToggle ------------------------------------- {{{2
 function! ErrorsToggle()
   if exists("g:is_error_window")
@@ -476,6 +713,26 @@ function! StripTrailingWhitespace()
   call winrestview(l:savedview)
 endfunction
 
+" More vala/genie support ----------------------------- {{{2
+" Vala settings as described here:
+" https://live.gnome.org/Vala/Vim
+
+" Disable valadoc syntax highlight
+"let vala_ignore_valadoc = 1
+
+" Enable comment strings
+let vala_comment_strings = 1
+
+" Highlight space errors
+let vala_space_errors = 1
+" Disable trailing space errors
+"let vala_no_trail_space_error = 1
+" Disable space-tab-space errors
+let vala_no_tab_space_error = 1
+
+" Minimum lines used for comment syncing (default 50)
+"let vala_minlines = 120
+
 " Popup Menu in IDE style ----------------------------- {{{2
 " From
 " http://vim.wikia.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
@@ -496,6 +753,126 @@ function Lilydjwg_chmodx()
       e!
       filetype detect
       nmap <buffer> <S-F5> :!%:p<CR>
+    endif
+  endif
+endfunction
+
+" MatchUnwantedWhitespaces ---------------------------- {{{2
+function! MatchUnwantedWhitespaces()
+  highlight ExtraWhitespace ctermbg=red guibg=red
+  " Show all trailing whitespaces: /\s\+$/
+  " and spaces followed by tabs:   / \+\t\+\s*/
+  " and tabs followed by spaces:   /\t\+ \+\s*/
+  " combine them together: /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+  match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+endfunction
+
+" StripTrailingWhitespace ----------------------------- {{{2
+function! StripTrailingWhitespace()
+  " To disable this function, either set ft as keep_whitespace prior saving
+  " or define a buffer local variable named keepWhitespace
+  if &ft =~ 'whitespace\|keep_whitespace' || exists('b:keep_whitespace')
+    return
+  endif
+  let l:savedview = winsaveview()
+  silent! %s/\s*$//e
+  call winrestview(l:savedview)
+endfunction
+
+" CurrentTag ------------------------------------------ {{{2
+function! CurrentTag()
+  if exists('b:show_tag_in_statusline') && b:show_tag_in_statusline == 1
+    return tagbar#currenttag('[%s]','','f')
+  else
+    return ''
+  endif
+endfunction
+
+" ToggleCurrentTag ------------------------------------ {{{2
+function! ToggleCurrentTag()
+  if exists('b:show_tag_in_statusline')
+    let b:show_tag_in_statusline = !b:show_tag_in_statusline
+  else
+    let b:show_tag_in_statusline = 1
+  endif
+endfunction
+command! -nargs=0 CurrentTagToggle call ToggleCurrentTag()
+nnoremap <leader>ct :CurrentTagToggle<CR>
+
+" PWDName --------------------------------------------- {{{2
+function! PWDName()
+  let l:pwd_name = fnamemodify(getcwd(), ':~:.')
+  if l:pwd_name != ""
+    let l:pwd_name .= '/'
+  endif
+  return l:pwd_name
+endfunction
+
+" RevisionInfo ---------------------------------------- {{{2
+" Return revision info of current file
+function! RevisionInfo()
+  if !exists('b:revision_info')
+    return ''
+  endif
+  return b:revision_info
+endfunction
+
+" ReposType ------------------------------------------- {{{2
+" Return repository type if current file is inside one
+function! ReposType()
+  if !exists('b:repos_type')
+    return ''
+  endif
+  return b:repos_type
+endfunction
+
+" UpdateRevisionInfo ---------------------------------- {{{2
+" Update revision info of current file
+function! UpdateRevisionInfo()
+  let b:revision_info = ""
+  let b:repos_type = ""
+
+  if glob("%") == ""
+    " No existing file is loaded.
+    return
+  endif
+
+  " lookup path, starts from directory of current file
+  " searching up upward, until file system root.
+  let l:cur_dir_and_up = expand("%:p:h") . ';'
+  let l:repos_info_cmd = ""
+
+  " Is this inside a mercurial repository?
+  let l:root = finddir('.hg', l:cur_dir_and_up)
+  if l:root != ""
+    " this is an hg repos.
+    let b:repos_type = "Mercurial"
+    if !exists("g:hg_id_flag")
+      let g:hg_id_flag = '-Bbint'
+    endif
+    let l:repos_info_cmd = "hg id " . g:hg_id_flag
+  else
+    let l:root = finddir('.git', l:cur_dir_and_up)
+    if l:root != ""
+      "  git repository
+      let b:repos_type = "Git"
+      let l:repos_info_cmd = "git branch"
+    endif
+  endif
+  " inside repository
+  if l:repos_info_cmd != ""
+    " root of repository
+    let l:repos_root = fnamemodify(l:root, ":p:h")
+    " try to get revision info
+    let l:info = system("cd " . l:repos_root . " && " . l:repos_info_cmd)
+    if v:shell_error == 0
+      " with return code 0, assuming nothing went wrong
+      if b:repos_type ==# "Git"
+        " git does not provide enough customization of output as we need
+        " remove first 2 chars, e.g, the '* ' part of '* master'
+        let l:info = strpart(l:info, 2)
+      endif
+      let b:revision_info = substitute(l:info, '\n.*', '', 'g')
     endif
   endif
 endfunction
@@ -596,7 +973,7 @@ if has('cscope')
   nnoremap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 endif
 " Misc --------------------- {{{1
-nnoremap <Leader>h :nohls<CR>
+nnoremap zz zz:nohls<CR>
 nnoremap <Leader>p "+p<CR>
 nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
@@ -624,22 +1001,10 @@ nnoremap <m-Up> :cprevious<cr>zvzz
 vmap / y/<C-R>"<CR>
 
 " tab navigation
-nmap tp :tabprevious<cr>
-nmap tn :tabnext<cr>
+nmap tk :tabprevious<cr>
+nmap tj :tabnext<cr>
 nmap to :tabnew<cr>
 nmap tc :tabclose<cr>
-
-
-" Edit (bang)
-command! -bang E e<bang>
-command! -bang Q q<bang>
-command! -bang W w<bang>
-command! -bang QA qa<bang>
-command! -bang Qa qa<bang>
-command! -bang Wa wa<bang>
-command! -bang WA wa<bang>
-command! -bang Wq wq<bang>
-command! -bang WQ wq<bang>
 
 " Beginning & End
 noremap H ^
@@ -651,7 +1016,7 @@ inoremap <C-e> <esc>A
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
 
 " Save & Make
-nnoremap <F5> :w<CR>:make!<CR>
+nnoremap <F5> :w<CR>:make!<CR><CR>:cc<CR>
 
 " Paste toggle
 set pastetoggle=<F7>

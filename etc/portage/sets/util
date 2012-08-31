@@ -21,6 +21,7 @@ games-misc/cowsay
 games-misc/fortune-mod
 media-gfx/imagemagick
 net-misc/unison
+sys-apps/ack
 sys-apps/mlocate
 sys-devel/bc
 sys-fs/encfs

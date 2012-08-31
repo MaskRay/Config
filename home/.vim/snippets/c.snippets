@@ -11,8 +11,8 @@ snippet once "Include header once only guard"
 if not snip.c:
 	import random, string
 	name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
-	rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
-	snip.rv = ('%s_%s' % (name,rand)).upper()
+	name = re.sub(r'([A-Z])([a-z])', r'\1_\2', name)
+	snip.rv = ('%s' % (name,)).upper()
 else:
     snip.rv = snip.c`}
 #define $1
@@ -20,7 +20,6 @@ else:
 ${0}
 
 #endif /* end of include guard: $1 */
-
 endsnippet
 
 snippet main "main() (main)"

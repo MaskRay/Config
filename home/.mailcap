@@ -1,4 +1,5 @@
 application/msword; catdoc %s; copiousoutput
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s; test=test -n "$DISPLAY"
 
 image/*; feh %s; test=test -n "$DISPLAY"
 image/*; fbi %s

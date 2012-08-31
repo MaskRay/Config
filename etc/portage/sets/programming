@@ -8,6 +8,8 @@ dev-lang/ghc
 dev-lang/ocaml
 dev-lang/gnu-smalltalk
 dev-lang/R
+dev-lang/vala
+dev-libs/gdl
 dev-lisp/sbcl
 dev-python/ipython
 dev-python/markdown
@@ -16,6 +18,7 @@ dev-tcltk/expect
 dev-tex/latex-beamer
 dev-util/cscope
 dev-util/flawfinder
+dev-util/glade
 dev-util/valgrind
 dev-vcs/git
 dev-vcs/mercurial

@@ -83,7 +83,7 @@ XTerm*bellIsUrgent: true
 
 
 URxvt.preeditType: OffTheSpot
-URxvt.inputMethod: fcitx
+URxvt.inputMethod: ibus
 URxvt.imFont: -misc-wenquanyi micro hei-medium-r-normal--0-0-0-0-p-0-gb18030.2000-0
 URxvt.geometry: 105x45
 URxvt.xftAntialias: true

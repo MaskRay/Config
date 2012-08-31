@@ -1,4 +1,5 @@
 app-text/pandoc
+app-emacs/haskell-mode
 dev-haskell/cmdargs
 dev-haskell/conduit
 dev-haskell/filesystem-conduit
