@@ -4,6 +4,7 @@
 syntax on
 set nocompatible
 filetype plugin indent on
+let g:mapleader = " "
 
 set hidden
 set hlsearch
@@ -11,11 +12,13 @@ set incsearch
 set ruler
 set showcmd
 set title
+set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
 set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
-set autochdir
+"set autochdir
 set winaltkeys=no
+set scrolloff=3 scrolljump=5
 
 set backup
 set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
@@ -173,6 +176,14 @@ if has("autocmd")
     au!
     autocmd FileType ruby inoreab <buffer> #! #!/usr/bin/env ruby
     autocmd FileType ruby inoreab <buffer> #e # coding: utf-8
+    nmap <leader>rc :Rcontroller<space><tab>
+    nmap <leader>rm :Rmodel<space><tab>
+    nmap <leader>rv :Rview<space><tab>
+    nmap <leader>rl :Rlayout<space><tab>
+    nmap <leader>rh :Rhelper<space><tab>
+    nmap <leader>rj :Rjavascript<space><tab>
+    nmap <leader>rs :Rspec<space><tab>
+    nmap <leader>rh :Rhelper<space><tab>
 
   " Python Support ------------------------------------ {{{2
   augroup python_support
@@ -224,8 +235,8 @@ if has("autocmd")
     " set 'shiftwidth' and 'tabstop' to the same amount, usually less than 8
     " for better viewing, leaving 'softtabstop' unset and 'expandtab' at
     " default value
-    autocmd FileType c setlocal sw=2 ts=2
-    autocmd FileType cpp setlocal sw=2 ts=2
+    autocmd FileType c setlocal sw=2 ts=2 et
+    autocmd FileType cpp setlocal sw=2 ts=2 et cino=g0,:0
     autocmd FileType go setlocal sw=2 ts=2
     autocmd FileType java setlocal sw=2 ts=2
     autocmd FileType php setlocal sw=2 ts=2
@@ -243,6 +254,7 @@ if has("autocmd")
     autocmd FileType htmlcheetah setlocal sw=2 sts=2 et
     autocmd FileType htmldjango setlocal sw=2 sts=2 et
     autocmd FileType javascript setlocal sw=2 sts=2 et
+    autocmd FileType jade setlocal sw=2 sts=2 et
     autocmd FileType jinja setlocal sw=2 sts=2 et
     autocmd FileType jinja2 setlocal sw=2 sts=2 et
     autocmd FileType mason setlocal sw=2 sts=2 et
@@ -301,6 +313,7 @@ if has("autocmd")
 else
   set autoindent
 endif " has("autocmd")
+
 
 " Colorschemes ---------------------------------------- {{{1
 " get them from: http://www.vim.org/
@@ -363,7 +376,8 @@ if has("gui_running")
   set background=dark
   "colorscheme molokai
   "hi Normal       guifg=White guibg=Black
-  colorscheme badwolf
+  "colorscheme badwolf
+  colorscheme harlequin
 else
   set t_Co=256
   set background=dark
@@ -377,27 +391,39 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'ack.vim'
-"Bundle 'vim-powerline'
 Bundle 'ctrlp'
 Bundle 'tabular'
-Bundle 'syntastic'
-Bundle 'neco-ghc'
 Bundle 'EasyMotion'
-"Bundle 'javacomplete'
-"Bundle 'vim-sparkup'
-Bundle 'zencoding-vim'
-Bundle 'JavaScript-Indent'
-Bundle 'vim-matchit'
-"Bundle 'indent-guides'
-"Bundle 'rainbow_parentheses'
-Bundle 'tasklist'
+Bundle 'syntastic'
 Bundle 'UltiSnips'
-Bundle 'badwolf'
+"Bundle 'rainbow_parentheses'
+"Bundle 'vim-scripts/YankRing.vim'
+"Bundle 'joonty/vdebug'
+
+Bundle 'neco-ghc'
+Bundle 'vim-scripts/fcitx.vim'
+"Bundle 'AndrewRadev/linediff.vim'
+
+Bundle 'vim-sparkup'
+Bundle 'zencoding-vim'
+Bundle 'vim-css-color'
+Bundle 'digitaltoad/vim-jade'
+Bundle 'wavded/vim-stylus'
+Bundle 'vim-matchit'
+
+Bundle 'JavaScript-Indent'
+Bundle 'pangloss/vim-javascript'
+Bundle 'myhere/vim-nodejs-complete'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'doctorjs'
+
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'tpope/vim-rails'
+
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
-let g:mapleader = ","
 let g:EasyMotion_do_mapping = 1
-let g:EasyMotion_leader_key = g:mapleader
+let g:EasyMotion_leader_key = ","
 " Ctrl-P ---------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=3736
 " http://kien.github.com/ctrlp.vim/
@@ -418,7 +444,7 @@ let g:ctrlp_custom_ignore = {
 " Match window, top of the screen:
 " let g:ctrlp_match_window_bottom = 0
 " switching between buffers
-nnoremap <C-N> :CtrlPBuffer<CR>
+nnoremap <C-k> :CtrlPBuffer<CR>
 " works in gvim and some terminals.
 nnoremap <C-A-P> :CtrlPMixed<CR>
 
@@ -444,8 +470,8 @@ nnoremap <C-A-P> :CtrlPMixed<CR>
 " use V 3.4
 "nnoremap <leader>ff :FufFile ~/projects/<CR>
 " search from cwd
-nnoremap <leader>gf :FufFile<CR>
-nnoremap <leader>gb :FufBuffer<CR>
+nnoremap <leader>ff :FufFile<CR>
+nnoremap <leader>fb :FufBuffer<CR>
 
 " Gundo ----------------------------------------------- {{{2
 " http://sjl.bitbucket.org/gundo.vim/
@@ -481,6 +507,11 @@ nnoremap <leader>nt :NERDTreeToggle<CR>
 " Rainbow Parentheses --------------------------------- {{{2
 " https://github.com/kien/rainbow_parentheses.vim
 " #git clone git://github.com/kien/rainbow_parentheses.vim.git
+
+" Sessionman ------------------------------------------ {{{2
+set sessionoptions=blank,buffers,curdir,folds,tabpages,winsize
+nmap <leader>sl :SessionList<CR>
+nmap <leader>ss :SessionSave<CR>
 
 " Splice ---------------------------------------------- {{{2
 " https://bitbucket.org/sjl/splice.vim
@@ -531,13 +562,25 @@ nnoremap <leader>st :SyntasticToggleMode<CR>
 " http://www.vim.org/scripts/script.php?script_id=3464
 " https://github.com/godlygeek/tabular
 " git clone git://github.com/godlygeek/tabular.git
+if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:<CR>
+  vmap <Leader>a: :Tabularize /:<CR>
+  nmap <Leader>a:: :Tabularize /:\zs<CR>
+  vmap <Leader>a:: :Tabularize /:\zs<CR>
+  nmap <Leader>a, :Tabularize /,<CR>
+  vmap <Leader>a, :Tabularize /,<CR>
+  nmap <Leader>a<Bar> :Tabularize /<Bar><CR>
+  vmap <Leader>a<Bar> :Tabularize /<Bar><CR>
+endif
 
 " Tagbar ---------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=3465
 " http://github.com/majutsushi/tagbar
 " git clone git://github.com/majutsushi/tagbar.git
 nnoremap <leader>tb :TagbarToggle<CR>
-let g:tagbar_autoclose = 1
+"let g:tagbar_autoclose = 1
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
 
@@ -642,15 +685,11 @@ let g:vimim_toggle = 'pinyin'
 " It doesn't honor my sw, sts settings.
 
 " NeoComplCache
-" Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
-" Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
-" Use camel case completion.
 let g:neocomplcache_enable_camel_case_completion = 1
-" Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
-" Set minimum syntax keyword length.
+let g:neocomplcache_enable_auto_delimiter = 1
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 " Define keyword.
@@ -666,6 +705,14 @@ let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 " Gentoo Syntax --------------------------------- {{{2
 " FIXME Get rid of nmap <Leader>bug
 let g:loaded_bugsummary=1
+
+" Fugitive --- {{{2
+nnoremap <silent> <leader>gs :Gstatus<CR>
+nnoremap <silent> <leader>gd :Gdiff<CR>
+nnoremap <silent> <leader>gc :Gcommit<CR>
+nnoremap <silent> <leader>gb :Gblame<CR>
+nnoremap <silent> <leader>gl :Glog<CR>
+nnoremap <silent> <leader>gp :Git push<CR>
 
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
@@ -979,7 +1026,6 @@ nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
 inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
-nmap gf <C-W>gf
 noremap gz :bdelete<cr>
 noremap gn :bnext<cr>
 noremap gb :bprev<cr>
@@ -993,9 +1039,8 @@ inoremap <m-k> <C-o>gk
 " Error navigation
 nnoremap <m-j> :lnext<cr>zvzz
 nnoremap <m-k> :lprevious<cr>zvzz
-nnoremap <m-Down> :cnext<cr>zvzz
-nnoremap <m-Down> :cnext<cr>zvzz
-nnoremap <m-Up> :cprevious<cr>zvzz
+nnoremap <m-Up> :cnext<cr>zvzz
+nnoremap <m-Down> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
 vmap / y/<C-R>"<CR>
@@ -1012,6 +1057,8 @@ noremap L g_
 inoremap <C-a> <esc>I
 inoremap <C-e> <esc>A
 
+nnoremap <Leader>a :Ack
+
 " Open a Quickfix window for the last search.
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
 
@@ -1020,6 +1067,21 @@ nnoremap <F5> :w<CR>:make!<CR><CR>:cc<CR>
 
 " Paste toggle
 set pastetoggle=<F7>
+
+" visual shifting (does not exit Visual mode)
+vnoremap < <gv
+vnoremap > >gv
+
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>ew :e %%
+map <leader>es :sp %%
+map <leader>ev :vsp %%
+map <leader>et :tabe %%
+
+map zl zL
+map zh zH
+
+cmap w!! w !sudo tee % >/dev/null
 
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs

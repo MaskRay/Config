@@ -6,6 +6,6 @@ set sendmail="sendmail"
 set spoolfile=+INBOX \
     record=+Sent \
     postponed=+Drafts \
-    from=emacs.ray@gmail.com
+    from=i@maskray.tk
 #   smtp_url=smtps://emacsray@smtp.gmail.com \
 #   smtp_pass=$imap_pass \

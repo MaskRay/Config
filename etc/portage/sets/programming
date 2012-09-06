@@ -19,9 +19,11 @@ dev-tex/latex-beamer
 dev-util/cscope
 dev-util/flawfinder
 dev-util/glade
+dev-util/qt-creator
 dev-util/valgrind
 dev-vcs/git
 dev-vcs/mercurial
 dev-vcs/tig
+net-libs/nodejs
 sys-devel/crossdev
 sys-devel/gdb

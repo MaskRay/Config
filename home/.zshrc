@@ -221,8 +221,7 @@ HISTFILE=~/.zsh_history
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 
-export PATH=$HOME/.cabal/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
-PATH=$PATH:~/.npm/coffee-script/1.3.3/package/bin
+export PATH=$HOME/.cabal/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
 unset RUBYOPT
 
 export LESS="-M -i -R --shift 5"

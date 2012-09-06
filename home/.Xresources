@@ -1,6 +1,6 @@
 ! tvale
-*background: #000000
-*foreground: #FFFFFF
+xterm*background: #000000
+xterm*foreground: #FFFFFF
 !black
 *color0 : #222222
 *color8 : #454545
