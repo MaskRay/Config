@@ -46,7 +46,7 @@ if has("gui_running")
 "  set cursorcolumn
 "  set cursorline
   set nowrap
-  set relativenumber
+  "set elativenumber
   " set spell
 
   " Ctrl-F12 Toggle Menubar and Toolbar
@@ -292,7 +292,7 @@ if has("autocmd")
     au!
     " Toggling between number and relativenumber when entering/leaving insert mode
     autocmd InsertEnter * set number
-    autocmd InsertLeave * set relativenumber
+    "autocmd InsertLeave * set relativenumber
     " remove trailing whitespaces
     autocmd BufWritePre * call StripTrailingWhitespace()
 
@@ -396,13 +396,16 @@ Bundle 'tabular'
 Bundle 'EasyMotion'
 Bundle 'syntastic'
 Bundle 'UltiSnips'
+Bundle 'tomtom/tcomment_vim'
 "Bundle 'rainbow_parentheses'
 "Bundle 'vim-scripts/YankRing.vim'
 "Bundle 'joonty/vdebug'
 
-Bundle 'neco-ghc'
+Bundle 'ujihisa/neco-ghc'
+"Bundle 'eagletmt/ghcmod-vim'
 Bundle 'vim-scripts/fcitx.vim'
-"Bundle 'AndrewRadev/linediff.vim'
+Bundle 'adinapoli/cumino'
+Bundle 'AndrewRadev/linediff.vim'
 
 Bundle 'vim-sparkup'
 Bundle 'zencoding-vim'
@@ -415,6 +418,7 @@ Bundle 'JavaScript-Indent'
 Bundle 'pangloss/vim-javascript'
 Bundle 'myhere/vim-nodejs-complete'
 Bundle 'kchmck/vim-coffee-script'
+Bundle 'othree/html5.vim'
 Bundle 'doctorjs'
 
 Bundle 'vim-ruby/vim-ruby'
@@ -537,8 +541,8 @@ let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv
 "
 " try this:
 " ihtml:xxs>#wrapper>#nav>h2{navigation}+ul>li#id_$*3>a<<<#main{Page Content}+div#footer{Footer}<c-tab>
-let g:sparkupExecuteMapping = '<C-]>'
-let g:sparkupNextMapping = '<C-J>'
+"let g:sparkupExecuteMapping = '<C-]>'
+"let g:sparkupNextMapping = '<C-m>'
 
 " SuperTab -------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=1643
@@ -618,9 +622,7 @@ let g:UltiSnipsExpandTrigger = "<Tab>"
 let g:UltiSnipsJumpForwardTrigger = "<Tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
 " local snippets only:
-"let g:UltiSnipsSnippetDirectories = ["snippets"]
-" Snippets dir
-let g:UltiSnipsSnippetDirectories = ["UltiSnips", "snippets"]
+let g:UltiSnipsSnippetDirectories = ["snippets"]
 " vsplit the snippets edit window
 let g:UltiSnipsEditSplit = 'vertical'
 
@@ -713,6 +715,9 @@ nnoremap <silent> <leader>gc :Gcommit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
 nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
+
+" Cumino --- {{{2
+let g:cumino_buffer_location = "/tmp/.cumini.buff"
 
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
@@ -1090,3 +1095,8 @@ cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
+
+
+let g:PinyinSearch_Dict = '/home/ray/.vim/pinyin-search/PinyinSearch.dict'
+let g:PinyinSearch_Python = '/home/ray/.vim/pinyin-search/PinyinSearch.py'
+                nnoremap<silent><expr> <c-f> PinyinSearch()

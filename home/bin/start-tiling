@@ -23,6 +23,7 @@ List.map Sys.command [
   (* one-shot *)
   ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1 --off; }"
   ; "xrdb ~/.Xresources"
+  ; "offlineimap &"
   ; "setxkbmap -option ctrl:nocaps -option keypad:pointerkeys"
   ; pic
   ; "redshift"

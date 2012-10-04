@@ -1,11 +1,11 @@
 set folder=~/Maildir
 set realname="Ray"
 unmailboxes *
-mailboxes =INBOX =Tunet =Drafts =Gentoo-china =Haskell =Erlang =Contest =Shlug =School =Toplanguage =Lesson =Ruby =Python =SRT
+mailboxes =INBOX =Tuna =Drafts =Gentoo-china =Haskell =Nodejs =Contest =Shlug =School =Toplanguage =Lesson =SRT
 set sendmail="sendmail"
 set spoolfile=+INBOX \
     record=+Sent \
     postponed=+Drafts \
-    from=i@maskray.tk
+    from=i@maskray.me
 #   smtp_url=smtps://emacsray@smtp.gmail.com \
 #   smtp_pass=$imap_pass \

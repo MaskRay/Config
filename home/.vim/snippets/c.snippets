@@ -22,7 +22,7 @@ ${0}
 #endif /* end of include guard: $1 */
 endsnippet
 
-snippet main "main() (main)"
+snippet main "main(argc, argv)"
 int main(int argc, const char* argv[])
 {
 	${0:/* code */}
@@ -31,23 +31,39 @@ int main(int argc, const char* argv[])
 endsnippet
 
 snippet foi "for int loop (foi)"
-foi (${4:int} ${2:i} = 0; $2 < ${1:n}; ${3:++$2})
+for (${4:int} ${2:i} = 0; $2 < ${1:n}; $2++)
 	${0:/* code */}
 endsnippet
 
-snippet fori "for int loop (fori)"
-fori (${4:int} ${2:i} = 0; $2 < ${1:n}; ${3:++$2})
-{
+snippet for "for int loop (fori)"
+for (${4:int} ${2:i} = 0; $2 < ${1:n}; $2++) {
 	${0:/* code */}
 }
 endsnippet
 
 snippet printf
-printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+printf("${1:%d}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
 endsnippet
 
 snippet scanf
-printf("${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+scanf("${1:%d}"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
+endsnippet
+
+snippet readint
+int readInt()
+{
+  int c, t = 0;
+  while (c = getchar(), c < '0' || c > '9');
+  while ('0' <= c && c <= '9') {
+    t = t * 10 + c - '0';
+    c = getchar();
+  }
+  return t;
+}
+endsnippet
+
+snippet edge
+struct Edge { int v; Edge* next; } $0;
 endsnippet
 
 # vim:ft=snippets:

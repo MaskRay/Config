@@ -6,14 +6,16 @@
 if [[  "$-" != *i* ]]; then return 0; fi
 
 # server?
-if [[ $(hostname) != t* ]]; then
+if [[ $(hostname) = lap ]]; then
   EPREFIX=
   MYSELF=true
 else
   export EPREFIX=~/gentoo
   export PATH="$EPREFIX/usr/bin:$EPREFIX/bin:$EPREFIX/tmp/usr/bin:$EPREFIX/tmp/bin:$PATH"
-  export LD_LIBRARY_PATH="$EPREFIX/usr/lib:$EPREFIX/lib"
-  alias cabali="cabal install --extra-include-dirs=$EPREFIX/usr/include --extra-lib-dirs=$EPREFIX/lib --extra-lib-dirs=$EPREFIX/usr/lib"
+  alias -g halt=
+  alias -g poweroff=
+  alias -g shutdown=
+  alias -g reboot=
 fi
 if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
     eval $(dircolors -b ~/.lscolor256)
@@ -275,7 +277,8 @@ alias -g P="|column -t"
 alias -g S="|sort"
 alias -g T="|tail -n $(($LINES-2))"
 alias -g X="|xargs"
-alias -g NF="./*(oc[1])"      # last modified(inode time) file or directory
+alias -g NF=".*(oc[1])"
+alias -g ND="/*(oc[1])"
 alias -g MOU='-o users,uid=1000,gid=1000,codepage=936,utf8'
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias fh='firefox ~/haskell/index.html'
