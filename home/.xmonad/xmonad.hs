@@ -126,7 +126,7 @@ myLayout = avoidStruts $
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
-    [ className =? c --> doShift "web" | c <- ["Firefox"] ] ++
+    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Okular", "Evince"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
@@ -146,6 +146,7 @@ myManageHook = composeAll $
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , stringProperty "WM_WINDOW_ROLE" =? "pop-up"
         , fmap (isPrefixOf "sun-") appName
         , fmap (isPrefixOf "Gnuplot") title
         , flip fmap className $ flip elem
@@ -212,7 +213,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "google-chrome", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -417,7 +418,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "firefox" site s >> viewWeb)
+      (S.search "google-chrome" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -475,7 +476,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "firefox") "firefox.xpm"
+    [ TI "web" "" (spawn "google-chrome") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"

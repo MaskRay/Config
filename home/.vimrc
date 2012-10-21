@@ -19,6 +19,7 @@ set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
+set ttimeoutlen=100
 
 set backup
 set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
@@ -177,13 +178,15 @@ if has("autocmd")
     autocmd FileType ruby inoreab <buffer> #! #!/usr/bin/env ruby
     autocmd FileType ruby inoreab <buffer> #e # coding: utf-8
     nmap <leader>rc :Rcontroller<space><tab>
-    nmap <leader>rm :Rmodel<space><tab>
-    nmap <leader>rv :Rview<space><tab>
-    nmap <leader>rl :Rlayout<space><tab>
     nmap <leader>rh :Rhelper<space><tab>
     nmap <leader>rj :Rjavascript<space><tab>
-    nmap <leader>rs :Rspec<space><tab>
-    nmap <leader>rh :Rhelper<space><tab>
+    nmap <leader>rl :Rlayout<space><tab>
+    nmap <leader>ro :Rlocale<space><tab>
+    nmap <leader>rm :Rmodel<space><tab>
+    nmap <leader>rt :Rspec<space><tab>
+    nmap <leader>rk :Rtask<space><tab>
+    nmap <leader>rs :Rstylesheet<space><tab>
+    nmap <leader>rv :Rview<space><tab>
 
   " Python Support ------------------------------------ {{{2
   augroup python_support
@@ -407,7 +410,7 @@ Bundle 'vim-scripts/fcitx.vim'
 Bundle 'adinapoli/cumino'
 Bundle 'AndrewRadev/linediff.vim'
 
-Bundle 'vim-sparkup'
+"Bundle 'vim-sparkup'
 Bundle 'zencoding-vim'
 Bundle 'vim-css-color'
 Bundle 'digitaltoad/vim-jade'
@@ -423,6 +426,7 @@ Bundle 'doctorjs'
 
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
+Bundle 'bbommarito/vim-slim'
 
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
@@ -819,17 +823,6 @@ function! MatchUnwantedWhitespaces()
   match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
 endfunction
 
-" StripTrailingWhitespace ----------------------------- {{{2
-function! StripTrailingWhitespace()
-  " To disable this function, either set ft as keep_whitespace prior saving
-  " or define a buffer local variable named keepWhitespace
-  if &ft =~ 'whitespace\|keep_whitespace' || exists('b:keep_whitespace')
-    return
-  endif
-  let l:savedview = winsaveview()
-  silent! %s/\s*$//e
-  call winrestview(l:savedview)
-endfunction
 
 " CurrentTag ------------------------------------------ {{{2
 function! CurrentTag()

@@ -1,7 +1,7 @@
 set folder=~/Maildir
 set realname="Ray"
 unmailboxes *
-mailboxes =INBOX =Tuna =Drafts =Gentoo-china =Haskell =Nodejs =Contest =Shlug =School =Toplanguage =Lesson =SRT
+mailboxes =INBOX =Tuna =Drafts =Gentoo-china =Haskell =ML =Contest =School =Lesson =Work
 set sendmail="sendmail"
 set spoolfile=+INBOX \
     record=+Sent \

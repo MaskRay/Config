@@ -1,36 +1,83 @@
 [user]
-	name = Ray Song
-	email = i@maskray.me
-[color]
-	diff = always
-	branch = auto
-	status = auto
-	grep = always
+  name = Ray Song
+  email = i@maskray.me
+[advice]
+  statusHints = false
 [alias]
-	a   = add
-	b   = branch
-	c   = commit
-	d   = diff
-	l   = log
-	lc  = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
-	lg  = log --graph
-	m   = merge
-	pl  = pull
-	pu  = push
-	s   = status -s
-	sb  = status -sb
-	t   = tag
-	untrack = rm -r --cached
-	merge-branch-file = checkout --merge
-	ix = diff --cached
-	dupes = !git ls-tree -r HEAD | cut -c 13- | sort | uniq -D -w 40
-[merge]
-	tool = vimdiff
+  a = add
+  b = branch -v
+  m   = merge
+  nc  = checkout -b
+  pl  = pull
+  pu  = push
+  untrack = rm -r --cached
+  dupes = !git ls-tree -r HEAD | cut -c 13- | sort | uniq -D -w 40
+
+  # commit
+  c = commit
+  ca = commit -a
+  co = checkout
+
+  # diff
+  d   = diff
+  dc  = diff --cached
+  last = diff HEAD^
+
+  # log
+  l = log
+  lp = log -p
+  ls = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
+  lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+  lg = log --graph
+
+  # rebase
+  rb = rebase
+  rc = rebase --continue
+  rs = rebase --skip
+
+  # remote
+  r = remote
+
+  # reset
+  unstage = reset HEAD
+
+  # stash
+  ss = stash
+  sl = stash list
+  sa = stash apply
+
+  # status
+  s = status -s
+
+  # tag
+  t = tag
 [branch]
-	autosetuprebase = always
-[github]
-	user = MaskRay
+  autosetuprebase = always
+[color]
+  ui = true
+  status = auto
+  grep = always
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  old = red bold
+  new = green bold
+  frag = magenta bold
+[diff]
+  mnemonicprefix = true
+  tool = gvimdiff
 [diff "lisp"]
-    xfuncname="^(\\((def|test).*)$"
+  xfuncname="^(\\((def|test).*)$"
 [diff "python"]
-    xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"
+  xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"
+[github]
+  user = MaskRay
+[merge]
+  tool = vimdiff
+[push]
+  default = tracking
+[url "git://github.com/"]
+  insteadOf = gh:

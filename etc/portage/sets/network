@@ -26,4 +26,5 @@ net-misc/urlview
 net-misc/zsync
 net-proxy/polipo
 www-client/firefox-bin
+www-client/google-chrome
 www-client/w3m
