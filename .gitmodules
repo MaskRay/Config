@@ -1,0 +1,60 @@
+[submodule "home/.vim/bundle/vim-jsbeautify"]
+	path = home/.vim/bundle/vim-jsbeautify
+	url = https://github.com/maksimr/vim-jsbeautify
+[submodule "home/.vim/bundle/vim-rails"]
+	path = home/.vim/bundle/vim-rails
+	url = https://github.com/tpope/vim-rails.git
+[submodule "home/.vim/bundle/ack.vim"]
+	path = home/.vim/bundle/ack.vim
+	url = https://github.com/mileszs/ack.vim
+[submodule "home/.vim/bundle/ghcmod-vim"]
+	path = home/.vim/bundle/ghcmod-vim
+	url = https://github.com/eagletmt/ghcmod-vim
+[submodule "home/.vim/bundle/neco-ghc"]
+	path = home/.vim/bundle/neco-ghc
+	url = https://github.com/ujihisa/neco-ghc.git
+[submodule "home/.vim/bundle/vundle"]
+	path = home/.vim/bundle/vundle
+	url = http://github.com/gmarik/vundle.git
+[submodule "home/.vim/bundle/syntastic"]
+	path = home/.vim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "home/.vim/bundle/ctrlp"]
+	path = home/.vim/bundle/ctrlp
+	url = https://github.com/kien/ctrlp.vim
+[submodule "home/.vim/bundle/nginx-vim-syntax"]
+	path = home/.vim/bundle/nginx-vim-syntax
+	url = https://github.com/evanmiller/nginx-vim-syntax
+[submodule "home/.vim/bundle/vim-css3-syntax"]
+	path = home/.vim/bundle/vim-css3-syntax
+	url = https://github.com/hail2u/vim-css3-syntax
+[submodule "home/.vim/bundle/vim-css-color"]
+	path = home/.vim/bundle/vim-css-color
+	url = https://github.com/skammer/vim-css-color
+[submodule "home/.vim/bundle/vim-jade"]
+	path = home/.vim/bundle/vim-jade
+	url = https://github.com/digitaltoad/vim-jade.git
+[submodule "home/.vim/bundle/vim-slim"]
+	path = home/.vim/bundle/vim-slim
+	url = https://github.com/bbommarito/vim-slim
+[submodule "home/.vim/bundle/vim-coffee-script"]
+	path = home/.vim/bundle/vim-coffee-script
+	url = https://github.com/kchmck/vim-coffee-script
+[submodule "home/.vim/bundle/vim-javascript"]
+	path = home/.vim/bundle/vim-javascript
+	url = https://github.com/pangloss/vim-javascript.git
+[submodule "home/.vim/bundle/vim-stylus"]
+	path = home/.vim/bundle/vim-stylus
+	url = https://github.com/wavded/vim-stylus.git
+[submodule "home/.vim/bundle/UltiSnips"]
+	path = home/.vim/bundle/UltiSnips
+	url = https://github.com/vim-scripts/UltiSnips.git
+[submodule "home/.vim/bundle/vim-matchit"]
+	path = home/.vim/bundle/vim-matchit
+	url = https://github.com/tsaleh/vim-matchit
+[submodule "home/.vim/bundle/tabular"]
+	path = home/.vim/bundle/tabular
+	url = https://github.com/godlygeek/tabular
+[submodule "home/.vim/bundle/doctorjs"]
+	path = home/.vim/bundle/doctorjs
+	url = https://github.com/mozilla/doctorjs

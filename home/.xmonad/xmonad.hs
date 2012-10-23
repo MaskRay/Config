@@ -418,7 +418,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "google-chrome" site s >> viewWeb)
+      (S.search "firefox" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -476,7 +476,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "google-chrome") "firefox.xpm"
+    [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
