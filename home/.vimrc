@@ -30,8 +30,6 @@ set history=200
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 
-set dictionary+=/usr/share/dict/words
-
 set grepprg=ack\ -a
 
 " tabs and eols
@@ -197,20 +195,21 @@ if has("autocmd")
     " Setting 'python_space_error_highlight' = 1 will only highlight mixed
     " tabs and spaces, I go as far as mark all tabs as error.
     autocmd Syntax python syn match ExtraWhitespace /\t/
+    nmap <leader>p :call Flake8()<cr>
 
   " py.test Support ----------------------------------- {{{2
   augroup pytest
     au!
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tf <Esc>:Pytest function looponfail<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tc <Esc>:Pytest class looponfail<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tm <Esc>:Pytest method looponfail<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tt <Esc>:Pytest file looponfail<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tC <Esc>:Pytest clear<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>te <Esc>:Pytest error<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tn <Esc>:Pytest next<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tp <Esc>:Pytest previous<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>tF <Esc>:Pytest fails<CR>
-    autocmd FileType python nnoremap <buffer> <silent> <localleader>ts <Esc>:Pytest session<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tf <Esc>:Pytest function looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tc <Esc>:Pytest class looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tm <Esc>:Pytest method looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tt <Esc>:Pytest file looponfail<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tC <Esc>:Pytest clear<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>te <Esc>:Pytest error<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tn <Esc>:Pytest next<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tp <Esc>:Pytest previous<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>tF <Esc>:Pytest fails<CR>
+    autocmd FileType python nnoremap <buffer> <silent> <leader>ts <Esc>:Pytest session<CR>
 
   " Mappings for reStructuredText: Section Headers ---- {{{2
   augroup restructuredtext
@@ -399,13 +398,13 @@ Bundle 'tabular'
 Bundle 'EasyMotion'
 Bundle 'syntastic'
 Bundle 'UltiSnips'
+Bundle 'nerdtree'
 "Bundle 'tomtom/tcomment_vim'
 "Bundle 'rainbow_parentheses'
 "Bundle 'vim-scripts/YankRing.vim'
-"Bundle 'joonty/vdebug'
 
-Bundle 'ujihisa/neco-ghc'
-"Bundle 'eagletmt/ghcmod-vim'
+Bundle 'vimproc'
+Bundle 'eagletmt/ghcmod-vim'
 Bundle 'vim-scripts/fcitx.vim'
 Bundle 'adinapoli/cumino'
 
@@ -428,6 +427,10 @@ Bundle 'myhere/vim-nodejs-complete'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'bbommarito/vim-slim'
+
+Bundle 'jedi-vim'
+Bundle 'vim-flake8'
+Bundle 'pytest.vim'
 
 filetype plugin indent on    " required!
 " EasyMotion ------------------------------------------ {{{2
@@ -997,6 +1000,8 @@ if has('cscope')
     "au BufEnter *.cpp call LoadCscopeOut()
     "au BufEnter *.cxx call LoadCscopeOut()
   "augroup END
+
+  au FileType * exe('setl dictionary+='.$VIMRUNTIME.'/syntax/'.&filetype.'.vim')
 
   " Use both cscope and ctag
   "set cscopetag

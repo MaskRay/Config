@@ -58,3 +58,15 @@
 [submodule "home/.vim/bundle/doctorjs"]
 	path = home/.vim/bundle/doctorjs
 	url = https://github.com/mozilla/doctorjs
+[submodule "home/.vim/bundle/vim-flake8"]
+	path = home/.vim/bundle/vim-flake8
+	url = https://github.com/nvie/vim-flake8
+[submodule "home/.vim/bundle/pytest.vim"]
+	path = home/.vim/bundle/pytest.vim
+	url = https://github.com/alfredodeza/pytest.vim
+[submodule "home/.vim/bundle/nerdtree"]
+	path = home/.vim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree/
+[submodule "home/.vim/bundle/jedi-vim"]
+	path = home/.vim/bundle/jedi-vim
+	url = https://github.com/davidhalter/jedi-vim

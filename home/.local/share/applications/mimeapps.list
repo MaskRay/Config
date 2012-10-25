@@ -1,0 +1,10 @@
+[Default Applications]
+text/html=firefox-bin.desktop
+application/xhtml+xml=firefox-bin.desktop
+x-scheme-handler/http=firefox-bin.desktop
+x-scheme-handler/https=firefox-bin.desktop
+
+; text/html=google-chrome.desktop
+; application/xhtml+xml=google-chrome.desktop
+; x-scheme-handler/http=google-chrome.desktop
+; x-scheme-handler/https=google-chrome.desktop
