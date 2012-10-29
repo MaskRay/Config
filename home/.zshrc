@@ -1,60 +1,113 @@
 #!/bin/zsh
-# vim:fdm=marker
+# vim:sw=2 sts=2 et fdm=marker
 
-# 预配置 {{{
-# 如果不是交互shell就直接结束 (unix power tool, 2.11)
 if [[  "$-" != *i* ]]; then return 0; fi
 
-# server?
+# Server? {{{1
 if [[ $(hostname) = lap ]]; then
-  EPREFIX=
   MYSELF=true
 else
-  export EPREFIX=~/gentoo
-  export PATH="$EPREFIX/usr/bin:$EPREFIX/bin:$EPREFIX/tmp/usr/bin:$EPREFIX/tmp/bin:$PATH"
+  if [[ -d ~/gentoo ]]; then
+    export EPREFIX=~/gentoo
+    export PATH="$EPREFIX/usr/bin:$EPREFIX/bin:$EPREFIX/tmp/usr/bin:$EPREFIX/tmp/bin:$PATH"
+  fi
   alias -g halt=
   alias -g poweroff=
   alias -g shutdown=
   alias -g reboot=
 fi
+
+# Parameters & environment variables {{{1
+WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
+export PATH=$HOME/.cabal/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+export LESS="-NMiR --shift 5"
+export GREP_OPTIONS='--color=auto'
+export MENUCONFIG_COLOR=blackbg
+export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
+
+# Look {{{1
+PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %F{white}'
+. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
+
+# dircolors {{{2
 if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
     eval $(dircolors -b ~/.lscolor256)
 else if [[ -f $HOME/.lscolor ]];
     eval $(dircolors -b ~/.lscolor)
 fi
 
-setopt pushdminus
-setopt complete_aliases         #do not expand aliases _before_ completion has finished
-setopt auto_cd                  # if not a command, try to cd to it.
-setopt auto_pushd               # automatically pushd directories on dirstack
-setopt auto_continue            #automatically send SIGCON to disowned jobs
-setopt extended_glob            # so that patterns like ^() *~() ()# can be used
-setopt pushd_ignore_dups        # do not push dups on stack
-setopt brace_ccl                # expand alphabetic brace expressions
-#setopt chase_links             # ~/ln -> /; cd ln; pwd -> /
-setopt complete_in_word         # stays where it is and completion is done from both ends
-setopt correct                  # spell check for commands only
-#setopt equals extended_glob    # use extra globbing operators
-setopt no_hist_beep             # don not beep on history expansion errors
-setopt hash_list_all            # search all paths before command completion
+# fasd {{{1
+eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
+bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
+bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
+bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
+alias o='fasd -fe xdg-open'
+alias sv='fasd -fe "sudo vim"'
+alias e='fasd -fe "emacsclient -c -n"'
+alias j='fasd_cd -d'
+alias m='fasd -fe mplayer'
+if [[ -n $MYSELF ]]; then
+  alias v='fasd -fe "vim --servername GVIM --remote-tab-silent"'
+else
+  alias v='fasd -fe vim'
+fi
+
+# Options {{{1
+# History {{{2
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+unsetopt flowcontrol
 setopt hist_ignore_all_dups     # when runing a command several times, only store one
 setopt hist_reduce_blanks       # reduce whitespace in history
 setopt hist_ignore_space        # do not remember commands starting with space
 setopt share_history            # share history among sessions
 setopt hist_verify              # reload full command when runing from history
-setopt hist_expire_dups_first   #remove dups when max size reached
+setopt hist_expire_dups_first   # remove dups when max size reached
+setopt inc_append_history       # append to history once executed
+
+# Directories {{{2
+setopt auto_cd                  # if not a command, try to cd to it.
+setopt auto_pushd               # automatically pushd directories on dirstack
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+alias 1='cd -'
+alias 2='cd +2'
+alias 3='cd +3'
+alias 4='cd +4'
+alias 5='cd +5'
+alias 6='cd +6'
+alias 7='cd +7'
+alias 8='cd +8'
+alias 9='cd +9'
+
+alias md='mkdir -p'
+alias d='dirs -v'
+
+setopt complete_aliases         #do not expand aliases _before_ completion has finished
+setopt auto_continue            #automatically send SIGCON to disowned jobs
+setopt extended_glob            # so that patterns like ^() *~() ()# can be used
+setopt pushd_ignore_dups        # do not push dups on stack
+setopt brace_ccl                # expand alphabetic brace expressions
+setopt correct                  # spell check for commands only
+setopt equals
+setopt no_hist_beep             # don not beep on history expansion errors
+setopt hash_list_all            # search all paths before command completion
 setopt interactive_comments     # comments in history
 setopt list_types               # show ls -F style marks in file completion
 setopt long_list_jobs           # show pid in bg job list
 setopt numeric_glob_sort        # when globbing numbered files, use real counting
-setopt inc_append_history       # append to history once executed
 setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 
-
 fpath=($HOME/.zsh/site-functions/ $fpath)
-autoload -U ${fpath[1]}/*(:t)
 
+# Completion {{{1
+setopt complete_in_word
+setopt always_to_end
 #   zsytle ':completion:*:completer:context or command:argument:tag'
 zmodload -i zsh/complist        # for menu-list completion
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" "ma=${${use_256color+1;7;38;5;143}:-1;7;33}"
@@ -63,7 +116,7 @@ zstyle ':completion:*' ignore-parents parent pwd directory
 #menu selection in completion
 zstyle ':completion:*' menu select=2
 #zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete _match #_user_expand
+zstyle ':completion:*' completer _oldlist _expand _complete _match #_user_expand
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 ## case-insensitive (uppercase from lowercase) completion
@@ -75,7 +128,7 @@ zstyle ':completion:*:*:*:*:processes' force-list always
 zstyle ':completion:*:processes' command 'ps -au$USER'
 zstyle ':completion:*:*:kill:*:processes' list-colors "=(#b) #([0-9]#)*=36=1;31"
 #use cache to speed up pacman completion
-zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' use-cache 1
 #zstyle ':completion::complete:*' cache-path .zcache
 #group matches and descriptions
 zstyle ':completion:*:matches' group 'yes'
@@ -96,13 +149,126 @@ zstyle ':completion:*:history-words' menu yes select
 autoload -Uz compinit
 compinit
 
-#force rehash when command not found
-#  http://zshwiki.org/home/examples/compsys/general
-_force_rehash() {
-    (( CURRENT == 1 )) && rehash
-    return 1    # Because we did not really complete anything
-}
+bindkey -M menuselect '^o' accept-and-infer-next-history
 
+#check if a binary exists in path
+bin-exist() {[[ -n ${commands[$1]} ]]}
+
+# Bindings {{{1
+bindkey -v '^A' vi-insert-bol
+bindkey -v '^E' vi-insert-eol
+bindkey -v '^K' kill-line
+bindkey -v '\ef' forward-word
+bindkey -v '\eb' backward-word
+bindkey -v '^P' up-history
+bindkey -v '^N' down-history
+bindkey -v '^F' forward-char
+bindkey -v '^B' backward-char
+bindkey -v '^U' kill-whole-line
+bindkey -v '^R' history-incremental-search-backward
+bindkey -v '^S' history-incremental-search-forward
+bindkey -v '^Y' yank-pop
+bindkey -v '\e.' insert-last-word
+bindkey -v '\e?' which-command
+bindkey -v '\eh' run-help
+bindkey -v '\el' down-case-word
+bindkey -v '\eu' up-case-word
+bindkey -v "^[m" copy-prev-shell-word
+
+bindkey -e
+
+# Aliases {{{1
+# General {{{2
+alias pg='pgrep -l'
+alias cp='cp -i -v'
+alias mv='mv -i -v'
+alias rm='rm -i -v -d' # since coreutils-8.19
+alias psg='ps aux|grep'
+if [ `uname` = Linux ]; then
+    alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
+else
+    alias ls="ls -F"
+fi
+alias l="ls -l"
+alias la='l -A'
+
+# Global aliases {{{2
+alias -g A="|awk"
+alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
+alias -g E="|sed"
+alias -g L="|less"
+alias -g P="|column -t"
+alias -g S="|sort"
+alias -g X="|xargs"
+alias -g G='|egrep'
+alias -g EG='|& egrep'
+alias -g H="|head -n $(($LINES-2))"
+alias -g T="|tail -n $(($LINES-2))"
+alias -g N='>/dev/null'
+alias -g NN='>/dev/null 2>&1'
+alias -g X='| xargs'
+alias -g X0='| xargs -0'
+
+# Suffix aliases {{{2
+alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
+
+# Application-specific {{{2
+alias clip='xsel -ib'
+alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
+alias -g NF=".*(oc[1])"
+alias -g ND="/*(oc[1])"
+alias mou='mount -o users,uid=1000,gid=1000,codepage=936,utf8'
+alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
+alias c=cat
+alias L=less
+alias g='grep -I'
+alias eg='egrep -I'
+alias df='df -Th'
+alias du='du -h'
+alias dud='du -s *(/)' #show directories size
+alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
+alias rsync='rsync --progress --partial'
+alias port='ss -ntlp'
+alias wgetpaste='wgetpaste -X'
+alias 2pdf='libreoffice --headless --convert-to pdf'
+alias 2csv='libreoffice --headless --convert-to csv'
+alias g2u='iconv -f GBK -t UTF-8'
+alias u2g='iconv -f UTF-8 -t GBK'
+alias ntp='sudo /etc/init.d/ntp-client start'
+alias luit='luit -encoding gbk'
+alias gdb='gdb -q'
+alias getmail='getmail -r rc0 -r rc1'
+
+# Gentoo-specific {{{2
+alias peme='sudo proxychains emerge -1'
+alias emel='tail -f /var/log/emerge.log'
+alias emef='tail -f /var/log/emerge-fetch.log'
+alias ei='eix -uI --only-names'
+alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
+alias disp='sudo dispatch-conf'
+
+# ZLE {{{1
+# highlight {{{2
+zle_highlight=(region:bg=magenta
+  special:bold,fg=magenta
+  default:bold
+  isearch:underline
+  suffix:fg=cyan
+)
+
+# edit-command-line {{{2
+autoload -U edit-command-line
+zle -N      edit-command-line
+bindkey '\C-x\C-e' edit-command-line
+
+# url-quote-magic
+autoload -U url-quote-magic
+zle -N self-insert url-quote-magic
+
+# Goodies {{{1
+(bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
+
+# Utils {{{1
 # show 256 color tab
 256tab() {
     for k in `seq 0 1`;do
@@ -114,239 +280,5 @@ _force_rehash() {
     done
 }
 
-#check if a binary exists in path
-bin-exist() {[[ -n ${commands[$1]} ]]}
-
-#recalculate track db gain with mp3gain
-(bin-exist mp3gain) && id3gain() { find $* -type f -iregex ".*\(mp3\|ogg\|wma\)" -exec mp3gain -r -s i {} \; }
-
-#ccze for log viewing
-(bin-exist ccze) && lless() { tac $* |ccze -A |less }
-
-autoload -U zkbd
-bindkey -e      # emacs style
-typeset -A key
-key[Home]=${terminfo[khome]}
-key[End]=${terminfo[kend]}
-key[Insert]=${terminfo[kich1]}
-key[Delete]=${terminfo[kdch1]}
-key[Up]=${terminfo[kcuu1]}
-key[Down]=${terminfo[kcud1]}
-key[Left]=${terminfo[kcub1]}
-key[Right]=${terminfo[kcuf1]}
-key[PageUp]=${terminfo[kpp]}
-key[PageDown]=${terminfo[knp]}
-for k in ${(k)key} ; do
-        # $terminfo[] entries are weird in ncurses application mode...
-  [[ ${key[$k]} == $'\eO'* ]] && key[$k]=${key[$k]/O/[}
-done
-
-# setup key accordingly
-[[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
-[[ -n "${key[End]}"     ]]  && bindkey  "${key[End]}"     end-of-line
-[[ -n "${key[Insert]}"  ]]  && bindkey  "${key[Insert]}"  overwrite-mode
-[[ -n "${key[Delete]}"  ]]  && bindkey  "${key[Delete]}"  delete-char
-[[ -n "${key[Up]}"      ]]  && bindkey  "${key[Up]}"      up-line-or-history
-[[ -n "${key[Down]}"    ]]  && bindkey  "${key[Down]}"    down-line-or-history
-[[ -n "${key[Left]}"    ]]  && bindkey  "${key[Left]}"    backward-char
-[[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
-
-autoload -U edit-command-line
-zle -N      edit-command-line
-bindkey '\ee' edit-command-line
-
-# pressing TAB in an empty command makes a cd command with completion list
-dumb-cd(){
-    if [[ -n $BUFFER ]] ; then # 如果该行有内容
-        zle expand-or-complete # 执行 TAB 原来的功能
-    else # 如果没有
-        BUFFER="cd " # 填入 cd（空格）
-        zle end-of-line # 这时光标在行首，移动到行末
-        zle expand-or-complete # 执行 TAB 原来的功能
-    fi
-}
-zle -N dumb-cd
-bindkey "\t" dumb-cd #将上面的功能绑定到 TAB 键
-
-# colorize commands
-TOKENS_FOLLOWED_BY_COMMANDS=('|' '||' ';' '&' '&&' 'sudo' 'do' 'time' 'strace')
-
-recolor-cmd() {
-    region_highlight=()
-    colorize=true
-    start_pos=0
-    for arg in ${(z)BUFFER}; do
-        ((start_pos+=${#BUFFER[$start_pos+1,-1]}-${#${BUFFER[$start_pos+1,-1]## #}}))
-        ((end_pos=$start_pos+${#arg}))
-        if $colorize; then
-            colorize=false
-            res=$(LC_ALL=C builtin type $arg 2>/dev/null)
-            case $res in
-                *'reserved word'*)   style="fg=magenta,bold";;
-                *'alias for'*)       style="fg=cyan,bold";;
-                *'shell builtin'*)   style="fg=yellow,bold";;
-                *'shell function'*)  style='fg=green,bold';;
-                *"$arg is"*)
-                    [[ $arg = 'sudo' ]] && style="fg=red,bold" || style="fg=blue,bold";;
-                *)                   style='none,bold';;
-            esac
-            region_highlight+=("$start_pos $end_pos $style")
-        fi
-        [[ ${${TOKENS_FOLLOWED_BY_COMMANDS[(r)${arg//|/\|}]}:+yes} = 'yes' ]] && colorize=true
-        start_pos=$end_pos
-    done
-}
-
-check-cmd-self-insert() { zle .self-insert && recolor-cmd }
-check-cmd-backward-delete-char() { zle .backward-delete-char && recolor-cmd }
-
-zle -N self-insert check-cmd-self-insert
-zle -N backward-delete-char check-cmd-backward-delete-char
-
-# double ESC to prepend "sudo"
-sudo-command-line() {
-    [[ -z $BUFFER ]] && zle up-history
-    [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
-    zle end-of-line                 #光标移动到行末
-}
-zle -N sudo-command-line
-#定义快捷键为： [Esc] [Esc]
-bindkey "\e\e" sudo-command-line
-
-
-PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %{${RESET}%}'
-WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=~/.zsh_history
-
-export MENUCONFIG_COLOR=blackbg
-export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
-
-export PATH=$HOME/.cabal/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
-unset RUBYOPT
-
-export LESS="-M -i -R --shift 5"
-export LESSCHARSET=utf-8
-
-# redefine command not found
-(bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
-
-eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
-bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
-bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
-bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
-alias o='fasd -fe xdg-open'
-alias sv='fasd -fe "sudo vim"'
-alias e='fasd -fe "emacsclient -c -n"'
-alias j='fasd_cd -d'
-alias m='fasd -fe mplayer'
-if [[ -n $MYSELF ]]; then
-  alias v='fasd -fe "vim --servername GVIM --remote-tab-silent"'
-else
-  alias v='fasd -fe vim'
-fi
-
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....=../../../..
-alias pg='pgrep -l'
-alias cp='cp -i -v'
-alias mv='mv -i -v'
-alias rm='rm -i -v'
-alias psg='ps aux|grep'
-alias clip='xsel -ib'
-
-if [ `uname` = 'Linux' ]; then
-    alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
-else
-    alias ls="ls -F"
-fi
-alias l="ls -l"
-alias la='l -A'
-
-alias -g A="|awk"
-alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
-alias -g C="|wc"
-alias -g E="|sed"
-alias -g G='|GREP_COLOR=$(echo 3$[$(date +%N)%6+1]'\'';1;7'\'') egrep -i --color=always'
-alias -g H="|head -n $(($LINES-2))"
-alias -g L="|less"
-alias -g P="|column -t"
-alias -g S="|sort"
-alias -g T="|tail -n $(($LINES-2))"
-alias -g X="|xargs"
-alias -g NF=".*(oc[1])"
-alias -g ND="/*(oc[1])"
-alias -g MOU='-o users,uid=1000,gid=1000,codepage=936,utf8'
-alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
-alias fh='firefox ~/haskell/index.html'
-
-alias c=cat
-alias L=less
-alias g='grep -I --color=auto'
-alias eg='egrep -I --color=auto'
-alias df='df -Th'
-alias du='du -h'
-alias dud='du -s *(/)' #show directories size
-alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
-alias rsync='rsync --progress --partial'
-alias port='netstat -ntlp'
-if [[ -n $MYSELF ]]; then
-  alias eme='sudo emerge -1 --keep-going'
-  alias deme='sudo FEATURE=distcc emerge -1 --keep-going'
-else
-  alias v='fasd -fe vim'
-  alias eme='emerge -1 --keep-going'
-fi
-alias wgetpaste='wgetpaste -C'
-alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
-alias 2pdf='libreoffice --headless --convert-to pdf'
-alias 2csv='libreoffice --headless --convert-to csv'
-alias g2u='iconv -f GBK -t UTF-8'
-alias u2g='iconv -f UTF-8 -t GBK'
-alias ntp='sudo /etc/init.d/ntp-client start'
-alias luit='luit -encoding gbk'
-alias dropboxd=/opt/dropbox/dropboxd
-alias gdb='gdb -q'
-alias getmail='getmail -r rc0 -r rc1'
-
-# gentoo specific
-alias peme='sudo proxychains emerge -1'
-alias emel='tail -f /var/log/emerge.log'
-alias emef='tail -f /var/log/emerge-fetch.log'
-alias ei='eix -uI --only-names'
-alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
-alias disp='sudo dispatch-conf'
-
-# global aliases
-alias -g EG='|& egrep'
-alias -g EH='|& head'
-alias -g ET='|& tail'
-alias -g G='| egrep'
-alias -g H='| head'
-alias -g T='| tail'
-alias -g N='>/dev/null'
-alias -g NN='>/dev/null 2>&1'
-alias -g X='| xargs'
-alias -g X0='| xargs -0'
-
-# suffix aliases
-for i in jpg png gif; alias -s $i=feh
-for i in avi rmvb wmv; alias -s $i=mplayer
-for i in xlsx xls ppt pptx docx doc; alias -s $i=libreoffice
-for i in pdf ps; alias -s $i=evince
-for i in html htm xml; alias -s $i=firefox
-
-zle_highlight=(region:bg=magenta
-  special:bold,fg=magenta
-  default:bold
-  isearch:underline
-)
-
-bindkey -s "" "fg\n"
-bindkey -s "^zw" "(ip l sh wlan0 | grep -q DOWN; a=\${\${?/0/up}/1/down}; ip l s wlan0 \$a; echo \$a)\n"
-bindkey -s '^zP' "sleep 3 && import -window root /tmp/screen.jpg\n"
 cowfiles=(/usr/share/cowsay-3.03/cows/*)
 bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fortune -s | cowsay -f${cowfiles[$RANDOM % ${#cowfiles[@]} + 1]}; sleep 0.3; done'"\n"

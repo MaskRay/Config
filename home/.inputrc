@@ -1,0 +1,37 @@
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+set bell-style none
+
+set completion-ignore-case on
+set completion-map-case on
+set completion-prefix-display-length 2
+set skip-completed-text on
+
+set visible-stats on
+
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+
+set editing-mode vi
+
+set keymap vi-insert
+"\C-a": vi-insert-beg
+"\C-b": backward-char
+"\C-e": end-of-line
+"\C-f": forward-char
+"\C-k": kill-line
+"\e.":  yank-last-arg
+"\ef":  vi-next-word
+"\eb":  vi-prev-word
+"\ep":  previous-history
+"\en":  next-history
+"\e&":  tilde-expand
+"\e.-C"  capitalize-word
+
+set keymap yi-command
+"qq": start-kbd-macro
+"qe": end-kbd-macro
+"Q":  call-last-kbd-macro

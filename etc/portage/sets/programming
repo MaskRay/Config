@@ -15,6 +15,7 @@ dev-python/ipython
 dev-python/markdown
 dev-scheme/guile
 dev-tcltk/expect
+dev-tex/biblatex
 dev-tex/latex-beamer
 dev-util/cscope
 dev-util/flawfinder
