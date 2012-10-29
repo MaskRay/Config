@@ -43,11 +43,16 @@ bind pager H display-toggle-weed
 #bind index <tab> display-message
 bind browser <backtab> toggle-mailboxes
 #bind browser <tab> select-entry
+bind browser,index,pager \cb previous-page
+bind browser,index,pager \cf next-page
 bind index h previous-page
 bind index / limit
 bind index <esc>/ show-limit
 bind index l next-page
 bind index <esc>n next-unread-mailbox
+bind index,pager r group-reply
+bind index,pager R reply
+macro index i '<change-folder>?<toggle-mailboxes>'
 message-hook '!(~g|~G) ~b"^-----BEGIN\ PGP\ (SIGNED\ )?MESSAGE"' "exec check-traditional-pgp"
 set mail_check=120
 set sort=threads
@@ -61,7 +66,8 @@ set quit=yes
 lists Toplanguage Shlug
 source ~/.mutt/mutt_color
 # source ~/.mutt/gpg.rc
-auto_view text/html
+#auto_view text/html
+auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
 charset-hook ^us-ascii$ utf8
 charset-hook ^iso-8859-1$ utf8
 charset-hook ^gb2312$ gbk
@@ -89,5 +95,5 @@ macro index ,v "<collapse-thread>" "collapse/uncollapse thread"
 macro index ,V "<collapse-all>" "collapse/uncollapse all threads"
 macro attach s "<save-entry><kill-line>/tmp/<enter>a" "Save attachment"
 macro index ,s \
-  "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output /tmp/mutt_results --prompt search<enter><change-folder-readonly>/tmp/mutt_results<enter>" \
+  "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"

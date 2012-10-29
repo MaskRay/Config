@@ -100,10 +100,19 @@ command! no-margin -javascript -desc 'set no margin on left and right'
 map -g user ,m -ex wide-margin
 map -g user ,M -ex no-margin
 
+"command! strip-anchor -javascript -desc 'reopen current url with anchor stripped'
+"   \ let url = buffer.URL;
+"   \ let anchor = url.indexOf('#');
+"   \ if (anchor > 0)
+"   \   dactyl.open(url.substring(0, anchor));
+"
+
 command! strip-anchor -javascript -desc 'reopen current url with anchor stripped'
-   \ let url = buffer.URL;
-   \ let anchor = url.indexOf('#');
-   \ if (anchor > 0)
-   \   dactyl.open(url.substring(0, anchor));
+  \ var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch).prefHasUserValue("extensions.stylish.styleRegistrationEnabled");
+  \ if (prefs){
+          \ stylishOverlay.turnOnOff(true);
+  \ } else {
+          \ stylishOverlay.turnOnOff(false);
+  \ }
 
 map -g user ,s -ex strip-anchor

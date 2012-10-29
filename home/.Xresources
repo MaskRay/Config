@@ -105,6 +105,7 @@ URxvt.urlLauncher: firefox
 URxvt.underlineURLs: true
 URxvt.keysym.M-u:       perl:mark-yank-urls:activate_mark_mode
 URxvt.keysym.M-y: perl:mark-and-yank:activate_mark_mode
+URxvt.searchable-scrollback: disable
 
 URxvt.cutchars: `"()'*<>[]{|}"
 

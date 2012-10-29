@@ -399,13 +399,14 @@ Bundle 'EasyMotion'
 Bundle 'syntastic'
 Bundle 'UltiSnips'
 Bundle 'nerdtree'
+Bundle 'vim-PinyinSearch'
 "Bundle 'tomtom/tcomment_vim'
 "Bundle 'rainbow_parentheses'
 "Bundle 'vim-scripts/YankRing.vim'
 
 Bundle 'vimproc'
 Bundle 'eagletmt/ghcmod-vim'
-Bundle 'vim-scripts/fcitx.vim'
+"Bundle 'vim-scripts/fcitx.vim'
 Bundle 'adinapoli/cumino'
 
 Bundle 'vim-css-color'
@@ -1096,6 +1097,5 @@ let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
 
-let g:PinyinSearch_Dict = '/home/ray/.vim/pinyin-search/PinyinSearch.dict'
-let g:PinyinSearch_Python = '/home/ray/.vim/pinyin-search/PinyinSearch.py'
-                nnoremap<silent><expr> <c-f> PinyinSearch()
+let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
+nnoremap <Leader>ps :call PinyinSearch()<CR>

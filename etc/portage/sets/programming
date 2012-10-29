@@ -25,5 +25,6 @@ dev-vcs/git
 dev-vcs/mercurial
 dev-vcs/tig
 net-libs/nodejs
+sci-electronics/ngspice
 sys-devel/crossdev
 sys-devel/gdb

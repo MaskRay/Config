@@ -5,6 +5,7 @@ dev-lang/gprolog doc examples
 dev-lang/tcl threads
 dev-lang/gnu-smalltalk gmp emacs tk
 dev-lang/swi-prolog doc gmp
+dev-scheme/guile networking
 dev-scheme/racket doc future jit
 sys-devel/gcc gcj
 
@@ -33,3 +34,5 @@ dev-lang/R doc
 sci-mathematics/maxima
 
 sys-cluster/openmpi threads mpi-threads
+
+sci-electronics/gwave gnuplot
