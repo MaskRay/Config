@@ -5,6 +5,7 @@ app-i18n/fcitx-configtool
 app-office/libreoffice-bin
 app-text/evince
 app-text/poppler-data
+app-text/zathura-meta
 media-gfx/feh
 media-libs/alsa-lib
 media-libs/mesa

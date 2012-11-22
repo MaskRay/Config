@@ -27,6 +27,8 @@ xterm*foreground: #FFFFFF
 *color15: #FFFFFF
 
 Xft.dpi:                96
+Xft.autohint:  0
+Xft.lcdfilter:  lcddefault
 Xft.hinting:            1
 Xft.hintstyle:          hintslight
 Xft.antialias:          1
@@ -52,6 +54,8 @@ xterm*cursorColor: green
 
 xterm*saveLines: 1000
 xterm*fastScroll: true
+XTerm*jumpScroll:               true
+XTerm*multiScroll:              true
 
 xterm*highlightSelection: true
 
@@ -82,30 +86,20 @@ XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 
 
-URxvt.preeditType: OffTheSpot
-URxvt.inputMethod: ibus
-URxvt.imFont: -misc-wenquanyi micro hei-medium-r-normal--0-0-0-0-p-0-gb18030.2000-0
+URxvt.preeditType: Root
+!URxvt.inputMethod: fcitx
+!URxvt.imFont: -misc-wenquanyi micro hei-medium-r-normal--0-0-0-0-p-0-gb18030.2000-0
 URxvt.geometry: 105x45
 URxvt.xftAntialias: true
-URxvt.font: xft:Monaco:bold:size=12,xft:WenQuanYi Micro Hei:bold:antialias=True
-
-! mark-yank-urls bindings (see http://www.jukie.net/~bart/blog/urxvt-url-yank)
-!==========
-! Alt-u: Enter yank mode
-! Esc: Exit yank mode
-! y: copy to clipboard
-! Enter: Launch Browser
-! Ctrl-n: select next url
-! Ctrl-p: select previous url
-!==========
+URxvt.font: xft:Monaco:bold:size=12,xft:DejaVu Sans Mono:bold:size=12,xft:WenQuanYi Micro Hei:bold:antialias=True
+URxvt.searchable-scrollback: false
 
 URxvt.perl-lib: /home/ray/.urxvt/
-URxvt.perl-ext: option-popup,matcher,selection,mark-yank-urls
-URxvt.urlLauncher: firefox
-URxvt.underlineURLs: true
-URxvt.keysym.M-u:       perl:mark-yank-urls:activate_mark_mode
-URxvt.keysym.M-y: perl:mark-and-yank:activate_mark_mode
-URxvt.searchable-scrollback: disable
+URxvt.perl-ext:      default,url-select
+URxvt.keysym.M-u:    perl:url-select:select_next
+URxvt.url-select.launcher: google-chrome
+URxvt.url-select.underline: true
+URxvt.url-select.autocopy: true
 
 URxvt.cutchars: `"()'*<>[]{|}"
 
@@ -117,7 +111,7 @@ URxvt.scrollBar: true
 URxvt.scrollBar_right: true
 URxvt.scrollBar_floating: true
 
-URxvt.saveLines: 65535
+URxvt.saveLines: 1234
 URxvt.depth: 32
 URxvt.background: black
 URxvt.foreground: white
@@ -127,3 +121,29 @@ URxvt.iso14755_52: False
 
 Xcursor.theme: gentoo
 Xcursor.size: 32
+
+x11-ssh-askpass*background:             #000000
+x11-ssh-askpass*foreground:             #ffffff
+x11-ssh-askpass.Button*background:      #000000
+x11-ssh-askpass.Indicator*foreground:   #ff9900
+x11-ssh-askpass.Indicator*background:   #090909
+x11-ssh-askpass*topShadowColor:         #000000
+x11-ssh-askpass*bottomShadowColor:      #000000
+x11-ssh-askpass.*borderWidth:           1
+
+xscreensaver.Dialog.foreground: #ffffff
+xscreensaver.Dialog.background: #000000
+xscreensaver.Dialog.topShadowColor: #000000
+xscreensaver.Dialog.bottomShadowColor: #000000
+xscreensaver.Dialog.Button.foreground: #666666
+xscreensaver.Dialog.Button.background: #ffffff
+!username/password input box and date text colour
+xscreensaver.Dialog.text.foreground: #666666
+xscreensaver.Dialog.text.background: #ffffff
+xscreensaver.Dialog.internalBorderWidth:24
+xscreensaver.Dialog.borderWidth: 20
+xscreensaver.Dialog.shadowThickness: 2
+!timeout bar (background is actually determined by Dialog.text.background)
+xscreensaver.passwd.thermometer.foreground: #666666
+xscreensaver.passwd.thermometer.background: #000000
+xscreensaver.passwd.thermometer.width: 8

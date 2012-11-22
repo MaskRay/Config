@@ -27,10 +27,11 @@ List.map Sys.command [
   ; "setxkbmap -option ctrl:nocaps -option keypad:pointerkeys"
   ; pic
   ; "redshift"
-  ; "dorm u"
+  (*; "dorm u"*)
   ; "emacs --daemon"
   ; "xcompmgr -c &"
   ; "urxvtd -f -q -o"
-  ; "ai9 &"
+  ; "mail-inotify &"
+  ; "xscreensaver -no-splash &"
   ; "~/projects/vrome/system/python/vrome &"
 ];;

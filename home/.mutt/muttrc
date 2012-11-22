@@ -60,7 +60,8 @@ set sort_aux=reverse-last-date-received
 set pager_index_lines=5
 set imap_check_subscribed=yes
 alternative_order text/html text/enriched text/plain
-set editor="vim +'sil! g/^\\(>>\\? \\)\\+\\s*--/,/^>\\( >>\\?\\)*\\s*$/d' +'g/^\s*$/d' %s"
+# set editor="vim +'sil! g/^\\(>>\\? \\)\\+\\s*--/,/^>\\( >>\\?\\)*\\s*$/d' +'g/^\s*$/d' %s"
+set editor="vim %s"
 set edit_headers
 set quit=yes
 lists Toplanguage Shlug
@@ -95,5 +96,6 @@ macro index ,v "<collapse-thread>" "collapse/uncollapse thread"
 macro index ,V "<collapse-all>" "collapse/uncollapse all threads"
 macro attach s "<save-entry><kill-line>/tmp/<enter>a" "Save attachment"
 macro index ,s \
-  "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
+  "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output \
+  /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"

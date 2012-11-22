@@ -266,12 +266,14 @@ if has("autocmd")
     autocmd FileType ruby setlocal sw=2 sts=2 et
     autocmd FileType python setlocal sw=4 sts=4 et tw=72
     autocmd FileType scheme setlocal sw=2 sts=2 et
+    autocmd FileType stylus setlocal sw=2 sts=2 et
     autocmd FileType vala setlocal sw=4 sts=4 et tw=78
     autocmd FileType xhtml setlocal sw=2 sts=2 et
     autocmd FileType xml setlocal sw=2 sts=2 et
     " Others with special requirements
     autocmd FileType make setlocal noet
     autocmd FileType sql setlocal et
+    autocmd FileType tex setlocal sw=2 sts=2 et
     autocmd FileType text setlocal textwidth=72
 
 

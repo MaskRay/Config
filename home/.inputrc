@@ -15,7 +15,7 @@ set visible-stats on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 
-set editing-mode vi
+#set editing-mode vi
 
 set keymap vi-insert
 "\C-a": vi-insert-beg

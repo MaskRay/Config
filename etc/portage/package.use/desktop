@@ -1,3 +1,4 @@
+app-text/zathura-meta pdf postscript
 app-emulation/wine v4l
 mail-client/mutt gpg nntp doc smtp imap pop sasl sidebar
 x11-misc/xbindkeys tk guile

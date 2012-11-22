@@ -20,7 +20,7 @@ fi
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export PATH=$HOME/.cabal/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
-export LESS="-NMiR --shift 5"
+export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
@@ -191,6 +191,7 @@ else
 fi
 alias l="ls -l"
 alias la='l -A'
+alias lh='l -lh'
 
 # Global aliases {{{2
 alias -g A="|awk"
@@ -217,7 +218,7 @@ alias clip='xsel -ib'
 alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
 alias -g NF=".*(oc[1])"
 alias -g ND="/*(oc[1])"
-alias mou='mount -o users,uid=1000,gid=1000,codepage=936,utf8'
+alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias c=cat
 alias L=less
@@ -240,7 +241,8 @@ alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 
 # Gentoo-specific {{{2
-alias peme='sudo proxychains emerge -1'
+alias eme='sudo emerge'
+alias peme='sudo proxychains emerge'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge-fetch.log'
 alias ei='eix -uI --only-names'
