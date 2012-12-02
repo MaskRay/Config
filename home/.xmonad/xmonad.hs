@@ -128,13 +128,13 @@ doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
-    [ className =? c --> doShift "doc" | c <- ["Okular", "Evince"] ] ++
+    [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
     [ className =? c --> viewShift "media" | c <- ["feh", "Display"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
-    [ className =? c --> doShift "net" | c <- ["Wpa_gui", "TUNET64"] ] ++
+    [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ className =? "Do" --> doIgnore ] ++
     [ myFloats --> doSPFloat ] ++
@@ -304,10 +304,13 @@ myKeys =
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     , ("M-p f", fadePrompt myXPConfig)
-    , ("M-p m", manPrompt myXPConfig)
+    --, ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
+    , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
+    , ("M-p m", launchApp myXPConfig "mupdf" ["pdf","ps"])
+    , ("M-p z", launchApp myXPConfig "zathura" ["pdf","ps"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
@@ -332,6 +335,7 @@ scratchpads =
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
 myConfig dzen = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
+--myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvtc"
     , focusFollowsMouse  = False
     , borderWidth        = 1
@@ -342,7 +346,7 @@ myConfig dzen = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgency
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , logHook            = fadeOutLogHook myFadeHook >> updatePointer (Relative 0.5 0.5) >> myDynamicLog dzen
+    , logHook            = fadeOutLogHook myFadeHook >> myDynamicLog dzen
     , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
 
@@ -418,7 +422,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "firefox" site s >> viewWeb)
+      (S.search "google-chrome" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -476,8 +480,8 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "firefox") "firefox.xpm"
-    , TI "code" "" (spawn "gvim") "gvim.xpm"
+    [ TI "web" "" (spawn "google-chrome") "firefox.xpm"
+    , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"

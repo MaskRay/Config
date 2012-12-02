@@ -23,6 +23,7 @@ net-misc/socat
 net-misc/telnet-bsd
 net-misc/tightvnc
 net-misc/urlview
+net-misc/whois
 net-misc/zsync
 net-proxy/polipo
 www-client/firefox-bin

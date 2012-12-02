@@ -214,6 +214,8 @@ alias -g X0='| xargs -0'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 
 # Application-specific {{{2
+alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
+alias tail='tail -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
 alias clip='xsel -ib'
 alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
 alias -g NF=".*(oc[1])"
@@ -229,7 +231,7 @@ alias du='du -h'
 alias dud='du -s *(/)' #show directories size
 alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
 alias rsync='rsync --progress --partial'
-alias port='ss -ntlp'
+alias port='/sbin/ss -ntlp'
 alias wgetpaste='wgetpaste -X'
 alias 2pdf='libreoffice --headless --convert-to pdf'
 alias 2csv='libreoffice --headless --convert-to csv'

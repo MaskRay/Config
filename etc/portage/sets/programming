@@ -2,11 +2,11 @@ app-editors/emacs
 app-text/texlive
 dev-db/sqlite
 dev-haskell/cabal-install
-dev-lang/fpc
 dev-lang/erlang
+dev-lang/fpc
 dev-lang/ghc
-dev-lang/ocaml
 dev-lang/gnu-smalltalk
+dev-lang/ocaml
 dev-lang/R
 dev-lang/vala
 dev-libs/gdl
@@ -19,6 +19,7 @@ dev-tex/biblatex
 dev-tex/latex-beamer
 dev-util/cscope
 dev-util/flawfinder
+dev-util/gengetopt
 dev-util/glade
 dev-util/qt-creator
 dev-util/valgrind

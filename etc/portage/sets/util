@@ -8,7 +8,6 @@ app-misc/colordiff
 app-misc/mtail
 app-misc/screen
 app-misc/tmux
-app-shells/autojump
 app-text/dvipng
 app-text/htmldoc
 app-text/pandoc
@@ -23,6 +22,7 @@ media-gfx/imagemagick
 net-misc/unison
 sys-apps/ack
 sys-apps/mlocate
+sys-apps/the_silver_searcher
 sys-devel/bc
 sys-fs/encfs
 sys-fs/inotify-tools

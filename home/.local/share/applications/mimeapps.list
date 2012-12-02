@@ -8,3 +8,5 @@ text/html=google-chrome.desktop
 application/xhtml+xml=google-chrome.desktop
 x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
+application/pdf=llpp.desktop
+application/postscript=zathura.desktop

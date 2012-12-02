@@ -3,8 +3,8 @@
 Random.self_init ();;
 
 (* randomly choose a wallpaper *)
-let pics = Sys.readdir "/home/ray/wallpapers";;
-let pic = "feh --bg-scale /home/ray/wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &";;
+let pics = Sys.readdir "/home/ray/Wallpapers";;
+let pic = "feh --bg-scale /home/ray/Wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &";;
 
 let singleton s =
   let comm =
@@ -16,15 +16,14 @@ List.map Sys.command [
   (* resident *)
   singleton "tmux new -d -s weechat -n weechat weechat-curses \\; new -d -s default -t weechat\\; new-window"
   ; singleton "parcellite &"
-  ; singleton "gol &"
   ; singleton "fcitx &"
+  ; singleton "/usr/lib64/notify-osd/notify-osd &"
   (*; singleton "ibus-daemon -d"*)
 
   (* one-shot *)
-  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1 --off; }"
+  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1; }"
   ; "xrdb ~/.Xresources"
   ; "offlineimap -q &"
-  ; "setxkbmap -option ctrl:nocaps -option keypad:pointerkeys"
   ; pic
   ; "redshift"
   (*; "dorm u"*)
@@ -33,5 +32,4 @@ List.map Sys.command [
   ; "urxvtd -f -q -o"
   ; "mail-inotify &"
   ; "xscreensaver -no-splash &"
-  ; "~/projects/vrome/system/python/vrome &"
 ];;

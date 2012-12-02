@@ -1,0 +1,2 @@
+COMMAND google-chrome %s
+REGEXP ((https?|ftp|)://[^' <>"]+|www.[-a-z0-9.]+)[^' .,;<>":]

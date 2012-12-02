@@ -19,3 +19,4 @@ net-irc/weechat ruby
 net-ftp/proftpd -acl ssl openssl authfile
 dev-java/icedtea-bin nsplugin
 mail-mta/msmtp sasl gnutls
+app-misc/recoll inotify -fam tex

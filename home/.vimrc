@@ -406,6 +406,8 @@ Bundle 'vim-PinyinSearch'
 "Bundle 'rainbow_parentheses'
 "Bundle 'vim-scripts/YankRing.vim'
 
+Bundle 'Rip-Rip/clang_complete'
+
 Bundle 'vimproc'
 Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
