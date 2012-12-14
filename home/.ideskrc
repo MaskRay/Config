@@ -1,0 +1,34 @@
+table Config
+  FontName: Monofur
+  FontSize: 14
+  Shadow: true
+  FontColor: #deefff
+  BackColorTip: #ffffff
+  ToolTip.FontSize: 12
+  ToolTip.FontName: Monofur
+  ToolTip.ForeColor: #ffccff
+  ToolTip.BackColor: #122334
+  ToolTip.CaptionOnHover: true
+  ToolTip.CaptionPlacement: Right
+  Locked: false
+  Transparency: 60
+  IconSnap: true
+  SnapWidth: 100
+  SnapHeight: 100
+  SnapOrigin: BottomRight
+  FillStyle: FillInvert
+
+  Background.Delay: 5
+  Background.Source: /home/ray/Wallpapers
+  Background.File: /home/ray/Wallpapers
+  Background.Mode: Scale
+end
+
+table Actions
+  Lock: control right doubleClk
+  Reload: middle doubleClk
+  Drag: right hold
+  EndDrag: right singleClk
+  Execute[0]: left singleClk
+  Execute[1]: left doubleClk
+end

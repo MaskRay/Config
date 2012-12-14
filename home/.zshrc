@@ -224,6 +224,7 @@ alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias c=cat
 alias L=less
+alias t=task
 alias g='grep -I'
 alias eg='egrep -I'
 alias df='df -Th'

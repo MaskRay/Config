@@ -313,11 +313,12 @@ if has("autocmd")
     " turn on spell checker for email and plain text file
     autocmd FileType mail,text setlocal spell
 
+    " au FileType * exe('setl dictionary+='.$VIMRUNTIME.'/syntax/'.&filetype.'.vim')
+
   augroup END " --------------------------------------- }}}2
 else
   set autoindent
 endif " has("autocmd")
-
 
 " Colorschemes ---------------------------------------- {{{1
 " get them from: http://www.vim.org/
@@ -402,32 +403,27 @@ Bundle 'syntastic'
 Bundle 'UltiSnips'
 Bundle 'nerdtree'
 Bundle 'vim-PinyinSearch'
-"Bundle 'tomtom/tcomment_vim'
 "Bundle 'rainbow_parentheses'
-"Bundle 'vim-scripts/YankRing.vim'
+Bundle 'YankRing'
 
 Bundle 'Rip-Rip/clang_complete'
 
-Bundle 'vimproc'
-Bundle 'eagletmt/ghcmod-vim'
+"Bundle 'vimproc'
+"Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
-Bundle 'adinapoli/cumino'
 
 Bundle 'vim-css-color'
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'vim-matchit'
 Bundle 'wavded/vim-stylus'
 
-
 Bundle 'digitaltoad/vim-jade'
 "Bundle 'vim-sparkup'
 "Bundle 'zencoding-vim'
 
 Bundle 'doctorjs'
-"Bundle 'JavaScript-Indent'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'pangloss/vim-javascript'
-Bundle 'myhere/vim-nodejs-complete'
 
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
@@ -975,59 +971,11 @@ function Lilydjwg_open_url()
 endfunction
 nmap <silent> tf :call Lilydjwg_open_url()<CR>
 
-" cscope ---------------------------------------------- {{{2
-if has('cscope')
-  function LoadCscopeOut()
-    let parent = 0
-    let dir = "."
-    while parent < 5
-      if filereadable(dir . "/cscope.out")
-        if exists("b:cscope_prepend") && cscope_connection(3, "out", b:cscope_prepend)
-          break
-        end
-        if cscope_connection()
-          exe "cs kill " . 0
-        endif
-        exe "cs add " . dir . "/cscope.out" . " " . dir
-        let b:cscope_prepend = dir
-        break
-      endif
-      let parent += 1
-      let dir = "../" . dir
-    endwhile
-  endfunc
-
-  "augroup autoload_cscope
-    "au!
-    "au BufEnter *.[ch] call LoadCscopeOut()
-    "au BufEnter *.hpp call LoadCscopeOut()
-    "au BufEnter *.cc call LoadCscopeOut()
-    "au BufEnter *.cpp call LoadCscopeOut()
-    "au BufEnter *.cxx call LoadCscopeOut()
-  "augroup END
-
-  au FileType * exe('setl dictionary+='.$VIMRUNTIME.'/syntax/'.&filetype.'.vim')
-
-  " Use both cscope and ctag
-  "set cscopetag
-  " Show msg when cscope db added
-  set cscopeverbose
-  " Use tags for definition search first
-  set cscopetagorder=1
-  " Use quickfix window to show cscope results
-  set cscopequickfix=s-,g-,d-,c-,t-,e-,f-,i-
-
-  " Cscope mappings
-  nnoremap <C-w>\ :cs find c <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-  nnoremap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-  nnoremap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-endif
+" global ---------------------------------------------- {{{2
+  nnoremap <C-\>s :Gtags <C-r><C-w><cr>
+  nnoremap <C-\>r :Gtags -r <C-r><C-w><cr>
+  nnoremap <C-\>p :Gtags -P <C-r><C-w><cr>
+  nnoremap <C-\><C-\> :Gtags
 " Misc --------------------- {{{1
 nnoremap zz zz:nohls<CR>
 nnoremap <Leader>p "+p<CR>
@@ -1048,8 +996,8 @@ inoremap <m-k> <C-o>gk
 " Error navigation
 nnoremap <m-j> :lnext<cr>zvzz
 nnoremap <m-k> :lprevious<cr>zvzz
-nnoremap <m-Up> :cnext<cr>zvzz
-nnoremap <m-Down> :cprevious<cr>zvzz
+nnoremap <m-down> :cnext<cr>zvzz
+nnoremap <m-up> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
 vmap / y/<C-R>"<CR>

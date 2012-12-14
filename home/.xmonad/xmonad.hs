@@ -120,7 +120,7 @@ myLayout = avoidStruts $
     mkToggle1 REFLECTY $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
-    smartBorders $
+    lessBorders Screen $
     --onWorkspaces ["web","irc"] Full $
     Full ||| dragPane Horizontal 0.1 0.3 ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| HintedGrid.GridRatio (4/3) False
 
@@ -213,7 +213,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "google-chrome", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -279,18 +279,20 @@ myKeys =
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' l", namedScratchpadAction scratchpads "lua")
 
-    , ("C-' q", namedScratchpadAction scratchpads "swipl")
-    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
-    , ("C-' e", namedScratchpadAction scratchpads "erl")
-    , ("C-' p", namedScratchpadAction scratchpads "ipython")
-    , ("C-' r", namedScratchpadAction scratchpads "pry")
-    , ("C-' s", namedScratchpadAction scratchpads "gst")
-    , ("C-' j", namedScratchpadAction scratchpads "node")
-    , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "capture")
-    , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
+    , ("C-' e", namedScratchpadAction scratchpads "erl")
+    , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
+    , ("C-' j", namedScratchpadAction scratchpads "node")
+    , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
+    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
+    , ("C-' p", namedScratchpadAction scratchpads "ipython")
+    , ("C-' q", namedScratchpadAction scratchpads "swipl")
+    , ("C-' r", namedScratchpadAction scratchpads "pry")
+    , ("C-' s", namedScratchpadAction scratchpads "gst")
+    , ("C-' t", namedScratchpadAction scratchpads "task")
+    , ("C-' u", namedScratchpadAction scratchpads "R")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
@@ -306,18 +308,19 @@ myKeys =
     , ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
+    , ("M-p e", launchApp myXPConfig "xpra-start evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
-    , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
-    , ("M-p m", launchApp myXPConfig "mupdf" ["pdf","ps"])
-    , ("M-p z", launchApp myXPConfig "zathura" ["pdf","ps"])
+    , ("M-p l", launchApp myXPConfig "xpra-start llpp" ["pdf","ps"])
+    , ("M-p m", launchApp myXPConfig "xpra-start mupdf" ["pdf","ps"])
+    , ("M-p z", launchApp myXPConfig "xpra-start zathura" ["pdf","ps"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
 
 scratchpads =
-  map f ["erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
+  map f ["erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
+  , NS "task" "urxvtc -T task -e rlwrap task shell" (title =? "task") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
@@ -422,7 +425,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "google-chrome" site s >> viewWeb)
+      (S.search "chrome" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -480,10 +483,10 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "google-chrome") "firefox.xpm"
+    [ TI "web" "" (spawn "chrome") "firefox.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
-    , TI "doc" "Documents/" (spawn "evince") "evince.xpm"
+    , TI "doc" "Documents/" (spawn "xpra attach :7000") "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
     , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "thunderbird.xpm"

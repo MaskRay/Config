@@ -39,3 +39,5 @@ sci-mathematics/maxima
 sys-cluster/openmpi threads mpi-threads
 
 sci-electronics/gwave gnuplot
+
+dev-python/ipython matplotlib notebook

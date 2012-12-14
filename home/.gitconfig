@@ -23,6 +23,9 @@
   dc  = diff --cached
   last = diff HEAD^
 
+  # grep
+  gr = grep -Ii
+
   # log
   l = log
   lp = log -p

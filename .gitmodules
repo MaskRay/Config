@@ -73,3 +73,18 @@
 [submodule "home/.vim/bundle/vim-PinyinSearch"]
 	path = home/.vim/bundle/vim-PinyinSearch
 	url = https://github.com/ppwwyyxx/vim-PinyinSearch
+[submodule "home/.vim/bundle/EasyMotion"]
+	path = home/.vim/bundle/EasyMotion
+	url = https://github.com/vim-scripts/EasyMotion.git
+[submodule "home/.vim/bundle/YankRing.vim"]
+	path = home/.vim/bundle/YankRing.vim
+	url = https://github.com/vim-scripts/YankRing.vim.git
+[submodule "home/.vim/bundle/YankRing"]
+	path = home/.vim/bundle/YankRing
+	url = https://github.com/vim-scripts/YankRing.vim.git
+[submodule "home/.vim/bundle/clang_complete"]
+	path = home/.vim/bundle/clang_complete
+	url = https://github.com/Rip-Rip/clang_complete.git
+[submodule "home/.vim/bundle/vim-ruby"]
+	path = home/.vim/bundle/vim-ruby
+	url = https://github.com/vim-ruby/vim-ruby.git

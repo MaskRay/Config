@@ -2,6 +2,7 @@ app-emulation/wine
 app-i18n/fcitx
 app-i18n/fcitx-configtool
 app-misc/recoll
+app-misc/task
 app-misc/toilet
 app-office/libreoffice-bin
 app-text/evince
@@ -9,6 +10,7 @@ app-text/llpp
 app-text/poppler-data
 app-text/zathura-meta
 media-gfx/feh
+media-gfx/geeqie
 media-libs/alsa-lib
 media-libs/mesa
 media-sound/alsa-utils
@@ -30,6 +32,7 @@ x11-base/xorg-server
 x11-libs/libnotify
 x11-misc/dmenu
 x11-misc/notify-osd
+x11-misc/urxvt-perls
 x11-misc/wmctrl
 x11-misc/x11vnc
 x11-misc/xbindkeys

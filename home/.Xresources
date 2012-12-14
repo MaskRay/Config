@@ -119,7 +119,7 @@ URxvt.cursorBlink: False
 URxvt.cursorColor: green
 URxvt.iso14755_52: False
 
-Xcursor.theme: gentoo
+Xcursor.theme: ~/.icons/Pulse-Glass
 Xcursor.size: 32
 
 x11-ssh-askpass*background:             #000000

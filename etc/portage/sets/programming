@@ -21,6 +21,7 @@ dev-util/cscope
 dev-util/flawfinder
 dev-util/gengetopt
 dev-util/glade
+dev-util/global
 dev-util/qt-creator
 dev-util/valgrind
 dev-vcs/git
