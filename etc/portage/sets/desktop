@@ -1,6 +1,7 @@
 app-emulation/wine
 app-i18n/fcitx
 app-i18n/fcitx-configtool
+app-misc/goobook
 app-misc/recoll
 app-misc/task
 app-misc/toilet

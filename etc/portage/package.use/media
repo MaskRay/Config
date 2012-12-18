@@ -1,12 +1,9 @@
-media-libs/gd fontconfig
-#virtual/jpeg static-libs
-#media-libs/libjpeg-turbo static-libs
-#media-libs/libmng static-libs
-#media-libs/lcms static-libs
-#media-libs/libpng static-libs apng
-media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xvid directfb a52 aac real xvmc
-media-video/ffmpeg vdpau threads v4l v4l2
-www-plugins/adobe-flash 64bit
+media-libs/chromaprint tools
 media-libs/freetype kpathsea infinality
-x11-base/xorg-server xnest xvfb
+media-sound/ncmpcpp curl outputs fftw taglib visualizer clock
+media-video/ffmpeg vdpau threads v4l v4l2
+media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xvid directfb a52 aac real xvmc
 virtual/ffmpeg threads vdpau
+www-plugins/adobe-flash 64bit
+x11-base/xorg-server xnest xvfb
+x11-libs/libdrm libkms

@@ -1,0 +1,6 @@
+dev-db/mongodb v8
+mail-mta/msmtp sasl gnutls
+net-analyzer/nmap ncat ndiff nping
+net-ftp/proftpd -acl ssl openssl authfile
+net-misc/openvpn iproute2
+www-servers/nginx nginx_modules_http_stub_status nginx_modules_http_fancyindex

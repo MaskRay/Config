@@ -1,101 +1,132 @@
+# Headers {{{1
 ignore *
-unignore From Subject Lines
-hdr_order From Subject Lines
+unignore from to cc mail-followup-to date x-mailer x-url
+unhdr_order *
+hdr_order From: To: Cc: Subject: Date:
 
-set realname="Ray Song"
-set imap_user=emacsray@gmail.com
-set imap_passive=yes
-set imap_keepalive=300
-
-macro generic \Cx0 "<enter-command>source ~/.mutt/local<enter>"
-macro generic \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
-source ~/.mutt/local
-source ~/.mutt/hook
-
-set header_cache=~/.mutt/hcache
-set signature=~/.mutt/signature
-set message_cachedir=~/.mutt/bdcache
-set certificate_file =~/.mutt/certificates
-# 回信时是否包含原文。
-set include=yes
-# 回信的引文之前插入那个符号？
-set indent_str="> "
-# 当你按 "t" 或者 "D" 之类的标记操作时，是否自动把光标移动到下一封信件。
-set resolve=yes
-set wait_key=no
-
-set alias_file="~/.mutt/alias"
-set sort_alias=alias
-set reverse_alias=yes
-source $alias_file
-set query_command="abook --mutt-query '%s'"
-
-macro pager \cu "|urlview\n"
-macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
-macro generic,index,pager \ca "<shell-escape>abook<return>" "launch abook"
-bind generic,index j next-entry
-bind generic,index k previous-entry
-bind index,pager J next-new-then-unread
-bind index,pager K previous-new-then-unread
-bind generic,pager h previous-line
-bind generic,pager l next-line
-bind pager H display-toggle-weed
-#bind index <tab> display-message
-bind browser <backtab> toggle-mailboxes
-#bind browser <tab> select-entry
-bind browser,index,pager \cb previous-page
-bind browser,index,pager \cf next-page
-bind index h previous-page
-bind index / limit
-bind index <esc>/ show-limit
-bind index l next-page
-bind index <esc>n next-unread-mailbox
-bind index,pager r group-reply
-bind index,pager R reply
-macro index i '<change-folder>?<toggle-mailboxes>'
-message-hook '!(~g|~G) ~b"^-----BEGIN\ PGP\ (SIGNED\ )?MESSAGE"' "exec check-traditional-pgp"
+# Settings {{{1
+set assumed_charset="utf-8:gb18030"
+set charset="utf-8"
+set edit_headers
+set fast_reply
+set forward_format = "Fwd: %s"
+set forward_quote
+set include=ask-yes
+set ispell = "aspell -e -c"
 set mail_check=120
+set menu_scroll
+set mime_forward
+set pager_context = 5
+set pager_index_lines = 5
+set pager_stop
+set pipe_decode
+set query_command="goobook query '%s'"
+set quit
+set realname="Ray Song"
+set reply_to
+set resolve
+set reverse_alias
 set sort=threads
 set sort_aux=reverse-last-date-received
-set pager_index_lines=5
-set imap_check_subscribed=yes
-alternative_order text/html text/enriched text/plain
-# set editor="vim +'sil! g/^\\(>>\\? \\)\\+\\s*--/,/^>\\( >>\\?\\)*\\s*$/d' +'g/^\s*$/d' %s"
-set editor="vim %s"
-set edit_headers
-set quit=yes
-lists Toplanguage Shlug
-source ~/.mutt/mutt_color
-# source ~/.mutt/gpg.rc
-#auto_view text/html
-auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
-charset-hook ^us-ascii$ utf8
-charset-hook ^iso-8859-1$ utf8
-charset-hook ^gb2312$ gbk
-set markers=no
-#charset-hook .* utf8
-set charset="utf8"
-set locale="zh_CN.utf8"
-#set strict_mime=no
-set assumed_charset="GB18030:UTF-8"
 set ssl_force_tls = yes
+set timeout = 3
+unset mark_old
+unset markers
+unset sort_re
+unset wait_key
 
-macro   index   q       '<change-folder>?<toggle-mailboxes>'
-macro   browser q       '<exit><quit>'
+# Formats {{{1
+set alias_format = "%4n %t %-20a %r"
+set date_format = "%d/%m/%y at %I:%M%P"
+set index_format = "%3C %Z %[!%y%m%d] %-17.17F (%4c) %s"
+set pager_format = "%S [%C/%T] %n %s %> %P  "
+set status_format = "-%r- %f (%s) [%M/%m] [NEW=%n] %?V?[%V]?"
 
-macro index ,i "<change-folder>!<return>" "go to inbox"
-macro index ,t "<change-folder>=Tuna<return>" "go to =Tuna"
-macro index ,h "<change-folder>=Haskell<return>" "go to =Haskell"
-macro index ,m "<change-folder>=Tuna<return>" "go to =ML"
-macro index ,s "<change-folder>=Tuna<return>" "go to =School"
-macro index ,p "<pipe-message>cat > ~/" "save message as"
+# Files {{{1
+set mbox_type=Maildir
+set alias_file = ~/.mutt/aliases
+set header_cache = ~/.mutt/cache/headers
+set message_cachedir = ~/.mutt/cache/bodies
+set signature = ~/.mutt/signature
+set certificate_file  = ~/.mutt/certificates
+set record = ~/Maildir/Sent
+
+# Sidebar {{{1
+set sidebar_width = 20
+set sidebar_visible
+
+# Bindings {{{1
+macro index q '<change-folder>?<toggle-mailboxes>'
+bind index gg first-entry
+bind index G last-entry
+bind index p parent-message
+bind index zt current-top
+bind index zz current-middle
+bind index zb current-bottom
+bind index h previous-page
+bind index l next-page
+bind index / limit
+macro index ,p "<pipe-message>cat > /tmp/" "save message as"
 macro index ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
-macro index ,r "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
-macro index ,R "<collapse-all><tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return><collapse-all>" "mark all as read (collapsed)"
+macro index ,R "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
 macro index ,v "<collapse-thread>" "collapse/uncollapse thread"
 macro index ,V "<collapse-all>" "collapse/uncollapse all threads"
-macro attach s "<save-entry><kill-line>/tmp/<enter>a" "Save attachment"
 macro index ,s \
   "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output \
   /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"
+macro generic,index ,r "<enter-command>source ~/.mutt/muttrc<enter>"
+bind generic,index j next-entry
+bind generic,index k previous-entry
+bind index,pager r group-reply
+bind index,pager R reply
+bind index,pager J next-new-then-unread
+bind index,pager K previous-new-then-unread
+bind index,pager <esc>k sidebar-prev
+bind index,pager <esc>j sidebar-next
+bind index,pager <esc>o sidebar-open
+macro index,pager a "<pipe-message>goobook add<return>" "add the sender address to Google contacts"
+macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
+macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
+macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
+
+bind pager \Cu half-up
+bind pager \Cd half-down
+bind pager p parent-message
+bind pager gg top
+bind pager G bottom
+bind pager h previous-line
+bind pager l next-line
+bind pager H display-toggle-weed
+bind pager N search-opposite
+macro pager \cu "|urlview\n"
+
+# Folder shortcuts {{{2
+macro index,pager I "c!\n"
+macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"
+macro index,pager ,h "<change-folder>=Haskell<return>" "go to =Haskell"
+macro index,pager ,m "<change-folder>=ML<return>" "go to =ML"
+macro index,pager ,s "<change-folder>=School<return>" "go to =School"
+
+bind attach ' ' select-entry
+macro attach s <save-message><bol>/tmp/
+
+bind browser $ check-new
+bind browser ' ' select-entry
+macro browser q '<exit><quit>'
+
+bind editor <tab> complete-query
+
+# Misc {{{1
+set editor="vim %s"
+auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
+alternative_order text/plain text/html
+mime_lookup application/octet-stream
+
+# Includes {{{1
+source $alias_file
+source ~/.mutt/local
+source ~/.mutt/profile
+source ~/.mutt/theme
+
+# vim: fdm=marker:

@@ -1,0 +1,74 @@
+# set default
+  color normal white default
+
+# main colors
+  color status green default
+  color indicator brightwhite default
+  color tree blue default
+  color error brightred default
+  color message brightyellow default
+
+#
+# message states
+#
+# order matters here since some states override others
+#
+
+# messages to me
+uncolor index "~P"
+  color index brightblack default "~P"
+
+# threads containing new messages
+uncolor index "~(~N)"
+  color index brightcyan default "~(~N)"
+
+# new messages themselves
+uncolor index "~N"
+  color index brightyellow default "~N"
+
+# tagged
+uncolor index "~T"
+  color index brightgreen default "~T"
+
+# deleted
+uncolor index "~D"
+  color index brightred default "~D"
+
+# set up the headers
+  color header brightyellow default "^from:"
+  color header yellow default "^to:"
+  color header yellow default "^cc:"
+  color header blue default "^date:"
+  color header brightblue default "^subject:"
+
+# message bodies
+  color attachment brightblack default
+  color search red brightblack
+  color signature cyan default
+  color tilde blue default
+
+# urls
+  color body brightblue default "(^|<| )mailto:[^ ]+@[^ ]( |>|$)"
+  color body brightblue default "(^|<| )(http|https|ftp|file|telnet|news|finger)://[^ ]+( |>|$)"
+
+# smileys, the right way and the backward-ass euro way
+  color body brightmagenta default "(^| )+(|[<>|])[8;:](|[^ ])[)(/|DOPS]( |$)+"
+  color body brightmagenta default "(^| )+[)(/|DOPS](|[^ ])[8;:](|[<>|])( |$)+"
+
+# *bold*, _underline_, and /italic/
+  color body brightcyan default "(^| )\\*[^*]+\\*( |$)"
+  color body brightcyan default "(^| )_[^_]+_( |$)"
+  color body brightcyan default "(^| )/[^/]+/( |$)"
+
+# quote blocks
+  color quoted magenta default
+  color quoted1 cyan default
+  color quoted2 green default
+  color quoted3 magenta default
+  color quoted4 cyan default
+  color quoted5 green default
+  color quoted6 magenta default
+  color quoted7 cyan default
+
+# sidebar
+  color sidebar_new yellow default

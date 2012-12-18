@@ -277,10 +277,6 @@ if has("autocmd")
     autocmd FileType text setlocal textwidth=72
 
 
-  " Update repository and revision info --------------- {{{2
-  augroup update_rev_info
-    au!
-    autocmd BufReadPost,BufWritePost,FileChangedShellPost * call UpdateRevisionInfo()
 
   " Leave insert mode after 15 seconds of no input ---- {{{2
   augroup auto_escape

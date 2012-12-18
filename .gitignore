@@ -1,7 +1,8 @@
-#*
+*~
+*.log
+/home/.ncmpcpp/artists
 /home/.mutt/hcache
 /home/.mutt/passwd
 /etc/portage/package.use/cross-*
 ._cfg*
-
 /home/.local/share/applications/mimeinfo.cache

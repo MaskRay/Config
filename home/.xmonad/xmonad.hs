@@ -88,7 +88,6 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.WindowSwitcherDecoration
-import XMonad.Layout.DraggingVisualizer
 import qualified XMonad.Layout.Magnifier as Mag
 
 {-
@@ -122,7 +121,7 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
     --onWorkspaces ["web","irc"] Full $
-    Full ||| dragPane Horizontal 0.1 0.3 ||| ResizableTall 1 (3/100) (1/2) [] ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| HintedGrid.GridRatio (4/3) False
+    Full ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| HintedGrid.GridRatio (4/3) False
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
@@ -308,11 +307,11 @@ myKeys =
     , ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
-    , ("M-p e", launchApp myXPConfig "xpra-start evince" ["pdf","ps"])
+    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
-    , ("M-p l", launchApp myXPConfig "xpra-start llpp" ["pdf","ps"])
-    , ("M-p m", launchApp myXPConfig "xpra-start mupdf" ["pdf","ps"])
-    , ("M-p z", launchApp myXPConfig "xpra-start zathura" ["pdf","ps"])
+    , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
+    , ("M-p m", launchApp myXPConfig "mupdf" ["pdf","ps"])
+    , ("M-p z", launchApp myXPConfig "zathura" ["pdf","ps"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings

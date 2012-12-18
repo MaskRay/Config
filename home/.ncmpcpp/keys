@@ -1,0 +1,10 @@
+key_page_down = 4 338 # C-d pagedown
+key_page_up = 21 339 # C-u pageup
+key_move_song_up = 'K'
+key_move_song_down = 'J'
+key_prev_column = 'h' 260 # left
+key_next_column = 'l' 261 # right
+key_clear = 'C'
+key_lyrics = 'r'
+key_toggle_repeat = 'R'
+key_go_to_parent_dir = '^'

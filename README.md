@@ -6,7 +6,7 @@ Ray's comprehensive configuration archive.
 
 Default applications:
 
-See [home/.local/share/applications/mimeapps.list]() and related desktop entries.
+See `home/.local/share/applications/mimeapps.list` and related desktop entries.
 
 Gentoo Portage:
 
@@ -69,3 +69,4 @@ Have a look at my [Linux desktop config (in Chinese)](http://maskray.me/portfoli
   Thank you, Philip!
 - [@adam8157](https://github.com/adam8157) (Adam Lee)
 - [@roylez](https://github.com/roylez/dotfiles) (Roy Zuo)
+- [@laurentb](https://github.com/laurentb/public-dotfiles) (Laurent Bachelier)

@@ -1,22 +1,12 @@
-app-text/zathura-meta pdf postscript
-app-emulation/wine v4l
-mail-client/mutt gpg nntp doc smtp imap pop sasl sidebar
-x11-misc/xbindkeys tk guile
 app-emulation/wine win32 win64 alsa
-net-wireless/wpa_supplicant qt4
-x11-drivers/nvidia-drivers gtk -acpi
-net-misc/networkmanager dhclient connection-sharing
-app-misc/screen multiuser
-net-mail/offlineimap doc
-x11-misc/dzen xinerama xpm
-app-i18n/sunpinyin xim
-mail-mta/sendmail sasl
-net-nds/openldap -minimal syslog
+app-misc/recoll inotify -fam tex
+app-text/zathura-meta pdf postscript
+dev-java/icedtea-bin nsplugin
+mail-client/mutt gpg sidebar
 media-gfx/fbida fbcon imagemagick
-x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla
 media-gfx/imagemagick webp graphviz
 net-irc/weechat ruby
-net-ftp/proftpd -acl ssl openssl authfile
-dev-java/icedtea-bin nsplugin
-mail-mta/msmtp sasl gnutls
-app-misc/recoll inotify -fam tex
+net-wireless/wpa_supplicant qt4
+x11-misc/dzen xinerama xpm
+x11-misc/xbindkeys guile
+x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla

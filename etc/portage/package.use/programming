@@ -1,43 +1,48 @@
 # compilers, interpreters
-dev-lang/erlang doc hipe kpoll
-dev-lang/python sqlite
-dev-lang/gprolog doc examples
-dev-lang/tcl threads
+dev-lang/erlang hipe kpoll
 dev-lang/gnu-smalltalk gmp emacs tk
-dev-lang/swi-prolog doc gmp
+dev-lang/gprolog examples
+dev-lang/python sqlite
+dev-lang/swi-prolog gmp
+dev-lang/tcl threads
 dev-scheme/guile networking
-dev-scheme/racket doc future jit
-sys-devel/gcc gcj
+dev-scheme/racket future jit
 
 # vcs
 dev-vcs/git curl subversion doc tk cgi
+dev-vcs/git-annex assistant webapp
 dev-vcs/subversion -dso perl
 
-# ml
-dev-ml/lablgl glut
-
-
 dev-python/PyQt4 webkit
-x11-libs/cairo X xcb opengl svg
+x11-libs/cairo xcb opengl svg
 
 # editors
 app-editors/vim cscope ruby python
 app-editors/gvim cscope ruby python
 
 # databases
-dev-db/sqlite doc soundex
+dev-db/sqlite soundex unlock-notify
 
 # guile dependency
 dev-libs/boehm-gc threads
 
+# llpp dependency
+dev-ml/lablgl glut
+
 app-doc/doxygen latex dot
-
-dev-lang/R doc
-
-sci-mathematics/maxima
-
-sys-cluster/openmpi threads mpi-threads
-
+sys-cluster/openmpi threads mpi-threads -fortran
 sci-electronics/gwave gnuplot
 
+# haskell
+dev-lang/ghc llvm ghcbootstrap
+app-emacs/ghc-mod emacs
+
+# python
+net-analyzer/scapy gnuplot graphviz imagemagick pyx
+dev-lang/python tk
+dev-python/imaging tk
 dev-python/ipython matplotlib notebook
+
+# emacs
+app-emacs/org-mode contrib
+app-editors/emacs X gtk gzip-el

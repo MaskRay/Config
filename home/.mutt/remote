@@ -1,3 +1,6 @@
+set imap_user=emacsray@gmail.com
+set imap_passive=yes
+set imap_keepalive=300
 set folder=imaps://imap.gmail.com
 unmailboxes *
 mailboxes =INBOX =[Gmail]/Drafts =[Gmail]/'Sent Mail' =[Gmail]/Spam
