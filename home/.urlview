@@ -1,2 +1,2 @@
-COMMAND google-chrome %s
+COMMAND xdg-open %s
 REGEXP ((https?|ftp|)://[^' <>"]+|www.[-a-z0-9.]+)[^' .,;<>":]

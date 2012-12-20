@@ -212,7 +212,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox-bin", "emacs --daemon", "desmume", "VisualBoyAdvance "])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox", "emacs --daemon", "desmume", "VisualBoyAdvance "])
     , ("M-S-i", spawn "xcalib -i -a")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -424,7 +424,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "chrome" site s >> viewWeb)
+      (S.search "firefox" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -482,7 +482,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chrome") "firefox.xpm"
+    [ TI "web" "" (spawn "firefox") "firefox.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "xpra attach :7000") "evince.xpm"

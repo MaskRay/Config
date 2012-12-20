@@ -1,8 +1,10 @@
 *~
 *.log
 /home/.ncmpcpp/artists
-/home/.mutt/hcache
-/home/.mutt/passwd
+/home/.mutt/cache
+/home/.mutt/profile
 /etc/portage/package.use/cross-*
 ._cfg*
 /home/.local/share/applications/mimeinfo.cache
+/home/.config/newsbeuter/profile
+/home/.config/newsbeuter/urls

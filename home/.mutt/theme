@@ -1,9 +1,9 @@
 # set default
-  color normal white default
+  color normal color250 default
 
 # main colors
   color status green default
-  color indicator brightwhite default
+  color indicator brightwhite color235
   color tree blue default
   color error brightred default
   color message brightyellow default
