@@ -1,0 +1,103 @@
+# Development - Programming languages and environments
+dev-lang/R
+dev-lang/fpc
+dev-lang/ghc
+dev-lang/gnu-smalltalk
+dev-lang/ocaml
+dev-lang/icon
+dev-lang/vala
+dev-libs/gdl
+dev-lisp/sbcl
+dev-scheme/guile
+dev-scheme/racket
+sys-devel/clang
+dev-lang/erlang
+dev-tex/latex-beamer
+net-libs/nodejs
+
+# Development - Editors
+app-editors/emacs
+app-editors/gvim
+app-editors/vim
+dev-util/glade
+dev-util/qt-creator
+
+# Development - VCS
+dev-vcs/darcs
+dev-vcs/git
+dev-vcs/git-annex
+dev-vcs/mercurial
+dev-vcs/tig
+
+# Development - Tools
+dev-util/cloc
+dev-util/complexity
+dev-util/cscope
+dev-util/flawfinder
+dev-util/gengetopt
+dev-util/global
+dev-util/strace
+dev-util/systemtab
+dev-util/valgrind
+sys-devel/crossdev
+sys-devel/gdb
+sys-process/parallel
+
+# Development - Haskell specific
+app-emacs/haskell-mode
+dev-haskell/cabal-dev
+dev-haskell/cabal-install
+dev-haskell/cmdargs
+dev-haskell/djinn
+dev-haskell/filesystem-conduit
+dev-haskell/hlint
+dev-haskell/pcre-light
+dev-haskell/pointfree
+dev-haskell/yesod-platform
+
+# Development - OCaml specific
+dev-ml/findlib
+
+# Development - Ruby specific
+dev-ruby/rails
+
+# Development - Python specific
+dev-python/autopep8
+dev-python/elixir
+dev-python/fabric
+dev-python/ipython
+dev-python/paver
+dev-python/pytest
+dev-python/rope
+dev-python/sqlalchemy
+dev-python/virtualenv
+net-analyzer/scapy
+www-servers/tornado
+
+# Vim specific
+app-vim/colorschemes
+app-vim/extra-syntax
+app-vim/fuzzyfinder
+app-vim/gentoo-syntax
+app-vim/nerdcommenter
+app-vim/nerdtree
+app-vim/supertab
+app-vim/surround
+app-vim/tagbar
+app-vim/vim-latex
+app-vim/vimpython
+
+# Services
+app-admin/apache-tools
+dev-db/couchdb
+dev-db/mongodb
+dev-db/postgresql-server
+dev-db/redis
+dev-db/sqlite
+net-ftp/proftpd
+www-misc/fcgiwrap
+www-servers/nginx
+
+# Misc
+sci-electronics/ngspice
+app-misc/jq

@@ -1,9 +1,6 @@
+# Fonts
 media-fonts/corefonts
 media-fonts/dejavu
-media-fonts/droid
-media-fonts/liberation-fonts
-media-fonts/source-pro
 media-fonts/ttf-bitstream-vera
-media-fonts/wqy-bitmapfont
 media-fonts/wqy-microhei
 media-fonts/wqy-zenhei

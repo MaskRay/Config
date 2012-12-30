@@ -86,7 +86,7 @@ alias r ruby
 alias rsync 'command rsync --progress --partial'
 alias t task
 alias v 'vim --servername GVIM --remote-tab-silent'
-alias wgetpaste 'wgetpaste -X'
+alias wgetpaste 'command wgetpaste -X'
 
 # Gentoo-specific {{{2
 alias eme 'sudo emerge'

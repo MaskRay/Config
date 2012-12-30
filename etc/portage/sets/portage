@@ -1,6 +1,8 @@
+# Gentoo/Portage specific
 app-portage/eix
+app-portage/elogv
 app-portage/euses
 app-portage/genlop
 app-portage/gentoolkit
+app-portage/gentoolkit-dev
 app-portage/layman
-app-portage/ufed

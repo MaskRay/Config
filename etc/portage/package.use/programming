@@ -7,6 +7,7 @@ dev-lang/swi-prolog gmp
 dev-lang/tcl threads
 dev-scheme/guile networking
 dev-scheme/racket future jit
+dev-lang/io gui http image libffi sockets threads
 
 # vcs
 dev-vcs/git curl subversion doc tk cgi

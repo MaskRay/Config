@@ -425,8 +425,8 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'bbommarito/vim-slim'
 
+Bundle 'python-mode'
 Bundle 'jedi-vim'
-Bundle 'vim-flake8'
 Bundle 'pytest.vim'
 
 filetype plugin indent on    " required!

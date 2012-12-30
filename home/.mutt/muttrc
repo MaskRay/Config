@@ -11,7 +11,7 @@ set edit_headers
 set fast_reply
 set forward_format = "Fwd: %s"
 set forward_quote
-set include=ask-yes
+set include
 set ispell = "aspell -e -c"
 set mail_check=120
 set menu_scroll
@@ -22,7 +22,7 @@ set pager_stop
 set pipe_decode
 set query_command="goobook query '%s'"
 set quit
-set realname="Ray Song"
+set realname="Ray"
 set reply_to
 set resolve
 set reverse_alias

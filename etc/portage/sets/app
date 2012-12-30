@@ -1,0 +1,116 @@
+# Application - Audio
+media-sound/alsa-utils
+media-sound/audacity
+media-sound/cmus
+media-sound/mpc
+media-sound/mpd
+media-sound/ncmpcpp
+
+# Application - Documentation and tools
+app-office/grisbi
+app-office/libreoffice-bin
+app-text/catdoc
+app-text/evince
+app-text/htmldoc
+app-text/llpp
+app-text/mupdf
+app-text/pandoc
+app-text/texlive
+app-text/tree
+app-text/wgetpaste
+app-text/zathura-meta
+
+# Application - File tools
+app-arch/p7zip
+app-text/convmv
+app-text/recode
+
+# Application - Graphics
+media-gfx/blender
+media-gfx/feh
+media-gfx/geeqie
+media-gfx/gimp
+media-gfx/imagemagick
+media-gfx/inkscape
+
+# Application - GUI misc.
+app-misc/recoll
+net-p2p/deluge
+app-i18n/fcitx-configtool
+app-i18n/fcitx-rime
+
+# Application - Instant messaging
+net-im/bitlbee
+net-irc/weechat
+
+# Application - Mail
+app-misc/goobook
+mail-client/mutt
+mail-mta/msmtp
+net-mail/getmail
+net-mail/notmuch
+net-misc/urlview
+
+# Application - Misc.
+app-arch/p7zip
+app-benchmarks/siege
+app-emulation/wine
+app-misc/colordiff
+app-misc/mtail
+app-misc/task
+app-misc/toilet
+dev-perl/rename
+games-misc/bsd-games
+games-misc/cowsay
+games-misc/fortune-mod
+net-misc/unison
+sys-apps/ack
+sys-apps/mlocate
+sys-apps/renameutils
+sys-fs/inotify-tools
+sys-fs/sshfs-fuse
+
+# Application - TUI misc.
+app-misc/tmux
+app-shells/bash-completion
+app-shells/zsh-completion
+net-news/newsbeuter
+sys-apps/the_silver_searcher
+app-misc/rlwrap
+
+# Application - WWW
+www-client/firefox-bin
+www-client/google-chrome
+www-client/w3m
+www-plugins/adobe-flash
+
+# Application - Video
+media-video/mplayer
+
+# X11, WM, DE
+x11-apps/setxkbmap
+x11-apps/xdpyinfo
+x11-apps/xev
+x11-apps/xhost
+x11-apps/xinput
+x11-apps/xkill
+x11-apps/xsetroot
+x11-base/xorg-server
+x11-misc/compton
+x11-misc/dmenu
+x11-misc/notify-osd
+x11-misc/unclutter
+x11-misc/urxvt-perls
+x11-misc/wmctrl
+x11-misc/x11vnc
+x11-misc/xbindkeys
+x11-misc/xcalib
+x11-misc/xdotool
+x11-misc/xscreensaver
+x11-misc/xsel
+x11-plugins/epplets
+x11-terms/rxvt-unicode
+x11-terms/xterm
+x11-themes/gentoo-xcursors
+x11-wm/enlightenment:0.17
+x11-wm/xmonad-contrib

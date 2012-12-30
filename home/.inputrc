@@ -31,7 +31,7 @@ set keymap vi-insert
 "\e&":  tilde-expand
 "\e.-C"  capitalize-word
 
-set keymap yi-command
+set keymap vi-command
 "qq": start-kbd-macro
 "qe": end-kbd-macro
 "Q":  call-last-kbd-macro

@@ -61,7 +61,7 @@ import XMonad.Actions.WindowMenu
 import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.FadeInactive
+--import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -279,7 +279,7 @@ myKeys =
     , ("C-' l", namedScratchpadAction scratchpads "lua")
 
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
-    , ("C-' c", namedScratchpadAction scratchpads "capture")
+    , ("C-' c", namedScratchpadAction scratchpads "cmus")
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
@@ -304,7 +304,7 @@ myKeys =
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
-    , ("M-p f", fadePrompt myXPConfig)
+    --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
     , ("M-p p", runOrRaisePrompt myXPConfig)
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
@@ -317,7 +317,7 @@ myKeys =
     searchBindings
 
 scratchpads =
-  map f ["erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
+  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
   [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
   , NS "task" "urxvtc -T task -e rlwrap task shell" (title =? "task") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
@@ -348,10 +348,11 @@ myConfig dzen = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgency
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , logHook            = fadeOutLogHook myFadeHook >> myDynamicLog dzen
+    , logHook            = myDynamicLog dzen
     , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
 
+{-
 defaultFade = 8/10
 data FadeState = FadeState Rational (M.Map Window Rational) deriving (Typeable,Read,Show)
 instance ExtensionClass FadeState where
@@ -367,6 +368,7 @@ myFadeHook = do
     Nothing -> do
       b <- isUnfocused
       return $ if b then fadeUnfocused else 1
+-}
 
 myPromptKeymap = M.union defaultXPKeymap $ M.fromList
                  [
@@ -501,9 +503,10 @@ myTopics =
 myCommands =
     [ ("getmail", namedScratchpadAction scratchpads "getmail")
     , ("wallpaper", safeSpawn "change-wallpaper" [])
-    , ("fade", fadePrompt myXPConfig)
+    --, ("fade", fadePrompt myXPConfig)
     ]
 
+{-
 fadePrompt xpc = withFocused $ \w -> do
   mkXPrompt (TitledPrompt "fade to") xpc (\s -> return [show x | x <- [0..10], s `isPrefixOf` show x]) $ \i -> do
     let v = read i :: Int
@@ -511,6 +514,7 @@ fadePrompt xpc = withFocused $ \w -> do
     XS.put . FadeState u $ if all isDigit i && 0 <= v && v <= 10
       then M.insert w (toRational v/10) s
       else M.delete w s
+-}
 
 
 data TitledPrompt = TitledPrompt String

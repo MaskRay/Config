@@ -1,5 +1,5 @@
 gtk-theme-name="Boje"
-gtk-icon-theme-name = Tango
+gtk-icon-theme-name = Faience-Dark
 gtk-fallback-icon-theme = gnome
 gtk-font-name="Sans 16"
 gtk-toolbar-style = GTK_TOOLBAR_BOTH_HORIZ

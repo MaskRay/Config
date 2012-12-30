@@ -1,7 +1,0 @@
-app-admin/apache-tools
-dev-db/mongodb
-dev-db/postgresql-server
-dev-db/redis
-net-ftp/proftpd
-www-misc/fcgiwrap
-www-servers/nginx

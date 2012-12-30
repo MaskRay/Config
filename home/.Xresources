@@ -97,7 +97,7 @@ URxvt.searchable-scrollback: false
 URxvt.perl-lib: /home/ray/.urxvt/
 URxvt.perl-ext:      default,url-select
 URxvt.keysym.M-u:    perl:url-select:select_next
-URxvt.url-select.launcher: google-chrome
+URxvt.url-select.launcher: xdg-open
 URxvt.url-select.underline: true
 URxvt.url-select.autocopy: true
 

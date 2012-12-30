@@ -88,3 +88,6 @@
 [submodule "home/.vim/bundle/vim-ruby"]
 	path = home/.vim/bundle/vim-ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
+[submodule "home/.vim/bundle/python-mode"]
+	path = home/.vim/bundle/python-mode
+	url = https://github.com/klen/python-mode

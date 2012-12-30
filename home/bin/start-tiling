@@ -26,9 +26,10 @@ List.map Sys.command [
   ; "xrdb ~/.Xresources"
   ; pic
   ; "redshift"
+  ; "unclutter &"
   (*; "dorm u"*)
   ; "emacs --daemon"
-  ; "xcompmgr -c &"
+  ; "compton -cC -i 0.8 &"
   ; "urxvtd -f -q -o"
   ; "mail-inotify &"
   ; "xsetroot -cursor_name left_ptr"

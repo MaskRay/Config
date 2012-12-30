@@ -2,11 +2,14 @@ app-emulation/wine win32 win64 alsa
 app-misc/recoll inotify -fam tex
 app-text/zathura-meta pdf postscript
 dev-java/icedtea-bin nsplugin
-mail-client/mutt gpg sidebar
+mail-client/mutt gpg sidebar imap
 media-gfx/fbida fbcon imagemagick
 media-gfx/imagemagick webp graphviz
+media-gfx/graphviz gts
 net-irc/weechat ruby
 net-wireless/wpa_supplicant qt4
 x11-misc/dzen xinerama xpm
 x11-misc/xbindkeys guile
 x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla
+x11-wm/enlightenment enlightenment_modules_shot
+>=dev-libs/ecore-1.7.4 curl

@@ -16,10 +16,11 @@ color listfocus white color235
 color article color248 default
 color info green default
 
-highlight article "^Feed:.*" color34 default
-highlight article "^(Title|Author):.*" color40 default
-highlight article "^Link:.*" color24 default
-highlight article "^Date:.*" color30 default
+highlight article "^Feed: .*$" color3 default
+highlight article "^Title: .*$" color13 default bold
+highlight article "^Author: .*$" color5 default
+highlight article "^Link: .*$" color6 default
+highlight article "^Date: .*$" color4 default
 
 # Podbeuter {{{1
 player "mplayer"

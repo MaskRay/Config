@@ -39,18 +39,23 @@ map -builtin d <C-d>
 map -builtin u <C-u>
 map -builtin U u
 map -builtin D d
-
-set nextpattern=\s*下一页|下一张|下页\s*,\bNext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
-set previouspattern=\s*上一页|上一张|上页\s*,\bPrev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
-set defsearch=google
-set maxitems=5
-
 nmap -builtin q gT
 nmap -builtin w gt
 nmap -builtin j 4j
 nmap -builtin k 4k
 nmap -builtin <C-e> 10<C-e>
 nmap -builtin <C-y> 10<C-e>
+
+map -count -modes=n,v X -builtin <count>:emenu<Space>Private<Space>Browsing<Tab>
+
+map , <leader>
+nmap <leader>j :jumps<cr>
+nmap <leader>p :pa<cr>
+
+set nextpattern=\s*下一页|下一张|下页\s*,\bNext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
+set previouspattern=\s*上一页|上一张|上页\s*,\bPrev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
+set defsearch=google
+set maxitems=5
 
 " Instapaper -- depends on instapaper bookmarklet with `readlater' keyword
 command! instapaper open readlater
