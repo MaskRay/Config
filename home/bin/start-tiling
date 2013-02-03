@@ -29,6 +29,7 @@ List.map Sys.command [
   ; "unclutter &"
   (*; "dorm u"*)
   ; "emacs --daemon"
+  ; "xset r rate 200 50"
   ; "compton -cC -i 0.8 &"
   ; "urxvtd -f -q -o"
   ; "mail-inotify &"

@@ -1,6 +1,0 @@
-sys-kernel/*-sources
->dev-lang/ghc-7.4.1
->app-emulation/wine-1.5.3
->sys-libs/glibc-2.15-r1
-
->=net-analyzer/wireshark-1.8.0

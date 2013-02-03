@@ -1,3 +1,10 @@
+function prepend_to_path -d "Prepend the given dir to PATH if it exists and is not already in it"
+    if test -d $argv[1]
+        if not contains $argv[1] $PATH
+            set -gx PATH "$argv[1]" $PATH
+        end
+    end
+end
 set PATH ~/bin ~/.local/bin ~/.gem/ruby/1.9.1/bin $PATH
 
 # Functions {{{1
@@ -65,6 +72,10 @@ alias ls 'command ls -XF --color=auto --time-style="+'\e'[33m['\e'[32m%Y-%m-%d '
 alias l 'ls -l'
 alias la 'l -A'
 alias lh 'l -h'
+alias l1 'tree --dirsfirst -ChFL 1'
+alias l2 'tree --dirsfirst -ChFL 2'
+alias l3 'tree --dirsfirst -ChFL 3'
+alias l4 'tree --dirsfirst -ChFL 4'
 
 # coreutils {{{2
 alias L less

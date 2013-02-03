@@ -1,0 +1,57 @@
+# Development - Programming languages and environments
+dev-lang/erlang emacs hipe
+dev-lang/python sqlite
+dev-lang/swi-prolog gmp
+dev-scheme/racket backtrace future jit places plot threads
+sys-devel/llvm ocaml
+
+# Development - VCS
+dev-vcs/git curl subversion tk # git svn
+dev-vcs/subversion -dso perl # required by git[subversion]
+
+# Development - Libraries
+dev-python/PyQt4 webkit # perhaps for phantomjs's dependency
+x11-libs/cairo xcb opengl svg
+
+# databases
+
+# guile dependency
+dev-libs/boehm-gc threads
+
+# llpp dependency
+dev-ml/lablgl glut
+
+app-doc/doxygen latex dot
+sys-cluster/openmpi threads mpi-threads -fortran
+sci-electronics/gwave gnuplot
+
+# haskell
+dev-lang/ghc binary llvm
+app-emacs/ghc-mod emacs
+
+# Development - Python specific
+net-analyzer/scapy gnuplot graphviz imagemagick pyx
+dev-lang/python tk
+dev-python/imaging tk
+dev-python/ipython matplotlib notebook
+
+# Development - Editors
+app-editors/emacs gzip-el
+app-editors/gvim cscope ruby python
+app-editors/vim cscope ruby python
+app-emacs/org-mode contrib
+
+# Development- Tools
+dev-util/valgrind mpi
+sci-mathematics/maxima latex ecl
+sci-mathematics/sage mpc
+sci-visualization/gnuplot wxwidgets
+sys-devel/gdb python # Python pretty printers, STL containers specifically
+
+#required by media-gfx/blender-2.64a
+dev-cpp/glog gflags
+
+# Services
+dev-db/mongodb v8
+www-servers/nginx nginx_modules_http_stub_status nginx_modules_http_fancyindex
+

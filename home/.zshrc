@@ -19,7 +19,7 @@ fi
 
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
-export PATH=$HOME/.cabal/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin:$HOME/bin/ssh:$PATH
+export PATH=$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin/ssh:$PATH
 export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg

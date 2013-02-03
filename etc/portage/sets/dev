@@ -37,7 +37,7 @@ dev-util/flawfinder
 dev-util/gengetopt
 dev-util/global
 dev-util/strace
-dev-util/systemtab
+dev-util/systemtap
 dev-util/valgrind
 sys-devel/crossdev
 sys-devel/gdb
@@ -65,6 +65,7 @@ dev-ruby/rails
 dev-python/autopep8
 dev-python/elixir
 dev-python/fabric
+dev-python/flask
 dev-python/ipython
 dev-python/paver
 dev-python/pytest

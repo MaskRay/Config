@@ -91,3 +91,30 @@
 [submodule "home/.vim/bundle/python-mode"]
 	path = home/.vim/bundle/python-mode
 	url = https://github.com/klen/python-mode
+[submodule "home/.vim/bundle/vimfiler"]
+	path = home/.vim/bundle/vimfiler
+	url = https://github.com/Shougo/vimfiler
+[submodule "home/.vim/bundle/vim-ref"]
+	path = home/.vim/bundle/vim-ref
+	url = https://github.com/thinca/vim-ref
+[submodule "home/.vim/bundle/vim-rooter"]
+	path = home/.vim/bundle/vim-rooter
+	url = https://github.com/airblade/vim-rooter
+[submodule "home/.vim/bundle/vim-javascript-syntax"]
+	path = home/.vim/bundle/vim-javascript-syntax
+	url = https://github.com/jelera/vim-javascript-syntax
+[submodule "home/.vim/bundle/colorv.vim"]
+	path = home/.vim/bundle/colorv.vim
+	url = https://github.com/Rykka/colorv.vim
+[submodule "home/.vim/bundle/unite-outline"]
+	path = home/.vim/bundle/unite-outline
+	url = https://github.com/h1mesuke/unite-outline
+[submodule "home/.vim/bundle/SingleCompile"]
+	path = home/.vim/bundle/SingleCompile
+	url = https://github.com/vim-scripts/SingleCompile
+[submodule "home/.vim/bundle/vim-unimpaired"]
+	path = home/.vim/bundle/vim-unimpaired
+	url = https://github.com/tpope/vim-unimpaired
+[submodule "home/.vim/bundle/gundo"]
+	path = home/.vim/bundle/gundo
+	url = https://github.com/sjl/gundo.vim

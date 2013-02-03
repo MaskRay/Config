@@ -1,0 +1,7 @@
+>dev-lang/ghc-7.6.1
+>sys-libs/glibc-2.16.0
+>sys-devel/gcc-4.7.2
+>app-emulation/wine-1.5.23-r1
+>x11-libs/qt-webkit-4.8.4
+>net-libs/webkit-gtk-1.10.2-r300
+>app-text/pandoc-1.10.0.5

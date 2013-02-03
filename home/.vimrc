@@ -19,7 +19,10 @@ set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
+set ignorecase smartcase
 set ttimeoutlen=100
+set matchpairs=(:),[:],{:},<:>,':',":"
+au FileType c,cpp,java set mps+==:;
 
 set backup
 set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
@@ -30,7 +33,10 @@ set history=200
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 
-set grepprg=ack\ -a
+set formatprg="par-format rTbgqR B=.,?_A_a Q=_s>|"
+set guiheadroom=20
+set grepprg=internal
+"set grepprg=ack\ -a
 
 " tabs and eols
 set listchars+=tab:▸\ ,eol:¬
@@ -97,8 +103,8 @@ if has("gui_running")
   " Envy Code R
   " http://damieng.com/blog/2008/05/26/envy-code-r-preview-7-coding-font-released
   " set guifont=Monaco\ 15
-  set guifont=Inconsolata\ 17
-  set guifont=Monofur\ 18
+  set guifont=Inconsolata\ 15
+  set guifont=Monofur\ 16
   set guifontwide=WenQuanYi\ Micro\ Hei\ 13
 endif
 
@@ -133,6 +139,8 @@ endif
 
 " Autocommands ---------------------------------------- {{{1
 if has("autocmd")
+  " Markdown ------------------------------------------ {{{2
+  autocmd BufNewFile,BufRead *.md setfiletype markdown
   " Show trailing whitespaces when necessary ---------- {{{2
   " That is, most of the cases other than editing source code in Whitespace,
   " the programming language.
@@ -276,7 +284,76 @@ if has("autocmd")
     autocmd FileType tex setlocal sw=2 sts=2 et
     autocmd FileType text setlocal textwidth=72
 
+  " Language specific indentation --------------------- {{{2
+  augroup switch_case_indentation
+    au!
+    " cino-:
+    " line up case labels with switch:
+    "     switch (a) {
+    "     case 1:
+    "         /* ... */
+    "         break;
+    "     default:
+    "         break;
+    "     }
+    autocmd FileType c,cpp,vala setlocal cinoptions+=:0
 
+  augroup case_block_indentation
+    au!
+    " cino-l
+    " align with case label:
+    "     switch (a) {
+    "     case 1: {
+    "         /* ... */
+    "         break;
+    "     }
+    "     default:
+    "         break;
+    "     }
+    autocmd FileType c,cpp,vala setlocal cinoptions+=l1
+
+  augroup access_specifier_indentation
+    au!
+    " cino-g
+    " no indentation for access specifiers
+    "     class C {
+    "     public:
+    "         // ...
+    "     protected:
+    "         // ...
+    "     private:
+    "         // ...
+    "     };
+    autocmd FileType cpp setlocal cinoptions+=g0
+
+  augroup namespace_indentation
+    au!
+    " cino-N
+    " no indentation for namespace
+    "     namespace {
+    "     void function();
+    "     }
+    autocmd FileType cpp,vala setlocal cinoptions+=N-s
+
+  augroup unclosed_parentheses_indentation
+    au!
+    " cino-(
+    " line up inside unclosed parentheses
+    "     if (c1 && (c2 ||
+    "                c3))
+    "         ;
+    "     if (c1 &&
+    "         (c2 || c3))
+    "         ;
+    autocmd FileType c,cpp,vala setlocal cinoptions+=(0
+
+  augroup return_type_indentation
+    au!
+    " cino-t
+    " no indentation for return type declarations
+    "     int
+    "     func()
+    autocmd FileType c,cpp,vala setlocal cinoptions+=t0
 
   " Leave insert mode after 15 seconds of no input ---- {{{2
   augroup auto_escape
@@ -306,8 +383,12 @@ if has("autocmd")
       \   exe "normal! g`\"" |
       \ endif
 
-    " turn on spell checker for email and plain text file
+    " turn on spell checker for commit messages
+    autocmd FileType gitcommit,hgcommit setlocal spell
+    " and emails and plain text files
     autocmd FileType mail,text setlocal spell
+    " except 'help' files
+    autocmd BufEnter *.txt if &filetype == 'help' | setlocal nospell | endif
 
     " au FileType * exe('setl dictionary+='.$VIMRUNTIME.'/syntax/'.&filetype.'.vim')
 
@@ -392,19 +473,25 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'ack.vim'
-Bundle 'ctrlp'
 Bundle 'tabular'
 Bundle 'EasyMotion'
 Bundle 'syntastic'
-Bundle 'UltiSnips'
-Bundle 'nerdtree'
+"Bundle 'UltiSnips'
 Bundle 'vim-PinyinSearch'
 "Bundle 'rainbow_parentheses'
 Bundle 'YankRing'
+Bundle 'vimproc'
+Bundle 'vimfiler'
+Bundle 'unite.vim'
+Bundle 'unite-outline'
+Bundle 'vim-ref'
+Bundle 'SingleCompile'
+Bundle 'vim-unimpaired'
+Bundle 'gundo'
+Bundle 'accelerated-jk'
 
 Bundle 'Rip-Rip/clang_complete'
 
-"Bundle 'vimproc'
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
 
@@ -419,13 +506,13 @@ Bundle 'digitaltoad/vim-jade'
 
 Bundle 'doctorjs'
 Bundle 'kchmck/vim-coffee-script'
-Bundle 'pangloss/vim-javascript'
+"Bundle 'pangloss/vim-javascript'
 
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'bbommarito/vim-slim'
 
-Bundle 'python-mode'
+"Bundle 'python-mode'
 Bundle 'jedi-vim'
 Bundle 'pytest.vim'
 
@@ -453,9 +540,9 @@ let g:ctrlp_custom_ignore = {
 " Match window, top of the screen:
 " let g:ctrlp_match_window_bottom = 0
 " switching between buffers
-nnoremap <C-k> :CtrlPBuffer<CR>
+" nnoremap <C-k> :CtrlPBuffer<CR>
 " works in gvim and some terminals.
-nnoremap <C-A-P> :CtrlPMixed<CR>
+" nnoremap <C-A-P> :CtrlPMixed<CR>
 
 " Cute Python ----------------------------------------- {{{2
 " https://github.com/ehamberg/vim-cute-python
@@ -691,6 +778,11 @@ let g:vimim_toggle = 'pinyin'
 " This one has more features, I am not using this one right now.
 " It doesn't honor my sw, sts settings.
 
+" cd here --------------------------------------------- {{{2
+" Change into directory of the current file
+cnoreab cdh cd %:p:h
+cnoreab lcdh lcd %:p:h
+
 " NeoComplCache
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
@@ -720,9 +812,19 @@ nnoremap <silent> <leader>gc :Gcommit<CR>
 nnoremap <silent> <leader>gb :Gblame<CR>
 nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
+" Unite --- {{{2
+nnoremap <silent> sr :Unite -buffer-name=file -start-insert file_mru<cr>
+nnoremap <silent> sf :Unite -buffer-name=file -start-insert buffer file<cr>
+nnoremap <silent> sc :Unite -buffer-name=change change<cr>
+" VimFiler --- {{{2
+let g:vimfiler_as_default_explorer = 1
+nnoremap <leader>vf :VimFilerCurrentDir<cr>
 
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
+" Accelerated-jk --- {{{2
+nmap j <Plug>(accelerated_jk_gj_position)
+nmap k <Plug>(accelerated_jk_gk_position)
 
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
@@ -823,7 +925,6 @@ function! MatchUnwantedWhitespaces()
   " combine them together: /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
   match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
 endfunction
-
 
 " CurrentTag ------------------------------------------ {{{2
 function! CurrentTag()
@@ -983,6 +1084,12 @@ noremap gz :bdelete<cr>
 noremap gn :bnext<cr>
 noremap gb :bprev<cr>
 
+" edit
+map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
+map <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
+map <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
+map <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+
 " move in insert mode
 inoremap <m-h> <left>
 inoremap <m-l> <Right>
@@ -1003,6 +1110,44 @@ nmap tk :tabprevious<cr>
 nmap tj :tabnext<cr>
 nmap to :tabnew<cr>
 nmap tc :tabclose<cr>
+
+" vim hacks #159
+nmap <leader>sj <SID>(split-to-j)
+nmap <leader>sk <SID>(split-to-k)
+nmap <leader>sh <SID>(split-to-h)
+nmap <leader>sl <SID>(split-to-l)
+
+nnoremap <SID>(split-to-j) :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
+nnoremap <SID>(split-to-k) :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
+nnoremap <SID>(split-to-h) :<C-u>execute 'topleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+nnoremap <SID>(split-to-l) :<C-u>execute 'botright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
+
+nnoremap s <Nop>
+nnoremap ss s
+nnoremap sh <C-w>h
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+noremap sl <C-w>l
+nnoremap sH <C-w>H
+nnoremap sJ <C-w>J
+nnoremap sK <C-w>K
+nnoremap sL <C-w>L
+
+" vim hacks #181
+" Open junk file."{{{
+command! -nargs=0 JunkFile call s:open_junk_file()
+function! s:open_junk_file()
+  let l:junk_dir = '/tmp/.junk'. strftime('/%Y/%m')
+  if !isdirectory(l:junk_dir)
+    call mkdir(l:junk_dir, 'p')
+  endif
+
+  let l:filename = input('Junk Code: ', l:junk_dir.strftime('/%Y-%m-%d-%H%M%S.'))
+  if l:filename != ''
+    execute 'edit ' . l:filename
+  endif
+endfunction "}}}
+nnoremap <leader>jf :JunkFile<cr>
 
 " Beginning & End
 noremap H ^

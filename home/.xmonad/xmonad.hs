@@ -68,10 +68,9 @@ import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 import XMonad.Hooks.UrgencyHook
 
+import XMonad.Layout.Accordion
+import XMonad.Layout.Combo
 import XMonad.Layout.Mosaic
-import XMonad.Layout.AutoMaster
-import XMonad.Layout.DragPane
-import qualified XMonad.Layout.HintedGrid as HintedGrid
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
@@ -121,7 +120,9 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
     --onWorkspaces ["web","irc"] Full $
-    Full ||| mosaic 1.5 [7,5,2] ||| autoMaster 1 (1/20) (Mag.magnifier Grid) ||| HintedGrid.GridRatio (4/3) False
+    Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion)
+    where
+        tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
@@ -212,8 +213,9 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox", "emacs --daemon", "desmume", "VisualBoyAdvance "])
-    , ("M-S-i", spawn "xcalib -i -a")
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox"])
+    , ("M-S-i", spawn "pkill compton; compton -i 0.8 -cC --invert-color-include 'g:e:Google-chrome' &")
+    , ("M-C-i", spawn "pkill compton; compton -i 0.8 -cC &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
     , ("<XF86AudioNext>", spawn "mpc_seek forward")
@@ -238,7 +240,7 @@ myKeys =
     , ("M-.", sendMessage (IncMasterN (-1)))
     , ("M-b", windowPromptBring myXPConfig)
     , ("M-S-b", banishScreen LowerRight)
-    , ("M-s", sinkAll)
+    , ("M-s", windows W.swapMaster)
     , ("M-y", focusUrgent)
     , ("M-;", switchLayer)
     , ("M-h", windowGo L True)
@@ -292,6 +294,7 @@ myKeys =
     , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' t", namedScratchpadAction scratchpads "task")
     , ("C-' u", namedScratchpadAction scratchpads "R")
+    , ("C-' k", namedScratchpadAction scratchpads "pure")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
@@ -336,7 +339,7 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
-myConfig dzen = ewmh $ withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
 --myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvtc"
     , focusFollowsMouse  = False
@@ -413,7 +416,7 @@ main = do
     let fontSize = h `div` 54
     dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*5) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"
     -- remind <http://www.roaringpenguin.com/products/remind>
-    dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
+    -- dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
     spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height " ++ show barHeight
     xmonad $ myConfig dzen
 

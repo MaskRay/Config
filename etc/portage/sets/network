@@ -7,6 +7,7 @@ net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient
 net-firewall/iptables
+net-fs/curlftpfs
 net-fs/samba
 net-ftp/lftp
 net-misc/aria2

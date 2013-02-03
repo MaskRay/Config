@@ -1,3 +1,5 @@
+map , <leader>
+
 " Theme
 source ~/.pentadactyl/desert.penta
 
@@ -5,10 +7,6 @@ source ~/.pentadactyl/desert.penta
 set hintkeys=asdfg;lkjh
 hi -a Hint text-transform: uppercase
 
-" Toggle menu toolbar
-nmap <C-F1> :set guioptions!=m<CR>
-" toggle bookmarks toolbar
-nmap <C-F2> :set guioptions!=B<CR>
 
 " Search
 command! -nargs=* g tabopen http://www.google.com/search?q=<args>
@@ -18,10 +16,26 @@ command! -nargs=* d tabopen https://duckduckgo.com/?q=<args>&v=
 map  -g user <C-g> <ESC>
 imap -g user <C-g> <ESC>
 
-" sidebar
+" Bars
 command! bookstack sidebar! Bookstack
 map -g user ,b -ex bookstack
 map -g user ,c -ex sbclose
+nmap <f2> -e set go!=T
+
+" AutoProxy
+map -g user <f3> -ex js dactyl.globalVariables['toggle_autoproxy']();
+
+" Stylish
+command! toggle-stylish -javascript
+  \ var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch).prefHasUserValue("extensions.stylish.styleRegistrationEnabled");
+  \ if (prefs){
+          \ stylishOverlay.turnOnOff(true);
+  \ } else {
+          \ stylishOverlay.turnOnOff(false);
+  \ }
+map -g user <leader>s -ex toggle-stylish
+
+map g{ -js content.getSelection().toString()!=""?dactyl.execute(":tabopen "+ content.getSelection()):CommandExMode().open("tabopen ")
 
 " Bookmarks
 map -g user <A-a> -silent -ex dialog addbookmark
@@ -41,16 +55,20 @@ map -builtin U u
 map -builtin D d
 nmap -builtin q gT
 nmap -builtin w gt
-nmap -builtin j 4j
-nmap -builtin k 4k
+nmap -builtin j 5j
+nmap -builtin k 5k
 nmap -builtin <C-e> 10<C-e>
 nmap -builtin <C-y> 10<C-e>
 
 map -count -modes=n,v X -builtin <count>:emenu<Space>Private<Space>Browsing<Tab>
 
-map , <leader>
 nmap <leader>j :jumps<cr>
 nmap <leader>p :pa<cr>
+nmap <leader>eu :set encoding=UTF-8<cr>
+nmap <leader>eg :set encoding=GB2312<cr>
+nmap <leader>a -ex addons
+nmap <leader>d -ex downloads
+nmap <leader>h -js io.run('chrome', [buffer.URL])
 
 set nextpattern=\s*下一页|下一张|下页\s*,\bNext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
 set previouspattern=\s*上一页|上一张|上页\s*,\bPrev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
@@ -105,19 +123,41 @@ command! no-margin -javascript -desc 'set no margin on left and right'
 map -g user ,m -ex wide-margin
 map -g user ,M -ex no-margin
 
-"command! strip-anchor -javascript -desc 'reopen current url with anchor stripped'
-"   \ let url = buffer.URL;
-"   \ let anchor = url.indexOf('#');
-"   \ if (anchor > 0)
-"   \   dactyl.open(url.substring(0, anchor));
-"
+" Google Gmail, Reader,
+autocmd LocationChange .* js modes.passAllKeys = /.*(mail\.google\.com|www\.google\.com\/reader).*/.test(buffer.URL)
+" Web QQ
+autocmd LocationChange .* js modes.passAllKeys = /.*(web\.qq\.com).*/.test(buffer.URL)
+" Stack Overflow
+" autocmd LocationChange .* js modes.passAllKeys = /.*(stackoverflow|superuser\.com).*/.test(buffer.URL)
 
-command! strip-anchor -javascript -desc 'reopen current url with anchor stripped'
-  \ var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch).prefHasUserValue("extensions.stylish.styleRegistrationEnabled");
-  \ if (prefs){
-          \ stylishOverlay.turnOnOff(true);
-  \ } else {
-          \ stylishOverlay.turnOnOff(false);
-  \ }
+javascript <<EOF
+  dactyl.globalVariables['tt_autoproxy'] = false;
+  dactyl.globalVariables['toggle_stylish'] = function() {
+      toggle_status = dactyl.globalVariables['tt_stylish'];
+      dactyl.globalVariables['tt_stylish'] = toggle_status = !toggle_status;
 
-map -g user ,s -ex strip-anchor
+      if (toggle_status) {
+          dactyl.execute('set! extensions.stylish.styleRegistrationEnabled = true');
+      } else {
+          dactyl.execute('set! extensions.stylish.styleRegistrationEnabled = false');
+      }
+  }
+  dactyl.globalVariables['toggle_autoproxy'] = function() {
+      toggle_status = dactyl.globalVariables['tt_autoproxy'];
+
+      if (toggle_status == 'global') {
+          dactyl.execute('set! extensions.autoproxy.proxyMode='+'auto');
+          dactyl.globalVariables['tt_autoproxy'] = 'auto';
+          dactyl.execute('echo "Autoproxy auto"');
+      } else if (toggle_status == 'auto') {
+          dactyl.execute('set! extensions.autoproxy.proxyMode='+'disabled');
+          dactyl.globalVariables['tt_autoproxy'] = 'disabled';
+          dactyl.execute('echo "Autoproxy disabled"');
+      } else {
+          dactyl.execute('set! extensions.autoproxy.proxyMode='+'global');
+          dactyl.globalVariables['tt_autoproxy'] = 'global';
+          dactyl.execute('echo "Autoproxy global"');
+      }
+  }
+EOF
+

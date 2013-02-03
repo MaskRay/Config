@@ -1,0 +1,42 @@
+# Application - Documentation and tools
+app-text/texlive cjk png extra graphics publishers xetex linguas_zh
+app-text/texlive-core cjk xetex
+app-text/zathura sqlite
+app-text/zathura-meta pdf postscript
+
+# Application - Graphics
+media-gfx/imagemagick webp graphviz
+media-libs/freetype kpathsea infinality
+
+# Application - GUI misc.
+app-misc/recoll inotify -fam tex
+media-gfx/graphviz gts # otherwise sfdp won't work
+
+# Application - Instant messaging
+net-irc/weechat perl python ruby # plugins
+
+# Application - Mail
+mail-client/mutt gpg sidebar imap
+mail-mta/msmtp sasl gnutls
+
+# Application - Media
+>=media-libs/libsamplerate-0.1.8 sndfile # required by rosegarden
+media-libs/mesa gbm # required by mplayer[directfb]
+media-sound/ncmpcpp curl outputs fftw taglib visualizer clock
+media-video/ffmpeg vdpau threads v4l v4l2
+media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xvid directfb a52 aac real xvmc
+virtual/ffmpeg threads vdpau
+
+# Application - Misc.
+app-emulation/wine win32 win64 alsa
+dev-java/icedtea-bin nsplugin # Java plugin for Firefox
+x11-misc/xbindkeys guile # emacs-ish key sequence
+app-arch/p7zip rar
+
+# X11, WM, DE
+x11-base/xorg-server xnest xvfb
+x11-terms/rxvt-unicode 256-color wcwidth fading-colors blink pixbuf -vanilla
+x11-libs/libdrm libkms
+x11-wm/enlightenment enlightenment_modules_shot
+#required by x11-wm/enlightenment-0.17.1[enlightenment_modules_shot], required by @app, required by @selected, required by @world (argument)
+>=dev-libs/ecore-1.7.5 curl

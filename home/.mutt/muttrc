@@ -106,7 +106,7 @@ macro index,pager I "c!\n"
 macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"
 macro index,pager ,h "<change-folder>=Haskell<return>" "go to =Haskell"
 macro index,pager ,m "<change-folder>=ML<return>" "go to =ML"
-macro index,pager ,s "<change-folder>=School<return>" "go to =School"
+macro index,pager ,c "<change-folder>=School<return>" "go to =School"
 
 bind attach ' ' select-entry
 macro attach s <save-message><bol>/tmp/
