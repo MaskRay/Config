@@ -62,7 +62,7 @@ import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
 --import XMonad.Hooks.FadeInactive
-import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
@@ -71,6 +71,7 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.Accordion
 import XMonad.Layout.Combo
 import XMonad.Layout.Mosaic
+import XMonad.Layout.Fullscreen
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
@@ -120,7 +121,7 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
     --onWorkspaces ["web","irc"] Full $
-    Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion)
+    fullscreenFull Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion)
     where
         tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
 
@@ -214,7 +215,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox"])
-    , ("M-S-i", spawn "pkill compton; compton -i 0.8 -cC --invert-color-include 'g:e:Google-chrome' &")
+    , ("M-S-i", spawn "pkill compton; compton -i 0.8 -cC --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Firefox' --opengl &")
     , ("M-C-i", spawn "pkill compton; compton -i 0.8 -cC &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -351,6 +352,7 @@ myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook No
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
+    , handleEventHook    = fullscreenEventHook
     , logHook            = myDynamicLog dzen
     , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling"
 } `additionalKeysP` myKeys
@@ -487,7 +489,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "firefox") "firefox.xpm"
+    [ TI "web" "" (spawn "chrome") "firefox.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (spawn "xpra attach :7000") "evince.xpm"

@@ -7,6 +7,7 @@
 # portage:2.2, rsync support for PORTAGE_BINHOST, GENTOO_MIRRORS
 <sys-apps/portage-2.3 **
 
-=app-text/llpp-9999 **
-
 =app-i18n/librime-9999 **
+
+=app-text/llpp-9999 **
+=app-text/mupdf-9999 **

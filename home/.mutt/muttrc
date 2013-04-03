@@ -123,6 +123,8 @@ auto_view application/msword application/pdf application/vnd.oasis.opendocument.
 alternative_order text/plain text/html
 mime_lookup application/octet-stream
 
+charset-hook gb2312 gbk
+
 # Includes {{{1
 source $alias_file
 source ~/.mutt/local

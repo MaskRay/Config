@@ -36,10 +36,12 @@ bind-key <esc>k prev-feed
 bind-key <esc>j next-feed
 bind-key J      next
 bind-key K      prev
-bind-key SPACE  open
 bind-key h      pageup
 bind-key l      pagedown
 bind-key p      pb-play  podbeuter
+bind-key o      open-in-browser-and-mark-read
+bind-key O      open
+bind-key SPACE  toggle-article-read
 
 # Includes {{{1
 include "~/.config/newsbeuter/profile"

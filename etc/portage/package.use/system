@@ -4,3 +4,6 @@ sys-apps/grep pcre
 sys-fs/udev extras -acl gudev
 sys-libs/glibc systemtap debug
 sys-libs/zlib minizip # required by R, vlc, ...
+
+#required by media-video/cheese-3.6.2, required by cheese (argument)
+>=media-libs/gst-plugins-base-1.0.5-r2 theora

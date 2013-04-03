@@ -2,6 +2,7 @@
 cd ~/projects/Linux
 [ -n "$1" ] && git pull
 make menuconfig
+export CFLAGS=-ggdb
 sudo make CC=/usr/lib/ccache/bin/cc -j4
 sudo mount /boot
 sudo make install modules_install

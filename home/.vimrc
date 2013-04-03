@@ -19,10 +19,10 @@ set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
-set ignorecase smartcase
+"set ignorecase smartcase
 set ttimeoutlen=100
 set matchpairs=(:),[:],{:},<:>,':',":"
-au FileType c,cpp,java set mps+==:;
+"au FileType c,cpp,java set mps+==:;
 
 set backup
 set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
@@ -141,6 +141,7 @@ endif
 if has("autocmd")
   " Markdown ------------------------------------------ {{{2
   autocmd BufNewFile,BufRead *.md setfiletype markdown
+  autocmd BufNewFile,BufRead *.iced setfiletype coffee
   " Show trailing whitespaces when necessary ---------- {{{2
   " That is, most of the cases other than editing source code in Whitespace,
   " the programming language.
@@ -268,6 +269,7 @@ if has("autocmd")
     autocmd FileType jinja setlocal sw=2 sts=2 et
     autocmd FileType jinja2 setlocal sw=2 sts=2 et
     autocmd FileType mason setlocal sw=2 sts=2 et
+    autocmd FileType markdown setlocal sw=4 sts=4 et
     autocmd FileType ocaml setlocal sw=2 sts=2 et
     autocmd FileType perl setlocal sw=4 sts=4 et
     autocmd FileType rst setlocal sw=2 sts=2 et
@@ -481,6 +483,7 @@ Bundle 'vim-PinyinSearch'
 "Bundle 'rainbow_parentheses'
 Bundle 'YankRing'
 Bundle 'vimproc'
+Bundle 'vimshell'
 Bundle 'vimfiler'
 Bundle 'unite.vim'
 Bundle 'unite-outline'
@@ -489,8 +492,14 @@ Bundle 'SingleCompile'
 Bundle 'vim-unimpaired'
 Bundle 'gundo'
 Bundle 'accelerated-jk'
+Bundle 'ag'
+Bundle 'dwm'
+
+Bundle 'vim-scala'
+Bundle 'vimside'
 
 Bundle 'Rip-Rip/clang_complete'
+"Bundle 'YouCompleteMe'
 
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
@@ -504,7 +513,7 @@ Bundle 'digitaltoad/vim-jade'
 "Bundle 'vim-sparkup'
 "Bundle 'zencoding-vim'
 
-Bundle 'doctorjs'
+"Bundle 'doctorjs'
 Bundle 'kchmck/vim-coffee-script'
 "Bundle 'pangloss/vim-javascript'
 
@@ -544,6 +553,9 @@ let g:ctrlp_custom_ignore = {
 " works in gvim and some terminals.
 " nnoremap <C-A-P> :CtrlPMixed<CR>
 
+" Accelerated-jk --- {{{2
+nmap j <Plug>(accelerated_jk_gj_position)
+nmap k <Plug>(accelerated_jk_gk_position)
 " Cute Python ----------------------------------------- {{{2
 " https://github.com/ehamberg/vim-cute-python
 " #git clone git://github.com/ehamberg/vim-cute-python.git
@@ -551,6 +563,9 @@ let g:ctrlp_custom_ignore = {
 " dot.vim ------------------------------------------- {{{2
 " https://bitbucket.org/shu/dotoutlinetree
 " http://www.vim.org/scripts/script.php?script_id=1225
+
+" dwm --- {{{2
+nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
 
 " FuzzyFinder ----------------------------------------- {{{2
 " vim-l9 is the requirement of fuzzyfinder 4.*
@@ -568,6 +583,12 @@ let g:ctrlp_custom_ignore = {
 " search from cwd
 nnoremap <leader>ff :FufFile<CR>
 nnoremap <leader>fb :FufBuffer<CR>
+
+" Global ---------------------------------------------- {{{2
+nnoremap <C-\>s :Gtags <C-r><C-w><cr>
+nnoremap <C-\>r :Gtags -r <C-r><C-w><cr>
+nnoremap <C-\>p :Gtags -P <C-r><C-w><cr>
+nnoremap <C-\><C-\> :Gtags
 
 " Gundo ----------------------------------------------- {{{2
 " http://sjl.bitbucket.org/gundo.vim/
@@ -594,6 +615,10 @@ nnoremap <leader>nt :NERDTreeToggle<CR>
 " http://www.vim.org/scripts/script.php?script_id=2332
 " https://github.com/tpope/vim-pathogen
 " git clone git://github.com/tpope/vim-pathogen.git
+
+" PinyinSearch --- {{{2
+let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
+nnoremap <Leader>ps :call PinyinSearch()<CR>
 
 " py.test --------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=3424
@@ -652,6 +677,7 @@ let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv
 " git clone git://github.com/scrooloose/syntastic.git
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
+let g:syntastic_cpp_compiler_options = '-std=c++11'
 nnoremap <leader>st :SyntasticToggleMode<CR>
 
 " Tabular --------------------------------------------- {{{2
@@ -822,10 +848,6 @@ nnoremap <leader>vf :VimFilerCurrentDir<cr>
 
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
-" Accelerated-jk --- {{{2
-nmap j <Plug>(accelerated_jk_gj_position)
-nmap k <Plug>(accelerated_jk_gk_position)
-
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
 " ErrorsToggle & QFixToggle ------------------------------------- {{{2
@@ -1068,23 +1090,20 @@ function Lilydjwg_open_url()
 endfunction
 nmap <silent> tf :call Lilydjwg_open_url()<CR>
 
-" global ---------------------------------------------- {{{2
-  nnoremap <C-\>s :Gtags <C-r><C-w><cr>
-  nnoremap <C-\>r :Gtags -r <C-r><C-w><cr>
-  nnoremap <C-\>p :Gtags -P <C-r><C-w><cr>
-  nnoremap <C-\><C-\> :Gtags
-" Misc --------------------- {{{1
+
+  " Misc --------------------- {{{1
 nnoremap zz zz:nohls<CR>
+nnoremap <Leader>a :Ag
 nnoremap <Leader>p "+p<CR>
 nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
+noremap gz :bdelete<cr>
+
+" Omni completion
 inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
-noremap gz :bdelete<cr>
-noremap gn :bnext<cr>
-noremap gb :bprev<cr>
 
-" edit
+" Edit
 map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 map <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
@@ -1105,11 +1124,11 @@ nnoremap <m-up> :cprevious<cr>zvzz
 " search for visual-mode selected text
 vmap / y/<C-R>"<CR>
 
-" tab navigation
+" Tabs
 nmap tk :tabprevious<cr>
 nmap tj :tabnext<cr>
 nmap to :tabnew<cr>
-nmap tc :tabclose<cr>
+nmap tq :tabclose<cr>
 
 " vim hacks #159
 nmap <leader>sj <SID>(split-to-j)
@@ -1155,7 +1174,6 @@ noremap L g_
 inoremap <C-a> <esc>I
 inoremap <C-e> <esc>A
 
-nnoremap <Leader>a :Ack
 
 " Open a Quickfix window for the last search.
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
@@ -1170,25 +1188,29 @@ set pastetoggle=<F7>
 vnoremap < <gv
 vnoremap > >gv
 
+" Buffer
+nnoremap <C-Tab> :bn<cr>
+nnoremap <C-S-Tab> :bp<cr>
+
+" Edit
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 map <leader>ew :e %%
 map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
 
+" Scrolling
 map zl zL
 map zh zH
+
+" Command-line editing
+cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 cmap w!! w !sudo tee % >/dev/null
 
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
 nnoremap <F10> :set wrap!<CR>
-cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
-
-
-let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
-nnoremap <Leader>ps :call PinyinSearch()<CR>

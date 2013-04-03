@@ -19,7 +19,8 @@ fi
 
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
-export PATH=$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin/ssh:$PATH
+export SCALA_HOME=/opt/scala-2.10.1
+export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:/opt/wps:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin/ssh:$PATH
 export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
@@ -192,6 +193,7 @@ fi
 alias l="ls -l"
 alias la='l -A'
 alias lh='l -lh'
+alias which='which -a'
 
 # Global aliases {{{2
 alias -g A="|awk"

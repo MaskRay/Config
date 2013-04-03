@@ -1,6 +1,6 @@
 set folder=~/Maildir
 unmailboxes *
-mailboxes =INBOX =Tuna =Drafts =Gentoo-china =Haskell =ML =Contest =School =Lesson =Work
+mailboxes =INBOX =Tuna =ML =School =Sent
 set sendmail="sendmail"
 set spoolfile=+INBOX \
     postponed=+Drafts \

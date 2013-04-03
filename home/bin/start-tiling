@@ -14,7 +14,8 @@ let singleton s =
 
 List.map Sys.command [
   (* resident *)
-  singleton "tmux new -d -s weechat -n weechat weechat-curses \\; new -d -s default -t weechat\\; new-window"
+  singleton "tmux new -d -s default \\; new-window"
+  (*; singleton "tmux new -d -s weechat -n weechat weechat-curses \\; new -d -s default -t weechat\\; new-window"*)
   ; singleton "parcellite &"
   ; singleton "fcitx &"
   ; singleton "/usr/lib64/notify-osd/notify-osd &"
@@ -30,6 +31,7 @@ List.map Sys.command [
   (*; "dorm u"*)
   ; "emacs --daemon"
   ; "xset r rate 200 50"
+  ; "xcape -e 'Control_L=Escape'"
   ; "compton -cC -i 0.8 &"
   ; "urxvtd -f -q -o"
   ; "mail-inotify &"

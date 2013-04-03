@@ -13,6 +13,7 @@ app-misc/recoll inotify -fam tex
 media-gfx/graphviz gts # otherwise sfdp won't work
 
 # Application - Instant messaging
+net-im/bitlbee twitter
 net-irc/weechat perl python ruby # plugins
 
 # Application - Mail
@@ -21,7 +22,7 @@ mail-mta/msmtp sasl gnutls
 
 # Application - Media
 >=media-libs/libsamplerate-0.1.8 sndfile # required by rosegarden
-media-libs/mesa gbm # required by mplayer[directfb]
+media-libs/mesa gbm gles2 vdpau xorg
 media-sound/ncmpcpp curl outputs fftw taglib visualizer clock
 media-video/ffmpeg vdpau threads v4l v4l2
 media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xvid directfb a52 aac real xvmc
