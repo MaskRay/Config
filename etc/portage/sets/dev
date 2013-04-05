@@ -100,5 +100,6 @@ www-misc/fcgiwrap
 www-servers/nginx
 
 # Misc
-sci-electronics/ngspice
 app-misc/jq
+media-libs/opencv
+sci-electronics/ngspice

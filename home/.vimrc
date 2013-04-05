@@ -498,8 +498,8 @@ Bundle 'dwm'
 Bundle 'vim-scala'
 Bundle 'vimside'
 
-Bundle 'Rip-Rip/clang_complete'
-"Bundle 'YouCompleteMe'
+"Bundle 'Rip-Rip/clang_complete'
+Bundle 'YouCompleteMe'
 
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'

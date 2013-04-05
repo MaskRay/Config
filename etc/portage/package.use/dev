@@ -11,6 +11,7 @@ dev-vcs/subversion -dso perl # required by git[subversion]
 
 # Development - Libraries
 dev-python/PyQt4 webkit # perhaps for phantomjs's dependency
+media-libs/opencv ffmpeg
 x11-libs/cairo xcb opengl svg
 
 # databases

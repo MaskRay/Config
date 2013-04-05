@@ -130,3 +130,6 @@
 [submodule "home/.vim/bundle/dispatch"]
 	path = home/.vim/bundle/dispatch
 	url = https://github.com/tpope/vim-dispatch
+[submodule "home/.vim/bundle/YouCompleteMe"]
+	path = home/.vim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
