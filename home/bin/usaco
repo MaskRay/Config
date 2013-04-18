@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ "$1" = "-r" ]; then
+    sed '/\/\*/,/\*\//d;/^freopen/d'
+    exit
+fi
+
+if [ -z $1 ]; then
+    cat <<EOF
+Usage: $0 PROB ID
+EOF
+    exit 1
+fi
+
+sed "1{i\\
+/*
+i\\
+PROB: $1
+i\\
+LANG: C++
+i\\
+ID: ${2}
+i\\
+*/
+}
+/^int main()/{N;a\\
+freopen(\"$1.in\", \"r\", stdin);
+a\\
+freopen(\"$1.out\", \"w\", stdout);
+}"

@@ -1,0 +1,98 @@
+#!/usr/bin/perl
+
+use 5.010;
+#use strict;
+#no strict 'refs';
+use warnings;
+my $gg = '123';
+my($class, $signature, %typedef, %include);
+my $content = join '', <>;
+$class = $1 if $content =~ /Class:\s+(\S+)/;
+$signature = $1 if $content =~ /Method signature:\s+(\S[^\)]+\))/;
+die if !defined($class) || !defined($signature);
+
+$signature =~ s/vector <int>/int[]/;
+$signature =~ s/vector <double>/double[]/;
+$signature =~ s/vector <long long>/long[]/;
+$signature =~ s/vector <string>/string[]/;
+$signature =~ s/long long/long/;
+
+my %transform1 = ('long' => 'll', 'String' => 'string');
+while (my ($c,$d) = each %transform1) {
+    if ($signature =~ s/(^|(?<!\w))$c/$d/g) {
+	$typedef{'typedef long long ll;'} = 1 if $c eq 'long';
+	$include{'#include <string>'} = 1 if $c eq 'String';
+    }
+}
+
+my %transform2 = ('int' => 'vi', 'll' => 'vll', 'double' => 'vd', 'string' => 'vs');
+while (my ($c,$d) = each %transform2) {
+    if ($signature =~ s/$c\[\]/$d/g) {
+	$include{'#include <vector>'} = 1;
+	$typedef{'typedef vector<int> vi;'} = 1 if $c eq 'int';
+	$typedef{'typedef vector<ll> vll;'} = 1 if $c eq 'll';
+	$typedef{'typedef vector<double> vd;'} = 1 if $c eq 'double';
+	$typedef{'typedef vector<string> vs;'} = 1 if $c eq 'string';
+    }
+}
+
+my $include = join "\n", sort(keys %include);
+my $typedef = join("\n", sort(keys %typedef));
+$typedef .= "\n" if $typedef;
+
+print "$include
+using namespace std;
+$typedef
+class $class {
+public:
+    $signature {
+        
+    }
+};
+
+#include <iostream>
+
+int main()
+{
+";
+
+$signature =~ /([\w<>]+) (\w+)\((.*)\)/;
+local(%int, %ll, %double, %string, %vi, %vll, %vd, %vs);
+my $eol = 0;
+my $ret = $1;
+my $method = $2;
+my(@main, @id);
+for (split /, /, $3) {
+    my($type, $id) = split / /, $_;
+    push @id, $id;
+    given ($type) {
+	when ('int') { $int{$id} = 1; push @main, "cin >> $id;"; $eol = 1; }
+	when ('ll') { $ll{$id} = 1; push @main, "cin >> $id;"; $eol = 1; }
+	when ('double') { $double{$id} = 1; push @main, "cin >> $id;"; $eol = 1; }
+	when ('string') { $string{$id} = 1; push @main, "${['','cin.ignore(); ']}[$eol]getline(cin, $id);"; $eol = 0; }
+	when ('vi') { $int{'_N'} = 1; $int{'_I'} = 1; $vi{$id} = 1; push @main, "cin >> _N; while (_N--) cin >> _I, $id.push_back(_I);"; $eol = 1; }
+	when ('vll') {  $int{'_N'} = 1; $ll{'_L'} = 1; $vll{$id} = 1; push @main, "cin >> _N; while (_N--) cin >> _L, $id.push_back(_L);"; $eol = 1; }
+	when ('vd') { $int{'_N'} = 1; $double{'_D'} = 1; $vd{$id} = 1; push @main, "cin >> _N; while (_N--) cin >> _D, $id.push_back(_D);"; $eol = 1; }
+	when ('vs') {  $int{'_N'} = 1; $string{'_S'} = 1; $vs{$id} = 1; push @main, "cin >> _N; cin.ignore(); while (_N--) getline(cin, _S), $id.push_back(_S);"; $eol = 0; }
+    }
+}
+
+for ('int', 'll', 'double', 'string', 'vi', 'vll', 'vd', 'vs') {
+    next unless scalar %{$_};
+    say "    $_ ${[join ', ', sort(keys %{$_})]}[0];";
+}
+say("    ", join("\n    ", @main));
+
+if ($ret =~ /^v/) {
+    my $ret2;
+    given ($ret) {
+        when ('vi') { $ret2 = 'int'; }
+        when ('vll') { $ret2 = 'll'; }
+        when ('vd') { $ret2 = 'double'; }
+        when ('vs') { $ret2 = 'string'; }
+    }
+    say "    $ret R = $class().$method(${[join ', ', @id]}[0]); cout << R.size() << endl; copy(R.begin(), R.end(), ostream_iterator<$ret2>(cout, \"\\n\"));"
+} else {
+    say "    cout << $class().$method(${[join ', ', @id]}[0]) << endl;"
+}
+say '}';

@@ -58,6 +58,9 @@
 
   # tag
   t = tag
+
+  # misc
+  save-untracked = !git ls-files --others --exclude-standard -z | cpio -pmd0
 [branch]
   autosetuprebase = always
 [color]

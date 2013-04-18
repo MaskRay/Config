@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/google-chrome --disk-cache-dir=/dev/shm --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac "$@"

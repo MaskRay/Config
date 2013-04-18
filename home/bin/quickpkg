@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo /usr/bin/quickpkg --include-config=y --umask 0022 "$@"

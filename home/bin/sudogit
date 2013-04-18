@@ -1,0 +1,4 @@
+#!/bin/zsh
+name=${$(git config --get user.name):-$(id -un)}
+email=${$(git config --get user.email):-$(id -un)@$(hostname -s)}
+sudo GIT_AUTHOR_NAME="$name" GIT_AUTHOR_EMAIL="$email" EDITOR="$EDITOR" git "$@"

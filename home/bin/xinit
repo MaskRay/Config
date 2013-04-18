@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/xinit -- -nolisten tcp
