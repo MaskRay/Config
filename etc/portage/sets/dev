@@ -75,6 +75,12 @@ dev-python/virtualenv
 net-analyzer/scapy
 www-servers/tornado
 
+# Electronics
+sci-electronics/geda
+sci-electronics/gtkwave
+sci-electronics/iverilog
+sci-electronics/ngspice
+
 # Vim specific
 app-vim/colorschemes
 app-vim/extra-syntax
@@ -101,5 +107,5 @@ www-servers/nginx
 
 # Misc
 app-misc/jq
+app-text/xmlstarlet
 media-libs/opencv
-sci-electronics/ngspice

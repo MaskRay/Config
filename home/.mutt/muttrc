@@ -15,7 +15,6 @@ set include
 set ispell = "aspell -e -c"
 set mail_check=120
 set menu_scroll
-set mime_forward
 set pager_context = 5
 set pager_index_lines = 5
 set pager_stop
@@ -26,6 +25,7 @@ set realname="Ray"
 set reply_to
 set resolve
 set reverse_alias
+set rfc2047_parameters=yes
 set sort=threads
 set sort_aux=reverse-last-date-received
 set ssl_force_tls = yes
@@ -90,6 +90,10 @@ macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
 macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
 
+bind index zt current-top
+bind index zz current-middle
+bind index zb current-bottom
+
 bind pager \Cu half-up
 bind pager \Cd half-down
 bind pager p parent-message
@@ -124,6 +128,9 @@ alternative_order text/plain text/html
 mime_lookup application/octet-stream
 
 charset-hook gb2312 gbk
+
+message-hook . "set mime_forward=ask-no"
+message-hook "~h multipart" "set mime_forward=ask-yes"
 
 # Includes {{{1
 source $alias_file

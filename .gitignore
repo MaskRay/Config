@@ -1,5 +1,6 @@
 *~
 *.log
+*.pyc
 /home/.ncmpcpp/artists
 /home/.mutt/cache
 /home/.mutt/profile

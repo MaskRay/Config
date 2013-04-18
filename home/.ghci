@@ -11,4 +11,4 @@
 
 --let myPrint = putStrLn . HsColour.hscolour (HsColour.TTYg HsColour.XTerm256Compatible) myColourPrefs False False "" False . IPPrint.pshow
 
---:set -interactive-print=myPrint
+-- :set -interactive-print=myPrint

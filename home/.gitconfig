@@ -18,9 +18,13 @@
   ca = commit -a
   co = checkout
 
+  # fetch
+  fetchall = fetchall -v --all
+
   # diff
   d   = diff
   dc  = diff --cached
+  wd  = diff --word-diff=plain
   last = diff HEAD^
 
   # grep
@@ -30,7 +34,7 @@
   l = log
   lp = log -p
   ls = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
-  lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+  lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
   lg = log --graph
 
   # rebase

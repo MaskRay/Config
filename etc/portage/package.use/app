@@ -29,10 +29,11 @@ media-video/mplayer ass vdpau v4l v4l2 mp3 alsa fbcon live theora vorbis x264 xv
 virtual/ffmpeg threads vdpau
 
 # Application - Misc.
+app-arch/p7zip rar
+app-arch/unzip natspec
 app-emulation/wine win32 win64 alsa
 dev-java/icedtea-bin nsplugin # Java plugin for Firefox
 x11-misc/xbindkeys guile # emacs-ish key sequence
-app-arch/p7zip rar
 
 # X11, WM, DE
 x11-base/xorg-server xnest xvfb

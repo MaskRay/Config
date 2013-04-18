@@ -57,7 +57,7 @@ fi
 # History {{{2
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/.zsh_history
+HISTFILE=~/.history/zsh
 unsetopt flowcontrol
 setopt hist_ignore_all_dups     # when runing a command several times, only store one
 setopt hist_reduce_blanks       # reduce whitespace in history
@@ -196,8 +196,7 @@ alias lh='l -lh'
 alias which='which -a'
 
 # Global aliases {{{2
-alias -g A="|awk"
-alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
+#alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
 alias -g E="|sed"
 alias -g L="|less"
 alias -g P="|column -t"

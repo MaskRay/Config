@@ -285,6 +285,7 @@ if has("autocmd")
     autocmd FileType sql setlocal et
     autocmd FileType tex setlocal sw=2 sts=2 et
     autocmd FileType text setlocal textwidth=72
+    autocmd FileType verilog setlocal sw=2 sts=2 et
 
   " Language specific indentation --------------------- {{{2
   augroup switch_case_indentation
@@ -677,6 +678,7 @@ let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv
 " git clone git://github.com/scrooloose/syntastic.git
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
+let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_cpp_compiler_options = '-std=c++11'
 nnoremap <leader>st :SyntasticToggleMode<CR>
 

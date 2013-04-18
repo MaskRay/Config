@@ -99,7 +99,6 @@ x11-apps/xsetroot
 x11-base/xorg-server
 x11-misc/compton
 x11-misc/dmenu
-x11-misc/notify-osd
 x11-misc/unclutter
 x11-misc/urxvt-perls
 x11-misc/trayer

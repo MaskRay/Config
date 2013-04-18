@@ -23,7 +23,7 @@ List.map Sys.command [
   (*; singleton "ibus-daemon -d"*)
 
   (* one-shot *)
-  ; "xrandr | grep -q HDMI && { xrandr -s 1920x1080 --output HDMI1 --mode 1920x1080 --output LVDS1 --right-of HDMI1; }"
+  ; "xrandr | grep -q HDMI && { xrandr --output LVDS1 --mode 1366x768 -s 1920x1080 --output HDMI1 --mode 1920x1080 --right-of LVDS1 ; }"
   ; "xrdb ~/.Xresources"
   ; pic
   ; "redshift"
