@@ -67,6 +67,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.SetWMName
 
 import XMonad.Layout.Accordion
 import XMonad.Layout.Combo
@@ -88,7 +89,6 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.WindowSwitcherDecoration
-import qualified XMonad.Layout.Magnifier as Mag
 
 {-
  - TABBED
@@ -215,7 +215,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Firefox' &")
+    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -288,7 +288,7 @@ myKeys =
     , ("C-' h", namedScratchpadAction scratchpads "htop")
     , ("C-' j", namedScratchpadAction scratchpads "node")
     , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
-    , ("C-' o", namedScratchpadAction scratchpads "ocaml")
+    , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' q", namedScratchpadAction scratchpads "swipl")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
@@ -322,7 +322,7 @@ myKeys =
 
 scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
-  [ NS "ocaml" "urxvtc -T ocaml -e rlwrap ocaml" (title =? "ocaml") doSPFloat
+  [ NS "utop" "urxvtc -T utop -e rlwrap utop" (title =? "utop") doSPFloat
   , NS "task" "urxvtc -T task -e rlwrap task shell" (title =? "task") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
@@ -354,7 +354,7 @@ myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook No
     , manageHook         = myManageHook
     , handleEventHook    = fullscreenEventHook
     , logHook            = myDynamicLog dzen
-    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling"
+    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D"
 } `additionalKeysP` myKeys
 
 {-

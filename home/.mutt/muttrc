@@ -1,6 +1,6 @@
 # Headers {{{1
 ignore *
-unignore from to cc mail-followup-to date x-mailer x-url
+unignore from to cc reply-to mail-followup-to date organization message-id user-agent x-mailer x-url
 unhdr_order *
 hdr_order From: To: Cc: Subject: Date:
 
@@ -19,7 +19,7 @@ set pager_context = 5
 set pager_index_lines = 5
 set pager_stop
 set pipe_decode
-set query_command="goobook query '%s'"
+set query_command="abook --mutt-query '%s'"
 set quit
 set realname="Ray"
 set reply_to
@@ -46,6 +46,7 @@ set status_format = "-%r- %f (%s) [%M/%m] [NEW=%n] %?V?[%V]?"
 set mbox_type=Maildir
 set alias_file = ~/.mutt/aliases
 set header_cache = ~/.mutt/cache/headers
+#set maildir_header_cache_verify = no
 set message_cachedir = ~/.mutt/cache/bodies
 set signature = ~/.mutt/signature
 set certificate_file  = ~/.mutt/certificates
@@ -78,17 +79,21 @@ macro index ,s \
 macro generic,index ,r "<enter-command>source ~/.mutt/muttrc<enter>"
 bind generic,index j next-entry
 bind generic,index k previous-entry
+bind index,pager . next-unread
 bind index,pager r group-reply
 bind index,pager R reply
 bind index,pager J next-new-then-unread
 bind index,pager K previous-new-then-unread
+bind index,pager a create-alias
+bind index,pager p recall-message
+bind index,pager N search-opposite
 bind index,pager <esc>k sidebar-prev
 bind index,pager <esc>j sidebar-next
 bind index,pager <esc>o sidebar-open
-macro index,pager a "<pipe-message>goobook add<return>" "add the sender address to Google contacts"
 macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
 macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
+macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
 
 bind index zt current-top
 bind index zz current-middle
@@ -111,6 +116,7 @@ macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"
 macro index,pager ,h "<change-folder>=Haskell<return>" "go to =Haskell"
 macro index,pager ,m "<change-folder>=ML<return>" "go to =ML"
 macro index,pager ,c "<change-folder>=School<return>" "go to =School"
+macro index,pager ,< "<change-folder><<return>" "go to =Sent"
 
 bind attach ' ' select-entry
 macro attach s <save-message><bol>/tmp/
@@ -124,7 +130,7 @@ bind editor <tab> complete-query
 # Misc {{{1
 set editor="vim %s"
 auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
-alternative_order text/plain text/html
+alternative_order text/html text/plain
 mime_lookup application/octet-stream
 
 charset-hook gb2312 gbk

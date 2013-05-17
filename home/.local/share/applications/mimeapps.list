@@ -4,6 +4,7 @@
 ; x-scheme-handler/http=firefox-bin.desktop
 ; x-scheme-handler/https=firefox-bin.desktop
 
+text/plain=gvim.desktop
 text/html=google-chrome.desktop
 application/xhtml+xml=google-chrome.desktop
 x-scheme-handler/http=google-chrome.desktop

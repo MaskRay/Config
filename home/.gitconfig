@@ -4,11 +4,13 @@
 [advice]
   statusHints = false
 [alias]
-  a = add
-  b = branch -v
+  a   = add
+  b   = branch -v
   m   = merge
+  mt  = mergetool
   nc  = checkout -b
   pl  = pull
+  plr = pull --rebase
   pu  = push
   untrack = rm -r --cached
   dupes = !git ls-tree -r HEAD | cut -c 13- | sort | uniq -D -w 40
@@ -17,9 +19,11 @@
   c = commit
   ca = commit -a
   co = checkout
+  cv = commit -v
+  cav = commit -av
 
   # fetch
-  fetchall = fetchall -v --all
+  fetchall = fetch -v --all
 
   # diff
   d   = diff

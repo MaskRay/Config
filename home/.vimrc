@@ -11,14 +11,17 @@ set hlsearch
 set incsearch
 set ruler
 set showcmd
+set isfname-==
+set shortmess+=s
 set title
 set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
-set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a
+set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
+set sidescroll=3 sidescrolloff=3
 "set ignorecase smartcase
 set ttimeoutlen=100
 set matchpairs=(:),[:],{:},<:>,':',":"
@@ -179,6 +182,9 @@ if has("autocmd")
 
     autocmd FileType vala,genie setlocal formatoptions+=croql
 
+  au FileType r let &makeprg="R <% --vanilla"
+  au Filetype dot let &makeprg="dot -Tpng -O -v % ; feh %.png"
+
   " Ruby Support -------------------------------------- {{{2
   augroup ruby_support
     au!
@@ -238,6 +244,11 @@ if has("autocmd")
   augroup java_suppoer
     au!
     autocmd FileType *.java setlocal omnifunc=javacomplete#Complete
+
+  au BufWritePost *
+        \ if getline(1) =~ "^#!/bin/[a-z]*sh" |
+        \   exe "silent !chmod a+x <afile>" |
+        \ endif
 
   " Default tab settings for different file types ----- {{{2
   augroup tab_settings
@@ -374,7 +385,7 @@ if has("autocmd")
     autocmd InsertEnter * set number
     "autocmd InsertLeave * set relativenumber
     " remove trailing whitespaces
-    autocmd BufWritePre * call StripTrailingWhitespace()
+    "autocmd BufWritePre * call StripTrailingWhitespace()
 
     " When editing a file, always jump to the last known cursor position.
     " Don't do it when the position is invalid or when inside an event handler
@@ -462,7 +473,8 @@ if has("gui_running")
   "colorscheme molokai
   "hi Normal       guifg=White guibg=Black
   "colorscheme badwolf
-  colorscheme harlequin
+  "colorscheme harlequin
+  colorscheme hemisu
 else
   set t_Co=256
   set background=dark
@@ -483,21 +495,25 @@ Bundle 'syntastic'
 Bundle 'vim-PinyinSearch'
 "Bundle 'rainbow_parentheses'
 Bundle 'YankRing'
-Bundle 'vimproc'
-Bundle 'vimshell'
-Bundle 'vimfiler'
+"Bundle 'vimproc'
+"Bundle 'vimshell'
 Bundle 'unite.vim'
 Bundle 'unite-outline'
-Bundle 'vim-ref'
 Bundle 'SingleCompile'
 Bundle 'vim-unimpaired'
 Bundle 'gundo'
 Bundle 'accelerated-jk'
 Bundle 'ag'
 Bundle 'dwm'
+"Bundle 'notes'
+Bundle 'project'
+Bundle 'jsbeautify'
+Bundle 'LaTeX-Box'
 
 Bundle 'vim-scala'
 Bundle 'vimside'
+
+Bundle 'R-plugin'
 
 "Bundle 'Rip-Rip/clang_complete'
 Bundle 'YouCompleteMe'
@@ -505,7 +521,6 @@ Bundle 'YouCompleteMe'
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
 
-Bundle 'vim-css-color'
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'vim-matchit'
 Bundle 'wavded/vim-stylus'
@@ -514,13 +529,13 @@ Bundle 'digitaltoad/vim-jade'
 "Bundle 'vim-sparkup'
 "Bundle 'zencoding-vim'
 
-"Bundle 'doctorjs'
 Bundle 'kchmck/vim-coffee-script'
 "Bundle 'pangloss/vim-javascript'
+Bundle 'tern_for_vim'
 
 Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-rails'
-Bundle 'bbommarito/vim-slim'
+"Bundle 'tpope/vim-rails'
+"Bundle 'bbommarito/vim-slim'
 
 "Bundle 'python-mode'
 Bundle 'jedi-vim'
@@ -584,6 +599,7 @@ nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
 " search from cwd
 nnoremap <leader>ff :FufFile<CR>
 nnoremap <leader>fb :FufBuffer<CR>
+nnoremap <leader>fc :FufChangeLis[t<CR>
 
 " Global ---------------------------------------------- {{{2
 nnoremap <C-\>s :Gtags <C-r><C-w><cr>
@@ -611,6 +627,11 @@ nnoremap <leader>u :GundoToggle<CR>
 " https://github.com/scrooloose/nerdtree
 " git clone git://github.com/scrooloose/nerdtree.git
 nnoremap <leader>nt :NERDTreeToggle<CR>
+
+" Notes ----------------------------------------------- {{{2
+let g:notes_directory = '~/org'
+let g:notes_suffix = '.md'
+let g:notes_title_sync = 'no'
 
 " Pathogen -------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=2332
@@ -799,6 +820,10 @@ let g:vimim_toggle = 'pinyin'
 " not going to set it now.
 " let g:xptemplate_vars = "author=somebody&email=nobody@gmail.com"
 
+" YankRing --------------------------------------------- {{{2
+nmap <Leader>ys :YRShow<CR>
+nmap <Leader>ye :YRGetElem<space>
+
 " ZenCoding.vim --------------------------------------- {{{2
 " vim plugins for HTML and CSS hi-speed coding.
 " http://www.vim.org/scripts/script.php?script_id=2981
@@ -844,10 +869,6 @@ nnoremap <silent> <leader>gp :Git push<CR>
 nnoremap <silent> sr :Unite -buffer-name=file -start-insert file_mru<cr>
 nnoremap <silent> sf :Unite -buffer-name=file -start-insert buffer file<cr>
 nnoremap <silent> sc :Unite -buffer-name=change change<cr>
-" VimFiler --- {{{2
-let g:vimfiler_as_default_explorer = 1
-nnoremap <leader>vf :VimFilerCurrentDir<cr>
-
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
 " Commands, Mappings and Functions ------------------------------ {{{1
@@ -927,18 +948,6 @@ let vala_no_tab_space_error = 1
 "inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
 "  \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
-" automatically chmod +x {{{2
-function Lilydjwg_chmodx()
-  if strpart(getline(1), 0, 2) == '#!'
-    let f = expand("%:p")
-    if stridx(getfperm(f), 'x') != 2
-      call system("chmod +x ".shellescape(f))
-      e!
-      filetype detect
-      nmap <buffer> <S-F5> :!%:p<CR>
-    endif
-  endif
-endfunction
 
 " MatchUnwantedWhitespaces ---------------------------- {{{2
 function! MatchUnwantedWhitespaces()
@@ -1047,50 +1056,6 @@ function! UpdateRevisionInfo()
     endif
   endif
 endfunction
-
-" open url with firefox {{{2
-function Lilydjwg_get_pattern_at_cursor(pat)
-  let col = col('.') - 1
-  let line = getline('.')
-  let ebeg = -1
-  let cont = match(line, a:pat, 0)
-  while (ebeg >= 0 || (0 <= cont) && (cont <= col))
-    let contn = matchend(line, a:pat, cont)
-    if (cont <= col) && (col < contn)
-      let ebeg = match(line, a:pat, cont)
-      let elen = contn - ebeg
-      break
-    else
-      let cont = match(line, a:pat, contn)
-    endif
-  endwhile
-  if ebeg >= 0
-    return strpart(line, ebeg, elen)
-  else
-    return ""
-  endif
-endfunction
-
-function Lilydjwg_open_url()
-  let s:url = Lilydjwg_get_pattern_at_cursor('\v(https?://|ftp://|file:/{3}|www\.)(\w|[.-])+(:\d+)?(/(\w|[~@#$%^&+=/.?:-])+)?')
-  if s:url == ""
-    echohl WarningMsg
-    echomsg '在光标处未发现URL！'
-    echohl None
-  else
-    echo '打开URL：' . s:url
-    if !(has("win32") || has("win64"))
-      " call system("gnome-open " . s:url)
-      call system("setsid firefox '" . s:url . "' &")
-    else
-      " start 不是程序，所以无效。并且，cmd 只能使用双引号
-      " call system("start '" . s:url . "'")
-      call system("cmd /q /c start \"" . s:url . "\"")
-    endif
-  endif
-  unlet s:url
-endfunction
-nmap <silent> tf :call Lilydjwg_open_url()<CR>
 
 
   " Misc --------------------- {{{1
@@ -1205,6 +1170,8 @@ map <leader>et :tabe %%
 map zl zL
 map zh zH
 
+nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
+
 " Command-line editing
 cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
@@ -1216,3 +1183,41 @@ nnoremap <F10> :set wrap!<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
+
+if filereadable(glob("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
+
+func C_init()
+  set syntax=cpp11.doxygen
+  syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
+  syn keyword cppSTLType T
+endfunc
+
+func Ruby_init()
+  let &makeprg="ruby -c %"
+endfunc
+
+
+
+func Make()						" silent make with quickfix window popup
+	if &ft == 'cpp'
+		if filereadable(getcwd() . "/Makefile")
+			let &makeprg="make"
+		elseif  filereadable(getcwd() . "/../Makefile")
+			let &makeprg="make -C .."
+		endif
+	endif
+	make
+	" silent make ?
+	redraw!
+	for i in getqflist()
+		if i['valid']
+			cwin | winc p | return
+		endif
+	endfor
+endfunc
+
+nnoremap <Leader>mk :call Make()<CR>
+
+nmap <Leader>nw :set wrap!<CR>

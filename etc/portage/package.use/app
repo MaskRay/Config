@@ -33,6 +33,7 @@ app-arch/p7zip rar
 app-arch/unzip natspec
 app-emulation/wine win32 win64 alsa
 dev-java/icedtea-bin nsplugin # Java plugin for Firefox
+dev-libs/nss utils
 x11-misc/xbindkeys guile # emacs-ish key sequence
 
 # X11, WM, DE
@@ -42,3 +43,4 @@ x11-libs/libdrm libkms
 x11-wm/enlightenment enlightenment_modules_shot
 #required by x11-wm/enlightenment-0.17.1[enlightenment_modules_shot], required by @app, required by @selected, required by @world (argument)
 >=dev-libs/ecore-1.7.5 curl
+x11-wm/xmonad icccm

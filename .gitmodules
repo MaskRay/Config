@@ -133,3 +133,15 @@
 [submodule "home/.vim/bundle/YouCompleteMe"]
 	path = home/.vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
+[submodule "home/.vim/bundle/project"]
+	path = home/.vim/bundle/project
+	url = https://github.com/amiorin/vim-project
+[submodule "home/.vim/bundle/jsbeautify"]
+	path = home/.vim/bundle/jsbeautify
+	url = https://github.com/maksimr/vim-jsbeautify.git
+[submodule "home/.vim/bundle/R-plugin"]
+	path = home/.vim/bundle/R-plugin
+	url = https://github.com/jcfaria/Vim-R-plugin
+[submodule "home/.vim/bundle/LaTeX-Box"]
+	path = home/.vim/bundle/LaTeX-Box
+	url = https://github.com/LaTeX-Box-Team/LaTeX-Box

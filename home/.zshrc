@@ -20,11 +20,15 @@ fi
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export SCALA_HOME=/opt/scala-2.10.1
-export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:/opt/wps:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin/ssh:$PATH
+export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/1.9.1/bin:$HOME/bin/ssh:$PATH
+#export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
+export ADMB_HOME=$HOME/.local/admb
+export PATH=$ADMB_HOME/bin:$PATH
 export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
+export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
 
 # Look {{{1
 PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %F{white}'
@@ -42,11 +46,6 @@ eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-w
 bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
 bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
 bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
-alias o='fasd -fe xdg-open'
-alias sv='fasd -fe "sudo vim"'
-alias e='fasd -fe "emacsclient -c -n"'
-alias j='fasd_cd -d'
-alias m='fasd -fe mplayer'
 if [[ -n $MYSELF ]]; then
   alias v='fasd -fe "vim --servername GVIM --remote-tab-silent"'
 else
@@ -84,9 +83,6 @@ alias 6='cd +6'
 alias 7='cd +7'
 alias 8='cd +8'
 alias 9='cd +9'
-
-alias md='mkdir -p'
-alias d='dirs -v'
 
 setopt complete_aliases         #do not expand aliases _before_ completion has finished
 setopt auto_continue            #automatically send SIGCON to disowned jobs
@@ -180,23 +176,8 @@ bindkey -e
 
 # Aliases {{{1
 # General {{{2
-alias pg='pgrep -l'
-alias cp='cp -i -v'
-alias mv='mv -i -v'
-alias rm='rm -i -v -d' # since coreutils-8.19
-alias psg='ps aux|grep'
-if [ `uname` = Linux ]; then
-    alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
-else
-    alias ls="ls -F"
-fi
-alias l="ls -l"
-alias la='l -A'
-alias lh='l -lh'
-alias which='which -a'
 
 # Global aliases {{{2
-#alias -g B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'       # remove color, make things boring
 alias -g E="|sed"
 alias -g L="|less"
 alias -g P="|column -t"
@@ -215,34 +196,7 @@ alias -g X0='| xargs -0'
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 
 # Application-specific {{{2
-alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
-alias tail='tail -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
-alias clip='xsel -ib'
-alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
-alias -g NF=".*(oc[1])"
-alias -g ND="/*(oc[1])"
-alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
-alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
-alias c=cat
-alias L=less
-alias t=task
-alias g='grep -I'
-alias eg='egrep -I'
-alias df='df -Th'
-alias du='du -h'
-alias dud='du -s *(/)' #show directories size
-alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
-alias rsync='rsync --progress --partial'
-alias port='/sbin/ss -ntlp'
-alias wgetpaste='wgetpaste -X'
-alias 2pdf='libreoffice --headless --convert-to pdf'
-alias 2csv='libreoffice --headless --convert-to csv'
-alias g2u='iconv -f GBK -t UTF-8'
-alias u2g='iconv -f UTF-8 -t GBK'
-alias ntp='sudo /etc/init.d/ntp-client start'
-alias luit='luit -encoding gbk'
-alias gdb='gdb -q'
-alias getmail='getmail -r rc0 -r rc1'
+. ~/.alias
 
 # Gentoo-specific {{{2
 alias eme='sudo emerge'
@@ -288,3 +242,6 @@ zle -N self-insert url-quote-magic
 
 cowfiles=(/usr/share/cowsay-3.03/cows/*)
 bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fortune -s | cowsay -f${cowfiles[$RANDOM % ${#cowfiles[@]} + 1]}; sleep 0.3; done'"\n"
+
+# OPAM configuration
+. /home/ray/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

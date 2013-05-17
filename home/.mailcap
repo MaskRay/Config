@@ -7,4 +7,4 @@ image/*; fbi %s
 application/pdf; evince %s; test=test -n "$DISPLAY"
 application/pdf; pdftotext -enc UTF-8 %s /dev/stdout; copiousoutput
 
-text/html; t=%{charset} \; w3m -dump -ppc 9 -I ${t/2312/18030} -T text/html %s | sed -n '/[^[:blank:]]/,/^[[:blank:]]*$/p'; copiousoutput
+text/html; t=%{charset} \; w3m -dump -ppc 9 -I ${t/2312/18030} -T text/html %s | uniq; copiousoutput

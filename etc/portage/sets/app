@@ -13,6 +13,7 @@ app-text/wgetpaste
 app-text/zathura-meta
 
 # Application - File tools
+app-arch/lrzip
 app-arch/p7zip
 app-text/convmv
 app-text/recode
@@ -27,6 +28,7 @@ media-gfx/inkscape
 
 # Application - GUI misc.
 app-misc/recoll
+app-misc/xmind
 net-p2p/deluge
 app-i18n/fcitx-configtool
 app-i18n/fcitx-rime

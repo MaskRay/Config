@@ -1,7 +1,7 @@
 set folder=~/Maildir
 unmailboxes *
 mailboxes =INBOX =Tuna =ML =School =Sent
-set sendmail="sendmail"
+set sendmail="/usr/sbin/sendmail"
 set spoolfile=+INBOX \
     postponed=+Drafts \
     from=i@maskray.me

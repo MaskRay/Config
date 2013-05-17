@@ -29,7 +29,7 @@ List.map Sys.command [
   ; "redshift"
   ; "unclutter &"
   (*; "dorm u"*)
-  ; "emacs --daemon"
+  ; "emacs --daemon >/dev/null 2>/dev/null"
   ; "xset r rate 200 50"
   ; "xcape -e 'Control_L=Escape'"
   ; "compton -cC -i 0.8 &"

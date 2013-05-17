@@ -5,6 +5,7 @@ dev-lang/ghc
 dev-lang/gnu-smalltalk
 dev-lang/ocaml
 dev-lang/icon
+dev-lang/j
 dev-lang/vala
 dev-libs/gdl
 dev-lisp/sbcl

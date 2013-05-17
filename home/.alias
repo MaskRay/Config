@@ -1,0 +1,70 @@
+if [ `uname` = Linux ]; then
+    alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
+else
+    alias ls="ls -F"
+fi
+
+alias R='R --vanilla'
+
+function md() {
+  mkdir -p "$1"
+  cd "$1"
+}
+
+alias p6=ping6
+alias d='dirs -v'
+alias cp='cp -irv'
+alias mv='mv -iv'
+alias rm='rm -i -v -d' # since coreutils-8.19
+alias pg='pgrep -a'
+alias psg='ps aux|grep'
+
+alias l="ls -l"
+alias diff='colordiff'
+alias la='l -A'
+alias lh='l -lh'
+alias which='which -a'
+
+alias o='fasd -fe xdg-open'
+alias sv='fasd -fe "sudo vim"'
+alias e='fasd -fe "emacsclient -c -n"'
+alias j='fasd_cd -d'
+alias m='fasd -fe mplayer'
+
+alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
+alias tail='tail -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
+alias clip='xsel -ib'
+alias free='free -m'
+alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
+alias -g NF=".*(oc[1])"
+alias -g ND="/*(oc[1])"
+alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
+alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
+alias c=cat
+alias L=less
+alias t=task
+alias g='grep -I'
+alias eg='egrep -I'
+alias df='df -Th'
+alias dot='dot -Tpng -O -v'
+alias du='du -h'
+alias dud='du -s *(/)' #show directories size
+alias dstat='dstat -dnmcl --socket --top-io -N eth0,wlan0'
+alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
+alias rsync='rsync --progress --partial'
+alias port='/sbin/ss -ntlp'
+alias wgetpaste='wgetpaste -X'
+alias 2pdf='libreoffice --headless --convert-to pdf'
+alias 2csv='libreoffice --headless --convert-to csv'
+alias g2u='iconv -f GBK -t UTF-8'
+alias u2g='iconv -f UTF-8 -t GBK'
+alias ntp='sudo /etc/init.d/ntp-client start'
+alias luit='luit -encoding gbk'
+alias gdb='gdb -q'
+alias getmail='getmail -r rc0 -r rc1'
+alias pwget='proxychains wget'
+alias wps='/opt/wps-office_8.1.0.3842~a9p1_x86/wps'
+alias wpp='/opt/wps-office_8.1.0.3842~a9p1_x86/wpp'
+alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
+
+alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
