@@ -11,6 +11,8 @@ function md() {
   cd "$1"
 }
 
+LOCAL=$HOME/.local
+
 alias p6=ping6
 alias d='dirs -v'
 alias cp='cp -irv'
@@ -68,3 +70,5 @@ alias wpp='/opt/wps-office_8.1.0.3842~a9p1_x86/wpp'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
+
+alias jdgui=$LOCAL/bin/jd-gui

@@ -3,3 +3,4 @@ net-wireless/wpa_supplicant qt4 # wpa_gui
 net-analyzer/nmap ncat ndiff nping
 net-ftp/proftpd -acl # some issue related to acl support
 net-misc/openvpn iproute2
+net-analyzer/wireshark geoip

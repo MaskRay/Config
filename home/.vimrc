@@ -521,7 +521,8 @@ Bundle 'YouCompleteMe'
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
 
-Bundle 'hail2u/vim-css3-syntax'
+"Bundle 'hail2u/vim-css3-syntax'
+Bundle 'css3-mod'
 Bundle 'vim-matchit'
 Bundle 'wavded/vim-stylus'
 

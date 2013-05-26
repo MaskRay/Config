@@ -145,3 +145,6 @@
 [submodule "home/.vim/bundle/LaTeX-Box"]
 	path = home/.vim/bundle/LaTeX-Box
 	url = https://github.com/LaTeX-Box-Team/LaTeX-Box
+[submodule "home/.vim/bundle/css3-mod"]
+	path = home/.vim/bundle/css3-mod
+	url = https://github.com/vim-scripts/css3-mod

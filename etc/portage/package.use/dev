@@ -4,6 +4,7 @@ dev-lang/python sqlite
 dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
 sys-devel/llvm ocaml
+dev-lang/php truetype exif gd mysql
 
 # Development - VCS
 dev-vcs/git curl subversion tk # git svn
@@ -53,6 +54,6 @@ sys-devel/gdb python # Python pretty printers, STL containers specifically
 dev-cpp/glog gflags
 
 # Services
-dev-db/mongodb v8
+dev-db/mongodb v8 sharedclient
 www-servers/nginx nginx_modules_http_stub_status nginx_modules_http_fancyindex
 

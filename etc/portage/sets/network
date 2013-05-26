@@ -1,8 +1,11 @@
 # Network tools
 net-analyzer/dsniff
+net-analyzer/ettercap
+net-analyzer/metasploit
 net-analyzer/mtr
 net-analyzer/netcat
 net-analyzer/nmap
+net-analyzer/snort
 net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient
@@ -21,3 +24,5 @@ net-misc/tightvnc
 net-misc/whois
 net-misc/zsync
 net-proxy/polipo
+net-wireless/aircrack-ng
+net-wireless/kismet
