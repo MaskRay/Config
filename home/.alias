@@ -4,7 +4,7 @@ else
     alias ls="ls -F"
 fi
 
-alias R='R --vanilla'
+alias R='R --quiet'
 
 function md() {
   mkdir -p "$1"
@@ -40,6 +40,8 @@ alias free='free -m'
 alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
 alias -g NF=".*(oc[1])"
 alias -g ND="/*(oc[1])"
+alias -g N='>/dev/null'
+alias -g NN='2>/dev/null'
 alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias c=cat
@@ -67,8 +69,42 @@ alias getmail='getmail -r rc0 -r rc1'
 alias pwget='proxychains wget'
 alias wps='/opt/wps-office_8.1.0.3842~a9p1_x86/wps'
 alias wpp='/opt/wps-office_8.1.0.3842~a9p1_x86/wpp'
+alias pr='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 
 alias jdgui=$LOCAL/bin/jd-gui
+
+alias ga='git add'
+alias gpu='git push'
+alias gpl='git pull'
+alias gl='git log'
+alias glp='git log -p'
+alias gs='git status'
+alias ghost='command gs'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gm='git commit -m'
+alias gma='git commit -am'
+alias gb='git branch'
+alias gc='git checkout'
+alias gr='git remote'
+alias gcl='git clone'
+
+alias mount='sudo mount'
+alias umount='sudo umount'
+
+alias systemctl='sudo systemctl'
+alias status='systemctl status'
+alias start='systemctl start'
+alias restart='systemctl restart'
+alias reload='systemctl reload'
+alias stop='systemctl stop'
+alias enable='systemctl enable'
+alias disable='systemctl disable'
+
+alias pS='sudo pacman -S'
+alias pSs='pacman -Ss'
+alias pSy='sudo pacman -Syy'
+alias pSu='pacaur -Syu'

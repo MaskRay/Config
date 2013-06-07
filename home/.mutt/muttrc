@@ -90,7 +90,7 @@ bind index,pager N search-opposite
 bind index,pager <esc>k sidebar-prev
 bind index,pager <esc>j sidebar-next
 bind index,pager <esc>o sidebar-open
-macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
+macro index,pager B '<enter-command>toggle sidebar_visible<enter>'
 macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
 macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"

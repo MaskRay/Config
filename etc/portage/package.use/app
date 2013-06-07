@@ -7,6 +7,7 @@ app-text/zathura-meta pdf postscript
 # Application - Graphics
 media-gfx/imagemagick webp graphviz
 media-libs/freetype kpathsea infinality
+media-gfx/blender blender-game python_single_target_python3_3
 
 # Application - GUI misc.
 app-misc/recoll inotify -fam tex

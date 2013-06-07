@@ -5,6 +5,7 @@ dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
 sys-devel/llvm ocaml
 dev-lang/php truetype exif gd mysql
+dev-lang/R doc
 
 # Development - VCS
 dev-vcs/git curl subversion tk # git svn
@@ -14,6 +15,9 @@ dev-vcs/subversion -dso perl # required by git[subversion]
 dev-python/PyQt4 webkit # perhaps for phantomjs's dependency
 media-libs/opencv ffmpeg
 x11-libs/cairo xcb opengl svg
+
+#required by sci-libs/scipy-0.12.0, required by sci-libs/scikits_learn-0.13.1, required by scikits_learn (argument)
+>=dev-python/numpy-1.7.1 lapack
 
 # databases
 
