@@ -5,7 +5,6 @@ dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
 sys-devel/llvm ocaml
 dev-lang/php truetype exif gd mysql
-dev-lang/R doc
 
 # Development - VCS
 dev-vcs/git curl subversion tk # git svn

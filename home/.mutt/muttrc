@@ -129,7 +129,8 @@ bind editor <tab> complete-query
 
 # Misc {{{1
 set editor="vim %s"
-auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
+#auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
+auto_view application/vnd.oasis.opendocument.text text/html
 alternative_order text/html text/plain
 mime_lookup application/octet-stream
 

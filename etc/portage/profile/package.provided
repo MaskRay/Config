@@ -1,5 +1,6 @@
 sys-kernel/git-sources-9999
-www-client/phantomjs-1.7.0
 x11-misc/compton-9999 # --invert-color-include
 x11-misc/dzen-9999
 dev-lang/scala-2.10.0
+app-text/texlive-2012
+app-text/texlive-core-2012

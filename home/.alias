@@ -71,6 +71,7 @@ alias wps='/opt/wps-office_8.1.0.3842~a9p1_x86/wps'
 alias wpp='/opt/wps-office_8.1.0.3842~a9p1_x86/wpp'
 alias pr='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
+alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 

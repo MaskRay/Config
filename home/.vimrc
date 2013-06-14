@@ -517,6 +517,7 @@ Bundle 'R-plugin'
 
 "Bundle 'Rip-Rip/clang_complete'
 Bundle 'YouCompleteMe'
+let g:ycm_confirm_extra_conf = 0
 
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
