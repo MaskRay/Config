@@ -69,6 +69,7 @@ dev-python/fabric
 dev-python/flask
 dev-python/ipython
 dev-python/paver
+dev-python/pillow
 dev-python/pytest
 dev-python/rope
 dev-python/sqlalchemy

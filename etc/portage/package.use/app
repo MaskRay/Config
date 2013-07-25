@@ -32,7 +32,7 @@ virtual/ffmpeg threads vdpau
 # Application - Misc.
 app-arch/p7zip rar
 app-arch/unzip natspec
-app-emulation/wine win32 win64 alsa
+app-emulation/wine -fontconfig win32 win64 alsa
 dev-java/icedtea-bin nsplugin # Java plugin for Firefox
 dev-libs/nss utils
 x11-misc/xbindkeys guile # emacs-ish key sequence

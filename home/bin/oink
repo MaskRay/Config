@@ -1,0 +1,2 @@
+#!/bin/sh
+oinkmaster.pl -C /etc/oinkmaster.conf -o ~/.local/etc/suricata/rules -i

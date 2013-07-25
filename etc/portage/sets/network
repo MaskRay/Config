@@ -5,7 +5,8 @@ net-analyzer/metasploit
 net-analyzer/mtr
 net-analyzer/netcat
 net-analyzer/nmap
-net-analyzer/snort
+net-analyzer/oinkmaster
+net-analyzer/suricata
 net-analyzer/tcpdump
 net-analyzer/wireshark
 net-dialup/pptpclient
@@ -13,6 +14,7 @@ net-firewall/iptables
 net-fs/curlftpfs
 net-fs/samba
 net-ftp/lftp
+net-libs/libnetfilter_queue
 net-misc/aria2
 net-misc/bridge-utils
 net-misc/dhcpcd
@@ -26,3 +28,4 @@ net-misc/zsync
 net-proxy/polipo
 net-wireless/aircrack-ng
 net-wireless/kismet
+sys-apps/ethtool

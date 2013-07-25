@@ -4,7 +4,8 @@ dev-lang/python sqlite
 dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
 sys-devel/llvm ocaml
-dev-lang/php truetype exif gd mysql
+dev-lang/php fpm truetype exif gd mysql
+app-admin/eselect-php fpm
 
 # Development - VCS
 dev-vcs/git curl subversion tk # git svn
@@ -39,6 +40,7 @@ net-analyzer/scapy gnuplot graphviz imagemagick pyx
 dev-lang/python tk
 dev-python/imaging tk
 dev-python/ipython matplotlib notebook
+sci-libs/scipy sparse
 
 # Development - Editors
 app-editors/emacs gzip-el

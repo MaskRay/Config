@@ -186,6 +186,7 @@ if has("autocmd")
   au Filetype dot let &makeprg="dot -Tpng -O -v % ; feh %.png"
 
   " Ruby Support -------------------------------------- {{{2
+  au FileType ruby :call Ruby_init()
   augroup ruby_support
     au!
     autocmd FileType ruby inoreab <buffer> #! #!/usr/bin/env ruby
@@ -260,7 +261,7 @@ if has("autocmd")
     autocmd FileType c setlocal sw=2 ts=2 et
     autocmd FileType cpp setlocal sw=2 ts=2 et cino=g0,:0
     autocmd FileType go setlocal sw=2 ts=2
-    autocmd FileType java setlocal sw=2 ts=2
+    autocmd FileType java setlocal sw=2 ts=2 et
     autocmd FileType php setlocal sw=2 ts=2
     autocmd FileType rust setlocal sw=2 ts=2
     " Indentation with spaces:
@@ -503,12 +504,19 @@ Bundle 'SingleCompile'
 Bundle 'vim-unimpaired'
 Bundle 'gundo'
 Bundle 'accelerated-jk'
+Bundle 'accelerated-smooth-scroll'
 Bundle 'ag'
 Bundle 'dwm'
 "Bundle 'notes'
 Bundle 'project'
 Bundle 'jsbeautify'
 Bundle 'LaTeX-Box'
+Bundle 'VisIncr'
+Bundle 'tomtom/tlib_vim'
+Bundle 'tomtom/tmru_vim'
+Bundle 'evanmiller/nginx-vim-syntax'
+Bundle 'startify'
+Bundle 'splitjoin'
 
 Bundle 'vim-scala'
 Bundle 'vimside'
@@ -517,7 +525,19 @@ Bundle 'R-plugin'
 
 "Bundle 'Rip-Rip/clang_complete'
 Bundle 'YouCompleteMe'
+let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+let g:ycm_key_detailed_diagnostics = "<Leader>yd"
+let g:ycm_key_invoke_completion = "<F5>"
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_key_list_select_completion = ['<TAB>', '<Down>', '<Enter>']
 let g:ycm_confirm_extra_conf = 0
+let g:ycm_cache_omnifunc = 0
+let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+
 
 "Bundle 'eagletmt/ghcmod-vim'
 "Bundle 'vim-scripts/fcitx.vim'
@@ -526,6 +546,8 @@ let g:ycm_confirm_extra_conf = 0
 Bundle 'css3-mod'
 Bundle 'vim-matchit'
 Bundle 'wavded/vim-stylus'
+
+Bundle 'markdown'
 
 Bundle 'digitaltoad/vim-jade'
 "Bundle 'vim-sparkup'
@@ -869,7 +891,8 @@ nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
 " Unite --- {{{2
 nnoremap <silent> sr :Unite -buffer-name=file -start-insert file_mru<cr>
-nnoremap <silent> sf :Unite -buffer-name=file -start-insert buffer file<cr>
+"nnoremap <silent> sf :Unite -buffer-name=file -start-insert buffer file<cr>
+nnoremap <silent> sf :FufBuffer<cr>
 nnoremap <silent> sc :Unite -buffer-name=change change<cr>
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
@@ -1073,10 +1096,10 @@ inoremap <C-]> <C-x><C-]>
 inoremap <C-F> <C-x><C-F>
 
 " Edit
-map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
-map <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
-map <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
-map <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " move in insert mode
 inoremap <m-h> <left>
@@ -1094,10 +1117,10 @@ nnoremap <m-up> :cprevious<cr>zvzz
 vmap / y/<C-R>"<CR>
 
 " Tabs
-nmap tk :tabprevious<cr>
-nmap tj :tabnext<cr>
-nmap to :tabnew<cr>
-nmap tq :tabclose<cr>
+nnoremap tk :tabprevious<cr>
+nnoremap tj :tabnext<cr>
+nnoremap to :tabnew<cr>
+nnoremap tq :tabclose<cr>
 
 " vim hacks #159
 nmap <leader>sj <SID>(split-to-j)
@@ -1172,6 +1195,10 @@ map <leader>et :tabe %%
 map zl zL
 map zh zH
 
+" ; :
+nnoremap ; :
+nnoremap : ;
+
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
 
 " Command-line editing
@@ -1191,15 +1218,19 @@ if filereadable(glob("~/.vimrc.local"))
 endif
 
 func C_init()
+  set tags+=~/.vim/static/cpp                        " core in cpp
+  abbr #i #include
   set syntax=cpp11.doxygen
+  let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
+  syn keyword cppType real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
 endfunc
 
 func Ruby_init()
   let &makeprg="ruby -c %"
+  imap <C-CR> <CR><CR>end<Esc>-cc
 endfunc
-
 
 
 func Make()						" silent make with quickfix window popup
@@ -1223,3 +1254,6 @@ endfunc
 nnoremap <Leader>mk :call Make()<CR>
 
 nmap <Leader>nw :set wrap!<CR>
+
+let g:tmru_file = $HOME . "/.vimtmp/tmru_file"
+nnoremap <Leader>ru :TRecentlyUsedFiles<CR>

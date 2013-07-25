@@ -1,6 +1,6 @@
 # Settings {{{1
 always-display-description true
-browser "xdg-open"
+browser "detach xdg-open"
 external-url-viewer "urlview"
 goto-first-unread yes
 # html-renderer "w3m -dump -T text/html"

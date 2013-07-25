@@ -148,3 +148,24 @@
 [submodule "home/.vim/bundle/css3-mod"]
 	path = home/.vim/bundle/css3-mod
 	url = https://github.com/vim-scripts/css3-mod
+[submodule "home/.vim/bundle/VisIncr"]
+	path = home/.vim/bundle/VisIncr
+	url = https://github.com/vim-scripts/VisIncr
+[submodule "home/.vim/bundle/tlib_vim"]
+	path = home/.vim/bundle/tlib_vim
+	url = https://github.com/tomtom/tlib_vim
+[submodule "home/.vim/bundle/tmru_vim"]
+	path = home/.vim/bundle/tmru_vim
+	url = https://github.com/tomtom/tmru_vim
+[submodule "home/.vim/bundle/startify"]
+	path = home/.vim/bundle/startify
+	url = https://github.com/mhinz/vim-startify
+[submodule "home/.vim/bundle/markdown"]
+	path = home/.vim/bundle/markdown
+	url = https://github.com/tpope/vim-markdown
+[submodule "home/.vim/bundle/accelerated-smooth-scroll"]
+	path = home/.vim/bundle/accelerated-smooth-scroll
+	url = https://github.com/yonchu/accelerated-smooth-scroll
+[submodule "home/.vim/bundle/splitjoin"]
+	path = home/.vim/bundle/splitjoin
+	url = https://github.com/AndrewRadev/splitjoin.vim

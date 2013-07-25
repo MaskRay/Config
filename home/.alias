@@ -72,6 +72,9 @@ alias wpp='/opt/wps-office_8.1.0.3842~a9p1_x86/wpp'
 alias pr='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
 alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
+alias burp='java -jar ~/.local/opt/burpsuite_pro_v1.4.07+.jar'
+alias ida='wine ~/.local/opt/ida61_Full/idag64.exe'
+alias mingw='PATH=$PATH:/opt/mingw/libexec/gcc/i686-w64-mingw32/4.9.0 /opt/mingw/i686-w64-mingw32/bin/g++ -std=c++11 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0/i686-w64-mingw32 -I/opt/mingw/i686-w64-mingw32/include -I/opt/mingw/lib/gcc/i686-w64-mingw32/4.9.0/include'
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 
@@ -109,3 +112,5 @@ alias pS='sudo pacman -S'
 alias pSs='pacman -Ss'
 alias pSy='sudo pacman -Syy'
 alias pSu='pacaur -Syu'
+
+alias obj='objdump -M intel'
