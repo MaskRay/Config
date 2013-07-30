@@ -1,6 +1,7 @@
 # Application - Documentation and tools
 app-office/grisbi
 app-office/libreoffice-bin
+app-text/calibre
 app-text/catdoc
 app-text/evince
 app-text/htmldoc
@@ -19,7 +20,7 @@ app-text/convmv
 app-text/recode
 
 # Application - Graphics
-# media-gfx/blender
+media-gfx/blender
 media-gfx/feh
 media-gfx/geeqie
 media-gfx/gimp
@@ -89,6 +90,13 @@ www-client/firefox-bin
 www-client/google-chrome
 www-client/w3m
 www-plugins/adobe-flash
+
+# Security
+dev-lang/nasm
+dev-libs/udis86
+dev-util/radare2
+app-misc/hachoir-metadata
+app-misc/hachoir-subfile
 
 # X11, WM, DE
 x11-apps/setxkbmap

@@ -1,0 +1,5 @@
+#!/bin/sh -e
+# Gmail: More -> Export -> vCard format (for importing into Apple Address Book or another application)
+cd ~/.abook
+google-contact -i /tmp/contacts.vcf
+abook --convert --outformat mutt < ~/.abook/addressbook > ~/.mutt/aliases

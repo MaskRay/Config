@@ -20,6 +20,7 @@ alias mv='mv -iv'
 alias rm='rm -i -v -d' # since coreutils-8.19
 alias pg='pgrep -a'
 alias psg='ps aux|grep'
+alias xi=xinit
 
 alias l="ls -l"
 alias diff='colordiff'

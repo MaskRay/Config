@@ -53,7 +53,7 @@ dev-util/valgrind mpi
 sci-mathematics/maxima latex ecl
 sci-mathematics/sage mpc
 sci-visualization/gnuplot wxwidgets
-sys-devel/gdb python # Python pretty printers, STL containers specifically
+sys-devel/gdb expat python # Python pretty printers, STL containers specifically
 
 #required by media-gfx/blender-2.64a
 dev-cpp/glog gflags
