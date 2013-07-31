@@ -12,6 +12,7 @@ media-gfx/blender blender-game python_single_target_python3_3
 # Application - GUI misc.
 app-misc/recoll inotify -fam tex
 media-gfx/graphviz gts # otherwise sfdp won't work
+net-misc/tigervnc gnutls
 
 # Application - Instant messaging
 net-im/bitlbee twitter

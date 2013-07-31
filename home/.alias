@@ -115,3 +115,8 @@ alias pSy='sudo pacman -Syy'
 alias pSu='pacaur -Syu'
 
 alias obj='objdump -M intel'
+
+function johnrar() {
+   /usr/sbin/rar2john "$1" > /tmp/_.john && \
+     /usr/sbin/john --wordlist=~/Security/Dict/password-dict.txt /tmp/_.john
+}
