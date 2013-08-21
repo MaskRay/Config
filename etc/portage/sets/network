@@ -1,13 +1,19 @@
 # Network tools
+dev-util/skipfish
 net-analyzer/dsniff
 net-analyzer/ettercap
+net-analyzer/hydra
 net-analyzer/metasploit
 net-analyzer/mtr
 net-analyzer/netcat
+net-analyzer/nethogs
+net-analyzer/nikto
 net-analyzer/nmap
 net-analyzer/oinkmaster
 net-analyzer/suricata
 net-analyzer/tcpdump
+net-analyzer/tcpflow
+net-analyzer/tcpreplay
 net-analyzer/wireshark
 net-dialup/pptpclient
 net-firewall/iptables

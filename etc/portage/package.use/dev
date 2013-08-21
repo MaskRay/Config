@@ -3,7 +3,7 @@ dev-lang/erlang emacs hipe
 dev-lang/python sqlite
 dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
-sys-devel/llvm ocaml
+sys-devel/llvm clang ocaml
 dev-lang/php fpm truetype exif gd mysql
 app-admin/eselect-php fpm
 

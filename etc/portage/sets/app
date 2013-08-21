@@ -13,6 +13,12 @@ app-text/tree
 app-text/wgetpaste
 app-text/zathura-meta
 
+# Application - Emulation
+app-emulation/lxc
+app-emulation/qemu
+app-emulation/qemu-user
+app-emulation/wine
+
 # Application - File tools
 app-arch/lrzip
 app-arch/p7zip
@@ -59,11 +65,13 @@ media-video/mplayer
 # Application - Misc.
 app-arch/p7zip
 app-benchmarks/siege
-app-emulation/wine
+app-emulation/libguestfs
 app-misc/colordiff
+app-misc/jot
 app-misc/mtail
 app-misc/task
 app-misc/toilet
+app-misc/tpipe
 dev-perl/rename
 games-misc/bsd-games
 games-misc/cowsay
@@ -89,12 +97,10 @@ app-misc/rlwrap
 www-client/firefox-bin
 www-client/google-chrome
 www-client/w3m
+www-client/weboob
 www-plugins/adobe-flash
 
-# Security
-dev-lang/nasm
-dev-libs/udis86
-dev-util/radare2
+# Security - Forensics
 app-misc/hachoir-metadata
 app-misc/hachoir-subfile
 

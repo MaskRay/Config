@@ -1,10 +1,43 @@
-application/msword; catdoc %s; copiousoutput
+###############
+# Interactive #
+###############
+
+application/pdf; llpp '%s'; test=test -n "$DISPLAY"; description=Portable Document Format; nametemplate=%s.pdf
+application/postscript; zathura %s; test=test -n "$DISPLAY"
+application/vnd.ms-excel; libreoffice %s; test=test -n "$DISPLAY"
+application/vnd.oasis.opendocument.text; libreoffice %s; test=test -n "$DISPLAY"
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s; test=test -n "$DISPLAY"
+
+application/x-gzip; zless; needsterminal
+application/x-bzip2; bzless; needsterminal
+application/x-xz; xzless; needsterminal
 
 image/*; feh %s; test=test -n "$DISPLAY"
 image/*; fbi %s
 
-application/pdf; evince %s; test=test -n "$DISPLAY"
-application/pdf; pdftotext -enc UTF-8 %s /dev/stdout; copiousoutput
+audio/*; vlc %s; test=test -n "$DISPLAY"
+video/*; vlc %s; test=test -n "$DISPLAY"
 
-text/html; t=%{charset} \; w3m -dump -ppc 9 -I ${t/2312/18030} -T text/html %s | uniq; copiousoutput
+##########
+# Inline #
+##########
+
+application/x-shellscript; cat %s; copiousoutput
+application/x-tex; cat %s; copiousoutput
+text/html; t=%{charset} \; w3m -dump -I ${t/2312/18030} -T text/html %s | uniq; copiousoutput
+text/plain; cat %s; test=test "`echo %{charset} | tr '[A-Z]' '[a-z]'`" = utf-8 ; copiousoutput
+
+application/msword; catdoc %s; copiousoutput
+application/pdf; pdftotext -enc UTF-8 %s /dev/stdout; copiousoutput
+application/postscript; ps2ascii %s; copiousoutput
+
+application/x-gzip; zcat; copiousoutput
+application/x-cpio; cpio -tvF --quiet %s; copiousoutput
+application/x-tar; tar tvf %s; copiousoutput
+application/x-gtar; tar tvfz %s; copiousoutput
+application/rar; rar l %s | sed -n '/Name/,$p'; copiousoutput
+application/x-7z-compressed; 7z l %s | sed -n '/Date/,$p'; copiousoutput
+application/zip; 7z l %s | sed -n '/Date/,$p'; copiousoutput
+
+image/*; anytopnm %s | pnmscale -xsize 80 | convert - pbm:- | pbmtoascii; copiousoutput
+image/*; exiftool -common '%s'; copiousoutput

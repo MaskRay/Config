@@ -1,3 +1,8 @@
+# Assembly
+dev-lang/nasm
+dev-libs/udis86
+dev-util/radare2
+
 # Development - Programming languages and environments
 dev-lang/R
 dev-lang/fpc
@@ -9,6 +14,7 @@ dev-lang/j
 dev-lang/vala
 dev-libs/gdl
 dev-lisp/sbcl
+dev-python/pypy-bin
 dev-scheme/guile
 dev-scheme/racket
 sys-devel/clang

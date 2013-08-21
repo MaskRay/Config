@@ -7,3 +7,6 @@ sys-libs/zlib minizip # required by R, vlc, ...
 
 #required by media-video/cheese-3.6.2, required by cheese (argument)
 >=media-libs/gst-plugins-base-1.0.5-r2 theora
+# required by www-client/weboob-9999[X]
+# required by =weboob-9999 (argument)
+>=dev-python/PyQt4-4.10.2 phonon

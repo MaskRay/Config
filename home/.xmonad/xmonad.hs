@@ -81,6 +81,7 @@ import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
+import XMonad.Layout.IM
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
@@ -120,10 +121,12 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
+    {-onWorkspace "media" gimpLayout $-}
     --onWorkspaces ["web","irc"] Full $
-    fullscreenFull Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion)
+    fullscreenFull Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion) ||| gimpLayout
     where
         tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
+        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") Full
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
@@ -133,7 +136,7 @@ myManageHook = composeAll $
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
-    [ className =? c --> viewShift "media" | c <- ["feh", "Display"] ] ++
+    [ className =? c --> viewShift "media" | c <- ["feh", "Display", "Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
@@ -279,7 +282,7 @@ myKeys =
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
     , ("C-' g", namedScratchpadAction scratchpads "ghci")
-    , ("C-' l", namedScratchpadAction scratchpads "lua")
+    , ("C-' l", namedScratchpadAction scratchpads "livescript")
 
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
@@ -321,7 +324,7 @@ myKeys =
     searchBindings
 
 scratchpads =
-  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "lua", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
+  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
   [ NS "utop" "urxvtc -T utop -e rlwrap utop" (title =? "utop") doSPFloat
   , NS "task" "urxvtc -T task -e rlwrap task shell" (title =? "task") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat

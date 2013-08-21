@@ -15,24 +15,21 @@
 #
 
 # messages to me
-uncolor index "~P"
   color index brightblack default "~P"
+  color index brightred default "~F"
 
 # threads containing new messages
-uncolor index "~(~N)"
   color index brightcyan default "~(~N)"
 
 # new messages themselves
-uncolor index "~N"
-  color index brightyellow default "~N"
+  color index yellow default "~N"
+  color index brightyellow default "~N ~p"
 
 # tagged
-uncolor index "~T"
   color index brightgreen default "~T"
 
 # deleted
-uncolor index "~D"
-  color index brightred default "~D"
+  color index red default "~D"
 
 # set up the headers
   color header brightyellow default "^from:"
