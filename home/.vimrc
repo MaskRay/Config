@@ -164,7 +164,6 @@ nnoremap <SID>(split-to-h) :<C-u>execute 'topleft'    (v:count == 0 ? '' : v:cou
 nnoremap <SID>(split-to-l) :<C-u>execute 'botright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
 
 nnoremap s <Nop>
-nnoremap ss s
 nnoremap sh <C-w>h
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
@@ -285,3 +284,91 @@ nmap <Leader>nw :set wrap!<CR>
 
 let g:tmru_file = $HOME . "/.vimtmp/tmru_file"
 nnoremap <Leader>ru :TRecentlyUsedFiles<CR>
+
+" Plugins --------------------------------------------- {{{1
+" Vundle ---------------------------------------------- {{{2
+if has("gui_running")
+  filetype off
+  set rtp+=~/.vim/bundle/vundle/
+  call vundle#rc()
+
+  Bundle 'gmarik/vundle'
+  Bundle 'ack.vim'
+  Bundle 'Tabular'
+  Bundle 'EasyMotion'
+  Bundle 'syntastic'
+  "Bundle 'UltiSnips'
+  Bundle 'vim-PinyinSearch'
+  "Bundle 'rainbow_parentheses'
+  Bundle 'YankRing'
+  "Bundle 'vimproc'
+  "Bundle 'vimshell'
+  Bundle 'unite.vim'
+  Bundle 'unite-outline'
+  Bundle 'SingleCompile'
+  Bundle 'vim-unimpaired'
+  Bundle 'gundo'
+  "Bundle 'accelerated-jk'
+  "Bundle 'accelerated-smooth-scroll'
+  Bundle 'ag'
+  Bundle 'dwm'
+  "Bundle 'notes'
+  Bundle 'project'
+  Bundle 'jsbeautify'
+  Bundle 'LaTeX-Box'
+  Bundle 'VisIncr'
+  Bundle 'tomtom/tlib_vim'
+  Bundle 'tomtom/tmru_vim'
+  Bundle 'evanmiller/nginx-vim-syntax'
+  Bundle 'startify'
+  Bundle 'splitjoin'
+
+  Bundle 'vim-scala'
+  Bundle 'vimside'
+
+  Bundle 'R-plugin'
+
+  "Bundle 'Rip-Rip/clang_complete'
+  Bundle 'YouCompleteMe'
+  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+  let g:ycm_key_detailed_diagnostics = "<Leader>yd"
+  let g:ycm_key_invoke_completion = "<F5>"
+  let g:ycm_complete_in_comments = 1
+  let g:ycm_collect_identifiers_from_tags_files = 1
+  let g:ycm_seed_identifiers_with_syntax = 1
+  let g:ycm_autoclose_preview_window_after_completion = 1
+  let g:ycm_autoclose_preview_window_after_insertion = 1
+  let g:ycm_key_list_select_completion = ['<TAB>', '<Down>', '<Enter>']
+  let g:ycm_confirm_extra_conf = 0
+  let g:ycm_cache_omnifunc = 0
+  let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+
+
+  "Bundle 'eagletmt/ghcmod-vim'
+  "Bundle 'vim-scripts/fcitx.vim'
+
+  "Bundle 'hail2u/vim-css3-syntax'
+  Bundle 'css3-mod'
+  Bundle 'vim-matchit'
+  Bundle 'wavded/vim-stylus'
+
+  Bundle 'markdown'
+
+  Bundle 'digitaltoad/vim-jade'
+  "Bundle 'vim-sparkup'
+  "Bundle 'zencoding-vim'
+
+  Bundle 'kchmck/vim-coffee-script'
+  "Bundle 'pangloss/vim-javascript'
+  Bundle 'tern_for_vim'
+
+  Bundle 'vim-ruby/vim-ruby'
+  "Bundle 'tpope/vim-rails'
+  "Bundle 'bbommarito/vim-slim'
+
+  "Bundle 'python-mode'
+  Bundle 'jedi-vim'
+  Bundle 'pytest.vim'
+
+  filetype plugin indent on    " required!
+endif

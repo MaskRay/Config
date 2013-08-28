@@ -200,6 +200,7 @@ alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 
 # Gentoo-specific {{{2
 alias eme='sudo emerge'
+alias emo='sudo emerge -O'
 alias peme='sudo proxychains emerge'
 alias emel='tail -f /var/log/emerge.log'
 alias emef='tail -f /var/log/emerge-fetch.log'

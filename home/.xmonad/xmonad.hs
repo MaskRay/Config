@@ -138,7 +138,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
     [ className =? c --> viewShift "media" | c <- ["feh", "Display", "Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
-    [ className =? c --> doShift "net" | c <- ["Wpa_gui"] ] ++
+    [ className =? c --> doShift "misc" | c <- ["Wpa_gui", "Idaq"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ className =? "Do" --> doIgnore ] ++
     [ myFloats --> doSPFloat ] ++

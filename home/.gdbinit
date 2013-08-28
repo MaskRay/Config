@@ -9,6 +9,7 @@ set history save on
 set history size 10000
 set history filename ~/.history/gdb
 set disassembly-flavor intel
+#set output-radix 16
 
 define li
   x/10i $pc
@@ -16,3 +17,5 @@ end
 document li
   list machine instructions
 end
+
+alias dd=disassemble
