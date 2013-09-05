@@ -138,10 +138,10 @@ inoremap <m-j> <C-o>gj
 inoremap <m-k> <C-o>gk
 
 " Error navigation
-nnoremap <m-j> :lnext<cr>zvzz
-nnoremap <m-k> :lprevious<cr>zvzz
-nnoremap <m-down> :cnext<cr>zvzz
-nnoremap <m-up> :cprevious<cr>zvzz
+nnoremap <m-down> :lnext<cr>zvzz
+nnoremap <m-up> :lprevious<cr>zvzz
+nnoremap <m-j> :cnext<cr>zvzz
+nnoremap <m-k> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
 vmap / y/<C-R>"<CR>
@@ -301,6 +301,7 @@ if has("gui_running")
   Bundle 'vim-PinyinSearch'
   "Bundle 'rainbow_parentheses'
   Bundle 'YankRing'
+  Bundle 'dispatch'
   "Bundle 'vimproc'
   "Bundle 'vimshell'
   Bundle 'unite.vim'
@@ -326,7 +327,7 @@ if has("gui_running")
   Bundle 'vim-scala'
   Bundle 'vimside'
 
-  Bundle 'R-plugin'
+  "Bundle 'R-plugin'
 
   "Bundle 'Rip-Rip/clang_complete'
   Bundle 'YouCompleteMe'

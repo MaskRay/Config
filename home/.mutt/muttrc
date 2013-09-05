@@ -24,7 +24,6 @@ set query_command="echo; grep 'alias.*'%s ~/.mutt/aliases | cut -d' ' -f3-"
 set quit
 set read_inc=100
 set realname="Ray"
-set reply_to
 set resolve
 set reverse_alias
 set reverse_name
@@ -37,6 +36,7 @@ set text_flowed
 set timeout = 3
 unset mark_old
 unset markers
+unset reply_to
 unset sort_re
 unset wait_key
 

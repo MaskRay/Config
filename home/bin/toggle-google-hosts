@@ -1,0 +1,6 @@
+#!/bin/bash
+case "$1" in
+  0) sudo sed -ri '/^[^#].*google/s/^/#/g' /etc/hosts;;
+  1) sudo sed -i '/^#.*google/s/^#//' /etc/hosts;;
+  *) echo "${0##*/} 0|1";;
+esac

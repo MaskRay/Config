@@ -101,6 +101,7 @@ www-client/weboob
 www-plugins/adobe-flash
 
 # Security - Forensics
+app-forensics/foremost
 app-misc/hachoir-metadata
 app-misc/hachoir-subfile
 

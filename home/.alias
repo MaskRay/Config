@@ -18,9 +18,11 @@ alias d='dirs -v'
 alias cp='cp -irv'
 alias mv='mv -iv'
 alias rm='rm -i -v -d' # since coreutils-8.19
-alias pg='pgrep -a'
+alias pg='pgrep --full --list-full'
+alias pk='pgrep --full'
 alias psg='ps aux|grep'
 alias xi=xinit
+alias pa=parallel
 
 alias l="ls -l"
 alias diff='colordiff'
@@ -119,7 +121,11 @@ alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0'
 
 alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
 
-function johnrar() {
+johnrar() {
    /usr/sbin/rar2john "$1" > /tmp/_.john && \
      /usr/sbin/john --wordlist=~/Security/Dict/password-dict.txt /tmp/_.john
+}
+
+web() {
+  twistd web --path "$1" -p "${2:-8000}"
 }

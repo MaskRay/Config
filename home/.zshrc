@@ -171,6 +171,7 @@ bindkey -v '\eh' run-help
 bindkey -v '\el' down-case-word
 bindkey -v '\eu' up-case-word
 bindkey -v "^[m" copy-prev-shell-word
+bindkey '^]' vi-find-next-char
 
 bindkey -e
 
