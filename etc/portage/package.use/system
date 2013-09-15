@@ -10,3 +10,7 @@ sys-libs/zlib minizip # required by R, vlc, ...
 # required by www-client/weboob-9999[X]
 # required by =weboob-9999 (argument)
 >=dev-python/PyQt4-4.10.2 phonon
+
+# required by sys-libs/tevent-0.9.19
+# required by tevent (argument)
+>=sys-libs/talloc-2.0.8-r1 python

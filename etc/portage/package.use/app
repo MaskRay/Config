@@ -53,3 +53,6 @@ x11-wm/xmonad icccm
 # required by app-emulation/qemu-user-1.4.0
 # required by qemu-user (argument)
 >=sys-libs/zlib-1.2.8-r1 static-libs
+
+net-fs/samba addns ads winbind
+net-fs/cifs-utils ads upcall

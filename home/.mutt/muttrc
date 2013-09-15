@@ -80,7 +80,6 @@ macro index ,s \
   "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output \
   /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"
-macro generic,index ,r "<enter-command>source ~/.mutt/muttrc<enter>"
 bind generic,index j next-entry
 bind generic,index k previous-entry
 bind index,pager . next-unread

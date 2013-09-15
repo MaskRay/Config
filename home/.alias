@@ -111,6 +111,7 @@ alias stop='systemctl stop'
 alias enable='systemctl enable'
 alias disable='systemctl disable'
 
+alias cal='cal -3'
 alias pS='sudo pacman -S'
 alias pSs='pacman -Ss'
 alias pSy='sudo pacman -Syy'
@@ -118,8 +119,10 @@ alias pSu='pacaur -Syu'
 
 alias obj='objdump -M intel'
 alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0'
+alias xst='xstow -d ~/.local/stow'
 
 alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
+alias xor=~/Dev/Crypto/xortool/xortool.py
 
 johnrar() {
    /usr/sbin/rar2john "$1" > /tmp/_.john && \
@@ -129,3 +132,8 @@ johnrar() {
 web() {
   twistd web --path "$1" -p "${2:-8000}"
 }
+
+ord() { printf "0x%x\n" "'$1'"; }
+chr() { printf $(printf '\\%03o\\n' "$1"); }
+uniinfo() { python -c "import unicodedata as u; print u.name(unichr("$1"))"; }
+udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }

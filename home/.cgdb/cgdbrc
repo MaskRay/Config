@@ -1,0 +1,25 @@
+set arrowstyle = highlight
+set ignorecase
+set showtgdbcommands
+set tabstop=2
+set winsplit=top_big
+imap ; <ESC>
+
+# t : temp Breakpoint
+# f : finish
+# l : list locals
+map l iinfo<Space>locals<CR><ESC>
+# a : list args
+map a iinfo<Space>args<CR><ESC>
+# r : run
+map r :run<CR>
+# s : step
+map s :step<CR>
+# d : next
+map n :next<CR>
+# S : backtrace Stack
+map bt ibt<CR><ESC>
+# c : continue
+map c :c<CR>
+# u : until
+map c :u<CR>

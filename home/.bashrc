@@ -11,6 +11,12 @@ CYAN='[01;36m'
 WHITE='[01;37m'
 UNDERLINE='[04m'
 
+shopt -s checkwinsize
+stty -ixon -ixoff
+
+export HISTIGNORE='git*--amend*:ls:cd:git*-m*:git*-am*:git*-f*:rm -rf*'
+export HISTCONTROL=ignoredups:ignorespace
+
 function header()
 {
   begin_str=">>>"

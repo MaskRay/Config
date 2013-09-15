@@ -13,8 +13,10 @@ refresh-on-startup yes
 urls-source "local"
 
 # Theme {{{1
-color listnormal color248 default
+color listnormal color244 default
+color listnormal_unread color248 default
 color listfocus white color235
+color listfocus_unread white color235
 color article color248 default
 color info green default
 

@@ -43,6 +43,7 @@ dev-util/cscope
 dev-util/flawfinder
 dev-util/gengetopt
 dev-util/global
+dev-util/perf
 dev-util/strace
 dev-util/systemtap
 dev-util/valgrind
