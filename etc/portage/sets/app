@@ -36,7 +36,7 @@ media-gfx/inkscape
 # Application - GUI misc.
 app-misc/recoll
 app-misc/xmind
-net-p2p/deluge
+net-p2p/rtorrent
 app-i18n/fcitx-configtool
 app-i18n/fcitx-rime
 

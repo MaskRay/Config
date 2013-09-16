@@ -55,7 +55,7 @@ alias eg='egrep -I'
 alias df='df -Th'
 alias dot='dot -Tpng -O -v'
 alias du='du -h'
-alias dud='du -s *(/)' #show directories size
+alias du1='du --max-depth 1 | sort -rh | head'
 alias dstat='dstat -dnmcl --socket --top-io -N eth0,wlan0'
 alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
 alias rsync='rsync --progress --partial'
@@ -123,6 +123,8 @@ alias xst='xstow -d ~/.local/stow'
 
 alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
 alias xor=~/Dev/Crypto/xortool/xortool.py
+alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
+alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 
 johnrar() {
    /usr/sbin/rar2john "$1" > /tmp/_.john && \

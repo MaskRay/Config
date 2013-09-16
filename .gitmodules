@@ -15,7 +15,8 @@
 	url = https://github.com/ujihisa/neco-ghc.git
 [submodule "home/.vim/bundle/vundle"]
 	path = home/.vim/bundle/vundle
-	url = http://github.com/gmarik/vundle.git
+	url = https://github.com/gmarik/vundle
+	ignore = dirty
 [submodule "home/.vim/bundle/syntastic"]
 	path = home/.vim/bundle/syntastic
 	url = https://github.com/scrooloose/syntastic.git
@@ -52,6 +53,7 @@
 [submodule "home/.vim/bundle/vim-matchit"]
 	path = home/.vim/bundle/vim-matchit
 	url = https://github.com/tsaleh/vim-matchit
+	ignore = dirty
 [submodule "home/.vim/bundle/tabular"]
 	path = home/.vim/bundle/tabular
 	url = https://github.com/godlygeek/tabular
@@ -169,3 +171,14 @@
 [submodule "home/.vim/bundle/splitjoin"]
 	path = home/.vim/bundle/splitjoin
 	url = https://github.com/AndrewRadev/splitjoin.vim
+[submodule "home/.gdb/peda"]
+	path = home/.gdb/peda
+	url = https://github.com/longld/peda
+[submodule "home/.vim/bundle/vimside"]
+	path = home/.vim/bundle/vimside
+	url = https://github.com/megaannum/vimside
+	ignore = dirty
+[submodule "home/.vim/bundle/vimproc"]
+	path = home/.vim/bundle/vimproc
+	url = https://github.com/Shougo/vimproc
+	ignore = dirty

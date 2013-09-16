@@ -1,0 +1,19 @@
+# speed up display of strings
+set print null-stop
+
+define plist
+  if $argc == 0
+    help plist
+  else
+    set $h = $arg0
+    set $c = 9
+    while $h != 0 && $c > 0
+      set $c--
+      print *$h
+      set $h = $h->next
+    end
+    if $c > 0
+      printf "...\n"
+    end
+  end
+end

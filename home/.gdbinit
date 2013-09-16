@@ -21,14 +21,12 @@ alias var=info variables
 
 define li
   x/10i $pc
+
 end
 document li
   list machine instructions
 end
 
 alias dd=disassemble
-
-source ~/.gdb/peda/peda.py
-#source ~/.gdb/libheap/libheap.py
 
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-

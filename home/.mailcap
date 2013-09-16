@@ -39,5 +39,5 @@ application/rar; rar l %s | sed -n '/Name/,$p'; copiousoutput
 application/x-7z-compressed; 7z l %s | sed -n '/Date/,$p'; copiousoutput
 application/zip; 7z l %s | sed -n '/Date/,$p'; copiousoutput
 
-image/*; anytopnm %s | pnmscale -xsize 80 | convert - pbm:- | pbmtoascii; copiousoutput
+#image/*; anytopnm %s | pnmscale -xsize 80 | convert - pbm:- | pbmtoascii; copiousoutput
 image/*; exiftool -common '%s'; copiousoutput
