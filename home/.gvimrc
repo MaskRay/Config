@@ -73,6 +73,9 @@ if has("autocmd")
   au FileType r let &makeprg="R <% --vanilla"
   au Filetype dot let &makeprg="dot -Tpng -O -v % ; feh %.png"
 
+  " JavaScript Support -------------------------------------- {{{2
+  au FileType javascript :call JS_init()
+
   " Ruby Support -------------------------------------- {{{2
   au FileType ruby :call Ruby_init()
   augroup ruby_support
@@ -401,6 +404,10 @@ let g:ctrlp_custom_ignore = {
 " Cute Python ----------------------------------------- {{{2
 " https://github.com/ehamberg/vim-cute-python
 " #git clone git://github.com/ehamberg/vim-cute-python.git
+
+" Dispatch -------------------------------------------- {{{2
+" https://github.com/tpope/vim-dispatch
+autocmd FileType cpp let b:dispatch = 'make %'
 
 " dot.vim ------------------------------------------- {{{2
 " https://bitbucket.org/shu/dotoutlinetree

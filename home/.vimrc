@@ -254,6 +254,11 @@ func! C_init()
   syn keyword cppSTLType T
 endfunc
 
+func! JS_init()
+  nnoremap <buffer> [D :TernDef<CR>
+  nnoremap <buffer> [I :TernRefs<CR>
+endfunc
+
 func! Ruby_init()
   let &makeprg="ruby -c %"
   imap <C-CR> <CR><CR>end<Esc>-cc
@@ -282,9 +287,6 @@ nnoremap <Leader>mk :call Make()<CR>
 
 nmap <Leader>nw :set wrap!<CR>
 
-let g:tmru_file = $HOME . "/.vimtmp/tmru_file"
-nnoremap <Leader>ru :TRecentlyUsedFiles<CR>
-
 " Plugins --------------------------------------------- {{{1
 " Vundle ---------------------------------------------- {{{2
 if has("gui_running")
@@ -293,13 +295,11 @@ if has("gui_running")
   call vundle#rc()
 
   Bundle 'gmarik/vundle'
-  Bundle 'ack.vim'
   Bundle 'Tabular'
   Bundle 'EasyMotion'
   Bundle 'syntastic'
   "Bundle 'UltiSnips'
   Bundle 'vim-PinyinSearch'
-  "Bundle 'rainbow_parentheses'
   Bundle 'YankRing'
   Bundle 'dispatch'
   "Bundle 'vimproc'
@@ -309,27 +309,17 @@ if has("gui_running")
   Bundle 'SingleCompile'
   Bundle 'vim-unimpaired'
   Bundle 'gundo'
-  "Bundle 'accelerated-jk'
-  "Bundle 'accelerated-smooth-scroll'
   Bundle 'ag'
-  Bundle 'dwm'
-  "Bundle 'notes'
-  Bundle 'project'
-  Bundle 'jsbeautify'
   Bundle 'LaTeX-Box'
   Bundle 'VisIncr'
-  Bundle 'tomtom/tlib_vim'
-  Bundle 'tomtom/tmru_vim'
-  Bundle 'evanmiller/nginx-vim-syntax'
+  Bundle 'colorv.vim'
   Bundle 'startify'
   Bundle 'splitjoin'
 
-  Bundle 'vim-scala'
   Bundle 'vimside'
 
   "Bundle 'R-plugin'
 
-  "Bundle 'Rip-Rip/clang_complete'
   Bundle 'YouCompleteMe'
   let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
@@ -344,31 +334,22 @@ if has("gui_running")
   let g:ycm_cache_omnifunc = 0
   let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
 
-
-  "Bundle 'eagletmt/ghcmod-vim'
-  "Bundle 'vim-scripts/fcitx.vim'
-
-  "Bundle 'hail2u/vim-css3-syntax'
-  Bundle 'css3-mod'
-  Bundle 'vim-matchit'
-  Bundle 'wavded/vim-stylus'
-
-  Bundle 'markdown'
-
-  Bundle 'digitaltoad/vim-jade'
-  "Bundle 'vim-sparkup'
-  "Bundle 'zencoding-vim'
-
-  Bundle 'kchmck/vim-coffee-script'
-  "Bundle 'pangloss/vim-javascript'
+  Bundle 'css3-syntax'
+  Bundle 'matchit'
+  Bundle 'stylus'
+  Bundle 'jade'
+  Bundle 'coffee-script'
+  Bundle 'jsbeautify'
   Bundle 'tern_for_vim'
 
-  Bundle 'vim-ruby/vim-ruby'
-  "Bundle 'tpope/vim-rails'
-  "Bundle 'bbommarito/vim-slim'
+  Bundle 'evanmiller/nginx-vim-syntax'
+  Bundle 'markdown'
+
+  Bundle 'vim-ruby'
+  Bundle 'slim'
 
   "Bundle 'python-mode'
-  Bundle 'jedi-vim'
+  Bundle 'jedi'
   Bundle 'pytest.vim'
 
   filetype plugin indent on    " required!

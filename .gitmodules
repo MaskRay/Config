@@ -4,9 +4,6 @@
 [submodule "home/.vim/bundle/vim-rails"]
 	path = home/.vim/bundle/vim-rails
 	url = https://github.com/tpope/vim-rails.git
-[submodule "home/.vim/bundle/ack.vim"]
-	path = home/.vim/bundle/ack.vim
-	url = https://github.com/mileszs/ack.vim
 [submodule "home/.vim/bundle/ghcmod-vim"]
 	path = home/.vim/bundle/ghcmod-vim
 	url = https://github.com/eagletmt/ghcmod-vim
@@ -20,57 +17,42 @@
 [submodule "home/.vim/bundle/syntastic"]
 	path = home/.vim/bundle/syntastic
 	url = https://github.com/scrooloose/syntastic.git
-[submodule "home/.vim/bundle/ctrlp"]
-	path = home/.vim/bundle/ctrlp
-	url = https://github.com/kien/ctrlp.vim
 [submodule "home/.vim/bundle/nginx-vim-syntax"]
 	path = home/.vim/bundle/nginx-vim-syntax
 	url = https://github.com/evanmiller/nginx-vim-syntax
-[submodule "home/.vim/bundle/vim-css3-syntax"]
-	path = home/.vim/bundle/vim-css3-syntax
+[submodule "home/.vim/bundle/css3-syntax"]
+	path = home/.vim/bundle/css3-syntax
 	url = https://github.com/hail2u/vim-css3-syntax
-[submodule "home/.vim/bundle/vim-css-color"]
-	path = home/.vim/bundle/vim-css-color
-	url = https://github.com/skammer/vim-css-color
-[submodule "home/.vim/bundle/vim-jade"]
-	path = home/.vim/bundle/vim-jade
-	url = https://github.com/digitaltoad/vim-jade.git
-[submodule "home/.vim/bundle/vim-slim"]
-	path = home/.vim/bundle/vim-slim
+[submodule "home/.vim/bundle/jade"]
+	path = home/.vim/bundle/jade
+	url = https://github.com/digitaltoad/vim-jade
+[submodule "home/.vim/bundle/slim"]
+	path = home/.vim/bundle/slim
 	url = https://github.com/bbommarito/vim-slim
-[submodule "home/.vim/bundle/vim-coffee-script"]
-	path = home/.vim/bundle/vim-coffee-script
+[submodule "home/.vim/bundle/coffee-script"]
+	path = home/.vim/bundle/coffee-script
 	url = https://github.com/kchmck/vim-coffee-script
-[submodule "home/.vim/bundle/vim-javascript"]
-	path = home/.vim/bundle/vim-javascript
-	url = https://github.com/pangloss/vim-javascript.git
-[submodule "home/.vim/bundle/vim-stylus"]
-	path = home/.vim/bundle/vim-stylus
-	url = https://github.com/wavded/vim-stylus.git
+[submodule "home/.vim/bundle/stylus"]
+	path = home/.vim/bundle/stylus
+	url = https://github.com/wavded/vim-stylus
 [submodule "home/.vim/bundle/UltiSnips"]
 	path = home/.vim/bundle/UltiSnips
 	url = https://github.com/vim-scripts/UltiSnips.git
-[submodule "home/.vim/bundle/vim-matchit"]
-	path = home/.vim/bundle/vim-matchit
+[submodule "home/.vim/bundle/matchit"]
+	path = home/.vim/bundle/matchit
 	url = https://github.com/tsaleh/vim-matchit
 	ignore = dirty
-[submodule "home/.vim/bundle/tabular"]
-	path = home/.vim/bundle/tabular
+[submodule "home/.vim/bundle/Tabular"]
+	path = home/.vim/bundle/Tabular
 	url = https://github.com/godlygeek/tabular
-[submodule "home/.vim/bundle/doctorjs"]
-	path = home/.vim/bundle/doctorjs
-	url = https://github.com/mozilla/doctorjs
-[submodule "home/.vim/bundle/vim-flake8"]
-	path = home/.vim/bundle/vim-flake8
-	url = https://github.com/nvie/vim-flake8
 [submodule "home/.vim/bundle/pytest.vim"]
 	path = home/.vim/bundle/pytest.vim
 	url = https://github.com/alfredodeza/pytest.vim
 [submodule "home/.vim/bundle/nerdtree"]
 	path = home/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree/
-[submodule "home/.vim/bundle/jedi-vim"]
-	path = home/.vim/bundle/jedi-vim
+[submodule "home/.vim/bundle/jedi"]
+	path = home/.vim/bundle/jedi
 	url = https://github.com/davidhalter/jedi-vim
 [submodule "home/.vim/bundle/vim-PinyinSearch"]
 	path = home/.vim/bundle/vim-PinyinSearch
@@ -96,12 +78,6 @@
 [submodule "home/.vim/bundle/vimfiler"]
 	path = home/.vim/bundle/vimfiler
 	url = https://github.com/Shougo/vimfiler
-[submodule "home/.vim/bundle/vim-ref"]
-	path = home/.vim/bundle/vim-ref
-	url = https://github.com/thinca/vim-ref
-[submodule "home/.vim/bundle/vim-rooter"]
-	path = home/.vim/bundle/vim-rooter
-	url = https://github.com/airblade/vim-rooter
 [submodule "home/.vim/bundle/vim-javascript-syntax"]
 	path = home/.vim/bundle/vim-javascript-syntax
 	url = https://github.com/jelera/vim-javascript-syntax
@@ -111,9 +87,6 @@
 [submodule "home/.vim/bundle/unite-outline"]
 	path = home/.vim/bundle/unite-outline
 	url = https://github.com/h1mesuke/unite-outline
-[submodule "home/.vim/bundle/SingleCompile"]
-	path = home/.vim/bundle/SingleCompile
-	url = https://github.com/vim-scripts/SingleCompile
 [submodule "home/.vim/bundle/vim-unimpaired"]
 	path = home/.vim/bundle/vim-unimpaired
 	url = https://github.com/tpope/vim-unimpaired
@@ -126,48 +99,31 @@
 [submodule "home/.vim/bundle/vim2hs"]
 	path = home/.vim/bundle/vim2hs
 	url = https://github.com/dag/vim2hs
-[submodule "home/.vim/bundle/vim-scala"]
-	path = home/.vim/bundle/vim-scala
-	url = https://github.com/derekwyatt/vim-scala
 [submodule "home/.vim/bundle/dispatch"]
 	path = home/.vim/bundle/dispatch
 	url = https://github.com/tpope/vim-dispatch
 [submodule "home/.vim/bundle/YouCompleteMe"]
 	path = home/.vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
-[submodule "home/.vim/bundle/project"]
-	path = home/.vim/bundle/project
-	url = https://github.com/amiorin/vim-project
 [submodule "home/.vim/bundle/jsbeautify"]
 	path = home/.vim/bundle/jsbeautify
 	url = https://github.com/maksimr/vim-jsbeautify.git
+	ignore = dirty
 [submodule "home/.vim/bundle/R-plugin"]
 	path = home/.vim/bundle/R-plugin
 	url = https://github.com/jcfaria/Vim-R-plugin
 [submodule "home/.vim/bundle/LaTeX-Box"]
 	path = home/.vim/bundle/LaTeX-Box
 	url = https://github.com/LaTeX-Box-Team/LaTeX-Box
-[submodule "home/.vim/bundle/css3-mod"]
-	path = home/.vim/bundle/css3-mod
-	url = https://github.com/vim-scripts/css3-mod
 [submodule "home/.vim/bundle/VisIncr"]
 	path = home/.vim/bundle/VisIncr
 	url = https://github.com/vim-scripts/VisIncr
-[submodule "home/.vim/bundle/tlib_vim"]
-	path = home/.vim/bundle/tlib_vim
-	url = https://github.com/tomtom/tlib_vim
-[submodule "home/.vim/bundle/tmru_vim"]
-	path = home/.vim/bundle/tmru_vim
-	url = https://github.com/tomtom/tmru_vim
 [submodule "home/.vim/bundle/startify"]
 	path = home/.vim/bundle/startify
 	url = https://github.com/mhinz/vim-startify
 [submodule "home/.vim/bundle/markdown"]
 	path = home/.vim/bundle/markdown
 	url = https://github.com/tpope/vim-markdown
-[submodule "home/.vim/bundle/accelerated-smooth-scroll"]
-	path = home/.vim/bundle/accelerated-smooth-scroll
-	url = https://github.com/yonchu/accelerated-smooth-scroll
 [submodule "home/.vim/bundle/splitjoin"]
 	path = home/.vim/bundle/splitjoin
 	url = https://github.com/AndrewRadev/splitjoin.vim
@@ -182,3 +138,6 @@
 	path = home/.vim/bundle/vimproc
 	url = https://github.com/Shougo/vimproc
 	ignore = dirty
+[submodule "home/.vim/bundle/javascript"]
+	path = home/.vim/bundle/javascript
+	url = https://github.com/pangloss/vim-javascript
