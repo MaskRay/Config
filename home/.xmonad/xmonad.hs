@@ -247,10 +247,12 @@ myKeys =
     , ("M-s", windows W.swapMaster)
     , ("M-y", focusUrgent)
     , ("M-;", switchLayer)
-    , ("M-h", windowGo L True)
-    , ("M-j", windowGo D True)
-    , ("M-k", windowGo U True)
-    , ("M-l", windowGo R True)
+    {-, ("M-h", windowGo L True)-}
+    {-, ("M-j", windowGo D True)-}
+    {-, ("M-k", windowGo U True)-}
+    {-, ("M-l", windowGo R True)-}
+    , ("M-j", windows W.focusDown)
+    , ("M-k", windows W.focusUp)
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
     , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
     , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom

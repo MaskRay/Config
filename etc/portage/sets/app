@@ -72,6 +72,7 @@ app-misc/mtail
 app-misc/task
 app-misc/toilet
 app-misc/tpipe
+dev-db/recutils
 dev-perl/rename
 games-misc/bsd-games
 games-misc/cowsay

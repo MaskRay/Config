@@ -1,5 +1,66 @@
-#!/bin/sh -e
-# Gmail: More -> Export -> vCard format (for importing into Apple Address Book or another application)
-cd ~/.abook
-google-contact -i /tmp/contacts.vcf
-abook --convert --outformat mutt < ~/.abook/addressbook > ~/.mutt/aliases
+#!/usr/bin/env ruby
+# Gmail: More -> Export -> Google CSV
+require 'csv'
+
+pinyin_initial = {}
+File.open(File.expand_path '~/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict') {|h|
+  while l = h.gets
+    fs = l.split
+    if fs.size == 2
+      pinyin_initial[fs[0]] = fs[1]
+    end
+  end
+}
+to_pinyin = ->s {
+  s[/ /] ? '' : s.chars.map {|c| pinyin_initial.fetch c, c }.join
+}
+
+# Google CSV
+## remove/rename columns
+google = CSV.parse(File.open(ARGV[0] || '/tmp/google.csv')).transpose
+google.reject! {|x| x[0] =~ /Prefix|Suffix|Given|Family|Type/ || x[0] =~ /Address/ && x[0] !~ /Formatted/ }
+google.each {|x|
+  x[0].gsub!(/(\S+) \d - Value/) { $1.gsub('-', '') }
+  x[0].gsub! /Address.*/, 'Address'
+  x[0].gsub! /Additional Name/, 'Alias'
+}
+google = google.transpose
+
+## filter records with Name & Email fields
+email_idx = google[0].each_index.select {|i| google[0][i] =~ /Email/ }
+google = google.select {|x| x[0] && x.values_at(*email_idx).any? } # Name is empty
+google.reject! {|x| x.values_at(*email_idx).grep(/no-reply/).size > 0 } # Email: no-reply@...
+
+## generate pinyin Alias from Name
+google[1..-1].each {|x|
+  begin
+    x[1] = to_pinyin[x[0]]
+  rescue
+  end
+}
+
+# Mutt aliases
+File.open(File.expand_path('~/.mutt/aliases'), 'w') {|h|
+  google[1..-1].each {|x|
+    email_idx.each {|i|
+      h.puts "alias #{x[1]} #{x[0]} <#{x[i]}>" if x[i]
+    }
+  }
+}
+
+# contacts.rec
+File.open(File.expand_path('~/.mutt/contacts.rec'), 'w') {|rec|
+  rec.write <<EOF
+%rec: Contacts
+%key: Name
+%typedef: Email email
+
+EOF
+
+  abooks, aliases = [], []
+  IO.popen('csv2rec -e', 'r+') {|h|
+    h.write CSV.generate {|csv| google.each {|x| csv << x } }
+    h.close_write
+    rec.puts h.read
+  }
+}
