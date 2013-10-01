@@ -5,5 +5,5 @@ Exec=gvim --remote-tab-silent %F
 Icon=gvim
 Terminal=false
 Type=Application
-MimeType=text/plain;
+MimeType=text/plain;inode/x-empty
 Categories=Development;

@@ -5,6 +5,7 @@ unhdr_order *
 hdr_order From: To: Cc: Subject: Date:
 
 # Settings {{{1
+unset abort_unmodified
 set assumed_charset="utf-8:gbk"
 set attach_charset="utf-8:gbk"
 set charset="utf-8"
@@ -24,7 +25,7 @@ set pipe_decode
 set query_command="echo; recsel -ie 'Alias ~ \"'%s'\"' ~/.mutt/contacts.rec | recfmt '{{Name}} <{{Email}}>'"
 set quit
 set read_inc=100
-set realname="Ray"
+set realname="Ray Song"
 set resolve
 set reverse_alias
 set reverse_name
@@ -87,7 +88,6 @@ bind index,pager . next-unread
 bind index,pager J next-new-then-unread
 bind index,pager K previous-new-then-unread
 bind index,pager a create-alias
-bind index,pager p recall-message
 bind index,pager N search-opposite
 bind index,pager <esc>k sidebar-prev
 bind index,pager <esc>j sidebar-next
@@ -116,7 +116,7 @@ macro index,pager I "c!\n"
 macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"
 macro index,pager ,h "<change-folder>=Haskell<return>" "go to =Haskell"
 macro index,pager ,m "<change-folder>=ML<return>" "go to =ML"
-macro index,pager ,s "<change-folder>=School<return>" "go to =School"
+macro index,pager ,c "<change-folder>=School<return>" "go to =School"
 macro index,pager ,w "<change-folder>=Work<return>" "go to =Work"
 macro index,pager ,< "<change-folder><<return>" "go to =Sent"
 
@@ -128,6 +128,27 @@ bind browser ' ' select-entry
 macro browser q '<exit><quit>'
 
 bind editor <tab> complete-query
+
+# PGP {{{1
+set pgp_auto_decode=yes
+set pgp_replyencrypt=yes
+set pgp_timeout=1800
+set pgp_verify_sig=yes
+
+set pgp_decode_command="gpg --status-fd=2 %?p?--passphrase-fd 0? --no-verbose --quiet --batch --output - %f"
+set pgp_verify_command="gpg --status-fd=2 --no-verbose --quiet --batch --output - --verify %s %f"
+set pgp_decrypt_command="gpg --status-fd=2 %?p?--passphrase-fd 0? --no-verbose --quiet --batch --output - %f"
+set pgp_sign_command="gpg --no-verbose --batch --quiet --output - %?p?--passphrase-fd 0? --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_clearsign_command="gpg --no-verbose --batch --quiet --output - %?p?--passphrase-fd 0? --armor --textmode --clearsign %?a?-u %a? %f"
+set pgp_encrypt_only_command="pgpewrap gpg --encrypt-to 6EF987AE --charset utf8 --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
+set pgp_encrypt_sign_command="pgpewrap gpg %?p?--passphrase-fd 0? --encrypt-to 6EF987AE --charset utf8 --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+set pgp_import_command="gpg --no-verbose --import %f"
+set pgp_export_command="gpg --no-verbose --export --armor %r"
+set pgp_verify_key_command="gpg --verbose --batch --fingerprint --check-sigs %r"
+set pgp_list_pubring_command="gpg --no-verbose --batch --quiet --with-colons --list-keys %r"
+set pgp_list_secring_command="gpg --no-verbose --batch --quiet --with-colons --list-secret-keys %r"
+set pgp_getkeys_command="gpg --recv-keys %r > /dev/null 2>&1"
+set pgp_good_sign="^\\[GNUPG:\\] GOODSIG"
 
 # Misc {{{1
 set editor="vim %s"

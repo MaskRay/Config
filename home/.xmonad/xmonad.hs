@@ -345,8 +345,8 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
---myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
-myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
+{-myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
     { terminal           = "urxvtc"
     , focusFollowsMouse  = False
     , borderWidth        = 1

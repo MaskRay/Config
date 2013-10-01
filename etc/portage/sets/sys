@@ -1,4 +1,5 @@
 # System tools
+app-benchmarks/i7z
 app-admin/logrotate
 app-admin/sudo
 app-admin/supervisor
@@ -14,6 +15,7 @@ sys-apps/smartmontools
 sys-apps/usbutils
 sys-fs/ntfs3g
 sys-kernel/module-rebuild
+sys-power/cpupower
 sys-process/at
 sys-process/htop
 sys-process/lsof

@@ -19,7 +19,6 @@ dev-scheme/guile
 dev-scheme/racket
 sys-devel/clang
 dev-lang/erlang
-dev-tex/latex-beamer
 net-libs/nodejs
 
 # Development - Editors
@@ -27,7 +26,7 @@ app-editors/emacs
 app-editors/gvim
 app-editors/vim
 dev-util/glade
-dev-util/qt-creator
+#dev-qt/qt-creator
 
 # Development - VCS
 dev-vcs/darcs

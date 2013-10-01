@@ -4,7 +4,7 @@ dev-lang/python sqlite
 dev-lang/swi-prolog gmp
 dev-scheme/racket backtrace future jit places plot threads
 sys-devel/llvm clang ocaml
-dev-lang/php fpm truetype exif gd mysql
+dev-lang/php cjk curl fpm truetype exif gd mysql mysqli postgres pdo sqlite
 app-admin/eselect-php fpm
 
 # Development - VCS

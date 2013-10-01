@@ -23,6 +23,7 @@ alias pk='pgrep --full'
 alias psg='ps aux|grep'
 alias xi=xinit
 alias pa=parallel
+alias wee=weechat-curses
 
 alias l="ls -l"
 alias diff='colordiff'

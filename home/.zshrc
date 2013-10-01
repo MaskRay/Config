@@ -247,3 +247,6 @@ bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fo
 
 # OPAM configuration
 . /home/ray/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+
+# Pinyin Completion
+[[ -d $HOME/.zsh/Pinyin-Completion ]] && source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh && export PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin

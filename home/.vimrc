@@ -352,5 +352,7 @@ if has("gui_running")
   Bundle 'jedi'
   Bundle 'pytest.vim'
 
+  Bundle 'emmet'
+
   filetype plugin indent on    " required!
 endif

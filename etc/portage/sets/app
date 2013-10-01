@@ -3,12 +3,11 @@ app-office/grisbi
 app-office/libreoffice-bin
 app-text/calibre
 app-text/catdoc
-app-text/evince
+#app-text/evince
 app-text/htmldoc
 app-text/llpp
 app-text/mupdf
 app-text/pandoc
-app-text/texlive
 app-text/tree
 app-text/wgetpaste
 app-text/zathura-meta
@@ -72,6 +71,9 @@ app-misc/mtail
 app-misc/task
 app-misc/toilet
 app-misc/tpipe
+app-text/csvfix
+app-text/html-xml-utils
+app-text/tesseract
 dev-db/recutils
 dev-perl/rename
 games-misc/bsd-games

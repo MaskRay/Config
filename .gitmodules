@@ -141,3 +141,6 @@
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = https://github.com/pangloss/vim-javascript
+[submodule "home/.vim/bundle/emmet"]
+	path = home/.vim/bundle/emmet
+	url = https://github.com/mattn/emmet-vim
