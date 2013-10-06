@@ -1,5 +1,5 @@
 #!/bin/sh -e
-cd ~/projects/Linux
+cd ~/Dev/Linux
 [ -n "$1" ] && git pull
 make menuconfig
 sudo make CC=/usr/lib/ccache/bin/cc -j4

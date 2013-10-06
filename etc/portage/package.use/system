@@ -36,3 +36,12 @@ sys-libs/zlib minizip # required by R, vlc, ...
 # required by @selected
 # required by @world (argument)
 >=sys-libs/tdb-1.2.12-r1 python
+
+#required by sys-devel/prelink-20130503, required by app-emulation/wine-1.7.0[prelink], required by @__auto_slot_operator_replace_installed__ (argument)
+>=dev-libs/elfutils-0.156 static-libs
+#required by app-emulation/libguestfs-1.22.6, required by @app, required by @selected, required by @world (argument)
+=app-emulation/qemu-1.6.0-r1 qemu_user_targets_x86_64 tci
+#required by app-text/texlive-core-2013-r1[xetex], required by dev-texlive/texlive-latex-2013, required by dev-texlive/texlive-latexrecommended-2013, required by virtual/latex-base-1.0, required by app-vim/vim-latex-1.8.23.20130116, required by @dev, required by @selected, required by @world (argument)
+=media-libs/harfbuzz-0.9.20 icu
+#required by media-libs/sk1libs-0.9.1-r3, required by media-gfx/uniconvertor-1.1.5-r1, required by media-gfx/inkscape-0.48.4-r1, required by @app, required by @selected, required by @world (argument)
+>=media-libs/lcms-1.19-r1:0 python

@@ -4,6 +4,7 @@ dev-libs/udis86
 dev-util/radare2
 
 # Development - Programming languages and environments
+dev-java/oracle-jdk-bin
 dev-lang/R
 dev-lang/fpc
 dev-lang/ghc
@@ -12,6 +13,8 @@ dev-lang/ocaml
 dev-lang/icon
 dev-lang/j
 dev-lang/vala
+dev-lang/php
+dev-lang/mercury
 dev-libs/gdl
 dev-lisp/sbcl
 dev-python/pypy-bin
@@ -20,6 +23,12 @@ dev-scheme/racket
 sys-devel/clang
 dev-lang/erlang
 net-libs/nodejs
+dev-util/android-ndk
+dev-util/android-sdk-update-manager
+sys-devel/gcc:4.7
+sys-devel/gcc:4.8
+cross-arm-unknown-linux-gnueabi/gcc
+cross-arm-unknown-linux-gnueabi/gdb
 
 # Development - Editors
 app-editors/emacs
@@ -27,6 +36,7 @@ app-editors/gvim
 app-editors/vim
 dev-util/glade
 #dev-qt/qt-creator
+app-emacs/auctex
 
 # Development - VCS
 dev-vcs/darcs
@@ -34,6 +44,7 @@ dev-vcs/git
 dev-vcs/git-annex
 dev-vcs/mercurial
 dev-vcs/tig
+dev-vcs/bzr
 
 # Development - Tools
 dev-util/cloc
@@ -49,45 +60,58 @@ dev-util/valgrind
 sys-devel/crossdev
 sys-devel/gdb
 sys-process/parallel
+dev-db/sqlitebrowser
+www-servers/varnish
+dev-util/indent
+sys-fs/entr
+dev-util/cwdiff
+dev-util/dialog
 
 # Development - Haskell specific
 app-emacs/haskell-mode
-dev-haskell/cabal-dev
 dev-haskell/cabal-install
-dev-haskell/cmdargs
-dev-haskell/djinn
-dev-haskell/filesystem-conduit
-dev-haskell/hlint
-dev-haskell/pcre-light
 dev-haskell/pointfree
-dev-haskell/yesod-platform
 
 # Development - OCaml specific
 dev-ml/findlib
 
-# Development - Ruby specific
-dev-ruby/rails
+# Development - Perl specific
+dev-perl/Devel-REPL
+dev-perl/Term-ReadLine-Gnu
+
+# Development - PHP specific
+dev-php/xdebug
 
 # Development - Python specific
 dev-python/autopep8
-dev-python/elixir
+dev-python/ipdb
 dev-python/fabric
-dev-python/flask
 dev-python/ipython
-dev-python/paver
+dev-python/greenlet
 dev-python/pillow
 dev-python/pytest
 dev-python/rope
-dev-python/sqlalchemy
 dev-python/virtualenv
 net-analyzer/scapy
 www-servers/tornado
+dev-python/twisted-core # for twistd
+dev-python/jedi
+
+# Development - Ruby specific
+dev-ruby/rails
+dev-ruby/nokogiri
+www-servers/thin
 
 # Electronics
-sci-electronics/geda
+sci-electronics/geda-suite
 sci-electronics/gtkwave
 sci-electronics/iverilog
 sci-electronics/ngspice
+
+# Math
+sci-libs/scipy
+sci-libs/scikits
+sci-mathematics/glpk
 
 # Vim specific
 app-vim/colorschemes
@@ -116,4 +140,11 @@ www-servers/nginx
 # Misc
 app-misc/jq
 app-text/xmlstarlet
+dev-db/mysql
+dev-java/ant-core
+dev-java/antlr
+dev-java/junit
+dev-java/log4j
+dev-text/patchutils
+dev-util/howdoi
 media-libs/opencv

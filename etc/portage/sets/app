@@ -1,13 +1,16 @@
 # Application - Documentation and tools
+app-office/gnumeric
 app-office/grisbi
-app-office/libreoffice-bin
+app-text/agrep
 app-text/calibre
 app-text/catdoc
-#app-text/evince
+app-text/evince
 app-text/htmldoc
 app-text/llpp
+app-text/multitail
 app-text/mupdf
 app-text/pandoc
+app-text/pdfjam
 app-text/tree
 app-text/wgetpaste
 app-text/zathura-meta
@@ -17,16 +20,19 @@ app-emulation/lxc
 app-emulation/qemu
 app-emulation/qemu-user
 app-emulation/wine
+app-emulation/spice
 
 # Application - File tools
 app-arch/lrzip
 app-arch/p7zip
+app-arch/zpaq
 app-text/convmv
 app-text/recode
 
 # Application - Graphics
 media-gfx/blender
 media-gfx/feh
+media-gfx/sxiv
 media-gfx/geeqie
 media-gfx/gimp
 media-gfx/imagemagick
@@ -53,6 +59,7 @@ net-misc/urlview
 
 # Application - Media
 media-sound/alsa-utils
+media-sound/picard
 media-sound/audacity
 media-sound/cmus
 media-sound/easytag
@@ -60,14 +67,18 @@ media-sound/mpc
 media-sound/mpd
 media-sound/ncmpcpp
 media-video/mplayer
+media-sound/mp3unicode
+media-sound/id3tool
 
 # Application - Misc.
 app-arch/p7zip
 app-benchmarks/siege
 app-emulation/libguestfs
 app-misc/colordiff
+app-misc/dateutils
 app-misc/jot
 app-misc/mtail
+app-misc/remind
 app-misc/task
 app-misc/toilet
 app-misc/tpipe
@@ -87,6 +98,7 @@ sys-apps/moreutils
 sys-apps/renameutils
 sys-fs/inotify-tools
 sys-fs/sshfs-fuse
+www-plugins/google-talkplugin
 
 # Application - TUI misc.
 app-misc/tmux
@@ -105,8 +117,10 @@ www-plugins/adobe-flash
 
 # Security - Forensics
 app-forensics/foremost
+app-forensics/sleuthkit
 app-misc/hachoir-metadata
 app-misc/hachoir-subfile
+app-misc/hachoir-urwid
 
 # X11, WM, DE
 x11-apps/setxkbmap
@@ -115,17 +129,24 @@ x11-apps/xev
 x11-apps/xhost
 x11-apps/xinput
 x11-apps/xkill
+x11-apps/xlsfonts
+x11-apps/xmodmap
+x11-apps/xrandr
 x11-apps/xsetroot
 x11-base/xorg-server
 x11-misc/compton
 x11-misc/dmenu
+x11-misc/dunst
+x11-misc/evolvotron
+x11-misc/redshift
+x11-misc/trayer
 x11-misc/unclutter
 x11-misc/urxvt-perls
-x11-misc/trayer
 x11-misc/wmctrl
 x11-misc/x11vnc
 x11-misc/xbindkeys
 x11-misc/xcalib
+x11-misc/xclip # for wgetpaste -X
 x11-misc/xdotool
 x11-misc/xscreensaver
 x11-misc/xsel
@@ -133,5 +154,5 @@ x11-plugins/epplets
 x11-terms/rxvt-unicode
 x11-terms/xterm
 x11-themes/gentoo-xcursors
-x11-wm/enlightenment:0.17
+x11-themes/xcursor-themes
 x11-wm/xmonad-contrib
