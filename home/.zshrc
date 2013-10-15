@@ -32,7 +32,7 @@ export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
 
 # Look {{{1
 PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %F{white}'
-. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
+#. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
 if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
@@ -250,3 +250,9 @@ bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fo
 
 # Pinyin Completion
 [[ -d $HOME/.zsh/Pinyin-Completion ]] && source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh && export PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin
+
+export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/ray/perl5";
+export PERL_MB_OPT="--install_base /home/ray/perl5";
+export PERL_MM_OPT="INSTALL_BASE=/home/ray/perl5";
+export PERL5LIB="/home/ray/perl5/lib/perl5:$PERL5LIB";
+export PATH="/home/ray/perl5/bin:$PATH";

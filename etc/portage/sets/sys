@@ -1,6 +1,6 @@
 # System tools
 app-admin/augeas
-app-admin/ccze
+app-admin/lnav
 app-admin/logrotate
 app-admin/sudo
 app-admin/supervisor
@@ -26,6 +26,18 @@ sys-power/cpupower
 sys-powers/acpi
 sys-powers/acpid
 sys-process/at
+sys-process/fcron
 sys-process/htop
+sys-process/atop
 sys-process/iotop
 sys-process/lsof
+sys-apps/lm_sensors
+sys-process/nmon
+sys-apps/sdparm
+sys-apps/sg3_utils
+sys-boot/unetbootin
+sys-boot/grub:2
+sys-process/audit
+sys-power/acpi
+sys-power/acpid
+sys-power/powertop

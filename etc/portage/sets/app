@@ -5,7 +5,6 @@ app-text/agrep
 app-text/calibre
 app-text/catdoc
 app-text/evince
-app-text/htmldoc
 app-text/llpp
 app-text/multitail
 app-text/mupdf
@@ -14,6 +13,8 @@ app-text/pdfjam
 app-text/tree
 app-text/wgetpaste
 app-text/zathura-meta
+app-text/pdfgrep
+app-text/goldendict
 
 # Application - Emulation
 app-emulation/lxc
@@ -21,11 +22,13 @@ app-emulation/qemu
 app-emulation/qemu-user
 app-emulation/wine
 app-emulation/spice
+sys-block/nbd
 
 # Application - File tools
 app-arch/lrzip
 app-arch/p7zip
 app-arch/zpaq
+app-arch/unzip
 app-text/convmv
 app-text/recode
 
@@ -67,13 +70,15 @@ media-sound/mpc
 media-sound/mpd
 media-sound/ncmpcpp
 media-video/mplayer
+media-video/mpv
 media-sound/mp3unicode
 media-sound/id3tool
 
 # Application - Misc.
+x11-misc/lndir
 app-arch/p7zip
 app-benchmarks/siege
-app-emulation/libguestfs
+#app-emulation/libguestfs
 app-misc/colordiff
 app-misc/dateutils
 app-misc/jot
@@ -107,6 +112,7 @@ app-shells/zsh-completion
 net-news/newsbeuter
 sys-apps/the_silver_searcher
 app-misc/rlwrap
+app-misc/ranger
 
 # Application - WWW
 www-client/firefox-bin
@@ -121,6 +127,8 @@ app-forensics/sleuthkit
 app-misc/hachoir-metadata
 app-misc/hachoir-subfile
 app-misc/hachoir-urwid
+
+app-crypt/johntheripper
 
 # X11, WM, DE
 x11-apps/setxkbmap
@@ -156,3 +164,6 @@ x11-terms/xterm
 x11-themes/gentoo-xcursors
 x11-themes/xcursor-themes
 x11-wm/xmonad-contrib
+x11-misc/parcellite
+x11-misc/xcape
+x11-apps/xlsclients

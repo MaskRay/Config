@@ -45,3 +45,5 @@ sys-libs/zlib minizip # required by R, vlc, ...
 =media-libs/harfbuzz-0.9.20 icu
 #required by media-libs/sk1libs-0.9.1-r3, required by media-gfx/uniconvertor-1.1.5-r1, required by media-gfx/inkscape-0.48.4-r1, required by @app, required by @selected, required by @world (argument)
 >=media-libs/lcms-1.19-r1:0 python
+
+net-analyzer/rrdtool perl

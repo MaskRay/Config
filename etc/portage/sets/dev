@@ -31,6 +31,7 @@ cross-arm-unknown-linux-gnueabi/gcc
 cross-arm-unknown-linux-gnueabi/gdb
 
 # Development - Editors
+sys-apps/ed
 app-editors/emacs
 app-editors/gvim
 app-editors/vim
@@ -47,6 +48,7 @@ dev-vcs/tig
 dev-vcs/bzr
 
 # Development - Tools
+app-doc/doxygen
 dev-util/cloc
 dev-util/complexity
 dev-util/cscope
@@ -55,10 +57,12 @@ dev-util/gengetopt
 dev-util/global
 dev-util/perf
 dev-util/strace
+dev-util/ltrace
 dev-util/systemtap
 dev-util/valgrind
 sys-devel/crossdev
 sys-devel/gdb
+sys-devel/cgdb
 sys-process/parallel
 dev-db/sqlitebrowser
 www-servers/varnish
@@ -66,6 +70,10 @@ dev-util/indent
 sys-fs/entr
 dev-util/cwdiff
 dev-util/dialog
+net-libs/webkit-gtk
+
+# Development - C/C++ specific
+dev-util/cppi
 
 # Development - Haskell specific
 app-emacs/haskell-mode
@@ -78,32 +86,36 @@ dev-ml/findlib
 # Development - Perl specific
 dev-perl/Devel-REPL
 dev-perl/Term-ReadLine-Gnu
+dev-perl/Data-Dump
 
 # Development - PHP specific
 dev-php/xdebug
 
 # Development - Python specific
+dev-python/argparse
 dev-python/autopep8
 dev-python/ipdb
 dev-python/fabric
 dev-python/ipython
 dev-python/greenlet
 dev-python/pillow
+dev-python/pip
 dev-python/pytest
 dev-python/rope
 dev-python/virtualenv
 net-analyzer/scapy
 www-servers/tornado
+www-servers/gunicorn
 dev-python/twisted-core # for twistd
 dev-python/jedi
 
 # Development - Ruby specific
 dev-ruby/rails
 dev-ruby/nokogiri
-www-servers/thin
+#www-servers/thin
 
 # Electronics
-sci-electronics/geda-suite
+sci-electronics/geda
 sci-electronics/gtkwave
 sci-electronics/iverilog
 sci-electronics/ngspice
@@ -111,6 +123,7 @@ sci-electronics/ngspice
 # Math
 sci-libs/scipy
 sci-libs/scikits
+sci-libs/libsvm
 sci-mathematics/glpk
 
 # Vim specific
@@ -145,6 +158,6 @@ dev-java/ant-core
 dev-java/antlr
 dev-java/junit
 dev-java/log4j
-dev-text/patchutils
+dev-util/patchutils
 dev-util/howdoi
 media-libs/opencv

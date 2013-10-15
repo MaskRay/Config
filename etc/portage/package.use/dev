@@ -36,7 +36,7 @@ dev-lang/ghc binary llvm
 app-emacs/ghc-mod emacs
 
 # Development - Python specific
-net-analyzer/scapy gnuplot graphviz imagemagick pyx
+net-analyzer/scapy gnuplot graphviz imagemagick
 dev-lang/python tk
 dev-python/imaging tk
 dev-python/ipython matplotlib notebook
