@@ -1,0 +1,17 @@
+#!/bin/bash
+[[ $EUID -ne 0 ]] && exec sudo "$0" "$@"
+
+f() {
+  device=$(sudo systool -b usb -A product | awk -F"\n" -vRS="\n\n" '$2~/Mouse/{split($1,a,"\"");print a[2]}')
+  echo echo "$1" '>' /sys/bus/usb/devices/$device/power/control
+  echo "$1" > /sys/bus/usb/devices/$device/power/control
+}
+
+case "$1" in
+  0|auto)
+    f auto
+    ;;
+  1|on)
+    f on
+    ;;
+esac

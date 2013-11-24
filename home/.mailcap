@@ -2,11 +2,11 @@
 # Interactive #
 ###############
 
-application/pdf; llpp '%s'; test=test -n "$DISPLAY"; description=Portable Document Format; nametemplate=%s.pdf
+application/pdf; llpp %s; test=test -n "$DISPLAY"; description=Portable Document Format; nametemplate=%s.pdf
 application/postscript; zathura %s; test=test -n "$DISPLAY"
-application/vnd.ms-excel; libreoffice %s; test=test -n "$DISPLAY"
-application/vnd.oasis.opendocument.text; libreoffice %s; test=test -n "$DISPLAY"
-application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s; test=test -n "$DISPLAY"
+application/vnd.ms-excel; gnumeric %s; test=test -n "$DISPLAY"
+application/vnd.oasis.opendocument.text; wps %s; test=test -n "$DISPLAY"
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; wps %s; test=test -n "$DISPLAY"
 
 application/x-gzip; zless; needsterminal
 application/x-bzip2; bzless; needsterminal

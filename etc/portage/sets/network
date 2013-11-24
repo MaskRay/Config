@@ -5,6 +5,7 @@ net-analyzer/ettercap
 net-analyzer/hydra
 net-analyzer/metasploit
 net-analyzer/mtr
+net-analyzer/ncrack
 net-analyzer/netcat
 net-analyzer/nethogs
 net-analyzer/nikto
@@ -17,6 +18,7 @@ net-analyzer/tcpflow
 net-analyzer/tcpreplay
 net-analyzer/wireshark
 net-dialup/pptpclient
+net-firewall/conntrack-tools
 net-firewall/iptables
 net-fs/curlftpfs
 net-fs/samba
@@ -50,7 +52,7 @@ net-misc/iodine
 net-analyzer/p0f
 net-analyzer/net-snmp
 net-analyzer/argus
-net-analyzer/iftop
+net-analyzer/jnettop
 net-p2p/transmission
 net-misc/httpie
 net-misc/pssh
@@ -59,7 +61,6 @@ net-misc/tor
 net-wireless/iw
 net-misc/vde
 net-misc/ntp
-net-misc/pdns
 net-misc/googlecl
 net-misc/dropbox-cli
 net-misc/httpie

@@ -10,6 +10,8 @@ app-admin/xstow
 app-benchmarks/i7z
 app-laptop/laptop-mode-tools
 app-shells/zsh
+net-fs/nfs-utils
+sys-apps/dstat
 sys-apps/etckeeper
 sys-apps/hdparm
 sys-apps/lshw
@@ -19,8 +21,11 @@ sys-apps/pciutils
 sys-apps/smartmontools
 sys-apps/systemd-units
 sys-apps/usbutils
+sys-fs/dosfstools
 sys-fs/ntfs3g
 sys-fs/reiserfsprogs
+sys-fs/squashfs-tools
+sys-fs/sysfsutils
 sys-kernel/module-rebuild
 sys-power/cpupower
 sys-powers/acpi

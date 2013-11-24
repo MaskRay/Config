@@ -2,8 +2,6 @@
 =x11-wm/xmonad-9999 **
 =x11-wm/xmonad-contrib-9999 **
 
-=sys-devel/gcc-4.8.1 **
-
 =app-text/llpp-9999 **
 =app-text/mupdf-9999 **
 =www-client/weboob-9999 **

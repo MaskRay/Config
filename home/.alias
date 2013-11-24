@@ -17,7 +17,7 @@ alias p6=ping6
 alias d='dirs -v'
 alias cp='cp -irv'
 alias mv='mv -iv'
-alias rm='rm -i -v -d' # since coreutils-8.19
+alias rm='rm -i -v' # -d since coreutils-8.19
 alias pg='pgrep --full --list-full'
 alias pk='pgrep --full'
 alias psg='ps aux|grep'
@@ -72,16 +72,24 @@ alias luit='luit -encoding gbk'
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias pwget='proxychains wget'
-alias wps='/opt/wps/wps'
-alias wpp='/opt/wps/wpp'
+alias wps=/opt/kingsoft-office_9.1.0.4207~a12p2_x86/wps
+alias wpp=/opt/kingsoft-office_9.1.0.4207~a12p2_x86/wpp
+alias et=/opt/kingsoft-office_9.1.0.4207~a12p2_x86/et
 alias prx='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
+alias xi=xinit -- -nolisten tcp
 alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
+alias spice='spicec -h 0 -p 5900'
 alias burp='java -jar ~/.local/opt/burpsuite_pro_v1.4.07+.jar'
 alias ida='wine ~/.local/opt/ida61_Full/idag64.exe'
 alias mingw='PATH=$PATH:/opt/mingw/libexec/gcc/i686-w64-mingw32/4.9.0 /opt/mingw/i686-w64-mingw32/bin/g++ -std=c++11 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0/i686-w64-mingw32 -I/opt/mingw/i686-w64-mingw32/include -I/opt/mingw/lib/gcc/i686-w64-mingw32/4.9.0/include'
 alias matlab='~/.local/opt/matlab/bin/matlab'
+alias math='~/.local/opt/mathematica/Executables/Mathematica -graphicssystem native'
 alias matlabc='~/.local/opt/matlab/bin/matlab -nodisplay -r clc'
+alias blockdump='sudo sysctl vm.block_dump=1'
+alias xsel='xsel -l /dev/null'
+alias eclimd=$LOCAL/opt/eclipse/eclimd
+alias wine='WINEDEBUG=-all wine'
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 
@@ -92,7 +100,6 @@ alias gpu='git push'
 alias gpl='git pull'
 alias gl='git log'
 alias glp='git log -p'
-alias gs='git status'
 alias ghost='command gs'
 alias gd='git diff'
 alias gdc='git diff --cached'
@@ -129,7 +136,16 @@ alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
 alias xor=~/Dev/Crypto/xortool/xortool.py
 alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
-alias mouseon="sudo su -c 'echo on > /sys/bus/usb/devices/3-1/power/level'"
+
+# Gentoo-specific {{{2
+alias eme='sudo emerge'
+alias peme='sudo proxychains emerge'
+alias ebuildncd=sudo FEATURES='-collision-detect -protected-owned' ebuild
+alias ei='eix -uI --only-names'
+alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
+alias disp='sudo dispatch-conf'
+
+alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
 
 mtrg() {
   sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}' 
@@ -141,7 +157,8 @@ johnrar() {
 }
 
 web() {
-  twistd web --path "$1" -p "${2:-8000}"
+  #twistd web --path "$1" -p "${2:-8000}"
+  ruby -run -e httpd "$1" -p "${2:-8000}"
 }
 
 ord() { printf "0x%x\n" "'$1'"; }

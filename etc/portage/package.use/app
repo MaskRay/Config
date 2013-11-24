@@ -4,15 +4,19 @@ app-text/texlive-core cjk xetex
 app-text/zathura sqlite
 app-text/zathura-meta pdf postscript
 
+app-emulation/spice client
+
 # Application - Graphics
 media-gfx/imagemagick webp graphviz
 media-libs/freetype kpathsea infinality
 media-gfx/blender blender-game python_single_target_python3_3
+media-gfx/gimp webkit python curl
 
 # Application - GUI misc.
 app-misc/recoll inotify -fam tex
 media-gfx/graphviz gts # otherwise sfdp won't work
 net-misc/tigervnc gnutls
+app-emulation/qemu spice vde
 
 # Application - Instant messaging
 net-im/bitlbee twitter
@@ -33,7 +37,7 @@ virtual/ffmpeg threads vdpau
 # Application - Misc.
 app-arch/p7zip rar
 app-arch/unzip natspec
-app-emulation/wine -fontconfig win32 win64 alsa
+app-emulation/wine win32 win64 alsa dos
 dev-java/icedtea-bin nsplugin # Java plugin for Firefox
 dev-libs/nss utils
 x11-misc/xbindkeys guile # emacs-ish key sequence
@@ -56,3 +60,5 @@ x11-wm/xmonad icccm
 
 net-fs/samba addns ads winbind
 net-fs/cifs-utils ads upcall
+
+sys-apps/file python

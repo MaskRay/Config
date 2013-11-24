@@ -199,16 +199,6 @@ alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 # Application-specific {{{2
 . ~/.alias
 
-# Gentoo-specific {{{2
-alias eme='sudo emerge'
-alias emo='sudo emerge -O'
-alias peme='sudo proxychains emerge'
-alias emel='tail -f /var/log/emerge.log'
-alias emef='tail -f /var/log/emerge-fetch.log'
-alias ei='eix -uI --only-names'
-alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
-alias disp='sudo dispatch-conf'
-
 # ZLE {{{1
 # highlight {{{2
 zle_highlight=(region:bg=magenta

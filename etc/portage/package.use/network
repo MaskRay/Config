@@ -1,6 +1,6 @@
 # Network tools
 net-analyzer/nmap ncat ndiff nping
-net-analyzer/wireshark adns geoip -gtk2 -qt4
+net-analyzer/wireshark adns geoip -gtk2 qt gtk3
 net-ftp/proftpd ssl openssl -acl # some issue related to acl support
 net-misc/openvpn iproute2
 net-wireless/wpa_supplicant qt4 # wpa_gui

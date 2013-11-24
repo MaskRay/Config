@@ -118,6 +118,7 @@ URxvt.foreground: white
 URxvt.cursorBlink: False
 URxvt.cursorColor: green
 URxvt.iso14755_52: False
+URxvt.urgentOnBell: true 
 
 Xcursor.theme: ~/.icons/Pulse-Glass
 Xcursor.size: 32

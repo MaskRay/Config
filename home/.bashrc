@@ -54,6 +54,8 @@ function repos_info()
 export PS1='$(repos_info)\n\
 \e${WHITE}[\e${CYAN}Login\e${WHITE}] \e${GREEN}\u \e${RESET}at \e${WHITE}\h \e${RESET}in \e${BLUE}\w\n\
 \[\e${RED}\]\$\[\e${RESET}\] '
+PS4='(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]} - [${SHLVL},${BASH_SUBSHELL}, $?]
+'
 
 alias rm='rm -i'
 alias mv='mv -i'

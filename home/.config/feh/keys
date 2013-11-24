@@ -1,25 +1,13 @@
-action_0         period
-action_1         comma
-action_2         colon
-action_3         semicolon
-
-
-delete           D      C-d
 jump_back        H      Prior
 jump_fwd         L      Next
-menu_child       s      Right
-menu_down        t      Down
-menu_parent      n      Left
-menu_select      Return space
 menu_up          Up
 next_img         l      Right  space
 prev_img         h      Left   BackSpace
 remove           d      Delete
-render           m
-scroll_down      C-t    C-Down
-scroll_left      C-n    C-Left
-scroll_right     C-s    C-Right
-scroll_up        C-h    C-Up
+scroll_down      C-j    C-Down
+scroll_left      C-h    C-Left
+scroll_right     C-l    C-Right
+scroll_up        C-k    C-Up
 toggle_actions   I
 toggle_filenames i
 zoom_default     0

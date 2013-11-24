@@ -144,3 +144,6 @@
 [submodule "home/.vim/bundle/emmet"]
 	path = home/.vim/bundle/emmet
 	url = https://github.com/mattn/emmet-vim
+[submodule "home/.vim/bundle/rails"]
+	path = home/.vim/bundle/rails
+	url = https://github.com/tpope/vim-rails

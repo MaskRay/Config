@@ -12,6 +12,7 @@ dev-lang/gnu-smalltalk
 dev-lang/ocaml
 dev-lang/icon
 dev-lang/j
+dev-lang/swi-prolog
 dev-lang/vala
 dev-lang/php
 dev-lang/mercury
@@ -62,9 +63,9 @@ dev-util/systemtap
 dev-util/valgrind
 sys-devel/crossdev
 sys-devel/gdb
-sys-devel/cgdb
+dev-util/cgdb
 sys-process/parallel
-dev-db/sqlitebrowser
+dev-db/sqliteman
 www-servers/varnish
 dev-util/indent
 sys-fs/entr
@@ -149,6 +150,8 @@ dev-db/sqlite
 net-ftp/proftpd
 www-misc/fcgiwrap
 www-servers/nginx
+
+dev-db/pgadmin3
 
 # Misc
 app-misc/jq

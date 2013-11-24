@@ -38,6 +38,7 @@ media-gfx/feh
 media-gfx/sxiv
 media-gfx/geeqie
 media-gfx/gimp
+media-gfx/graphicsmagick
 media-gfx/imagemagick
 media-gfx/inkscape
 
@@ -124,6 +125,7 @@ www-plugins/adobe-flash
 # Security - Forensics
 app-forensics/foremost
 app-forensics/sleuthkit
+app-misc/binwalk
 app-misc/hachoir-metadata
 app-misc/hachoir-subfile
 app-misc/hachoir-urwid

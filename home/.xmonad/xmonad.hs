@@ -48,6 +48,7 @@ import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
+import XMonad.Actions.GroupNavigation
 import XMonad.Actions.Navigation2D
 import qualified XMonad.Actions.Search as S
 import XMonad.Actions.Submap
@@ -69,7 +70,10 @@ import XMonad.Hooks.Place
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.SetWMName
 
+import XMonad.Layout.PositionStoreFloat
+import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.Accordion
+import XMonad.Layout.Drawer
 import XMonad.Layout.Combo
 import XMonad.Layout.Mosaic
 import XMonad.Layout.Fullscreen
@@ -77,6 +81,7 @@ import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
 import XMonad.Layout.Maximize
+import XMonad.Layout.MouseResizableTile
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Named
@@ -86,7 +91,9 @@ import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.SubLayouts
 import XMonad.Layout.Tabbed
+import XMonad.Layout.TrackFloating
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.WindowSwitcherDecoration
@@ -113,7 +120,7 @@ myNavigation2DConfig = defaultNavigation2DConfig { layoutNavigation   = [("Full"
                                                  }
 
 myLayout = avoidStruts $
-    configurableNavigation (navigateColor "#00aa00") $
+    {-configurableNavigation (navigateColor "#00aa00") $-}
     mkToggle1 TABBED $
     mkToggle1 NBFULL $
     mkToggle1 REFLECTX $
@@ -121,16 +128,19 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
-    {-onWorkspace "media" gimpLayout $-}
+    onWorkspace "media" gimpLayout $
     --onWorkspaces ["web","irc"] Full $
-    fullscreenFull Full ||| mosaic 1.5 [7,5,2] ||| tall ||| named "Full|Acc" (combineTwo tall Full Accordion) ||| gimpLayout
+    fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
     where
         tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
-        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") Full
+        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)
+        {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)-}
+        termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
+        float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
-    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Google-chrome-beta"] ] ++
+    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
@@ -145,11 +155,13 @@ myManageHook = composeAll $
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
   where
+    role = stringProperty "WM_WINDOW_ROLE"
     prefixTitle prefix = fmap (prefix `isPrefixOf`) title
     viewShift = doF . liftM2 (.) W.greedyView W.shift
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , className =? "Gimp" <&&> fmap (not . flip any ["image-window", "toolbox", "dock"] . flip isSuffixOf) role
         , stringProperty "WM_WINDOW_ROLE" =? "pop-up"
         , fmap (isPrefixOf "sun-") appName
         , fmap (isPrefixOf "Gnuplot") title
@@ -162,6 +174,7 @@ myManageHook = composeAll $
 
 myDynamicLog h = dynamicLogWithPP $ defaultPP
   { ppCurrent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
+  , ppVisible = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
   , ppHidden = ap clickable (wrap "^i(/home/ray/.xmonad/icons/gray/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
   , ppUrgent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/highlight/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
   , ppSep = dzenColor "#0033FF" "" " | "
@@ -201,7 +214,7 @@ myKeys =
     [ ("C-; " ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "asdfghjkl;'\""
         , (f, m) <- [ (switchTopic myTopicConfig, "")
-                    , (windows . liftM2 (.) W.view W.shift, "S-")
+                    , (windows . W.shift, "S-")
                     ]
     ]
     ++
@@ -218,7 +231,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -245,7 +258,8 @@ myKeys =
     , ("M-b", windowPromptBring myXPConfig)
     , ("M-S-b", banishScreen LowerRight)
     , ("M-s", windows W.swapMaster)
-    , ("M-y", focusUrgent)
+    , ("M-<Backspace>", focusUrgent)
+    , ("M-y", nextMatch History (return True))
     , ("M-;", switchLayer)
     {-, ("M-h", windowGo L True)-}
     {-, ("M-j", windowGo D True)-}
@@ -352,13 +366,13 @@ myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook No
     , borderWidth        = 1
     , modMask            = mod4Mask
     , workspaces         = myTopicNames
-    , normalBorderColor  = "#dbdbdb"
+    , normalBorderColor  = "#000000"
     , focusedBorderColor = "#3939ff"
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
     , handleEventHook    = fullscreenEventHook
-    , logHook            = myDynamicLog dzen
+    , logHook            = historyHook >> myDynamicLog dzen
     , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D"
 } `additionalKeysP` myKeys
 

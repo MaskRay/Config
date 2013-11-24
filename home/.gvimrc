@@ -82,16 +82,16 @@ if has("autocmd")
     au!
     autocmd FileType ruby inoreab <buffer> #! #!/usr/bin/env ruby
     autocmd FileType ruby inoreab <buffer> #e # coding: utf-8
-    nmap <leader>rc :Rcontroller<space><tab>
-    nmap <leader>rh :Rhelper<space><tab>
-    nmap <leader>rj :Rjavascript<space><tab>
-    nmap <leader>rl :Rlayout<space><tab>
-    nmap <leader>ro :Rlocale<space><tab>
-    nmap <leader>rm :Rmodel<space><tab>
-    nmap <leader>rt :Rspec<space><tab>
-    nmap <leader>rk :Rtask<space><tab>
-    nmap <leader>rs :Rstylesheet<space><tab>
-    nmap <leader>rv :Rview<space><tab>
+    nnoremap <leader>rc :Rcontroller<space><tab>
+    nnoremap <leader>rh :Rhelper<space><tab>
+    nnoremap <leader>rj :Rjavascript<space><tab>
+    nnoremap <leader>rl :Rlayout<space><tab>
+    nnoremap <leader>ro :Rlocale<space><tab>
+    nnoremap <leader>rm :Rmodel<space><tab>
+    nnoremap <leader>rt :Rspec<space><tab>
+    nnoremap <leader>rk :Rtask<space><tab>
+    nnoremap <leader>rs :Rstylesheet<space><tab>
+    nnoremap <leader>rv :Rview<space><tab>
 
   " Python Support ------------------------------------ {{{2
   augroup python_support
@@ -103,6 +103,8 @@ if has("autocmd")
     " tabs and spaces, I go as far as mark all tabs as error.
     autocmd Syntax python syn match ExtraWhitespace /\t/
     nmap <leader>p :call Flake8()<cr>
+
+  au FileType tex :call Tex_init()
 
   " py.test Support ----------------------------------- {{{2
   augroup pytest
@@ -459,7 +461,9 @@ nnoremap <leader>u :GundoToggle<CR>
 " http://www.vim.org/scripts/script.php?script_id=1658
 " https://github.com/scrooloose/nerdtree
 " git clone git://github.com/scrooloose/nerdtree.git
+let g:NERDTreeChDirMode=2
 nnoremap <leader>nt :NERDTreeToggle<CR>
+nnoremap <leader>ny :NERDTree<CR>
 
 " Notes ----------------------------------------------- {{{2
 let g:notes_directory = '~/org'
@@ -706,6 +710,8 @@ nnoremap <silent> ss :Unite -buffer-name=buffer -start-insert buffer<cr>
 nnoremap <silent> sc :Unite -buffer-name=change change<cr>
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
+" Eclim --- {{{2
+let g:EclimCompletionMethod = 'omnifunc'
 " Commands, Mappings and Functions ------------------------------ {{{1
 " <Space> in Normal mode ------------------------------ {{{2
 " ErrorsToggle & QFixToggle ------------------------------------- {{{2

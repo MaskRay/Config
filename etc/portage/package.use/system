@@ -47,3 +47,16 @@ sys-libs/zlib minizip # required by R, vlc, ...
 >=media-libs/lcms-1.19-r1:0 python
 
 net-analyzer/rrdtool perl
+
+# required by app-emulation/virt-manager-0.10.0-r1
+# required by virt-manager (argument)
+>=net-libs/gtk-vnc-0.5.3 python
+# required by app-emulation/virt-manager-0.10.0-r1
+# required by virt-manager (argument)
+>=app-emulation/libvirt-glib-0.1.7 python
+# required by app-emulation/virt-manager-0.10.0-r1
+# required by virt-manager (argument)
+>=net-misc/spice-gtk-0.21 python
+# required by app-emulation/virt-manager-0.10.0-r1
+# required by virt-manager (argument)
+=app-emulation/libvirt-1.1.3 python

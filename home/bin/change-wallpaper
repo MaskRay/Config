@@ -3,5 +3,5 @@
 Random.self_init ();;
 
 (* randomly choose a wallpaper *)
-let pics = Sys.readdir "/home/ray/wallpapers";;
-Sys.command ("feh --bg-scale /home/ray/wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &")
+let pics = Sys.readdir "/home/ray/Wallpapers";;
+Sys.command ("feh --bg-scale /home/ray/Wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &")
