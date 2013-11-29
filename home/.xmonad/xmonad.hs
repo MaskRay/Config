@@ -63,7 +63,8 @@ import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
 --import XMonad.Hooks.FadeInactive
-import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)
+{-import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)-}
+import EwmhDesktops hiding (fullscreenEventHook)
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
@@ -133,8 +134,8 @@ myLayout = avoidStruts $
     fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
     where
         tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
-        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)
-        {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)-}
+        {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
+        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
         termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
         float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
 
@@ -142,7 +143,7 @@ doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
-    [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer"] ] ++
+    [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer", "Wpp"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
@@ -230,7 +231,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "chrome", "firefox"])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark"])
     , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -245,6 +246,7 @@ myKeys =
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
     , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
+    , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
     -- window management
     , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
@@ -359,8 +361,8 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig
-{-myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
+{-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
+myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvtc"
     , focusFollowsMouse  = False
     , borderWidth        = 1

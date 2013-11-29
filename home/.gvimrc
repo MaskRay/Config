@@ -463,7 +463,7 @@ nnoremap <leader>u :GundoToggle<CR>
 " git clone git://github.com/scrooloose/nerdtree.git
 let g:NERDTreeChDirMode=2
 nnoremap <leader>nt :NERDTreeToggle<CR>
-nnoremap <leader>ny :NERDTree<CR>
+nnoremap <leader>ny :NERDTree `=expand('%:h')`<CR>
 
 " Notes ----------------------------------------------- {{{2
 let g:notes_directory = '~/org'

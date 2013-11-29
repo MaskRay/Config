@@ -60,5 +60,5 @@ dev-cpp/glog gflags
 
 # Services
 dev-db/mongodb v8 sharedclient
-www-servers/nginx nginx_modules_http_stub_status nginx_modules_http_fancyindex
+www-servers/nginx nginx_modules_http_stub_status nginx_modules_http_fancyindex nginx_modules_http_headers_more nginx_modules_http_gzip_static
 

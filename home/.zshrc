@@ -21,9 +21,8 @@ fi
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export SCALA_HOME=/opt/scala-2.10.1
 export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH
+export PATH=$SCALA_HOME/bin:~/.cabal/bin:~/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:~/bin/ssh:$PATH
 #export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
-export ADMB_HOME=$HOME/.local/admb
-export PATH=$ADMB_HOME/bin:$PATH
 export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg

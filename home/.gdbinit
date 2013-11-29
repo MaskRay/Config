@@ -29,4 +29,12 @@ end
 
 alias dd=disassemble
 
+# Plugins {{{1
+
+source ~/.gdb/pygdb-fork.py
+
+define nub
+  python nextUntilBreakpoint()
+end
+
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-

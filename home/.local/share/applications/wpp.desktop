@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=wpp
+Type=Application
+Comment=
+Terminal=false
+Exec=/opt/kingsoft-office_9.1.0.4207~a12p2_x86/wpp %F
+Categories=Office;
+MimeType=application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;

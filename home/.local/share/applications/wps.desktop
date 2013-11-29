@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=wps
+Type=Application
+Comment=
+Terminal=false
+Exec=/opt/kingsoft-office_9.1.0.4207~a12p2_x86/wps %F
+Categories=Office;
+MimeType=application/msword;application/vnd.openxmlformats-officedocument.wordprocessingml.document;

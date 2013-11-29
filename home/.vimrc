@@ -6,6 +6,7 @@ set nocompatible
 filetype plugin indent on
 let g:mapleader = " "
 
+set display=lastline
 set hidden
 set hlsearch
 set incsearch
@@ -14,6 +15,7 @@ set showcmd
 set isfname-==
 set shortmess+=s
 set title
+set whichwrap=b,s,[,]
 set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
@@ -21,15 +23,16 @@ set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.p
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
-set sidescroll=3 sidescrolloff=3
+set sidescroll=10 sidescrolloff=20
+set switchbuf=useopen
 "set ignorecase smartcase
 set ttimeoutlen=100
 set matchpairs=(:),[:],{:},<:>,':',":"
 "au FileType c,cpp,java set mps+==:;
 
 set backup
-set backupdir=~/.tmp,~/tmp,/var/tmp,/tmp
-set directory=~/.tmp,~/tmp,/var/tmp,/tmp
+set backupdir=~/tmp,/var/tmp,/tmp
+set directory=~/tmp,/var/tmp,/tmp
 
 set backspace=indent,eol,start
 set history=200
@@ -37,6 +40,7 @@ set history=200
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 
 set formatprg="par-format rTbgqR B=.,?_A_a Q=_s>|"
+set formatoptions+=n " support formatting of numbered lists
 set guiheadroom=20
 set grepprg=internal
 "set grepprg=ack\ -a
@@ -130,6 +134,7 @@ nnoremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>w :set wrap!<CR>
 
 " move in insert mode
 inoremap <m-h> <left>
@@ -239,7 +244,6 @@ cmap w!! w !sudo tee % >/dev/null
 
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
-nnoremap <F10> :set wrap!<CR>
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
@@ -262,6 +266,61 @@ endfunc
 func! Ruby_init()
   let &makeprg="ruby -c %"
   imap <C-CR> <CR><CR>end<Esc>-cc
+endfunc
+
+func! Tex_init()
+	" pdf auto refresh preview
+	au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -SIGHUP mupdf > /dev/null 2 >&1' &")
+
+    setl nocursorline                                " for performance
+    hi clear Conceal
+    let &conceallevel=has("gui_running") ? 1: 2        " conceal problem for gvim
+    setl concealcursor=
+    setl sw=2 sts=2 expandtab
+    setl textwidth=150
+    setl errorformat=aaaaaaa                        " disable quickfix
+
+    inoremap <buffer> $$ $<Space>$<Left>
+    inoremap <buffer> " ``''<Left><Left>
+    nmap <buffer> <Leader>" xi``<Esc>,f"axi''<Esc>
+    inoremap <buffer> ... \cdots<Space>
+
+    inoremap <buffer> \[ \[<Space>\]<Left><Left>
+    inoremap <buffer> \{ \{<Space>\}<Left><Left>
+    inoremap <buffer> \langle \langle<Space><Space>\rangle<Esc>7hi
+    inoremap <buffer> \verb \verb<Bar><Bar><Left>
+    inoremap <buffer> \beg \begin{}<Left>
+    inoremap <buffer> \bb <Esc>:call Tex_Block("")<Left><Left>
+    inoremap <buffer> \bbt <Esc>:call Tex_Block("t")<CR><Up><End>[H]<Down>\centering<CR>\caption{\label{tab:}}<Esc>k:call Tex_Block("tabular")<CR>
+    inoremap <buffer> \bbf <Esc>:call Tex_Block("f")<CR><Up><End>[H]<Down>\centering<CR>\includegraphics[width=\textwidth]{res/}<CR>\caption{\label{fig:}}<Esc>
+    inoremap <buffer> \bbm <Esc>:call Tex_Block("mp")<CR><Up><End>[b]{0.46\linewidth}<Down>\centering<CR>\includegraphics[width=\textwidth]{res/}<CR>\caption{\label{fig:}}<Esc>
+    inoremap <buffer> \bf \textbf{}<Left>
+    xmap <buffer> \bbe di\bbe<CR><Tab><Esc>pj
+    xmap <buffer> \bbd di\bbd<CR><Tab><Esc>pj
+    xmap <buffer> \bf s}i\textbf<Esc>
+    xmap <buffer> \em s}i\emph<Esc>
+    xmap <buffer> <Leader>tab :s/\s\+/ \&/g<CR>gv:s/$/\\\\/g<CR>gv<Space>tt
+
+    " Plugin: LaTeX-Box
+    let g:LatexBox_no_mappings = 1
+    inoremap <buffer> [[ \begin{}<Left>
+    imap <buffer> ]] <Plug>LatexCloseCurEnv
+    inoremap <buffer> <C-n> <Esc><Right>:call LatexBox_JumpToNextBraces(0)<CR>i
+    nmap <buffer> P l:call LatexBox_JumpToNextBraces(0)<CR>
+    nmap <buffer> Q :call LatexBox_JumpToNextBraces(1)<CR>
+
+    xmap <buffer> ie <Plug>LatexBox_SelectCurrentEnvInner
+    xmap <buffer> ae <Plug>LatexBox_SelectCurrentEnvOuter
+    omap <buffer> ie :normal vie<CR>
+    omap <buffer> ae :normal vae<CR>
+    xmap <buffer> im <Plug>LatexBox_SelectInlineMathInner
+    xmap <buffer> am <Plug>LatexBox_SelectInlineMathOuter
+    omap <buffer> im :normal vim<CR>
+    omap <buffer> am :normal vam<CR>
+
+    nmap <buffer> <Leader>ce <Plug>LatexChangeEnv
+    xmap <buffer> <Leader>tc <Plug>LatexWrapSelection
+    xmap <buffer> <Leader>te <Plug>LatexEnvWrapSelection
 endfunc
 
 
@@ -300,7 +359,7 @@ if has("gui_running")
   Bundle 'syntastic'
   "Bundle 'UltiSnips'
   Bundle 'vim-PinyinSearch'
-  Bundle 'YankRing'
+  "Bundle 'YankRing'
   Bundle 'dispatch'
   "Bundle 'vimproc'
   "Bundle 'vimshell'
@@ -346,6 +405,7 @@ if has("gui_running")
   Bundle 'markdown'
 
   Bundle 'vim-ruby'
+  Bundle 'vim-rails'
   Bundle 'slim'
 
   "Bundle 'python-mode'

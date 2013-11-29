@@ -4,11 +4,24 @@
 ; x-scheme-handler/http=firefox-bin.desktop
 ; x-scheme-handler/https=firefox-bin.desktop
 
+; text
 inode/x-empty=gvim.desktop
 text/plain=gvim.desktop
+
+; html
 text/html=google-chrome.desktop
 application/xhtml+xml=google-chrome.desktop
 x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
+
+; .pdf .ps
 application/pdf=llpp.desktop
 application/postscript=zathura.desktop
+
+; .doc .docx
+application/msword=wps.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps.desktop
+
+; .ppt .pptx
+application/vnd.ms-powerpoint=wpp.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=wpp.desktop
