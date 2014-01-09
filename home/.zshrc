@@ -20,8 +20,9 @@ fi
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export SCALA_HOME=/opt/scala-2.10.1
-export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH
+export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH:/home/ray/Cross/toolchain-mips_r2_gcc-4.3.3+cs_uClibc-0.9.30.1/usr/bin
 export PATH=$SCALA_HOME/bin:~/.cabal/bin:~/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:~/bin/ssh:$PATH
+export EDITOR=vim
 #export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
 export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'

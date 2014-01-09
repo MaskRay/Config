@@ -6,10 +6,12 @@ set nocompatible
 filetype plugin indent on
 let g:mapleader = " "
 
+set sw=2 sts=2 et
 set display=lastline
 set hidden
 set hlsearch
 set incsearch
+set nrformats=hex
 set ruler
 set showcmd
 set isfname-==
@@ -34,7 +36,7 @@ set backup
 set backupdir=~/tmp,/var/tmp,/tmp
 set directory=~/tmp,/var/tmp,/tmp
 
-set backspace=indent,eol,start
+" set backspace=indent,eol,start
 set history=200
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
@@ -118,23 +120,31 @@ else
 endif
 
 " Misc --------------------- {{{1
-nnoremap zz zz:nohls<CR>
+" nnoremap zz zz:nohls<CR>
+nnoremap <silent> <C-l> :nohls<cr><C-l>
 nnoremap <Leader>a :Ag
 nnoremap <Leader>p "+p<CR>
 nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
 noremap gz :bdelete<cr>
 
+ino <C-j> <C-r>=TriggerSnippet()<cr>
+
 " Omni completion
-inoremap <C-]> <C-x><C-]>
-inoremap <C-F> <C-x><C-F>
+" inoremap <C-]> <C-x><C-]>
+" inoremap <C-F> <C-x><C-F>
 
 " Edit
-nnoremap <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+nnoremap <leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>w :set wrap!<CR>
+
+" Diff
+nnoremap <leader>dt :diffthis<CR>
+nnoremap <leader>do :bufdo diffoff<CR>
 
 " move in insert mode
 inoremap <m-h> <left>
@@ -149,34 +159,7 @@ nnoremap <m-j> :cnext<cr>zvzz
 nnoremap <m-k> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
-vmap / y/<C-R>"<CR>
-
-" Tabs
-nnoremap tk :tabprevious<cr>
-nnoremap tj :tabnext<cr>
-nnoremap to :tabnew<cr>
-nnoremap tq :tabclose<cr>
-
-" vim hacks #159
-nmap <leader>sj <SID>(split-to-j)
-nmap <leader>sk <SID>(split-to-k)
-nmap <leader>sh <SID>(split-to-h)
-nmap <leader>sl <SID>(split-to-l)
-
-nnoremap <SID>(split-to-j) :<C-u>execute 'belowright' (v:count == 0 ? '' : v:count) 'split'<CR>
-nnoremap <SID>(split-to-k) :<C-u>execute 'aboveleft'  (v:count == 0 ? '' : v:count) 'split'<CR>
-nnoremap <SID>(split-to-h) :<C-u>execute 'topleft'    (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-nnoremap <SID>(split-to-l) :<C-u>execute 'botright'   (v:count == 0 ? '' : v:count) 'vsplit'<CR>
-
-nnoremap s <Nop>
-nnoremap sh <C-w>h
-nnoremap sj <C-w>j
-nnoremap sk <C-w>k
-noremap sl <C-w>l
-nnoremap sH <C-w>H
-nnoremap sJ <C-w>J
-nnoremap sK <C-w>K
-nnoremap sL <C-w>L
+vmap X y/<C-R>"<CR>
 
 " vim hacks #181
 " Open junk file."{{{
@@ -200,12 +183,8 @@ noremap L g_
 inoremap <C-a> <esc>I
 inoremap <C-e> <esc>A
 
-
 " Open a Quickfix window for the last search.
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
-
-" Save & Make
-nnoremap <F5> :w<CR>:make!<CR><CR>:cc<CR>
 
 " Paste toggle
 set pastetoggle=<F7>
@@ -218,17 +197,6 @@ vnoremap > >gv
 nnoremap <C-Tab> :bn<cr>
 nnoremap <C-S-Tab> :bp<cr>
 
-" Edit
-cnoremap %% <C-R>=expand('%:h').'/'<cr>
-map <leader>ew :e %%
-map <leader>es :sp %%
-map <leader>ev :vsp %%
-map <leader>et :tabe %%
-
-" Scrolling
-map zl zL
-map zh zH
-
 " ; :
 nnoremap ; :
 nnoremap : ;
@@ -236,6 +204,7 @@ vnoremap ; :
 vnoremap : ;
 
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
+nnoremap <S-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " Command-line editing
 cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
@@ -357,7 +326,7 @@ if has("gui_running")
   Bundle 'Tabular'
   Bundle 'EasyMotion'
   Bundle 'syntastic'
-  "Bundle 'UltiSnips'
+  Bundle 'UltiSnips'
   Bundle 'vim-PinyinSearch'
   "Bundle 'YankRing'
   Bundle 'dispatch'
@@ -374,6 +343,7 @@ if has("gui_running")
   Bundle 'colorv.vim'
   Bundle 'startify'
   Bundle 'splitjoin'
+  Bundle 'commentary'
 
   Bundle 'vimside'
 

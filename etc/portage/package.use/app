@@ -11,6 +11,7 @@ media-gfx/imagemagick webp graphviz
 media-libs/freetype kpathsea infinality
 media-gfx/blender blender-game python_single_target_python3_3
 media-gfx/gimp webkit python curl
+media-sound/cmus cue wma ffmpeg -aac # aac plugin is broken
 
 # Application - GUI misc.
 app-misc/recoll inotify -fam tex

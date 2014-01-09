@@ -186,7 +186,7 @@ if has("autocmd")
     autocmd FileType xhtml setlocal sw=2 sts=2 et
     autocmd FileType xml setlocal sw=2 sts=2 et
     " Others with special requirements
-    autocmd FileType make setlocal noet
+    autocmd FileType make setlocal ts=4 noet
     autocmd FileType sql setlocal et
     autocmd FileType tex setlocal sw=2 sts=2 et
     autocmd FileType text setlocal textwidth=72
@@ -508,6 +508,7 @@ let g:slimv_swank_cmd = '! urxvtc -e sbcl --load ' . $HOME . '/.vim/bundle/slimv
 " http://www.vim.org/scripts/script.php?script_id=2540
 " http://github.com/msanders/snipmate.vim
 " #git clone git://github.com/msanders/snipmate.vim.git
+" let g:snippets_dir = "~/.vim/snippets/"
 
 " Sparkup --------------------------------------------- {{{2
 " You can write HTML in a CSS-like syntax, and have Sparkup handle the

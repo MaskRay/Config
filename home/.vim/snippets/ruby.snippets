@@ -1,5 +1,5 @@
 snippet #!
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 endsnippet
 
 snippet #utf8 "# encoding: utf-8"
@@ -110,4 +110,10 @@ endsnippet
 
 snippet fopen
 File.open(${1:filename}, '${2:r}') {|${3:h}| ${4} }
+endsnippet
+
+snippet wh
+while $1
+	$0
+end
 endsnippet

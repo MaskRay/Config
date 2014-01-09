@@ -30,6 +30,7 @@ import XMonad.Util.NamedScratchpad
 import XMonad.Util.Paste
 import XMonad.Util.Run
 import qualified XMonad.Util.Themes as Theme
+import XMonad.Util.Timer
 import XMonad.Util.WorkspaceCompare
 
 import XMonad.Prompt
@@ -231,7 +232,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark"])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64"])
     , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -373,9 +374,9 @@ myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = fullscreenEventHook
+    , handleEventHook    = fullscreenEventHook >> clockEventHook
     , logHook            = historyHook >> myDynamicLog dzen
-    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D"
+    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys
 
 {-
@@ -452,7 +453,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "firefox" site s >> viewWeb)
+      (S.search "chrome" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -572,3 +573,19 @@ launchApp config app exts = mkXPrompt (TitledPrompt app) config (getFilesWithExt
   where
     launch :: MonadIO m => String -> String -> m ()
     launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
+
+
+data TidState = TID TimerId deriving Typeable
+
+instance ExtensionClass TidState where
+  initialValue = TID 0
+
+clockStartupHook = startTimer 1 >>= XS.put . TID
+
+clockEventHook e = do
+  (TID t) <- XS.get
+  handleTimer t e $ do
+    startTimer 1 >>= XS.put . TID
+    ask >>= logHook.config
+    return Nothing
+  return $ All True

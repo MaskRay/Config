@@ -29,6 +29,7 @@ List.map Sys.command [
   ; pic
   ; "redshift"
   ; "unclutter &"
+  ; "keynav &"
   (*; "dorm u"*)
   ; "emacs --daemon >/dev/null 2>/dev/null"
   ; "xset r rate 200 50"

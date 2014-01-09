@@ -147,3 +147,6 @@
 [submodule "home/.vim/bundle/rails"]
 	path = home/.vim/bundle/rails
 	url = https://github.com/tpope/vim-rails
+[submodule "home/.vim/bundle/commentary"]
+	path = home/.vim/bundle/commentary
+	url = https://github.com/tpope/vim-commentary

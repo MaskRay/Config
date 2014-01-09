@@ -1,0 +1,14 @@
+#!/bin/bash
+readelf -s ${1:-a.out} | gawk '
+{
+  if($4 == "FUNC" && $2 != 0) {
+    print "# code for " $NF;
+    print "b *0x" $2;
+    print "commands";
+    print "silent";
+    print "bt 1";
+    print "c";
+    print "end";
+    print "";
+  }
+}'

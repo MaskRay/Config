@@ -132,7 +132,6 @@ app-vim/colorschemes
 app-vim/extra-syntax
 app-vim/fuzzyfinder
 app-vim/gentoo-syntax
-app-vim/nerdcommenter
 app-vim/nerdtree
 app-vim/supertab
 app-vim/surround
@@ -163,4 +162,5 @@ dev-java/junit
 dev-java/log4j
 dev-util/patchutils
 dev-util/howdoi
+media-gfx/optipng
 media-libs/opencv
