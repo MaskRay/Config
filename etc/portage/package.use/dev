@@ -15,6 +15,7 @@ dev-vcs/subversion -dso perl # required by git[subversion]
 dev-python/PyQt4 webkit # perhaps for phantomjs's dependency
 media-libs/opencv ffmpeg
 x11-libs/cairo xcb opengl svg
+net-misc/curl ssl
 
 #required by sci-libs/scipy-0.12.0, required by sci-libs/scikits_learn-0.13.1, required by scikits_learn (argument)
 >=dev-python/numpy-1.7.1 lapack

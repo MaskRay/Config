@@ -20,7 +20,8 @@ fi
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export SCALA_HOME=/opt/scala-2.10.1
-export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH:/home/ray/Cross/toolchain-mips_r2_gcc-4.3.3+cs_uClibc-0.9.30.1/usr/bin
+#export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH:/home/ray/Cross/toolchain-mips_r2_gcc-4.3.3+cs_uClibc-0.9.30.1/usr/bin
+export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:$HOME/bin/ssh:$PATH
 export PATH=$SCALA_HOME/bin:~/.cabal/bin:~/bin:~/.local/bin:~/.gem/ruby/2.0.0/bin:~/bin/ssh:$PATH
 export EDITOR=vim
 #export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
@@ -196,6 +197,13 @@ alias -g X0='| xargs -0'
 # Suffix aliases {{{2
 alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
 
+# Path aliases
+hash -d up=/usr/portage
+hash -d ep=/etc/portage
+hash -d vl=/var/lib
+hash -d vl=/var/lib
+hash -d as=~/Assignment/2013aut
+
 # Application-specific {{{2
 . ~/.alias
 
@@ -246,3 +254,7 @@ export PERL_MB_OPT="--install_base /home/ray/perl5";
 export PERL_MM_OPT="INSTALL_BASE=/home/ray/perl5";
 export PERL5LIB="/home/ray/perl5/lib/perl5:$PERL5LIB";
 export PATH="/home/ray/perl5/bin:$PATH";
+
+# Environment Modules {{{1
+module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
+module use ~/.modules

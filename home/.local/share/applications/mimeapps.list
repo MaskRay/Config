@@ -13,6 +13,7 @@ text/html=google-chrome.desktop
 application/xhtml+xml=google-chrome.desktop
 x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
+application/x-asp=google-chrome.desktop
 
 ; .pdf .ps
 application/pdf=llpp.desktop

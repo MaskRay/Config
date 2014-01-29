@@ -138,7 +138,7 @@ alias aps='sudo aptitude search'
 alias apu='sudo aptitude update'
 
 alias obj='objdump -M intel'
-alias re='readelf'
+alias re='readelf -W'
 alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0'
 alias xst='xstow -d ~/.local/stow'
 

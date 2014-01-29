@@ -13,7 +13,7 @@ export XMODIFIERS=@im=fcitx
 
 xset s off dpms 600 600 600
 xset r rate 200 50
-xset m 3 3
+xset m 8 3
 
 # tap once: click
 # two twice: right click
@@ -25,6 +25,10 @@ synclient MinSpeed=1.5 MaxSpeed=3.5 AccelFactor=0.1
 
 # scrolling using two fingers
 synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
+
+# GPG agent
+export GPG_TTY=$(tty)
+eval $(gpg-agent --daemon)
 
 ln -sf ~/.vim/.ycm_extra_conf.py /tmp/
 

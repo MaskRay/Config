@@ -180,8 +180,6 @@ nnoremap <leader>jf :JunkFile<cr>
 " Beginning & End
 noremap H ^
 noremap L g_
-inoremap <C-a> <esc>I
-inoremap <C-e> <esc>A
 
 " Open a Quickfix window for the last search.
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
@@ -235,6 +233,10 @@ endfunc
 func! Ruby_init()
   let &makeprg="ruby -c %"
   imap <C-CR> <CR><CR>end<Esc>-cc
+endfunc
+
+func! Fortran_init()
+  let g:fortran_free_source = #1
 endfunc
 
 func! Tex_init()
@@ -344,6 +346,8 @@ if has("gui_running")
   Bundle 'startify'
   Bundle 'splitjoin'
   Bundle 'commentary'
+  Bundle 'eunuch'
+  Bundle 'ZoomWin'
 
   Bundle 'vimside'
 
@@ -370,6 +374,7 @@ if has("gui_running")
   Bundle 'coffee-script'
   Bundle 'jsbeautify'
   Bundle 'tern_for_vim'
+  Bundle 'coloresque'
 
   Bundle 'evanmiller/nginx-vim-syntax'
   Bundle 'markdown'
@@ -383,6 +388,9 @@ if has("gui_running")
   Bundle 'pytest.vim'
 
   Bundle 'emmet'
+  Bundle 'surfer'
 
   filetype plugin indent on    " required!
 endif
+
+let g:fortran_free_source = 1

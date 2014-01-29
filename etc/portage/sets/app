@@ -25,6 +25,7 @@ app-emulation/spice
 sys-block/nbd
 
 # Application - File tools
+app-arch/duff
 app-arch/lrzip
 app-arch/p7zip
 app-arch/zpaq
@@ -74,9 +75,11 @@ media-video/mplayer
 media-video/mpv
 media-sound/mp3unicode
 media-sound/id3tool
+media-sound/sox
 
 # Application - Misc.
 x11-misc/lndir
+app-admin/pass
 app-arch/p7zip
 app-benchmarks/siege
 #app-emulation/libguestfs
@@ -85,6 +88,7 @@ app-misc/dateutils
 app-misc/jot
 app-misc/mtail
 app-misc/remind
+app-misc/supercat
 app-misc/task
 app-misc/toilet
 app-misc/tpipe
@@ -104,6 +108,7 @@ sys-apps/moreutils
 sys-apps/renameutils
 sys-fs/inotify-tools
 sys-fs/sshfs-fuse
+sys-process/watchpid
 www-plugins/google-talkplugin
 
 # Application - TUI misc.

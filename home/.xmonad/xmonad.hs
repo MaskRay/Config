@@ -233,7 +233,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")

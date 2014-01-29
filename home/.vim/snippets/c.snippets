@@ -70,4 +70,16 @@ snippet td "Typedef"
 typedef ${1:int} ${2:MyCustomType};
 endsnippet
 
+snippet omp "#pragma omp"
+#pragma omp
+endsnippet
+
+snippet REP
+#define REP(i, n) FOR(i, 0, n)
+endsnippet
+
+snippet FOR
+#define FOR(i, a, b) for (__typeof(b) i = (a); i < (b); i++)
+endsnippet
+
 # vim:ft=snippets:

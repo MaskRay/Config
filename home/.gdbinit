@@ -37,4 +37,19 @@ define nub
   python nextUntilBreakpoint()
 end
 
+define fs
+  finish
+  step
+end
+
+#
+# C++ related beautifiers (optional)
+#
+
+set print pretty on
+set print object on
+set print static-members on
+set print vtbl on
+set demangle-style gnu-v3
+
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-

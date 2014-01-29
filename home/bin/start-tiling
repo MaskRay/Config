@@ -29,6 +29,8 @@ List.map Sys.command [
   ; pic
   ; "redshift"
   ; "unclutter &"
+  ; "batti &"
+  ; "syndaemon -k &"
   ; "keynav &"
   (*; "dorm u"*)
   ; "emacs --daemon >/dev/null 2>/dev/null"

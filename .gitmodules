@@ -150,3 +150,15 @@
 [submodule "home/.vim/bundle/commentary"]
 	path = home/.vim/bundle/commentary
 	url = https://github.com/tpope/vim-commentary
+[submodule "home/.vim/bundle/eunuch"]
+	path = home/.vim/bundle/eunuch
+	url = https://github.com/tpope/vim-eunuch
+[submodule "home/.vim/bundle/coloresque"]
+	path = home/.vim/bundle/coloresque
+	url = https://github.com/gorodinskiy/vim-coloresque
+[submodule "home/.vim/bundle/ZoomWin"]
+	path = home/.vim/bundle/ZoomWin
+	url = https://github.com/vim-scripts/ZoomWin
+[submodule "home/.vim/bundle/surfer"]
+	path = home/.vim/bundle/surfer
+	url = https://github.com/gcmt/surfer.vim
