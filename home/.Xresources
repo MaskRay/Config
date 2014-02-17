@@ -75,7 +75,8 @@ xterm*utf8Title: true
 xterm*fontMenu*fontdefault*Label: Default
 ! xterm*faceName: Bitstream Vera Sans Mono:bold:antialias=True
 xterm*faceName: Monaco:bold:antialias=true:pixelsize=16
-xterm*faceNameDoublesize: WenQuanYi Micro Hei:bold:antialias=True:pixelsize=18
+!xterm*faceNameDoublesize: WenQuanYi Micro Hei:bold:antialias=True:pixelsize=18
+xterm*faceNameDoublesize: 微軟正黑體:bold:antialias=True:pixelsize=18
 xterm*xftAntialias: true
 
 ! allow selecting email/url by double click
@@ -90,7 +91,8 @@ URxvt.preeditType: Root
 !URxvt.imFont: -misc-wenquanyi micro hei-medium-r-normal--0-0-0-0-p-0-gb18030.2000-0
 URxvt.geometry: 105x45
 URxvt.xftAntialias: true
-URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:WenQuanYi Micro Hei:bold:antialias=True
+!URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:WenQuanYi Micro Hei:bold:antialias=True
+URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:微軟正黑體:bold:antialias=True
 URxvt.searchable-scrollback: false
 
 URxvt.perl-lib: /home/ray/.urxvt/

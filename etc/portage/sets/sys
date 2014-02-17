@@ -28,8 +28,8 @@ sys-fs/squashfs-tools
 sys-fs/sysfsutils
 sys-kernel/module-rebuild
 sys-power/cpupower
-sys-powers/acpi
-sys-powers/acpid
+sys-power/acpi
+sys-power/acpid
 sys-process/at
 sys-process/fcron
 sys-process/htop

@@ -2,9 +2,25 @@
 [[ $EUID -ne 0 ]] && exec sudo "$0" "$@"
 
 f() {
-  device=$(sudo systool -b usb -A product | awk -F"\n" -vRS="\n\n" '$2~/Mouse/{split($1,a,"\"");print a[2]}')
-  echo echo "$1" '>' /sys/bus/usb/devices/$device/power/control
-  echo "$1" > /sys/bus/usb/devices/$device/power/control
+  #for i in /sys/class/input/event*; do
+  #  name="$i/device/name"
+  # See http://www.mattfischer.com/blog/?p=182 for robust solutions
+  #  if grep -si 'usb.*mouse' "$name"; then
+  #    :
+  #  fi
+  #done
+  #exit
+  device=$(sudo systool -b usb -A product | awk -vIGNORECASE=1 -F"\n" -vRS="\n\n" '$2~/usb.*mouse/{split($1,a,"\"");print a[2]}')
+  if [[ -n $device ]]; then
+    echo echo "$1" '>' /sys/bus/usb/devices/$device/power/control
+    echo "$1" > /sys/bus/usb/devices/$device/power/control
+  fi
+
+  device=$(sudo systool -b usb -A product | awk -vIGNORECASE=1 -F"\n" -vRS="\n\n" '$2~/usb.*key.oard/{split($1,a,"\"");print a[2]}')
+  if [[ -n $device ]]; then
+    echo echo "$1" '>' /sys/bus/usb/devices/$device/power/control
+    echo "$1" > /sys/bus/usb/devices/$device/power/control
+  fi
 }
 
 case "$1" in

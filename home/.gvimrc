@@ -30,6 +30,8 @@ set statusline+=%*                            " restore normal highlight
 
 " Autocommands ---------------------------------------- {{{1
 if has("autocmd")
+  au FileType cpp,c :call C_init()
+  au FileType sass :call CSS_init()
   " Markdown ------------------------------------------ {{{2
   autocmd BufNewFile,BufRead *.md setfiletype markdown
   autocmd BufNewFile,BufRead *.iced setfiletype coffee

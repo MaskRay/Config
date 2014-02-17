@@ -89,7 +89,7 @@ app-misc/jot
 app-misc/mtail
 app-misc/remind
 app-misc/supercat
-app-misc/task
+#app-misc/task
 app-misc/toilet
 app-misc/tpipe
 app-text/csvfix

@@ -216,13 +216,18 @@ let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
 func! C_init()
-  set tags+=~/.vim/static/cpp                        " core in cpp
+  setl tags+=~/.vim/static/cpp                        " core in cpp
+  setl dictionary=~/.vim/dict/cpp
   abbr #i #include
   set syntax=cpp11.doxygen
   let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
   syn keyword cppType real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
+endfunc
+
+func! CSS_init()
+  setl dictionary=~/.vim/dict/css
 endfunc
 
 func! JS_init()
@@ -353,7 +358,7 @@ if has("gui_running")
 
   "Bundle 'R-plugin'
 
-  Bundle 'YouCompleteMe'
+  "Bundle 'YouCompleteMe'
   let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
   let g:ycm_key_invoke_completion = "<F5>"
@@ -366,6 +371,7 @@ if has("gui_running")
   let g:ycm_confirm_extra_conf = 0
   let g:ycm_cache_omnifunc = 0
   let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+  let g:ycm_auto_trigger = 0
 
   Bundle 'css3-syntax'
   Bundle 'matchit'
@@ -387,7 +393,7 @@ if has("gui_running")
   Bundle 'jedi'
   Bundle 'pytest.vim'
 
-  Bundle 'emmet'
+  "Bundle 'emmet'
   Bundle 'surfer'
 
   filetype plugin indent on    " required!

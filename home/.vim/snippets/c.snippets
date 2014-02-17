@@ -1,8 +1,8 @@
-snippet inc "#include local header (inc)"
+snippet Inc "#include local header (inc)"
 #include "${1:`!p snip.rv = snip.basename + '.h'`}"
 endsnippet
 
-snippet Inc "#include <> (Inc)"
+snippet inc "#include <> (Inc)"
 #include <${1:.h}>
 endsnippet
 
@@ -62,6 +62,24 @@ int readInt()
 }
 endsnippet
 
+snippet ri
+int ri()
+{
+  int x;
+  scanf("%d", &x);
+  return x;
+}
+endsnippet
+
+snippet rd
+double rd()
+{
+  double x;
+  scanf("%lf", &x);
+  return x;
+}
+endsnippet
+
 snippet edge
 struct Edge { int v; Edge* next; } $0;
 endsnippet
@@ -76,6 +94,10 @@ endsnippet
 
 snippet REP
 #define REP(i, n) FOR(i, 0, n)
+endsnippet
+
+snippet REP1
+#define REP1(i, n) FOR(i, 1, n+1)
 endsnippet
 
 snippet FOR

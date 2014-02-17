@@ -1,0 +1,3 @@
+#%Module
+# http://sourceforge.net/projects/mingwbuilds
+prepend-path PATH /opt/mingw/bin

@@ -7,7 +7,7 @@
 /etc/portage/package.use/cross-*
 ._cfg*
 /home/.local/share/applications/mimeinfo.cache
-/home/.local/share/applications/wine-*
+/home/.local/share/applications/wine*
 /home/.config/newsbeuter/profile
 /home/.config/newsbeuter/urls
 /home/.config/gtk-3.0/bookmarks
