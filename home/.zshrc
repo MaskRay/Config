@@ -100,7 +100,8 @@ setopt numeric_glob_sort        # when globbing numbered files, use real countin
 setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 
-fpath=($HOME/.zsh/site-functions/ $fpath)
+#fpath=($HOME/.zsh/site-functions/ $fpath)
+fpath=($HOME/Util/zsh-completions/src/ $fpath)
 
 # Completion {{{1
 setopt complete_in_word

@@ -18,14 +18,14 @@ dev-lang/php
 dev-lang/mercury
 dev-libs/gdl
 dev-lisp/sbcl
-dev-python/pypy-bin
+#dev-python/pypy-bin
 dev-scheme/guile
 dev-scheme/racket
 sys-devel/clang
 dev-lang/erlang
 net-libs/nodejs
-dev-util/android-ndk
-dev-util/android-sdk-update-manager
+#dev-util/android-ndk
+#dev-util/android-sdk-update-manager
 dev-util/scanmem
 sys-devel/gcc:4.7
 sys-devel/gcc:4.8
@@ -112,15 +112,15 @@ dev-python/twisted-core # for twistd
 dev-python/jedi
 
 # Development - Ruby specific
-dev-ruby/rails
+#dev-ruby/rails
 dev-ruby/nokogiri
 #www-servers/thin
 
 # Electronics
-sci-electronics/geda
-sci-electronics/gtkwave
-sci-electronics/iverilog
-sci-electronics/ngspice
+#sci-electronics/geda
+#sci-electronics/gtkwave
+#sci-electronics/iverilog
+#sci-electronics/ngspice
 
 # Math
 sci-libs/scipy

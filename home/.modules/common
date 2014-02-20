@@ -1,0 +1,10 @@
+if {[string length [info commands lmap]] == 0} {
+  proc lmap {i xs cmd} {
+    upvar $i x
+    set r {}
+    foreach x $xs {
+      lappend r [uplevel "eval $cmd"]
+    }
+    return $r
+  }
+}

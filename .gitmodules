@@ -162,3 +162,6 @@
 [submodule "home/.vim/bundle/surfer"]
 	path = home/.vim/bundle/surfer
 	url = https://github.com/gcmt/surfer.vim
+[submodule "home/Util/zsh-completions"]
+	path = home/Util/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions

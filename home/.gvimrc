@@ -706,11 +706,24 @@ nnoremap <silent> <leader>gb :Gblame<CR>
 nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
 " Unite --- {{{2
-nnoremap <silent> sr :Unite -buffer-name=file -start-insert file_mru<cr>
-nnoremap <silent> sf :Unite -buffer-name=file -start-insert file<cr>
-nnoremap <silent> ss :Unite -buffer-name=buffer -start-insert buffer<cr>
+nnoremap <silent> sr :Unite -no-split -buffer-name=file -start-insert file_mru<cr>
+nnoremap <silent> sf :Unite -no-split -buffer-name=file -start-insert file<cr>
+nnoremap <silent> ss :Unite -no-split -buffer-name=buffer -start-insert buffer<cr>
 "nnoremap <silent> sf :FufBuffer<cr>
-nnoremap <silent> sc :Unite -buffer-name=change change<cr>
+nnoremap <silent> sc :Unite -no-split -buffer-name=change change<cr>
+nnoremap <silent> so :Unite -no-split -buffer-name=outline outline<cr>
+nnoremap <silent> sn :Unite -no-split -quick-match buffer<cr>
+nnoremap <silent> sl :Unite -auto-resize -buffer-name=line line<cr>
+nnoremap <silent> sy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+if executable('ag')
+  let g:unite_source_grep_command='ag'
+  let g:unite_source_grep_default_opts='--nocolor --nogroup -S -C4'
+  let g:unite_source_grep_recursive_opt=''
+elseif executable('ack')
+  let g:unite_source_grep_command='ack'
+  let g:unite_source_grep_default_opts='--no-heading --no-color -C4'
+  let g:unite_source_grep_recursive_opt=''
+endif
 " Cumino --- {{{2
 let g:cumino_buffer_location = "/tmp/.cumini.buff"
 " Eclim --- {{{2

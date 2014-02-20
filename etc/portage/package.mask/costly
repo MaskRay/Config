@@ -1,5 +1,6 @@
 >app-emulation/wine-1.7.8
 >dev-db/mongodb-2.4.9
+>dev-lang/mercury-13.05
 >dev-java/oracle-jdk-bin-1.7.0.51-r1
 >dev-lang/ghc-7.6.3-r1
 >media-gfx/blender-2.69

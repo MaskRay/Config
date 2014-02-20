@@ -60,6 +60,7 @@ alias t=task
 alias g='grep -I'
 alias eg='egrep -I'
 alias df='df -Th'
+alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
 alias du1='du --max-depth 1 | sort -rh | head'
 alias dstat='dstat -dnmcl --socket --top-io -N eth0,wlan0'
