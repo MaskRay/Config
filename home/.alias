@@ -136,6 +136,8 @@ alias pSu='pacaur -Syu'
 alias api='sudo aptitude install'
 alias aps='sudo aptitude search'
 alias apu='sudo aptitude update'
+alias yui='sudo yum install'
+alias yus='sudo yum search'
 
 alias obj='objdump -M intel'
 alias re='readelf -W'
@@ -148,7 +150,8 @@ alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 
 # Gentoo-specific {{{2
-alias eme='sudo emerge'
+SUDO_IFNOT_PREFIX=${EPREFIX:-sudo }
+alias eme="${SUDO_IFNOT_PREFIX}emerge"
 alias peme='sudo proxychains emerge'
 alias ebuildncd=sudo FEATURES='-collision-detect -protected-owned' ebuild
 alias ei='eix -uI --only-names'

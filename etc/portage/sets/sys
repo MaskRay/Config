@@ -9,6 +9,7 @@ app-admin/webalizer
 app-admin/xstow
 app-benchmarks/i7z
 app-laptop/laptop-mode-tools
+app-shells/pdsh
 app-shells/zsh
 net-fs/nfs-utils
 sys-apps/dstat

@@ -29,6 +29,8 @@ export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
+export PAGER='less -s' # squeeze blank lines
+export PYTHONSTARTUP=$HOME/.pythonstartup
 
 # Look {{{1
 PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %F{white}'
@@ -42,7 +44,7 @@ else if [[ -f $HOME/.lscolor ]];
 fi
 
 # fasd {{{1
-eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install       zsh-wcomp zsh-wcomp-install)"
+eval "$(fasd --init posix-alias zsh-hook zsh-wcomp zsh-wcomp-install)"
 bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
 bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
 bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
@@ -51,10 +53,13 @@ if [[ -n $MYSELF ]]; then
 else
   alias v='fasd -fe vim'
 fi
+alias j='fasd_cd -d'
+alias jj='fasd_cd -d -i'
+alias o='f -fe xdg-open'
 
 # Options {{{1
 # History {{{2
-HISTSIZE=10000
+HISTSIZE=100000
 SAVEHIST=10000
 HISTFILE=~/.history/zsh
 unsetopt flowcontrol
@@ -104,48 +109,104 @@ setopt nonomatch
 fpath=($HOME/Util/zsh-completions/src/ $fpath)
 
 # Completion {{{1
-setopt complete_in_word
-setopt always_to_end
-#   zsytle ':completion:*:completer:context or command:argument:tag'
-zmodload -i zsh/complist        # for menu-list completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" "ma=${${use_256color+1;7;38;5;143}:-1;7;33}"
-#ignore list in completion
-zstyle ':completion:*' ignore-parents parent pwd directory
-#menu selection in completion
-zstyle ':completion:*' menu select=2
-#zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*' completer _oldlist _expand _complete _match #_user_expand
+autoload -U compinit
+compinit
+setopt AUTO_LIST
+setopt AUTO_MENU
+setopt MENU_COMPLETE
+setopt complete_in_word   # complete /v/c/a/p
+setopt no_nomatch		  # enhanced bash wildcard completion
+setopt magic_equal_subst
+setopt noautoremoveslash
+setopt null_glob
+
+# ignore the current directory
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+
+zstyle ':completion:*' use-cache true
+zstyle ':completion::complete:*' cache-path .zcache
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' menu select
+zstyle ':completion:*:*:default' force-list always
+zstyle ':completion:*' select-prompt '%SSelect:  lines: %L  matches: %M  [%p]'
 zstyle ':completion:*:match:*' original only
+zstyle ':completion::prefix-1:*' completer _complete
+zstyle ':completion:predict:*' completer _complete
+zstyle ':completion:incremental:*' completer _complete _correct
+
+# Path Completion
+zstyle ':completion:*' expand 'yes'
+zstyle ':completion:*' squeeze-shlashes 'yes'
+zstyle ':completion::complete:*' '\\'
+
+# Colorful Completion
+eval $(dircolors -b)
+export ZLSCOLORS="${LS_COLORS}"
+zmodload zsh/complist
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+export LS_COLORS="$LS_COLORS*.f4v=01;35:*.pdf=01;35:*.djvu=01;35:"		# add custom ls_color
+
+# Fix case and typo
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
-## case-insensitive (uppercase from lowercase) completion
-zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
-### case-insensitive (all) completion
-#zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:*:*:*:processes' force-list always
-zstyle ':completion:*:processes' command 'ps -au$USER'
-zstyle ':completion:*:*:kill:*:processes' list-colors "=(#b) #([0-9]#)*=36=1;31"
-#use cache to speed up pacman completion
-zstyle ':completion::complete:*' use-cache 1
-#zstyle ':completion::complete:*' cache-path .zcache
-#group matches and descriptions
+
+# Grouping Completion
 zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:options' auto-description '%d'
-zstyle ':completion:*:descriptions' format $'\e[33m == \e[1;7;36m %d \e[m\e[33m ==\e[m'
-zstyle ':completion:*:messages' format $'\e[33m == \e[1;7;36m %d \e[m\e[0;33m ==\e[m'
-zstyle ':completion:*:warnings' format $'\e[33m == \e[1;7;31m No Matches Found \e[m\e[0;33m ==\e[m'
-zstyle ':completion:*:corrections' format $'\e[33m == \e[1;7;37m %d (errors: %e) \e[m\e[0;33m ==\e[m'
-# dabbrev for zsh!! M-/ M-,
-zstyle ':completion:*:history-words' stop yes
-zstyle ':completion:*:history-words' remove-all-dups yes
-zstyle ':completion:*:history-words' list false
-zstyle ':completion:*:history-words' menu yes select
+zstyle ':completion:*:descriptions' format $'\e[01;33m -- %d --\e[0m'
+#zstyle ':completion:*:messages' format $'\e[01;35m -- %d --\e[0m'
+#zstyle ':completion:*:warnings' format $'\e[01;31m -- No Matches Found --\e[0m'
+#zstyle ':completion:*:corrections' format $'\e[01;32m -- %d (errors: %e) --\e[0m'
 
-#autoload -U compinit
-autoload -Uz compinit
-compinit
+# huge list
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*:default' menu 'select=0'
+# Completing order
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+zstyle ':completion:*' completer _complete _prefix _user_expand _correct _prefix _match
+# newer file first
+#zstyle ':completion:*' file-sort modification reverse
+# Separate man page sections.
+zstyle ':completion:*:manuals' separate-sections true
+# complete with a menu for xwindow ids
+#zstyle ':completion:*:windows' menu on=0
+#zstyle ':completion:*:expand:*' tag-order all-expansions
+
+#kill completion
+compdef pkill=kill
+compdef pkill=killall
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:*:*:*:processes' force-list always
+zstyle ':completion:*:processes' command 'ps -au$USER '
+
+# vim ignore
+zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(avi|mkv|rmvb|pyc|wmv)'
+
+# ... completion
+user_complete(){
+	if [[ -z $BUFFER ]]; then
+		return
+	fi
+	if [[ $BUFFER =~ "^\.\.\.*$" ]]; then
+		BUFFER=`echo "$BUFFER" |sed 's/^/cd\ /g'`
+		zle end-of-line
+		user_complete
+		return
+	elif [[ $BUFFER =~ ".*\.\.\..*$" ]] ;then
+		BUFFER=`echo "$BUFFER" |sed 's/\.\.\./\.\.\/\.\./g'`
+		zle end-of-line
+		user_complete
+		return
+	fi
+	zle expand-or-complete
+	#recolor-cmd
+}
+zle -N user_complete
+bindkey "\t" user_complete
+autoload compinstall
 
 bindkey -M menuselect '^o' accept-and-infer-next-history
 
@@ -247,15 +308,21 @@ bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fo
 . /home/ray/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
 # Pinyin Completion
-[[ -d $HOME/.zsh/Pinyin-Completion ]] && source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh && export PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin
-
-export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/ray/perl5";
-export PERL_MB_OPT="--install_base /home/ray/perl5";
-export PERL_MM_OPT="INSTALL_BASE=/home/ray/perl5";
-export PERL5LIB="/home/ray/perl5/lib/perl5:$PERL5LIB";
-export PATH="/home/ray/perl5/bin:$PATH";
+if [[ -d $HOME/.zsh/Pinyin-Completion ]]; then
+  PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin
+  source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh
+fi
 
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby ghc texlive
+module load ruby ghc perl texlive
+
+# rvm
+[[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
+
+# nvm
+[[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
+
+# opam
+. $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

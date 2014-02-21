@@ -69,6 +69,7 @@
   autosetuprebase = always
 [color]
   ui = true
+  diff = always
   status = auto
   grep = always
 [color "branch"]
