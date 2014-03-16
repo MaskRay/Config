@@ -1,10 +1,19 @@
 #!/bin/bash -e
 
-files=$(git ls-files)
+files=$(git ls-files | grep -v '\.ssh')
 target=~
 
 link() {
   ln -sf "$PWD/$1" "$2"
+}
+
+do_ssh() {
+  cp -rT home/.ssh ~/.ssh
+  chmod 700 ~/.ssh
+}
+
+do_mkdir() {
+  mkdir -p ~/{.vimtmp,.history,tmp}
 }
 
 for f in $files; do
@@ -36,3 +45,6 @@ for f in $files; do
     link "$f" "$g"
   fi
 done
+
+do_ssh
+do_mkdir

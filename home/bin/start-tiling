@@ -26,7 +26,8 @@ List.map Sys.command [
   (* one-shot *)
   ; "xrandr | grep -q HDMI && { xrandr --output LVDS1 --mode 1366x768 -s 1920x1080 --output HDMI1 --mode 1920x1080 --right-of LVDS1 ; }"
   ; "xrdb ~/.Xresources"
-  ; pic
+  (*; pic*)
+  ; "change-wallpaper"
   ; "redshift"
   ; "unclutter &"
   ; "batti &"

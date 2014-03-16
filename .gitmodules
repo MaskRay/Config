@@ -165,3 +165,6 @@
 [submodule "home/Util/zsh-completions"]
 	path = home/Util/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions
+[submodule "home/.vim/bundle/fswitch"]
+	path = home/.vim/bundle/fswitch
+	url = https://github.com/derekwyatt/vim-fswitch

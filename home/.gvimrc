@@ -480,6 +480,7 @@ let g:notes_title_sync = 'no'
 " PinyinSearch --- {{{2
 let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
 nnoremap <Leader>ps :call PinyinSearch()<CR>
+nnoremap <Leader>pn :call PinyinNext()<CR>
 
 " py.test --------------------------------------------- {{{2
 " http://www.vim.org/scripts/script.php?script_id=3424
@@ -758,7 +759,7 @@ nnoremap <Leader>q :call QFixToggle()<CR>
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
 if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+  command DiffOrig vnew | setlocal bt=nofile bh=wipe nobl noswf | r ++edit # | 0d_ | diffthis
 		  \ | wincmd p | diffthis
 endif
 

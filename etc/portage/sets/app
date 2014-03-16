@@ -18,10 +18,11 @@ app-text/goldendict
 
 # Application - Emulation
 app-emulation/lxc
+app-emulation/q4wine
 app-emulation/qemu
 app-emulation/qemu-user
-app-emulation/wine
 app-emulation/spice
+app-emulation/wine
 sys-block/nbd
 
 # Application - File tools

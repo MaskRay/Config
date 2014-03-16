@@ -28,13 +28,21 @@ set scrolloff=3 scrolljump=5
 set sidescroll=10 sidescrolloff=20
 set switchbuf=useopen
 "set ignorecase smartcase
-set ttimeoutlen=100
+set timeoutlen=300
+set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
 "au FileType c,cpp,java set mps+==:;
 
-set backup
-set backupdir=~/tmp,/var/tmp,/tmp
-set directory=~/tmp,/var/tmp,/tmp
+"set backup
+"set backupdir=~/tmp,/var/tmp,/tmp
+"set directory=~/tmp,/var/tmp,/tmp
+set nobackup noswapfile
+if has('persistent_undo')
+  set undofile
+  set undolevels=200
+  set undodir=~/.vimtmp/undo
+end
+set viminfo+=n~/.vimtmp/viminfo
 
 " set backspace=indent,eol,start
 set history=200
@@ -195,6 +203,24 @@ vnoremap > >gv
 nnoremap <C-Tab> :bn<cr>
 nnoremap <C-S-Tab> :bp<cr>
 
+xnoremap <C-c> "+y
+inoremap <C-v> <esc>:se paste<cr>"+p:se nopaste<cr>i
+
+" insert word of the line above
+inoremap <C-Y> <C-C>:let @z = @"<CR>mz
+           \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
+           \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
+           \`zp:let @" = @z<CR>a
+
+au BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \   exe "normal g`\"" |
+      \ endif
+
+nnoremap <Leader>cp :!xsel -ib < %<cr><cr>
+nnoremap <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
+nnoremap <leader>ig :IndentLinesToggle<cr>:se list!<cr>
+
 " ; :
 nnoremap ; :
 nnoremap : ;
@@ -211,6 +237,13 @@ cmap w!! w !sudo tee % >/dev/null
 
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
+
+au BufEnter *.cpp let b:fswitchdst = 'hh,h' | let b:fswitchlocs = './,../include'
+au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
+au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+command! A FSHere
+command! AV FSSplitRight
 
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
@@ -322,6 +355,12 @@ nnoremap <Leader>mk :call Make()<CR>
 
 nmap <Leader>nw :set wrap!<CR>
 
+au BufNewFile,BufRead *.txt,*.doc,*.pdf setl ft=txt
+au BufReadPre *.doc,*.class,*.pdf setl ro
+au BufReadPost *.doc silent %!antiword "%"
+au BufRead *.class exe 'silent %!javap -c "%"' | setl ft=java
+au BufReadPost *.pdf silent %!pdftotext -nopgbrk "%" -
+
 " Plugins --------------------------------------------- {{{1
 " Vundle ---------------------------------------------- {{{2
 if has("gui_running")
@@ -353,6 +392,8 @@ if has("gui_running")
   Bundle 'commentary'
   Bundle 'eunuch'
   Bundle 'ZoomWin'
+  Bundle 'indentLine'
+  Bundle 'fswitch'
 
   Bundle 'vimside'
 

@@ -232,7 +232,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64"])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -327,6 +327,7 @@ myKeys =
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
+    , ("M-m", spawn "menu")
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)

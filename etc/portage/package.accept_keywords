@@ -13,3 +13,5 @@
 =app-i18n/rime-data-9999 **
 
 =app-shells/zsh-completion-99999999 **
+=app-emulation/qemu-1.7.0 **
+=net-misc/socat-2.0.0_beta7 **

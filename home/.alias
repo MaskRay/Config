@@ -59,6 +59,7 @@ alias L=less
 alias t=task
 alias g='grep -I'
 alias eg='egrep -I'
+alias off='LANG=C grep -Pabo'
 alias df='df -Th'
 alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
@@ -139,7 +140,7 @@ alias apu='sudo aptitude update'
 alias yui='sudo yum install'
 alias yus='sudo yum search'
 
-alias obj='objdump -M intel'
+alias od='objdump -M intel'
 alias re='readelf -W'
 alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0'
 alias xst='xstow -d ~/.local/stow'
@@ -150,7 +151,11 @@ alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 
 # Gentoo-specific {{{2
-SUDO_IFNOT_PREFIX=${EPREFIX:-sudo }
+if [[ -n "$EPREFIX" ]]; then
+  SUDO_IFNOT_PREFIX=
+else
+  SUDO_IFNOT_PREFIX='sudo '
+fi
 alias eme="${SUDO_IFNOT_PREFIX}emerge"
 alias peme='sudo proxychains emerge'
 alias ebuildncd=sudo FEATURES='-collision-detect -protected-owned' ebuild

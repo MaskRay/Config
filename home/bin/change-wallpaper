@@ -1,7 +1,12 @@
 #!/usr/bin/env ocaml
+open Printf;;
 
 Random.self_init ();;
 
 (* randomly choose a wallpaper *)
-let pics = Sys.readdir "/home/ray/Wallpapers";;
-Sys.command ("feh --bg-scale /home/ray/Wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &")
+let pics = Sys.readdir "/home/ray/Wallpapers" in
+let s = "/home/ray/Wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) in
+let oc = open_out "/tmp/wallpaper" in
+fprintf oc "wallpaper: %s\n" s;
+close_out oc;
+Sys.command ("feh --bg-scale " ^ s ^ " &")
