@@ -1,0 +1,10 @@
+[Unit]
+Description=MAC spoof %I
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "/bin/ip link set dev %i address 00:`openssl rand -hex 5|sed 's=\(..\)=\1:=g;s:.$::'`"
+ExecStart=/bin/ip link set dev %i up
+
+[Install]
+WantedBy=network.target

@@ -13,7 +13,13 @@ do_ssh() {
 }
 
 do_mkdir() {
-  mkdir -p ~/{.vimtmp,.history,tmp}
+  mkdir -p ~/{.vimtmp/undo,.history,tmp}
+  ln -s /tmp/.distcc -t ~
+}
+
+do_git() {
+  git submodule init
+  git submodule update
 }
 
 for f in $files; do
@@ -48,3 +54,4 @@ done
 
 do_ssh
 do_mkdir
+do_git

@@ -1,16 +1,17 @@
 # System tools
 app-admin/augeas
+app-admin/clustershell
 app-admin/lnav
 app-admin/logrotate
 app-admin/sudo
 app-admin/supervisor
-app-admin/syslog-ng
 app-admin/webalizer
 app-admin/xstow
 app-benchmarks/i7z
 app-laptop/laptop-mode-tools
 app-shells/pdsh
 app-shells/zsh
+dev-libs/libcgroup
 net-fs/nfs-utils
 sys-apps/dstat
 sys-apps/etckeeper
@@ -22,6 +23,7 @@ sys-apps/pciutils
 sys-apps/smartmontools
 sys-apps/systemd-units
 sys-apps/usbutils
+sys-fs/bindfs
 sys-fs/dosfstools
 sys-fs/ntfs3g
 sys-fs/reiserfsprogs

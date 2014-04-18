@@ -6,3 +6,4 @@ app-portage/genlop
 app-portage/gentoolkit
 app-portage/gentoolkit-dev
 app-portage/layman
+app-portage/portage-utils

@@ -145,6 +145,7 @@ myManageHook = composeAll $
     [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer", "Wpp"] ] ++
+    [ appName =? c --> doShift "doc" | c <- ["idaq.exe", "idaq64.exe"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++

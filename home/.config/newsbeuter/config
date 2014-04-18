@@ -11,6 +11,7 @@ refresh-on-startup yes
 
 # Sources {{{1
 urls-source "local"
+reload-threads 20
 
 # Theme {{{1
 color listnormal color244 default

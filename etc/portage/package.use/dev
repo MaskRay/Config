@@ -1,4 +1,5 @@
 # Development - Programming languages and environments
+sys-devel/gcc fortran mudflap graphite
 dev-lang/erlang emacs hipe
 dev-lang/python sqlite
 dev-lang/swi-prolog gmp

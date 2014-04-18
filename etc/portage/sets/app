@@ -81,7 +81,6 @@ media-sound/sox
 # Application - Misc.
 x11-misc/lndir
 app-admin/pass
-app-arch/p7zip
 app-benchmarks/siege
 #app-emulation/libguestfs
 app-misc/colordiff
@@ -123,7 +122,7 @@ app-misc/ranger
 
 # Application - WWW
 www-client/firefox-bin
-www-client/google-chrome
+www-client/google-chrome-beta
 www-client/w3m
 www-client/weboob
 www-plugins/adobe-flash

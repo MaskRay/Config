@@ -130,7 +130,7 @@ endif
 " Misc --------------------- {{{1
 " nnoremap zz zz:nohls<CR>
 nnoremap <silent> <C-l> :nohls<cr><C-l>
-nnoremap <Leader>a :Ag
+nnoremap <Leader>a :Ag<space>
 nnoremap <Leader>p "+p<CR>
 nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
@@ -228,7 +228,7 @@ vnoremap ; :
 vnoremap : ;
 
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
-nnoremap <S-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+nnoremap <S-F12> :!gtags && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " Command-line editing
 cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
@@ -254,7 +254,7 @@ func! C_init()
   abbr #i #include
   set syntax=cpp11.doxygen
   let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
-  syn keyword cppType real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
+  syn keyword cppType u real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
 endfunc
@@ -288,6 +288,7 @@ func! Tex_init()
     setl sw=2 sts=2 expandtab
     setl textwidth=150
     setl errorformat=aaaaaaa                        " disable quickfix
+    setl fo-=q
 
     inoremap <buffer> $$ $<Space>$<Left>
     inoremap <buffer> " ``''<Left><Left>

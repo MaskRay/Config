@@ -3,6 +3,6 @@ Name=wps
 Type=Application
 Comment=
 Terminal=false
-Exec=/opt/kingsoft-office_9.1.0.4244~a12p3_x86/wps %F
+Exec=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/wps %F
 Categories=Office;
 MimeType=application/msword;application/vnd.openxmlformats-officedocument.wordprocessingml.document;

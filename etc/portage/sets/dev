@@ -42,12 +42,13 @@ dev-util/glade
 app-emacs/auctex
 
 # Development - VCS
+dev-vcs/bzr
 dev-vcs/darcs
 dev-vcs/git
 dev-vcs/git-annex
 dev-vcs/mercurial
+dev-vcs/mr
 dev-vcs/tig
-dev-vcs/bzr
 
 # Development - Tools
 app-doc/doxygen

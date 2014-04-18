@@ -15,7 +15,7 @@ LOCAL=$HOME/.local
 
 alias p6=ping6
 alias d='dirs -v'
-alias cp='cp -irv'
+alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
 alias pg='pgrep --full --list-full'
@@ -25,6 +25,8 @@ alias xi=xinit
 alias pa=parallel
 alias wee=weechat-curses
 
+alias mtr='sudo mtr --curses'
+
 alias l="ls -l"
 alias diff='colordiff'
 alias la='l -A'
@@ -32,8 +34,6 @@ alias lh='l -lh'
 alias which='which -a'
 
 alias mc='make clean'
-alias mr='make run'
-alias mt='make test'
 alias tmuxa='tmux a || tmux new -s default'
 
 alias o='fasd -fe xdg-open'
@@ -75,14 +75,15 @@ alias 2csv='libreoffice --headless --convert-to csv'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias ntp='sudo /etc/init.d/ntp-client start'
+alias mt=multitail
 #alias luit='luit -encoding gbk'
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias pwget='proxychains wget'
 alias pyftp='python2 -m pyftpdlib'
-alias wps=/opt/kingsoft-office_9.1.0.4244~a12p3_x86/wps
-alias wpp=/opt/kingsoft-office_9.1.0.4244~a12p3_x86/wpp
-alias et=/opt/kingsoft-office_9.1.0.4244~a12p3_x86/et
+#alias wps=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/wps
+#alias wpp=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/wpp
+#alias et=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/et
 alias prx='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
 alias xi=xinit -- -nolisten tcp
@@ -140,10 +141,12 @@ alias apu='sudo aptitude update'
 alias yui='sudo yum install'
 alias yus='sudo yum search'
 
-alias od='objdump -M intel'
+alias ob='objdump -M intel'
 alias re='readelf -W'
-alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0'
+alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias xst='xstow -d ~/.local/stow'
+alias st=strace
+alias lt=ltrace
 
 alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
 alias xor=~/Dev/Crypto/xortool/xortool.py

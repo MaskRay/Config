@@ -1,0 +1,97 @@
+--recurse=yes
+--tag-relative=yes
+--totals=yes
+--fields=+l
+--extra=+f
+--exclude=.bundle
+--exclude=.git
+--exclude=.vagrant
+--exclude=*.min.js
+--exclude=log
+--exclude=logs
+--exclude=public/javascripts/chosen
+--exclude=public/javascripts/ckeditor
+--exclude=public/javascripts/jquery*
+--exclude=public/javascripts/livevalidation*
+--exclude=public/stylesheets/chosen
+--exclude=public/stylesheets/jquery*
+--exclude=sass-cache
+--exclude=tmp
+--exclude=vendor
+--exclude=*.html
+--exclude=*.haml
+--exclude=Makefile
+--exclude=*.yml
+--exclude=README
+
+--exclude=db/migrate
+--exclude=test
+--exclude=spec
+--exclude=Rakefile
+--exclude=Gemfile
+--exclude=Gemfile.lock
+--regex-ruby=/(^|;)[ \t]*(class|module)[ \t]+([A-Z][[:alnum:]_]+(::[A-Z][[:alnum:]_]+)+)/\3/c,class,constant/
+--regex-ruby=/(^|[:;])[ \t]*([A-Z][[:alnum:]_]+) *=/\2/c,class,constant/
+--regex-ruby=/(^|;)[ \t]*(has_many|belongs_to|has_one|has_and_belongs_to_many)\(? *:([[:alnum:]_]+)/\3/f,function,association/
+--regex-ruby=/(^|;)[ \t]*(named_)?scope\(? *:([[:alnum:]_]+)/\3/f,function,named_scope/
+--regex-ruby=/(^|;)[ \t]*expose\(? *:([[:alnum:]_]+)/\2/f,function,exposure/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2/f,function,aasm_event/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2!/f,function,aasm_event/
+--regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2?/f,function,aasm_event/
+
+--langdef=markdown
+--langmap=markdown:.md.mdown.mkdown.markdown
+--regex-markdown=/^# (.*)(#)?/\1/1,header1/
+--regex-markdown=/^#{2} (.*)(#{2})?/\1/2,header2/
+--regex-markdown=/^#{3} (.*)(#{3})?/\1/3,header3/
+--regex-markdown=/^#{4} (.*)(#{4})?/\1/4,header4/
+--regex-markdown=/^#{5} (.*)(#{5})?/\1/5,header5/
+--regex-markdown=/^#{6} (.*)(#{6})?/\1/6,header6/
+--regex-markdown=/^#{7} (.*)(#{7})?/\1/7,header7/
+
+--langdef=coffee
+--langmap=coffee:.coffee
+--regex-coffee=/(^|=[ \t])*class ([A-Za-z_][A-Za-z0-9_]+\.)*([A-Za-z_][A-Za-z0-9_]+)( extends ([A-Za-z][A-Za-z0-9_.]*)+)?$/\3/c,class/
+--regex-coffee=/^[ \t]*(module\.)?(exports\.)?@?(([A-Za-z][A-Za-z0-9_.]*)+):.*[-=]>.*$/\3/m,method/
+--regex-coffee=/^[ \t]*(module\.)?(exports\.)?(([A-Za-z][A-Za-z0-9_.]*)+)[ \t]*=.*[-=]>.*$/\3/f,function/
+--regex-coffee=/^[ \t]*(([A-Za-z][A-Za-z0-9_.]*)+)[ \t]*=[^->\n]*$/\1/v,variable/
+--regex-coffee=/^[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)[ \t]*=[^->\n]*$/\1/f,field/
+--regex-coffee=/^[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+):[^->\n]*$/\1/f,static field/
+--regex-coffee=/^[ \t]*(([A-Za-z][A-Za-z0-9_.]*)+):[^->\n]*$/\1/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?/\3/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){0}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){1}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){2}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){3}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){4}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){5}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){6}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){7}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){8}/\8/f,field/
+--regex-coffee=/((constructor|initialize):[ \t]*\()@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?(,[ \t]*@(([A-Za-z][A-Za-z0-9_.]*)+)([ \t]*=[ \t]*[^,)]+)?){9}/\8/f,field/'
+
+--langdef=css
+--langmap=css:.css
+--regex-css=/^[ \t]*\.([A-Za-z_][A-Za-z0-9_:"' \t\-]*)[ \t]*\{/.\1/c,class/
+--regex-css=/^[ \t]*\.([A-Za-z_][A-Za-z0-9_:"' \t\-]*)[ \t]*,/.\1/c,class/
+--regex-css=/,[ \t]*\.([A-Za-z_][A-Za-z0-9_:"' \t\-]*)[ \t]*\{/.\1/c,class/
+--regex-css=/,[ \t]*\.([A-Za-z_][A-Za-z0-9_:"' \t\-]*)[ \t]*,/.\1/c,class/
+--regex-css=/^[ \t]*#([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*\{/#\1/o,object/
+--regex-css=/^[ \t]*#([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*,/#\1/o,object/
+--regex-css=/,[ \t]*#([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*\{/#\1/o,object/
+--regex-css=/,[ \t]*#([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*,/#\1/o,object/
+--regex-css=/^[ \t]*([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*\{/\1/t,tags/
+--regex-css=/^[ \t]*([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*,/\1/t,tags/
+--regex-css=/,[ \t]*([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*\{/\1/t,tags/
+--regex-css=/,[ \t]*([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*,/\1/t,tags/
+--regex-css=/^[ \t]*\*[ \t]*[,{]/*/t,tags/
+
+--langdef=R
+--langmap=R:.R.r
+--regex-R=/^[ \t]*"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t]function/\1/f,Functions/
+--regex-R=/^"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/g,GlobalVars/ 
+--regex-R=/[ \t]"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/v,FunctionVariables/
+
+--langdef=snippets
+--langmap=snippets:.snippets
+--regex-snippets=/^snippet (.*)/\1/s,snippet/

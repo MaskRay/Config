@@ -1,0 +1,5 @@
+/* Add binding set to disable F10 context menu */
+@binding-set NoF10 {unbind "F10"}
+
+/* Apply binding set to all widgets */
+* {gtk-key-bindings: NoF10}

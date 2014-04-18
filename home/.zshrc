@@ -263,7 +263,7 @@ hash -d up=/usr/portage
 hash -d ep=/etc/portage
 hash -d vl=/var/lib
 hash -d vl=/var/lib
-hash -d as=~/Assignment/2013aut
+hash -d as=~/Assignment/2014spr
 
 # Application-specific {{{2
 . ~/.alias
@@ -316,7 +316,7 @@ fi
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby ghc perl texlive
+module load ruby ghc perl texlive wps
 
 # rvm
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
@@ -326,3 +326,14 @@ module load ruby ghc perl texlive
 
 # opam
 . $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+
+
+bindkey  "${terminfo[khome]}"    beginning-of-line
+bindkey  "${terminfo[kend]}"     end-of-line
+bindkey  "${terminfo[kich1]}"    overwrite-mode
+bindkey  "${terminfo[kbs]}"      backward-delete-char # original: kbs=^H (\177, Debian)
+bindkey  "${terminfo[kcuu1]}"    up-line-or-history
+bindkey  "${terminfo[kcud1]}"    down-line-or-history
+bindkey  "${terminfo[kcub1]}"    backward-char
+bindkey  "${terminfo[kcuf1]}"    forward-char
+bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
