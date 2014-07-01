@@ -1,10 +1,10 @@
->app-emulation/wine-1.7.13
+>app-emulation/wine-1.7.19-r1
 >dev-db/mongodb-2.4.9
 >dev-lang/mercury-13.05
 >dev-java/oracle-jdk-bin-1.7.0.51-r1
 >dev-lang/ghc-7.6.3-r1
 >media-gfx/blender-2.69
->net-libs/webkit-gtk-2.2.4-r200
->sys-devel/gcc-4.8.2-r1
->sys-devel/llvm-3.4
+>net-libs/webkit-gtk-2.2.6-r200
+>sys-devel/gcc-4.9.0
+>syxs-devel/llvm-3.4.1-r1
 >sys-libs/glibc-2.18-r1

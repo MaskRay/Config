@@ -1,1 +1,2 @@
 set ftp:list-options -a
+set bmk:save-passwords

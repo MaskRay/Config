@@ -204,7 +204,7 @@ nnoremap <C-Tab> :bn<cr>
 nnoremap <C-S-Tab> :bp<cr>
 
 xnoremap <C-c> "+y
-inoremap <C-v> <esc>:se paste<cr>"+p:se nopaste<cr>i
+"inoremap <C-v> <esc>:se paste<cr>"+p:se nopaste<cr>i
 
 " insert word of the line above
 inoremap <C-Y> <C-C>:let @z = @"<CR>mz
@@ -271,6 +271,9 @@ endfunc
 func! Ruby_init()
   let &makeprg="ruby -c %"
   imap <C-CR> <CR><CR>end<Esc>-cc
+  nnoremap <silent><buffer> ]] :RubyJumpForward<cr>
+  nnoremap <silent><buffer> [[ :RubyJumpBackward<cr>
+  nnoremap <silent><buffer> ]<space> :RubyJump<cr>
 endfunc
 
 func! Fortran_init()
@@ -283,12 +286,11 @@ func! Tex_init()
 
     setl nocursorline                                " for performance
     hi clear Conceal
-    let &conceallevel=has("gui_running") ? 1: 2        " conceal problem for gvim
-    setl concealcursor=
     setl sw=2 sts=2 expandtab
     setl textwidth=150
     setl errorformat=aaaaaaa                        " disable quickfix
     setl fo-=q
+    setl cole=0
 
     inoremap <buffer> $$ $<Space>$<Left>
     inoremap <buffer> " ``''<Left><Left>
@@ -395,8 +397,9 @@ if has("gui_running")
   Bundle 'ZoomWin'
   Bundle 'indentLine'
   Bundle 'fswitch'
+  Bundle 'polyglot'
 
-  Bundle 'vimside'
+  "Bundle 'vimside'
 
   "Bundle 'R-plugin'
 
@@ -420,7 +423,6 @@ if has("gui_running")
   Bundle 'stylus'
   Bundle 'jade'
   Bundle 'coffee-script'
-  Bundle 'jsbeautify'
   Bundle 'tern_for_vim'
   Bundle 'coloresque'
 
@@ -428,6 +430,7 @@ if has("gui_running")
   Bundle 'markdown'
 
   Bundle 'vim-ruby'
+  Bundle 'rubyjump'
   Bundle 'vim-rails'
   Bundle 'slim'
 

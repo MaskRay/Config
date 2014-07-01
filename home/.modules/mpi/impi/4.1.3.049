@@ -1,0 +1,17 @@
+#%Module
+source $env(MODULEPATH)/common
+conflict openmpi
+
+proc setL {args} {
+  prepend-path -delim " " LDFLAGS [lmap i $args {set _dummy -L$i}]
+  #prepend-path LD_RUN_PATH [join $args :]  icc does not seem to recognize LD_RUN_PATH flags
+  prepend-path LD_LIBRARY_PATH [join $args :]
+}
+
+set root $env(HOME)/.local/opt/intel/impi/4.1.3.049
+setenv I_MPI_ROOT $root
+set main $root/intel64
+
+prepend-path PATH $main/bin
+setL $main/lib
+prepend-path MANPATH /home/ray/.local/opt/intel/impi/4.1.3.049/man

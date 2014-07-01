@@ -168,3 +168,6 @@
 [submodule "home/.vim/bundle/fswitch"]
 	path = home/.vim/bundle/fswitch
 	url = https://github.com/derekwyatt/vim-fswitch
+[submodule "home/.vim/bundle/polyglot"]
+	path = home/.vim/bundle/polyglot
+	url = https://github.com/sheerun/vim-polyglot

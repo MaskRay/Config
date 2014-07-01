@@ -27,6 +27,7 @@ sys-fs/bindfs
 sys-fs/dosfstools
 sys-fs/ntfs3g
 sys-fs/reiserfsprogs
+sys-fs/simple-mtpfs
 sys-fs/squashfs-tools
 sys-fs/sysfsutils
 sys-kernel/module-rebuild

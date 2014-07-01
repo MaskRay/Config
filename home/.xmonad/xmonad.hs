@@ -232,9 +232,9 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "urxvtc" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Google-chrome' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -346,15 +346,15 @@ myKeys =
 
 scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
-  [ NS "utop" "urxvtc -T utop -e rlwrap utop" (title =? "utop") doSPFloat
-  , NS "task" "urxvtc -T task -e rlwrap task shell" (title =? "task") doSPFloat
+  [ NS "utop" "urxvt -T utop -e rlwrap utop" (title =? "utop") doSPFloat
+  , NS "task" "urxvt -T task -e rlwrap task shell" (title =? "task") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
-  , NS "eix-sync" "urxvtc -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
-  , NS "getmail" "urxvtc -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
+  , NS "getmail" "urxvt -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   ]
   where
-    urxvt prog = ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+    urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
     f s = NS s (urxvt s) (title =? s) doSPFloat
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
@@ -366,7 +366,7 @@ scratchpads =
 
 {-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
 myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
-    { terminal           = "urxvtc"
+    { terminal           = "urxvt"
     , focusFollowsMouse  = False
     , borderWidth        = 1
     , modMask            = mod4Mask
@@ -526,7 +526,7 @@ myTopics =
     , TI "net" "" (return ()) "gtk-network.xpm"
     ]
   where
-    urxvt prog = spawn . ("urxvtc -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+    urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 
 
 myCommands =

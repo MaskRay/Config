@@ -5,7 +5,7 @@ set confirm off
 set verbose off
 
 set history save on
-set history size 10000
+set history size 100000
 set history filename ~/.history/gdb
 set disassembly-flavor intel
 #set output-radix 16

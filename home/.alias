@@ -99,6 +99,8 @@ alias xsel='xsel -l /dev/null'
 alias eclimd=$LOCAL/opt/eclipse/eclimd
 alias wine='WINEDEBUG=-all wine'
 alias ctag='ctags -R --c++-kinds=+p --fields=+iaS --extra=+q'
+alias perf='sudo perf'
+alias mtp='simple-mtpfs /media'
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 
@@ -118,6 +120,8 @@ alias gb='git branch'
 alias gc='git checkout'
 alias gr='git remote'
 alias gcl='git clone'
+
+alias rspec='spring rspec --color'
 
 alias mount='sudo mount'
 alias umount='sudo umount'
@@ -165,6 +169,7 @@ alias ebuildncd=sudo FEATURES='-collision-detect -protected-owned' ebuild
 alias ei='eix -uI --only-names'
 alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
 alias disp='sudo dispatch-conf'
+alias book='cd ~/Book && xdg-open http://0:4000; gitbook serve -o /tmp/book'
 
 alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
 
@@ -190,3 +195,7 @@ udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
 
 use() { rm test; ln -s test-$1 test; }
 aa() { awk -vn=$1 'NR==1 {print n} 1 < NR && NR <= n+1' "$2" > "$3"; }
+
+
+alias cf='cpupower frequency-info'
+alias cs='cpupower frequency-set'

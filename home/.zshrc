@@ -28,7 +28,7 @@ export LESS="-MiR --shift 5"
 export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
-export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
+#export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 
@@ -316,7 +316,7 @@ fi
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby ghc perl texlive wps
+module load ruby ghc perl texlive wps mpi/impi
 
 # rvm
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm

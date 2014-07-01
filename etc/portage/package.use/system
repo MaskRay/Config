@@ -60,3 +60,9 @@ net-analyzer/rrdtool perl
 # required by app-emulation/virt-manager-0.10.0-r1
 # required by virt-manager (argument)
 =app-emulation/libvirt-1.1.3 python
+# required by dev-ruby/metasploit_data_models-0.17.0[ruby_targets_ruby19]
+# required by net-analyzer/metasploit-4.9.2-r2[-test,ruby_targets_ruby19]
+# required by @network
+# required by @selected
+# required by @world (argument)
+>=dev-ruby/activerecord-4.1.1 postgres

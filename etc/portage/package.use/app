@@ -17,7 +17,7 @@ media-sound/cmus cue wma ffmpeg -aac # aac plugin is broken
 app-misc/recoll inotify -fam tex
 media-gfx/graphviz gts # otherwise sfdp won't work
 net-misc/tigervnc gnutls
-app-emulation/qemu spice vde
+app-emulation/qemu spice ssh static-user tci vde
 
 # Application - Instant messaging
 net-im/bitlbee twitter

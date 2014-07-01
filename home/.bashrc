@@ -36,19 +36,20 @@ function get_git_repos_branch()
 
 function repos_info()
 {
-  HG_REPOS_ID="$(get_hg_repos_id)"
-  if [ "${HG_REPOS_ID}" ]
-  then
-    echo
-    echo -en "\e${WHITE}[\e${CYAN}Mercurial\e${WHITE}] Revision ID \e${YELLOW}${HG_REPOS_ID}"
-  else
-    GIT_REPOS_BRANCH="$(get_git_repos_branch)"
-    if [ "${GIT_REPOS_BRANCH}" ]
-    then
-      echo
-      echo -en "\e${WHITE}[\e${CYAN}Git\e${WHITE}] Current Branch \e${YELLOW}${GIT_REPOS_BRANCH}"
-    fi
-  fi
+  #HG_REPOS_ID="$(get_hg_repos_id)"
+  #if [ "${HG_REPOS_ID}" ]
+  #then
+  #  echo
+  #  echo -en "\e${WHITE}[\e${CYAN}Mercurial\e${WHITE}] Revision ID \e${YELLOW}${HG_REPOS_ID}"
+  #else
+  #  GIT_REPOS_BRANCH="$(get_git_repos_branch)"
+  #  if [ "${GIT_REPOS_BRANCH}" ]
+  #  then
+  #    echo
+  #    echo -en "\e${WHITE}[\e${CYAN}Git\e${WHITE}] Current Branch \e${YELLOW}${GIT_REPOS_BRANCH}"
+  #  fi
+  #fi
+  :
 }
 
 export PS1='$(repos_info)\n\
