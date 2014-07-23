@@ -604,7 +604,7 @@ let g:UltiSnipsExpandTrigger = "<Tab>"
 let g:UltiSnipsJumpForwardTrigger = "<Tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
 " local snippets only:
-let g:UltiSnipsSnippetDirectories = ["snippets"]
+let g:UltiSnipsSnippetDirectories = ["UltiSnips"]
 " vsplit the snippets edit window
 let g:UltiSnipsEditSplit = 'vertical'
 

@@ -227,6 +227,13 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
+" surf
+nnoremap <leader>sf :Surf<cr>
+
+" SplitJoin
+nnoremap <leader>sj :SplitJoinJoin<cr>
+nnoremap <leader>sJ :SplitJoinSplit<cr>
+
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
 nnoremap <S-F12> :!gtags && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
@@ -383,7 +390,6 @@ if has("gui_running")
   "Bundle 'vimshell'
   Bundle 'unite.vim'
   Bundle 'unite-outline'
-  Bundle 'SingleCompile'
   Bundle 'vim-unimpaired'
   Bundle 'gundo'
   Bundle 'ag'
@@ -395,9 +401,9 @@ if has("gui_running")
   Bundle 'commentary'
   Bundle 'eunuch'
   Bundle 'ZoomWin'
-  Bundle 'indentLine'
   Bundle 'fswitch'
   Bundle 'polyglot'
+  Bundle 'exchange'
 
   "Bundle 'vimside'
 
@@ -440,6 +446,8 @@ if has("gui_running")
 
   "Bundle 'emmet'
   Bundle 'surfer'
+
+  Bundle 'vim-airline'
 
   filetype plugin indent on    " required!
 endif

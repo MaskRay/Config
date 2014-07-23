@@ -142,7 +142,7 @@ myLayout = avoidStruts $
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
-    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Chrome"] ] ++
+    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Google-chrome-beta", "Chrome"] ] ++
     [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer", "Wpp"] ] ++
     [ appName =? c --> doShift "doc" | c <- ["idaq.exe", "idaq64.exe"] ] ++
@@ -234,7 +234,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")

@@ -33,7 +33,7 @@ export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 
 # Look {{{1
-PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[$: %?] )%{%F{red}%}%# %F{white}'
+PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[%?] )%{%F{red}%}%# %F{white}'
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
@@ -67,6 +67,7 @@ setopt hist_ignore_all_dups     # when runing a command several times, only stor
 setopt hist_reduce_blanks       # reduce whitespace in history
 setopt hist_ignore_space        # do not remember commands starting with space
 setopt share_history            # share history among sessions
+setopt extended_history         # timestamp for each history entry
 setopt hist_verify              # reload full command when runing from history
 setopt hist_expire_dups_first   # remove dups when max size reached
 setopt inc_append_history       # append to history once executed
@@ -205,8 +206,14 @@ user_complete(){
 	#recolor-cmd
 }
 zle -N user_complete
-bindkey "\t" user_complete
 autoload compinstall
+
+delete-horizontal-space() {
+  if [[ $LBUFFER == *\  ]]; then
+    LBUFFER="${LBUFFER%% *} "
+  fi
+}
+zle -N delete-horizontal-space
 
 bindkey -M menuselect '^o' accept-and-infer-next-history
 
@@ -236,6 +243,11 @@ bindkey -v "^[m" copy-prev-shell-word
 bindkey '^]' vi-find-next-char
 
 bindkey -e
+bindkey -N mymap emacs
+bindkey "\t" user_complete
+bindkey '\e\\' delete-horizontal-space
+#bindkey '^p' history-beginning-search-backward
+#bindkey '^n' history-beginning-search-forward
 
 # Aliases {{{1
 # General {{{2
@@ -264,6 +276,7 @@ hash -d ep=/etc/portage
 hash -d vl=/var/lib
 hash -d vl=/var/lib
 hash -d as=~/Assignment/2014spr
+hash -d d=~/Documents
 
 # Application-specific {{{2
 . ~/.alias
@@ -316,7 +329,7 @@ fi
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby ghc perl texlive wps mpi/impi
+module load ruby ghc perl texlive/2014 wps mpi/impi
 
 # rvm
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm

@@ -38,10 +38,6 @@
 [submodule "home/.vim/bundle/UltiSnips"]
 	path = home/.vim/bundle/UltiSnips
 	url = https://github.com/vim-scripts/UltiSnips.git
-[submodule "home/.vim/bundle/matchit"]
-	path = home/.vim/bundle/matchit
-	url = https://github.com/tsaleh/vim-matchit
-	ignore = dirty
 [submodule "home/.vim/bundle/Tabular"]
 	path = home/.vim/bundle/Tabular
 	url = https://github.com/godlygeek/tabular
@@ -156,9 +152,6 @@
 [submodule "home/.vim/bundle/coloresque"]
 	path = home/.vim/bundle/coloresque
 	url = https://github.com/gorodinskiy/vim-coloresque
-[submodule "home/.vim/bundle/ZoomWin"]
-	path = home/.vim/bundle/ZoomWin
-	url = https://github.com/vim-scripts/ZoomWin
 [submodule "home/.vim/bundle/surfer"]
 	path = home/.vim/bundle/surfer
 	url = https://github.com/gcmt/surfer.vim
@@ -171,3 +164,9 @@
 [submodule "home/.vim/bundle/polyglot"]
 	path = home/.vim/bundle/polyglot
 	url = https://github.com/sheerun/vim-polyglot
+[submodule "home/.vim/bundle/exchange"]
+	path = home/.vim/bundle/exchange
+	url = git://github.com/tommcdo/vim-exchange.git
+[submodule "home/.vim/bundle/vim-airline"]
+	path = home/.vim/bundle/vim-airline
+	url = https://github.com/bling/vim-airline

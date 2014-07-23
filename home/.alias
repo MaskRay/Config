@@ -21,7 +21,7 @@ alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
 alias pg='pgrep --full --list-full'
 alias pk='pgrep --full'
 alias psg='ps aux|grep'
-alias xi=xinit
+alias xi='xinit -- -ardelay 200 -arinterval 50'
 alias pa=parallel
 alias wee=weechat-curses
 
@@ -101,6 +101,8 @@ alias wine='WINEDEBUG=-all wine'
 alias ctag='ctags -R --c++-kinds=+p --fields=+iaS --extra=+q'
 alias perf='sudo perf'
 alias mtp='simple-mtpfs /media'
+alias jc='~/.local/opt/j64-802/jconsole.sh'
+alias jqt='~/.local/opt/j64-802/jqt.sh'
 
 alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
 
@@ -135,10 +137,25 @@ alias stop='sudo systemctl stop'
 #alias disable='sudo systemctl disable'
 
 alias cal='cal -3'
-alias pS='sudo pacman -S'
-alias pSs='pacman -Ss'
-alias pSy='sudo pacman -Syy'
-alias pSu='pacaur -Syu'
+alias yS='yaourt -S'
+alias ySs='yaourt -Ss'
+alias pSy='sudo pacman -Sy'
+alias pSyu='sudo pacman -Syu'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
+alias pS='sudo pacman -S'		# Install specific package(s) from the repositories
+alias pU='sudo pacman -U'		# Install specific package not from the repositories but from a file 
+alias pR='sudo pacman -R'		# Remove the specified package(s), retaining its configuration(s) and required dependencies
+alias pRns='sudo pacman -Rns'		# Remove the specified package(s), its configuration(s) and unneeded dependencies
+alias pSi='pacman -Si'			# Display information about a given package in the repositories
+alias pSs='pacman -Ss'			# Search for package(s) in the repositories
+alias pQi='pacman -Qi'			# Display information about a given package in the local database
+alias pQs='pacman -Qs'			# Search for package(s) in the local database
+alias paclo="pacman -Qdt"		# List all packages which are orphaned
+alias pacc="sudo pacman -Scc"		# Clean cache - delete all not currently installed package files
+alias pQl="pacman -Ql"			# List all files installed by a given package
+alias pacexpl="sudo pacman -D --asexp"	# Mark one or more installed packages as explicitly installed 
+alias pacimpl="sudo pacman -D --asdep"	# Mark one or more installed packages as non explicitly installed
+alias pacexpl='sudo pacman -D --asexp'
+alias pacimpl='sudo pacman -D --asdep'
 alias api='sudo aptitude install'
 alias aps='sudo aptitude search'
 alias apu='sudo aptitude update'

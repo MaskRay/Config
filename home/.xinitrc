@@ -14,6 +14,7 @@ export XMODIFIERS=@im=fcitx
 xset s off dpms 600 600 600
 xset r rate 200 50
 xset m 8 3
+setxkbmap -option ctrl:nocaps
 
 # tap once: click
 # two twice: right click

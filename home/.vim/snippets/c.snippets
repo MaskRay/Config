@@ -93,7 +93,11 @@ snippet REP1
 endsnippet
 
 snippet FOR
-#define FOR(i, a, b) for (__typeof(b) i = (a); i < (b); i++)
+#define FOR(i, a, b) for (int i = (a); i < (b); i++)
+endsnippet
+
+snippet ROF
+#define ROF(i, a, b) for (int i = (b); --i >= (a); )
 endsnippet
 
 # vim:ft=snippets:
