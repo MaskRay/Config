@@ -1,0 +1,44 @@
+#!/bin/zsh
+
+archive=/path/to/archive.zip
+tmp=$(mktemp -u)
+dir=/path/to/extract
+
+while getopts c opt; do
+  case $opt in
+    c) change=1;;
+  esac
+done
+shift $[$OPTIND-1]
+
+case $1 in
+  e)
+    [[ -d $dir ]] || mkdir $dir
+    while :; do
+      read -rs 'pass?Password: '
+      if [[ -f $archive ]] && unzip -P $pass -t $archive |& grep -qm1 'incorrect password'; then
+        if [[ -n $change && -d $dir ]]; then
+          echo Change password
+        fi
+        echo 'Incorrect password' >&2
+        continue
+      fi
+      break
+    done
+    (cd $dir && find . | zip -@ -P $pass $tmp) && mv $tmp $archive
+    ;;
+  d)
+    [[ -d $dir ]] || mkdir $dir
+    read -rs 'pass?Password: '
+    unzip -P $pass $archive -d $dir
+    ;;
+  *)
+    cat <<e
+Usage: $(basename $0) COMMAND
+
+Commands:
+  e  encrypt
+  d  decrypt
+e >&2
+    ;;
+esac

@@ -1,0 +1,45 @@
+#!/bin/zsh
+### Usage
+# timein Shanghai
+# timein hang
+# timein berl
+#
+
+d=/usr/share/zoneinfo
+
+if [[ $# -eq 0 ]]; then
+  tz=Asia/Shanghai
+elif [[ $1 = l || $1 = list ]]; then
+  cd $d
+  find . -type f -print | cut -c3-
+  exit 0
+fi
+
+matches=($(find $d -name right -prune -or -iname \*$1\* -type f -print))
+cnt=${#matches}
+if ((cnt>0)); then
+  if ((cnt<=10)); then
+    matches=($(xargs -n1 <<< $matches | sed "s,$d/,,"))
+    maxl=15
+    for i in $matches; do
+      if ((${#i} > maxl)); then
+        maxl=${#i}
+      fi
+    done
+    for i in $matches; do
+      echo -n "$i: "
+      c=$[$maxl+2-(${#i}+2)]
+      if ((c>0)); then
+        tput cuf $c
+      fi
+      TZ=$i date +'%F %T %Z (%z)'
+    done
+  else
+    echo Too many matches for \"$1\" >&2
+    echo "Use 'list' to see all known regions and time zones" >&2
+    exit 2
+  fi
+else
+  echo No match for \"$1\" >&2
+  exit 1
+fi

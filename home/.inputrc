@@ -18,8 +18,6 @@ set show-all-if-unmodified on
 "\C-n": history-search-forward
 "\C-p": history-search-backward
 
-#set editing-mode vi
-
 set keymap vi-insert
 "\C-a": vi-insert-beg
 "\C-b": backward-char
@@ -38,3 +36,6 @@ set keymap vi-command
 "qq": start-kbd-macro
 "qe": end-kbd-macro
 "Q":  call-last-kbd-macro
+
+# ipython
+set editing-mode emacs

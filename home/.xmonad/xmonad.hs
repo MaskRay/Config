@@ -149,7 +149,7 @@ myManageHook = composeAll $
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
-    [ className =? c --> viewShift "media" | c <- ["feh", "Display", "Gimp"] ] ++
+    [ className =? c --> viewShift "media" | c <- ["feh", "Display", "Gimp", "Inkscape"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "misc" | c <- ["Wpa_gui", "Idaq"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
@@ -233,7 +233,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "audacity", "wireshark", "ida", "ida64", "winecfg"])
+    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -376,7 +376,7 @@ myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = fullscreenEventHook >> clockEventHook
+    , handleEventHook    = fullscreenEventHook -- >> clockEventHook
     , logHook            = historyHook >> myDynamicLog dzen
     , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys

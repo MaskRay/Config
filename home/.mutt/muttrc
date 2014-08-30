@@ -22,7 +22,7 @@ set pager_index_lines = 5
 set pager_stop
 set pipe_decode
 #set query_command="echo; grep 'alias.*'%s ~/.mutt/aliases | cut -d' ' -f3-"
-set query_command="echo; recsel -ie 'Alias ~ \"'%s'\"' ~/.mutt/contacts.rec | recfmt '{{Name}} <{{Email}}>'"
+set query_command="echo; recsel -ie 'Alias ~ \"'%s'\"' ~/.mutt/contacts.rec | recfmt '{{Name}} <{{Email}}>%' | tr % '\n'"
 set quit
 set read_inc=100
 set realname="Ray Song"

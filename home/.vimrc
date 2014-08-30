@@ -31,7 +31,6 @@ set switchbuf=useopen
 set timeoutlen=300
 set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
-"au FileType c,cpp,java set mps+==:;
 
 "set backup
 "set backupdir=~/tmp,/var/tmp,/tmp
@@ -404,12 +403,13 @@ if has("gui_running")
   Bundle 'fswitch'
   Bundle 'polyglot'
   Bundle 'exchange'
+  Bundle 'nerdcommenter'
 
   "Bundle 'vimside'
 
   "Bundle 'R-plugin'
 
-  "Bundle 'YouCompleteMe'
+  Bundle 'YouCompleteMe'
   let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
   let g:ycm_key_invoke_completion = "<F5>"

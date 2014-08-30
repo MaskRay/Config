@@ -1,0 +1,110 @@
+#!/bin/zsh
+
+setopt extendedglob
+
+argv0=${0##*/}
+usage() {
+  cat <<EOF
+Interactively make a backup under /mnt/home/ray/ (USB stick).
+Candidate directories to backup can be modified by add/del.
+
+Usage: $argv0 [OPTIONS]
+
+Options:
+  -d     rsync --delete
+  -s     rsync --stats
+  -v     rsync -P
+  -h     display this help and exit
+EOF
+}
+
+if ! { mountpoint -q /mnt && [[ -d /mnt/home/ray ]]; }; then
+  echo 'please mount the backup disk onto /mnt' >&2
+  exit 1
+fi
+
+while getopts dhsv opt; do
+  case $opt in
+    d) delete=1;;
+    s) stats=1;;
+    v) verbose=1;;
+    h) usage; exit;;
+    *) usage; exit 2;;
+  esac
+done
+shift $[$OPTIND-1]
+
+rsync_opt=-a
+[[ -n $verbose ]] && rsync_opt="$rsync_opt -P"
+[[ -n $delete ]] && rsync_opt="$rsync_opt --delete"
+[[ -n $stats ]] && rsync_opt="$rsync_opt --stats"
+
+# the next line will be modified by sed -i
+items=(Documents maskray.me )
+
+sync() {
+  echo "\e[33msyncing $1 ...\e[0m"
+  rsync $=rsync_opt ~/$1 /mnt/home/ray/
+}
+echo "\e[1m\e[33mrsync options: $rsync_opt\e[0m"
+
+while :; do
+  echo -ne "\e[1m\e[36m${(o)items[@]}\n>\e[0m "
+  read -r name
+  case $name in
+    \*)
+      echo -ne '\e[1m\e[31msyncing all (y/n) \e[0m'
+      read -rq
+      echo
+      if [[ $REPLY == y ]]; then
+        for i in ${items[@]}; do
+          sync $i
+        done
+      fi
+      ;;
+    add\ *)
+      items=($items[@] ${name:4})
+      items=(${(ou)items})
+      x=$(printf "%s " ${(q)items})
+      x=$(print -r -- ${(q)x})
+      sed -i "/^items=(/s'.*'items=($x)'" $0
+      ;;
+    del\ *)
+      new_items=("${(@)items:#${name:4}}")
+      ndel=$[$#items-$#new_items]
+      [[ $ndel -ne 1 ]] && new_items=("${(@)items:#*(#i)${name:4}*}")
+
+      if (($ndel == 1 )); then
+        echo -ne "\e[1m\e[31mdelete ${(@)items:|new_items} (y/n) \e[0m"
+        read -rq
+        echo
+        if [[ $REPLY == y ]]; then
+          x=$(printf "%s " ${(q)new_items})
+          x=$(print -r -- ${(q)x})
+          items=("${new_items[@]}")
+          sed -i "/^items=(/s'.*'items=($x)'" $0
+          echo "\e[1m\e[33mdeleted\e[0m"
+        fi
+      elif (($ndel > 1)); then
+        echo "\e[1m\e[33m$ndel items matched\e[0m"
+      fi
+      ;;
+    *)
+      matched=()
+      for i in ${items[@]}; do
+        [[ $i = *(#i)${(q)name}* ]] && matched=($matched[@] $i)
+      done
+      case $#matched in
+        0)
+          echo 'not found'
+          ;;
+        1)
+          sync $matched[1]
+          ;;
+        *)
+          echo "\e[1m\e[33m$#matched items matched\e[0m"
+          ;;
+      esac
+      ;;
+  esac
+done

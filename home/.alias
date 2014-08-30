@@ -21,9 +21,10 @@ alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
 alias pg='pgrep --full --list-full'
 alias pk='pgrep --full'
 alias psg='ps aux|grep'
-alias xi='xinit -- -ardelay 200 -arinterval 50'
+alias xi='xinit -- -nolisten tcp -ardelay 200 -arinterval 50 :0 vt$XDG_VTNR'
 alias pa=parallel
 alias wee=weechat-curses
+alias hopper=~/.local/opt/hopper/usr/bin/hopper-v3
 
 alias mtr='sudo mtr --curses'
 
@@ -86,7 +87,6 @@ alias pyftp='python2 -m pyftpdlib'
 #alias et=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/et
 alias prx='proxychains'
 alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
-alias xi=xinit -- -nolisten tcp
 alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
 alias spice='spicec -h 0 -p 5900'
 alias burp='java -jar ~/.local/opt/burpsuite_pro_v1.4.07+.jar'
@@ -137,7 +137,7 @@ alias stop='sudo systemctl stop'
 #alias disable='sudo systemctl disable'
 
 alias cal='cal -3'
-alias yS='yaourt -S'
+alias yS='yaourt -S --noconfirm'
 alias ySs='yaourt -Ss'
 alias pSy='sudo pacman -Sy'
 alias pSyu='sudo pacman -Syu'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
