@@ -1,0 +1,11 @@
+#!/bin/zsh
+f=~/config/arch-packages.list
+if [[ $1 == -h ]]; then
+  echo "Usage: $(basename $0) [write to $f unless empty]"
+  exit
+fi
+[[ -n $1 ]] && echo writing to $f && exec > $f
+echo '# native'
+pacman -Qen | cut -d' ' -f1
+echo '\n# foreign'
+pacman -Qem | cut -d' ' -f1

@@ -173,3 +173,9 @@
 [submodule "home/.vim/bundle/nerdcommenter"]
 	path = home/.vim/bundle/nerdcommenter
 	url = https://github.com/scrooloose/nerdcommenter
+[submodule "home/.vim/bundle/RubyJump"]
+	path = home/.vim/bundle/RubyJump
+	url = https://github.com/vim-scripts/RubyJump
+[submodule "home/.vim/bundle/matchit"]
+	path = home/.vim/bundle/matchit
+	url = https://github.com/tmhedberg/matchit

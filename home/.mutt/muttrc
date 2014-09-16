@@ -110,6 +110,14 @@ bind pager H display-toggle-weed
 bind pager N search-opposite
 macro pager \cu "|urlview\n"
 
+macro generic \Cx_ "<enter-command>set sendmail" "Internal macro from the MSMTP module"
+macro generic \Cx| "\Cx_ = \"/usr/bin/msmtp" "Internal macro from the MSMTP module"
+macro generic \Cx& "<enter-command>macro compose \\t \"\\Cx" "Internal macro from the MSMTP module"
+macro compose <tab> "\Cx1" "Change the current MSMTP account"
+macro compose = "\Cx_\n" "Show the current MSMTP account"
+macro generic \Cx2 "\Cx| -a Gmail\"\n\Cx&2\" \"Change the current MSMTP account\"\n\Cx_\n" "Switch to account Gmail for MSMTP"
+macro generic \Cx3 "\Cx| -a Live\"\n\Cx&3\" \"Change the current MSMTP account\"\n\Cx_\n" "Switch to account Live for MSMTP"
+
 # Folder shortcuts {{{2
 macro index,pager I "c!\n"
 macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"

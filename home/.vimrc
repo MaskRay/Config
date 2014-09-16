@@ -92,8 +92,9 @@ if has("gui_running")
   " Envy Code R
   " http://damieng.com/blog/2008/05/26/envy-code-r-preview-7-coding-font-released
   " set guifont=Monaco\ 15
-  set guifont=Inconsolata\ 15
-  set guifont=Monofur\ 16
+  " set guifont=Inconsolata\ 15
+  " set guifont=Monofur\ 16
+  set guifont=Fantasque\ Sans\ Mono\ 16
   set guifontwide=WenQuanYi\ Micro\ Hei\ 13
 endif
 
@@ -226,6 +227,8 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
+inoremap jk <esc>
+
 " surf
 nnoremap <leader>sf :Surf<cr>
 
@@ -263,6 +266,10 @@ func! C_init()
   syn keyword cppType u real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
+  noremap <buffer> [[ ?{<cr>w99[{
+  noremap <buffer> ][ /}<cr>b99]}
+  map <buffer> ]] j0[[%/{<cr>
+  map <buffer> [] k$][%?}<cr>
 endfunc
 
 func! CSS_init()
@@ -436,7 +443,7 @@ if has("gui_running")
   Bundle 'markdown'
 
   Bundle 'vim-ruby'
-  Bundle 'rubyjump'
+  Bundle 'RubyJump'
   Bundle 'vim-rails'
   Bundle 'slim'
 
@@ -450,6 +457,10 @@ if has("gui_running")
   Bundle 'vim-airline'
 
   filetype plugin indent on    " required!
+
+  so ~/.opam/system/share/vim/syntax/ocp-indent.vim
 endif
 
 let g:fortran_free_source = 1
+
+source ~/.vimrc.local
