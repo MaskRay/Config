@@ -1,4 +1,9 @@
 # Settings {{{1
+download-retries 5
+download-timeout 90
+auto-reload yes
+reload-time 90
+reload-threads 5
 always-display-description true
 browser "detach xdg-open %u"
 external-url-viewer "urlview"
@@ -8,6 +13,11 @@ ignore-mode "display"
 keep-articles-days 90
 notify-program "notify-send"
 refresh-on-startup yes
+confirm-exit yes
+prepopulate-query-feeds yes
+openbrowser-and-mark-jumps-to-next-unread yes
+toggleitemread-jumps-to-next-unread yes
+markfeedread-jumps-to-next-unread yes
 
 # Sources {{{1
 urls-source "local"

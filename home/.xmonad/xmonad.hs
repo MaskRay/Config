@@ -149,7 +149,7 @@ myManageHook = composeAll $
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
-    [ className =? c --> viewShift "media" | c <- ["feh", "Display", "Gimp", "Inkscape"] ] ++
+    [ className =? c --> viewShift "media" | c <- ["Gimp", "Inkscape"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "misc" | c <- ["Wpa_gui", "Idaq"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
@@ -164,7 +164,11 @@ myManageHook = composeAll $
     myFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
+        , className =? "feh"
+        , className =? "SDL_App"
+        , className =? "Display"
         , className =? "Gimp" <&&> fmap (not . flip any ["image-window", "toolbox", "dock"] . flip isSuffixOf) role
+        , fmap (=="GtkFileChooserDialog") role
         , stringProperty "WM_WINDOW_ROLE" =? "pop-up"
         , fmap (isPrefixOf "sun-") appName
         , fmap (isPrefixOf "Gnuplot") title
@@ -234,7 +238,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -309,13 +313,13 @@ myKeys =
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' j", namedScratchpadAction scratchpads "node")
+    , ("C-' j", namedScratchpadAction scratchpads "jc")
     , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
     , ("C-' o", namedScratchpadAction scratchpads "utop")
+    , ("C-' i", namedScratchpadAction scratchpads "rawutop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' q", namedScratchpadAction scratchpads "swipl")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
-    , ("C-' s", namedScratchpadAction scratchpads "gst")
     , ("C-' t", namedScratchpadAction scratchpads "task")
     , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' k", namedScratchpadAction scratchpads "pure")
@@ -345,9 +349,10 @@ myKeys =
     searchBindings
 
 scratchpads =
-  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp"] ++
-  [ NS "utop" "urxvt -T utop -e rlwrap utop" (title =? "utop") doSPFloat
+  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
+  [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "task" "urxvt -T task -e rlwrap task shell" (title =? "task") doSPFloat
+  , NS "jc" "urxvt -T jc -e ~/.local/opt/j64-803/jconsole.sh" (title =? "jc") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
@@ -437,10 +442,10 @@ main = do
     d <- openDisplay ""
     let w = fromIntegral $ displayWidth d 0 :: Int
         h = fromIntegral $ displayHeight d 0 :: Int
-    let barWidth = h `div` 13
+    let barWidth = h `div` 12
     let barHeight = h `div` 35
     let fontSize = h `div` 54
-    dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*5) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"
+    dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*6) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"
     -- remind <http://www.roaringpenguin.com/products/remind>
     -- dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
     spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height " ++ show barHeight

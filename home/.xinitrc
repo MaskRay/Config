@@ -7,9 +7,10 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
 fi
 
 export BROWSER=chrome
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
+#export GTK_IM_MODULE=fcitx
+#export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+systemctl --user start fcitx@0
 
 xset s off dpms 600 600 600
 xset r rate 200 50
@@ -32,5 +33,8 @@ export GPG_TTY=$(tty)
 eval $(gpg-agent --daemon)
 
 ln -sf ~/.vim/.ycm_extra_conf.py /tmp/
+
+# vim merlin
+echo 'PKG core' > /tmp/.merlin
 
 exec xmonad

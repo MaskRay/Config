@@ -16,8 +16,8 @@ List.map Sys.command [
   (* resident *)
   singleton "TERM=screen-256color tmux new -d -s default \\; new-window"
   (*; singleton "tmux new -d -s weechat -n weechat weechat-curses \\; new -d -s default -t weechat\\; new-window"*)
-  ; singleton "parcellite &"
-  ; singleton "fcitx &"
+  (*; singleton "parcellite &" *)
+  (*; singleton "fcitx &" *)
   (*; singleton "/usr/lib64/notify-osd/notify-osd &"*)
   ; singleton "dunst &"
   ; singleton "offlineimap -q &"

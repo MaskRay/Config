@@ -6,7 +6,7 @@ set nocompatible
 filetype plugin indent on
 let g:mapleader = " "
 
-set sw=2 sts=2 et
+set sw=2 sts=2 et nu
 set display=lastline
 set hidden
 set hlsearch
@@ -21,7 +21,7 @@ set whichwrap=b,s,[,]
 set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
-set wildignore=*.o,*.bak,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe
+set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe,*.cm?
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
@@ -31,6 +31,7 @@ set switchbuf=useopen
 set timeoutlen=300
 set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
+set laststatus=2
 
 "set backup
 "set backupdir=~/tmp,/var/tmp,/tmp
@@ -99,48 +100,380 @@ if has("gui_running")
 endif
 
 " Colorschemes ---------------------------------------- {{{1
-" get them from: http://www.vim.org/
-" also: http://code.google.com/p/vimcolorschemetest/ (recommanded)
+set background=dark
 if has("gui_running")
-  " Darker Themes ------------------------------------- {{{2
-  " ir_black
-  " http://blog.infinitered.com/entries/show/8
-  " http://blog.infinitered.com/entry_files/8/ir_black.vim
-  "colorscheme ir_black
-  "colorscheme fruity
-  "colorscheme murphy
-  "colorscheme peaksea
-  " Lighter Themes ------------------------------------ {{{2
-  "colorscheme sf
-  "colorscheme settlemyer
-  "colorscheme sea
-  "colorscheme pyte
-  "colorscheme pleasant
-  "colorscheme navajo-night
-  "colorscheme cloudy
-  "colorscheme clarity
-  "colorscheme mint
-  "colorscheme kib_plastic
-  "colorscheme jhlight
-  " }}}2
+  "colorscheme badwolf
+  "colorscheme harlequin
+  "colorscheme molokai
+  colorscheme hemisu
 else
+  set t_Co=256
   colorscheme bocau
 endif
 
+" Functions --------------------- {{{1
+" DiffOrig {{{2
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vnew | setlocal bt=nofile bh=wipe nobl noswf | r ++edit # | 0d_ | diffthis
+  \ | wincmd p | diffthis
+endif
+
+" ErrorsToggle & QFixToggle {{{2
+function! ErrorsToggle()
+  if exists("g:is_error_window")
+    lclose
+    unlet g:is_error_window
+  else
+    botright lwindow 5
+    let g:is_error_window = 1
+  endif
+endfunction
+
+"command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
+function! QFixToggle()
+  if exists("g:qfix_win")
+    cclose
+    unlet g:qfix_win
+  else
+    botright copen 5
+    let g:qfix_win = 1
+  endif
+endfunction
+
+" StripTrailingWhitespace {{{2
+function! StripTrailingWhitespace()
+  " To disable this function, either set ft as keewhitespace prior saving
+  " or define a buffer local variable named keepWhitespace
+  if &ft =~ 'whitespace\|keep_whitespace' || exists('b:keep_whitespace')
+    return
+  endif
+  let l:savedview = winsaveview()
+  silent! %s/\s*$//e
+  call winrestview(l:savedview)
+endfunction
+
+
+" MatchUnwantedWhitespaces {{{2
+fu! MatchUnwantedWhitespaces()
+  if &filetype == 'vimfiler'
+    return
+  endif
+  highlight ExtraWhitespace ctermbg=red guibg=red
+  " Show all trailing whitespaces: /\s\+$/
+  " and spaces followed by tabs:   / \+\t\+\s*/
+  " and tabs followed by spaces:   /\t\+ \+\s*/
+  " combine them together: /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+  match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+endf
+" VSetSearch {{{2
+" makes * and # work on visual mode too.
+function! s:VSetSearch(cmdtype)
+  let temp = @s
+  norm! gv"sy
+  let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+  let @s = temp
+endfunction
+" Autocommands ---------------------------------------- {{{1
+if has("autocmd")
+  aug C_support
+    au!
+    au FileType c,cpp :call C_init()
+    au BufEnter *.cpp let b:fswitchdst = 'hpp,hh,h' | let b:fswitchlocs = './,../include'
+    au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
+    au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+    au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+  aug CoffeeScript_support
+    au!
+    au BufNewFile,BufRead *.iced setfiletype coffee
+  aug Fortran_support
+    au!
+    au FileType fortran :call Fortran_init()
+  aug JavaScript_support
+    au!
+    au FileType javascript :call JavaScript_init()
+  aug MarkDown_support
+    au!
+    au FileType markdown :call MarkDown_init()
+  aug OCaml_support
+    au!
+    au FileType ocaml :call OCaml_init()
+  aug Python_support
+    au!
+    au FileType python :call Python_init()
+  aug Ruby_support
+    au!
+    au FileType ruby :call Ruby_init()
+  aug Tex_support
+    au!
+    au FileType tex :call Tex_init()
+    au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -1 llpp' &")
+  " Show trailing whitespaces when necessary {{{2
+  " That is, most of the cases other than editing source code in Whitespace,
+  " the programming language.
+  augroup show_whitespaces
+    au!
+    " Make sure this will not be cleared by colorscheme
+    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+    " Highlight unwanted whitespaces
+    autocmd BufWinEnter,WinEnter,InsertLeave * call MatchUnwantedWhitespaces()
+    " In insert mode, show trailing whitespaces except when typing at the end
+    " of a line
+    autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+    " Show whitespaces in insert mode
+    autocmd InsertEnter * set list
+    " and turn it off when leave insert mode
+    autocmd InsertLeave * set nolist
+    " Clear highlight when lose focus
+    autocmd WinLeave * call clearmatches()
+  aug Textify
+    au!
+    au BufNewFile,BufRead *.txt,*.doc,*.pdf setl ft=txt
+    au BufReadPre *.doc,*.class,*.pdf setl ro
+    au BufReadPost *.doc silent %!antiword "%"
+    au BufRead *.class exe 'silent %!javap -c "%"' | setl ft=java
+    au BufReadPost *.pdf silent %!pdftotext -nopgbrk "%" -
+  aug misc
+    au!
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    " Also don't do it when the mark is in the first line, that is the default
+    " position when opening a file.
+    autocmd BufReadPost *
+      \ if line("'\"") > 1 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
+    " turn on spell checker for commit messages
+    au FileType gitcommit,hgcommit setlocal spell
+    " and emails and plain text files
+    au FileType mail,text setlocal spell
+    " except 'help' files
+    au BufEnter *.txt if &filetype == 'help' | setlocal nospell | endif
+    " au FileType * exe('setl dictionary+='.$VIMRUNTIME.'/syntax/'.&filetype.'.vim')
+
+    au Filetype dot let &makeprg="dot -Tpng -O -v % && feh %.png"
+    au Filetype r let &makeprg="R <% --vanilla"
+    au Filetype ocaml let &makeprg='ocaml %'
+    au FileType tex let &makeprg = 'xelatex -shell-escape -interaction=nonstopmode % && xdotool key Super+4'
+  aug end
+endif
+
+
+" Plugins --------------------------------------------- {{{1
+" Vundle ---------------------------------------------- {{{2
+if has("gui_running")
+  filetype off
+  set rtp+=~/.vim/bundle/vundle/
+  call vundle#rc()
+
+  Bundle 'gmarik/vundle'
+  Bundle 'AndrewRadev/splitjoin.vim'
+  Bundle 'Rykka/colorv.vim'
+  Bundle 'SirVer/UltiSnips'
+  Bundle 'tpope/vim-dispatch'
+  Bundle 'tpope/vim-endwise'
+  Bundle 'tpope/vim-eunuch'
+  Bundle 'ppwwyyxx/vim-PinyinSearch'
+  Bundle 'vim-scripts/VisIncr'
+  Bundle 'tpope/vim-unimpaired'
+
+  " Window
+  Bundle 'bling/vim-airline'
+  Bundle 'majutsushi/tagbar'
+  Bundle 'vim-scripts/ZoomWin'
+  Bundle 'mhinz/vim-startify'
+  Bundle 'sjl/gundo.vim'
+
+  " Tools
+  Bundle 'Lokaltog/vim-easymotion'
+  Bundle 'Shougo/neocomplete.vim'
+  Bundle 'Shougo/neomru.vim'
+  Bundle 'Shougo/unite.vim'
+  Bundle 'Shougo/vimfiler.vim'
+  Bundle 'Shougo/vimproc.vim'
+  Bundle 'Shougo/vimshell.vim'
+  Bundle 'gcmt/surfer.vim'
+  Bundle 'glts/vim-textobj-comment'
+  Bundle 'glts/vim-textobj-indblock'
+  Bundle 'godlygeek/tabular'
+  Bundle 'kana/vim-textobj-user'
+  Bundle 'lucapette/vim-textobj-underscore'
+  Bundle 'qstrahl/vim-matchmaker'
+  Bundle 'rking/ag.vim'
+  Bundle 'scrooloose/nerdcommenter'
+  Bundle 'scrooloose/syntastic'
+  Bundle 'terryma/vim-multiple-cursors'
+  Bundle 'terryma/vim-expand-region'
+  Bundle 'thinca/vim-quickrun'
+  Bundle 'tommcdo/vim-exchange'
+  Bundle 'tpope/vim-fugitive'
+  Bundle 'tpope/vim-surround'
+
+  " FileTypes
+  "Bundle 'R-plugin'
+  "Bundle 'emmet'
+  "Bundle 'pytest.vim'
+  "Bundle 'python-mode'
+  "Bundle 'vimside'
+  Bundle 'LaTeX-Box-Team/LaTeX-Box'
+  Bundle 'RubyJump'
+  Bundle 'Superbil/llvm.vim'
+  "Bundle 'danchoi/ri.vim'
+  Bundle 'davidhalter/jedi-vim'
+  Bundle 'derekwyatt/vim-fswitch'
+  Bundle 'spf13/PIV'
+  Bundle 'tern_for_vim'
+  Bundle 'tpope/vim-rails'
+  Bundle 'vim-ruby/vim-ruby'
+  Bundle 'Valloric/YouCompleteMe'
+  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+  let g:ycm_key_detailed_diagnostics = "<Leader>yd"
+  let g:ycm_key_invoke_completion = "<F5>"
+  let g:ycm_complete_in_comments = 1
+  let g:ycm_collect_identifiers_from_tags_files = 1
+  let g:ycm_seed_identifiers_with_syntax = 1
+  let g:ycm_autoclose_preview_window_after_completion = 1
+  let g:ycm_autoclose_preview_window_after_insertion = 1
+  let g:ycm_key_list_select_completion = ['<TAB>', '<Down>', '<Enter>']
+  let g:ycm_confirm_extra_conf = 0
+  let g:ycm_cache_omnifunc = 0
+  let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+  let g:ycm_auto_trigger = 0
+
+  " Syntax
+  Bundle 'chrisbra/csv.vim'
+  Bundle 'evanmiller/nginx-vim-syntax'
+  Bundle 'gorodinskiy/vim-coloresque'
+  Bundle 'groenewege/vim-less'
+  Bundle 'hail2u/vim-css3-syntax'
+  Bundle 'nvie/vim-flake8'
+  Bundle 'sheerun/vim-polyglot'
+  Bundle 'slim-template/vim-slim'
+  Bundle 'tpope/vim-markdown'
+  Bundle 'vim-scripts/coffee-script'
+  Bundle 'vim-scripts/vim-jade'
+  Bundle 'wavded/vim-stylus'
+
+
+  filetype plugin indent on    " required!
+
+  so ~/.opam/system/share/vim/syntax/ocp-indent.vim
+  so /usr/share/gtags/gtags.vim
+  ru macros/matchit.vim
+
+  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  execute "set rtp+=" . g:opamshare . "/merlin/vim"
+  execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
+  let g:syntastic_ocaml_checkers=['merlin']
+endif
+" EasyMotion {{{2
+let g:EasyMotion_do_mapping = 1
+let g:EasyMotion_leader_key = ","
+" FSwitch {{{2
+command! A FSHere
+command! AV FSSplitRight
+" Fugitive {{{2
+nn <silent> <leader>gs :Gstatus<CR>
+nn <silent> <leader>gd :Gdiff<CR>
+nn <silent> <leader>gc :Gcommit<CR>
+nn <silent> <leader>gb :Gblame<CR>
+nn <silent> <leader>gl :Glog<CR>
+nn <silent> <leader>gp :Git push<CR>
+" Gundo {{{2
+nn <leader>u :GundoToggle<cr>
+" Global {{{2
+nn <C-\>s :Gtags <C-r><C-w><cr>
+nn <C-\>r :Gtags -r <C-r><C-w><cr>
+nn <C-\>p :Gtags -P <C-r><C-w><cr>
+nn <C-\><C-\> :Gtags
+" NERDTree {{{2
+"let g:NERDTreeChDirMode=2
+"nn <leader>nt :NERDTreeToggle<cr>
+"nn <leader>ny :NERDTree `=getcwd()`<cr>
+" PinyinSearch --- {{{2
+let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
+nn <leader>ps :call PinyinSearch()<cr>
+nn <leader>pn :call PinyinNext()<cr>
+" QuickRun {{{2
+let g:quickrun_no_default_key_mappings = 1
+" Syntastic {{{2
+let g:syntastic_loc_list_height=5
+let g:syntastic_stl_format="Err:%fe %e,%w"
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = '-std=c++11'
+nn <leader>st :SyntasticToggleMode<cr>
+" Tabular {{{2
+if exists(":Tabularize")
+  nn <leader>a= :Tabularize /=<CR>
+  vn <leader>a= :Tabularize /=<CR>
+  nn <leader>a: :Tabularize /:<CR>
+  vn <leader>a: :Tabularize /:<CR>
+  nn <leader>a:: :Tabularize /:\zs<CR>
+  vn <leader>a:: :Tabularize /:\zs<CR>
+  nn <leader>a, :Tabularize /,<CR>
+  vn <leader>a, :Tabularize /,<CR>
+  nn <leader>a<Bar> :Tabularize /<Bar><CR>
+  vn <leader>a<Bar> :Tabularize /<Bar><CR>
+endif
+" Tagbar {{{2
+let g:tagbar_autofocus = 1
+let g:tagbar_autoshowtag = 1
+nn <leader>tb :TagbarToggle<cr>
+" UltiSnips {{{2
+let g:UltiSnipsExpandTrigger = "<Tab>"
+let g:UltiSnipsJumpForwardTrigger = "<Tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+" local snippets only:
+let g:UltiSnipsSnippetDirectories = ["UltiSnips"]
+" vsplit the snippets edit window
+let g:UltiSnipsEditSplit = 'vertical'
+" Unite {{{2
+nn <silent> sr :Unite -no-split -buffer-name=file -start-insert file_mru<cr>
+nn <silent> sf :Unite -no-split -buffer-name=file -start-insert file<cr>
+nn <silent> ss :Unite -no-split -buffer-name=buffer -start-insert buffer<cr>
+nn <silent> sc :Unite -no-split -buffer-name=change change<cr>
+nn <silent> so :Unite -no-split -buffer-name=outline outline<cr>
+nn <silent> sn :Unite -no-split -quick-match buffer<cr>
+nn <silent> sl :Unite -auto-resize -buffer-name=line line<cr>
+nn <silent> sy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+nn <silent> sg :Unite -no-split -buffer-name=ag grep<cr>
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --smart-case'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command='ack'
+  let g:unite_source_grep_default_opts='--no-heading --no-color -C4'
+  let g:unite_source_grep_recursive_opt=''
+endif
+" VimFiler {{{2
+let g:vimfiler_as_default_explorer=1
+nn <leader>nt :VimFilerCurrentDir -explorer<cr>
+let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
+
+source ~/.vimrc.local
 " Misc --------------------- {{{1
 " nnoremap zz zz:nohls<CR>
 nnoremap <silent> <C-l> :nohls<cr><C-l>
 nnoremap <Leader>a :Ag<space>
-nnoremap <Leader>p "+p<CR>
-nnoremap <Leader>P "+P<CR>
 nnoremap <CR> i<CR><ESC>
 noremap gz :bdelete<cr>
 
-ino <C-j> <C-r>=TriggerSnippet()<cr>
+cnoreab cdh cd %:p:h
+cnoreab lcdh lcd %:p:h
 
-" Omni completion
-" inoremap <C-]> <C-x><C-]>
-" inoremap <C-F> <C-x><C-F>
+nn <leader>l :call ErrorsToggle()<cr>
+nn <leader>q :call QFixToggle()<cr>
+
+xn * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+xn # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+
+" recursively vimgrep for word under cursor or selection if you hit leader-star
+nmap <leader>* :execute 'noautocmd vimgrep /\V' . substitute(escape(expand("<cword>"), '\'), '\n', '\\n', 'g') . '/ **'<CR>
+vmap <leader>* :<C-u>call <SID>VSetSearch()<CR>:execute 'noautocmd vimgrep /' . @/ . '/ **'<CR>
 
 " Edit
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
@@ -149,6 +482,15 @@ nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <leader>w :set wrap!<CR>
+
+" navigating tabs
+nn th :tabfirst<CR>
+nn tj :tabnext<cr>
+nn tk :tabprev<cr>
+nn tl :tablast<cr>
+nn tt :tabedit<space>
+nn tm :tabm<space>
+nn td :tabclose<cr>
 
 " Diff
 nnoremap <leader>dt :diffthis<CR>
@@ -167,7 +509,7 @@ nnoremap <m-j> :cnext<cr>zvzz
 nnoremap <m-k> :cprevious<cr>zvzz
 
 " search for visual-mode selected text
-vmap X y/<C-R>"<CR>
+vmap // y/<C-R>"<CR>
 
 " vim hacks #181
 " Open junk file."{{{
@@ -196,14 +538,14 @@ nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR
 set pastetoggle=<F7>
 
 " visual shifting (does not exit Visual mode)
-vnoremap < <gv
-vnoremap > >gv
+vn < <gv
+vn > >gv
 
 " Buffer
-nnoremap <C-Tab> :bn<cr>
-nnoremap <C-S-Tab> :bp<cr>
+nn <C-Tab> :bn<cr>
+nn <C-S-Tab> :bp<cr>
 
-xnoremap <C-c> "+y
+xn <C-c> "+y
 "inoremap <C-v> <esc>:se paste<cr>"+p:se nopaste<cr>i
 
 " insert word of the line above
@@ -222,19 +564,19 @@ nnoremap <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nnoremap <leader>ig :IndentLinesToggle<cr>:se list!<cr>
 
 " ; :
-nnoremap ; :
-nnoremap : ;
-vnoremap ; :
-vnoremap : ;
+nn ; :
+nn : ;
+vn ; :
+vn : ;
 
-inoremap jk <esc>
+ino jk <esc>
 
 " surf
 nnoremap <leader>sf :Surf<cr>
 
 " SplitJoin
-nnoremap <leader>sj :SplitJoinJoin<cr>
-nnoremap <leader>sJ :SplitJoinSplit<cr>
+vnoremap <leader>sj :SplitJoinJoin<cr>
+vnoremap <leader>sJ :SplitJoinSplit<cr>
 
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
 nnoremap <S-F12> :!gtags && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
@@ -247,21 +589,16 @@ cmap w!! w !sudo tee % >/dev/null
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
 
-au BufEnter *.cpp let b:fswitchdst = 'hh,h' | let b:fswitchlocs = './,../include'
-au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
-au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
-au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
-command! A FSHere
-command! AV FSSplitRight
-
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
-func! C_init()
+fu! C_init()
+  setl cino+=g0,:0,l1,N-s,t0,(0
   setl tags+=~/.vim/static/cpp                        " core in cpp
   setl dictionary=~/.vim/dict/cpp
+  setl fo+=j
   abbr #i #include
-  set syntax=cpp11.doxygen
+  setl syntax=cpp11.doxygen
   let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
   syn keyword cppType u real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
@@ -270,32 +607,70 @@ func! C_init()
   noremap <buffer> ][ /}<cr>b99]}
   map <buffer> ]] j0[[%/{<cr>
   map <buffer> [] k$][%?}<cr>
-endfunc
 
-func! CSS_init()
+  ia <buffer> re return
+  ia <buffer> return a<bs>
+
+  command! A FSHere
+  command! AV FSSplitRight
+endf
+
+fu! CSS_init()
   setl dictionary=~/.vim/dict/css
-endfunc
+endf
 
-func! JS_init()
+fu! Fortran_init()
+  let g:fortran_free_source = 1
+endf
+
+fu! JavaScript_init()
   nnoremap <buffer> [D :TernDef<CR>
   nnoremap <buffer> [I :TernRefs<CR>
-endfunc
+endf
 
-func! Ruby_init()
+fu! MarkDown_init()
+  ia <buffer> ``` ```<cr>```<up><end><esc>
+  ia <buffer> more <!-- more -->
+endf
+
+fu! OCaml_init()
+  setl isk-=.
+endf
+
+fu! Python_init()
+  ia <buffer> #! #!/usr/bin/env python
+  ia <buffer> #e # -*- coding: utf=8 -*-
+  syn keyword pythonDecorator self
+  " Setting 'python_space_error_highlight' = 1 will only highlight mixed
+  " tabs and spaces, I go as far as mark all tabs as error.
+  autocmd Syntax python syn match ExtraWhitespace /\t/
+  nmap <leader>p :call Flake8()<cr>
+endf
+
+fu! Ruby_init()
   let &makeprg="ruby -c %"
   imap <C-CR> <CR><CR>end<Esc>-cc
   nnoremap <silent><buffer> ]] :RubyJumpForward<cr>
   nnoremap <silent><buffer> [[ :RubyJumpBackward<cr>
   nnoremap <silent><buffer> ]<space> :RubyJump<cr>
-endfunc
 
-func! Fortran_init()
-  let g:fortran_free_source = #1
-endfunc
+  nnoremap <buffer><space>rc :Rcontroller<space><tab>
+  nnoremap <buffer><space>rh :Rhelper<space><tab>
+  nnoremap <buffer><space>rj :Rjavascript<space><tab>
+  nnoremap <buffer><space>rl :Rlayout<space><tab>
+  nnoremap <buffer><space>ro :Rlocale<space><tab>
+  nnoremap <buffer><space>rm :Rmodel<space><tab>
+  nnoremap <buffer><space>rt :Rspec<space><tab>
+  nnoremap <buffer><space>rk :Rtask<space><tab>
+  nnoremap <buffer><space>rs :Rstylesheet<space><tab>
+  nnoremap <buffer><space>rv :Rview<space><tab>
+
+  ia <buffer> #! #!/usr/bin/env ruby
+  ia <buffer> #e # encoding: utf-8
+endf
 
 func! Tex_init()
-	" pdf auto refresh preview
-	au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -SIGHUP mupdf > /dev/null 2 >&1' &")
+    " pdf auto refresh preview
 
     setl nocursorline                                " for performance
     hi clear Conceal
@@ -367,100 +742,15 @@ func! Make()						" silent make with quickfix window popup
 	endfor
 endfunc
 
-nnoremap <Leader>mk :call Make()<CR>
+nnoremap <Leader>mk :call Make()<cr>
+nnoremap <Leader>dd :Dispatch<cr>
+nnoremap <Leader>di :Dispatch!<cr>
+nnoremap <leader>mm :QuickRun<cr>
 
 nmap <Leader>nw :set wrap!<CR>
 
-au BufNewFile,BufRead *.txt,*.doc,*.pdf setl ft=txt
-au BufReadPre *.doc,*.class,*.pdf setl ro
-au BufReadPost *.doc silent %!antiword "%"
-au BufRead *.class exe 'silent %!javap -c "%"' | setl ft=java
-au BufReadPost *.pdf silent %!pdftotext -nopgbrk "%" -
-
-" Plugins --------------------------------------------- {{{1
-" Vundle ---------------------------------------------- {{{2
-if has("gui_running")
-  filetype off
-  set rtp+=~/.vim/bundle/vundle/
-  call vundle#rc()
-
-  Bundle 'gmarik/vundle'
-  Bundle 'Tabular'
-  Bundle 'EasyMotion'
-  Bundle 'syntastic'
-  Bundle 'UltiSnips'
-  Bundle 'vim-PinyinSearch'
-  "Bundle 'YankRing'
-  Bundle 'dispatch'
-  "Bundle 'vimproc'
-  "Bundle 'vimshell'
-  Bundle 'unite.vim'
-  Bundle 'unite-outline'
-  Bundle 'vim-unimpaired'
-  Bundle 'gundo'
-  Bundle 'ag'
-  Bundle 'LaTeX-Box'
-  Bundle 'VisIncr'
-  Bundle 'colorv.vim'
-  Bundle 'startify'
-  Bundle 'splitjoin'
-  Bundle 'commentary'
-  Bundle 'eunuch'
-  Bundle 'ZoomWin'
-  Bundle 'fswitch'
-  Bundle 'polyglot'
-  Bundle 'exchange'
-  Bundle 'nerdcommenter'
-
-  "Bundle 'vimside'
-
-  "Bundle 'R-plugin'
-
-  Bundle 'YouCompleteMe'
-  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
-  let g:ycm_key_detailed_diagnostics = "<Leader>yd"
-  let g:ycm_key_invoke_completion = "<F5>"
-  let g:ycm_complete_in_comments = 1
-  let g:ycm_collect_identifiers_from_tags_files = 1
-  let g:ycm_seed_identifiers_with_syntax = 1
-  let g:ycm_autoclose_preview_window_after_completion = 1
-  let g:ycm_autoclose_preview_window_after_insertion = 1
-  let g:ycm_key_list_select_completion = ['<TAB>', '<Down>', '<Enter>']
-  let g:ycm_confirm_extra_conf = 0
-  let g:ycm_cache_omnifunc = 0
-  let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
-  let g:ycm_auto_trigger = 0
-
-  Bundle 'css3-syntax'
-  Bundle 'matchit'
-  Bundle 'stylus'
-  Bundle 'jade'
-  Bundle 'coffee-script'
-  Bundle 'tern_for_vim'
-  Bundle 'coloresque'
-
-  Bundle 'evanmiller/nginx-vim-syntax'
-  Bundle 'markdown'
-
-  Bundle 'vim-ruby'
-  Bundle 'RubyJump'
-  Bundle 'vim-rails'
-  Bundle 'slim'
-
-  "Bundle 'python-mode'
-  Bundle 'jedi'
-  Bundle 'pytest.vim'
-
-  "Bundle 'emmet'
-  Bundle 'surfer'
-
-  Bundle 'vim-airline'
-
-  filetype plugin indent on    " required!
-
-  so ~/.opam/system/share/vim/syntax/ocp-indent.vim
-endif
-
-let g:fortran_free_source = 1
-
-source ~/.vimrc.local
+vmap  <expr>  <LEFT>   DVB_Drag('left')
+vmap  <expr>  <RIGHT>  DVB_Drag('right')
+vmap  <expr>  <DOWN>   DVB_Drag('down')
+vmap  <expr>  <UP>     DVB_Drag('up')
+vmap  <expr>  D        DVB_Duplicate()

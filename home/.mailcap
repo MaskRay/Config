@@ -2,8 +2,10 @@
 # Interactive #
 ###############
 
-application/pdf; llpp %s; test=test -n "$DISPLAY"; description=Portable Document Format; nametemplate=%s.pdf
-application/postscript; zathura %s; test=test -n "$DISPLAY"
+# application/pdf; llpp %s; test=test -n "$DISPLAY"; description=Portable Document Format; nametemplate=%s.pdf
+application/pdf; xdg-open %s; needsterminal
+# application/postscript; zathura %s; test=test -n "$DISPLAY"
+application/postscript; xdg-open %s; needsterminal
 application/vnd.ms-excel; gnumeric %s; test=test -n "$DISPLAY"
 application/vnd.oasis.opendocument.text; wps %s; test=test -n "$DISPLAY"
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; wps %s; test=test -n "$DISPLAY"
@@ -12,11 +14,15 @@ application/x-gzip; zless; needsterminal
 application/x-bzip2; bzless; needsterminal
 application/x-xz; xzless; needsterminal
 
-image/*; feh %s; test=test -n "$DISPLAY"
-image/*; fbi %s
+#image/*; feh %s; test=test -n "$DISPLAY"
+#image/*; fbi %s
+#
+#audio/*; vlc %s; test=test -n "$DISPLAY"
+#video/*; vlc %s; test=test -n "$DISPLAY"
 
-audio/*; vlc %s; test=test -n "$DISPLAY"
-video/*; vlc %s; test=test -n "$DISPLAY"
+image/* ; /usr/bin/xdg-open %s ; needsterminal
+audio/* ; /usr/bin/xdg-open %s ; needsterminal
+video/* ; /usr/bin/xdg-open %s ; needsterminal
 
 ##########
 # Inline #

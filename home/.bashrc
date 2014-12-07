@@ -61,5 +61,7 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias ll='ls -l'
 
-[[ -f /etc/profile.d/bash-completion.sh ]] && source /etc/profile.d/bash-completion.sh
+stty werase undef
+bind '\C-w:unix-filename-rubout'
 
+[[ -f /etc/profile.d/bash-completion.sh ]] && source /etc/profile.d/bash-completion.sh

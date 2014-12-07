@@ -85,6 +85,7 @@
 [diff]
   mnemonicprefix = true
   tool = gvimdiff
+  algorithm = patience
 [diff "lisp"]
   xfuncname="^(\\((def|test).*)$"
 [diff "python"]

@@ -68,8 +68,10 @@ set sidebar_width = 20
 set sidebar_visible
 
 # Bindings {{{1
+macro index a "<limit>all\n" "show all messages (undo limit)"
 macro index q '<change-folder>?<toggle-mailboxes>'
 bind index p parent-message
+macro index za "<collapse-thread>" "(un)collapse thread"
 bind index zt current-top
 bind index zz current-middle
 bind index zb current-bottom
@@ -119,13 +121,12 @@ macro generic \Cx2 "\Cx| -a Gmail\"\n\Cx&2\" \"Change the current MSMTP account\
 macro generic \Cx3 "\Cx| -a Live\"\n\Cx&3\" \"Change the current MSMTP account\"\n\Cx_\n" "Switch to account Live for MSMTP"
 
 # Folder shortcuts {{{2
-macro index,pager I "c!\n"
-macro index,pager ,t "<change-folder>=Tuna<return>" "go to =Tuna"
-macro index,pager ,h "<change-folder>=Haskell<return>" "go to =Haskell"
-macro index,pager ,m "<change-folder>=ML<return>" "go to =ML"
-macro index,pager ,c "<change-folder>=School<return>" "go to =School"
-macro index,pager ,w "<change-folder>=Work<return>" "go to =Work"
-macro index,pager ,< "<change-folder><<return>" "go to =Sent"
+macro index,pager <space>i "c!\n"
+macro index,pager <space>t "<change-folder>=Tuna<return>" "go to =Tuna"
+macro index,pager <space>m "<change-folder>=ML<return>" "go to =ML"
+macro index,pager <space>s "<change-folder>=School<return>" "go to =School"
+macro index,pager <space>w "<change-folder>=Work<return>" "go to =Work"
+macro index,pager <space>< "<change-folder><<return>" "go to =Sent"
 
 bind attach ' ' select-entry
 macro attach s <save-message><bol>/tmp/

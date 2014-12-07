@@ -25,12 +25,20 @@ export PATH=$HOME/bin:~/.local/bin:$HOME/bin/ssh:$PATH
 export EDITOR=vim
 #export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
 export LESS="-MiR --shift 5"
-export GREP_OPTIONS='--color=auto'
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 #export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
+export GOPATH=~/go
+
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+#export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Look {{{1
 PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[%?] )%{%F{red}%}%# %F{white}'
@@ -71,6 +79,7 @@ setopt extended_history         # timestamp for each history entry
 setopt hist_verify              # reload full command when runing from history
 setopt hist_expire_dups_first   # remove dups when max size reached
 setopt inc_append_history       # append to history once executed
+setopt notify                   # report the status of backgrounds jobs immediately
 
 # Directories {{{2
 setopt auto_cd                  # if not a command, try to cd to it.
@@ -105,6 +114,7 @@ setopt long_list_jobs           # show pid in bg job list
 setopt numeric_glob_sort        # when globbing numbered files, use real counting
 setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
+setopt nobeep
 
 #fpath=($HOME/.zsh/site-functions/ $fpath)
 fpath=($HOME/Util/zsh-completions/src/ $fpath)
@@ -141,12 +151,10 @@ zstyle ':completion:*' squeeze-shlashes 'yes'
 zstyle ':completion::complete:*' '\\'
 
 # Colorful Completion
-eval $(dircolors -b)
 export ZLSCOLORS="${LS_COLORS}"
 zmodload zsh/complist
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-export LS_COLORS="$LS_COLORS*.f4v=01;35:*.pdf=01;35:*.djvu=01;35:"		# add custom ls_color
 
 # Fix case and typo
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
@@ -301,6 +309,51 @@ zle -N self-insert url-quote-magic
 
 # Goodies {{{1
 (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
+
+cl() {
+  cd $1 && ls -a
+}
+
+ssht() {
+  ssh -t $1 'tmux a || tmux'
+}
+
+# listing stuff
+#a2# Execute \kbd{ls -lSrah}
+alias dir="command ls -lSrah"
+#a2# Only show dot-directories
+alias lad='command ls -d .*(/)'
+#a2# Only show dot-files
+alias lsa='command ls -a .*(.)'
+#a2# Only files with setgid/setuid/sticky flag
+alias lss='command ls -l *(s,S,t)'
+#a2# Only show symlinks
+alias lsl='command ls -l *(@)'
+#a2# Display only executables
+alias lsx='command ls -l *(*)'
+#a2# Display world-{readable,writable,executable} files
+alias lsw='command ls -ld *(R,W,X.^ND/)'
+#a2# Display the ten biggest files
+alias lsbig="command ls -flh *(.OL[1,10])"
+#a2# Only show directories
+alias lsd='command ls -d *(/)'
+#a2# Only show empty directories
+alias lse='command ls -d *(/^F)'
+#a2# Display the ten newest files
+alias lsnew="command ls -rtlh *(D.om[1,10])"
+#a2# Display the ten oldest files
+alias lsold="command ls -rtlh *(D.Om[1,10])"
+#a2# Display the ten smallest files
+alias lssmall="command ls -Srl *(.oL[1,10])"
+#a2# Display the ten newest directories and ten newest .directories
+alias lsnewdir="command ls -rthdl *(/om[1,10]) .*(D/om[1,10])"
+#a2# Display the ten oldest directories and ten oldest .directories
+alias lsolddir="command ls -rthdl *(/Om[1,10]) .*(D/Om[1,10])"
+
+#f5# List files which have been modified within the last {\it n} days, {\it n} defaults to 1
+modified() {
+  print -l -- *(m-${1:-1})
+}
 
 # Utils {{{1
 # show 256 color tab
