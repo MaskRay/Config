@@ -3,8 +3,8 @@
 exec tclsh "$0" "$@"
 package require Expect
 
-spawn luit -encoding gbk ssh yaray@bbs.net9.org
-set fp [open ~/Secret/bbs]
+spawn luit -encoding gbk ssh -1 -p22 yaray@bbs.net9.org
+set fp [open ~/Sed/bbs]
 set password [read -nonewline $fp]
 close $fp
 expect {

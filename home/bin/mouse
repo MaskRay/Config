@@ -20,6 +20,9 @@ f() {
   if [[ -n $device ]]; then
     echo echo "$1" '>' /sys/bus/usb/devices/$device/power/control
     echo "$1" > /sys/bus/usb/devices/$device/power/control
+  else
+    echo echo "$1" '>' /sys/bus/usb/devices/3-1/power/control
+    echo "$1" > /sys/bus/usb/devices/3-1/power/control
   fi
 }
 

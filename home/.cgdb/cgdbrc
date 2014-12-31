@@ -22,4 +22,4 @@ map bt ibt<CR><ESC>
 # c : continue
 map c :c<CR>
 # u : until
-map c :u<CR>
+map u :u<CR>

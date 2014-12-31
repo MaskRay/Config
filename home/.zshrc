@@ -371,7 +371,7 @@ cowfiles=(/usr/share/cowsay-3.03/cows/*)
 bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fortune -s | cowsay -f${cowfiles[$RANDOM % ${#cowfiles[@]} + 1]}; sleep 0.3; done'"\n"
 
 # OPAM configuration
-. /home/ray/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+. $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
 # Pinyin Completion
 if [[ -d $HOME/.zsh/Pinyin-Completion ]]; then
@@ -389,10 +389,6 @@ module load ruby ghc perl texlive/2014 wps #mpi/impi
 
 # nvm
 [[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
-
-# opam
-. $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-
 
 bindkey  "${terminfo[khome]}"    beginning-of-line
 bindkey  "${terminfo[kend]}"     end-of-line

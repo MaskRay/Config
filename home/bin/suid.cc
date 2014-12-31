@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    const char cmds[][11] = {"route", "ifconfig", "ip", "wpa_gui", ""};
+    const char cmds[][11] = {"route", "ifconfig", "ip", "wpa_gui", "ss", "brctf", ""};
     const char prefixes[][11] = {"/sbin/", "/sbin/", "/bin/", "/usr/bin/", ""};
     char cmd[1256], *p = strrchr(argv[0], '/');
     if (!p) p = argv[0];

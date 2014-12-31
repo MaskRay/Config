@@ -1,4 +1,4 @@
-P := ip route ifconfig wpa_gui
+P := ip route ifconfig wpa_gui ss brctl
 export CFLAGS :=
 
 define create

@@ -8,7 +8,7 @@ remember_window_size = False
  
 # user css
 # Set the user CSS stylesheet. This can be used to customize the look of all books.
-user_css = u'a { color: #9f69d5; }\n\n.ow, .p, .n, .cl { color: white !important; }\n.kt { color: #f87 !important; }\n.nf { color: #2f0 !important; }\n.n { color: #ff7 !important; }\n.c1 { color: #caa793 !important; }\n\na.ulink, a.xref, a.email, a.link {\n  color: #71ffed !important;\n}\npre { color: #bbd; }\n.literal { color: #dbb; }\nh2 { color: #71ffed !important; }\n.sidebar { background: #111 !important; }'
+user_css = u'a { color: #9f69d5; }\n\n.ow, .p, .n, .cl { color: white !important; }\n.kt { color: #f87 !important; }\n.nf { color: #2f0 !important; }\n.n { color: #ff7 !important; }\n.c1, .cf { color: #caa793 !important; }\n\na.ulink, a.xref, a.email, a.link {\n  color: #71ffed !important;\n}\npre { color: #bbd; }\n.literal { color: #dbb; }\nh2 { color: #71ffed !important; }\n.sidebar { background: #111 !important; }'
  
 # max fs width
 # Set the maximum width that the book's text and pictures will take when in fullscreen mode. This allows you to read the book text without it becoming too wide.

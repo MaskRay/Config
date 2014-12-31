@@ -132,7 +132,8 @@ myLayout = avoidStruts $
     lessBorders Screen $
     onWorkspace "media" gimpLayout $
     --onWorkspaces ["web","irc"] Full $
-    fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
+    --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
+    fullscreenFull Full ||| tall
     where
         tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}

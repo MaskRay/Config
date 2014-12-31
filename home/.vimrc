@@ -6,7 +6,8 @@ set nocompatible
 filetype plugin indent on
 let g:mapleader = " "
 
-set sw=2 sts=2 et nu
+set sw=2 sts=2 et nu sr
+set diffopt=filler,context:3
 set display=lastline
 set hidden
 set hlsearch
@@ -16,12 +17,13 @@ set ruler
 set showcmd
 set isfname-==
 set shortmess+=s
+set tags=./tags,tags,./../tags,./../../tags,./../../../tags
 set title
 set whichwrap=b,s,[,]
 set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
-set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe,*.cm?
+set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe,*.cm?,*.zi,*.zo
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
@@ -49,11 +51,14 @@ set history=200
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
 
-set formatprg="par-format rTbgqR B=.,?_A_a Q=_s>|"
-set formatoptions+=n " support formatting of numbered lists
+if executable('par')
+  set formatprg="par rTbgqR B=.,?_A_a Q=_s>|"
+el
+  set formatprg=fmt
+en
+set formatoptions+=nj " support formatting of numbered lists
 set guiheadroom=20
 set grepprg=internal
-"set grepprg=ack\ -a
 
 " tabs and eols
 set listchars+=tab:▸\ ,eol:¬
@@ -158,15 +163,14 @@ endfunction
 
 " MatchUnwantedWhitespaces {{{2
 fu! MatchUnwantedWhitespaces()
-  if &filetype == 'vimfiler'
-    return
-  endif
-  highlight ExtraWhitespace ctermbg=red guibg=red
   " Show all trailing whitespaces: /\s\+$/
   " and spaces followed by tabs:   / \+\t\+\s*/
   " and tabs followed by spaces:   /\t\+ \+\s*/
   " combine them together: /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
-  match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+  if bufname('%') != '' && bufname('%') != 'vimfiler:explorer'
+    hi ExtraWhitespace ctermbg=red guibg=red
+    match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+  en
 endf
 " VSetSearch {{{2
 " makes * and # work on visual mode too.
@@ -216,12 +220,12 @@ if has("autocmd")
   augroup show_whitespaces
     au!
     " Make sure this will not be cleared by colorscheme
-    autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+    "autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
     " Highlight unwanted whitespaces
     autocmd BufWinEnter,WinEnter,InsertLeave * call MatchUnwantedWhitespaces()
     " In insert mode, show trailing whitespaces except when typing at the end
     " of a line
-    autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+    "autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
     " Show whitespaces in insert mode
     autocmd InsertEnter * set list
     " and turn it off when leave insert mode
@@ -258,6 +262,8 @@ if has("autocmd")
     au Filetype r let &makeprg="R <% --vanilla"
     au Filetype ocaml let &makeprg='ocaml %'
     au FileType tex let &makeprg = 'xelatex -shell-escape -interaction=nonstopmode % && xdotool key Super+4'
+  aug misc
+    au BufWritePost .Xresources sil !xrdb %
   aug end
 endif
 
@@ -295,6 +301,7 @@ if has("gui_running")
   Bundle 'Shougo/vimfiler.vim'
   Bundle 'Shougo/vimproc.vim'
   Bundle 'Shougo/vimshell.vim'
+  Bundle 'airblade/vim-gitgutter'
   Bundle 'gcmt/surfer.vim'
   Bundle 'glts/vim-textobj-comment'
   Bundle 'glts/vim-textobj-indblock'
@@ -318,9 +325,10 @@ if has("gui_running")
   "Bundle 'pytest.vim'
   "Bundle 'python-mode'
   "Bundle 'vimside'
+  Bundle 'gkz/vim-ls'
   Bundle 'LaTeX-Box-Team/LaTeX-Box'
   Bundle 'RubyJump'
-  Bundle 'Superbil/llvm.vim'
+  "Bundle 'Superbil/llvm.vim'
   "Bundle 'danchoi/ri.vim'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
@@ -356,11 +364,12 @@ if has("gui_running")
   Bundle 'vim-scripts/coffee-script'
   Bundle 'vim-scripts/vim-jade'
   Bundle 'wavded/vim-stylus'
+  Bundle 'def-lkb/ocp-indent-vim'
 
 
   filetype plugin indent on    " required!
 
-  so ~/.opam/system/share/vim/syntax/ocp-indent.vim
+  "so ~/.opam/system/share/vim/syntax/ocp-indent.vim
   so /usr/share/gtags/gtags.vim
   ru macros/matchit.vim
 
@@ -382,6 +391,9 @@ nn <silent> <leader>gc :Gcommit<CR>
 nn <silent> <leader>gb :Gblame<CR>
 nn <silent> <leader>gl :Glog<CR>
 nn <silent> <leader>gp :Git push<CR>
+" GitGutter {{{2
+let g:gitgutter_enabled = 0
+nn <leader>gg :GitGutterToggle<cr>
 " Gundo {{{2
 nn <leader>u :GundoToggle<cr>
 " Global {{{2
@@ -451,8 +463,8 @@ elseif executable('ack')
 endif
 " VimFiler {{{2
 let g:vimfiler_as_default_explorer=1
-nn <leader>nt :VimFilerCurrentDir -explorer<cr>
-let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
+nn <leader>nt :VimFilerCurrentDir -explorer -winwidth=20<cr>
+let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|zi\|zo\)$'
 
 source ~/.vimrc.local
 " Misc --------------------- {{{1
@@ -596,7 +608,6 @@ fu! C_init()
   setl cino+=g0,:0,l1,N-s,t0,(0
   setl tags+=~/.vim/static/cpp                        " core in cpp
   setl dictionary=~/.vim/dict/cpp
-  setl fo+=j
   abbr #i #include
   setl syntax=cpp11.doxygen
   let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"

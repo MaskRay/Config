@@ -1,2 +1,3 @@
 #!/bin/sh
-/usr/bin/google-chrome --disk-cache-dir=/dev/shm --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac "$@"
+#/opt/google/chrome-beta/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --audio-buffer-size=2048 --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac --allow-running-insecure-content chrome://new-tab "$@"
+google-chrome-beta --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --audio-buffer-size=2048 --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac --allow-running-insecure-content chrome://new-tab "$@"

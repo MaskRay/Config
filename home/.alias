@@ -13,6 +13,7 @@ function md() {
 
 LOCAL=$HOME/.local
 
+alias px=proxychains
 alias p6=ping6
 alias d='dirs -v'
 alias cp='cp -iv'
@@ -21,7 +22,7 @@ alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
 alias pg='pgrep --full --list-full'
 alias pk='pgrep --full'
 alias psg='ps aux|grep --color=auto'
-alias xi='xinit -- -nolisten tcp -ardelay 200 -arinterval 50 :0 vt$XDG_VTNR'
+alias xi='xinit -- -nolisten tcp -ardelay 170 -arinterval 40 :0 vt$XDG_VTNR'
 alias pa=parallel
 alias wee=weechat-curses
 alias hopper=~/.local/opt/hopper/usr/bin/hopper-v3
@@ -109,6 +110,7 @@ alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOM
 alias jdgui=$LOCAL/bin/jd-gui
 
 alias ga='git add'
+alias gau='git add -u'
 alias gpu='git push'
 alias gpl='git pull'
 alias gl='git log'

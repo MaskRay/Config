@@ -40,7 +40,7 @@ rsync_opt=-a
 [[ -n $stats ]] && rsync_opt="$rsync_opt --stats"
 
 # the next line will be modified by sed -i
-items=(Documents maskray.me )
+items=(Activities Algo AlgoBook AlgoData Assignment bin Book config Documents maskray.me org Pictures)
 
 sync() {
   echo "\e[33msyncing $1 ...\e[0m"
@@ -63,7 +63,12 @@ while :; do
       fi
       ;;
     add\ *)
-      items=($items[@] ${name:4})
+      name=${name:4}
+      if ! [[ -d ~/$name ]]; then
+        echo "~/$name not exist" >&2
+        continue
+      fi
+      items=($items[@] $name)
       items=(${(ou)items})
       x=$(printf "%s " ${(q)items})
       x=$(print -r -- ${(q)x})

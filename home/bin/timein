@@ -20,12 +20,15 @@ cnt=${#matches}
 if ((cnt>0)); then
   if ((cnt<=10)); then
     matches=($(xargs -n1 <<< $matches | sed "s,$d/,,"))
-    maxl=15
+    maxl=0
     for i in $matches; do
       if ((${#i} > maxl)); then
         maxl=${#i}
       fi
     done
+    if ((20<maxl)); then
+      maxl=20
+    fi
     for i in $matches; do
       echo -n "$i: "
       c=$[$maxl+2-(${#i}+2)]

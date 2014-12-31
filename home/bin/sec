@@ -1,8 +1,7 @@
 #!/bin/zsh
 
-archive=/path/to/archive.zip
-tmp=$(mktemp -u)
-dir=/path/to/extract
+archive=/home/ray/Sed/sed.zip
+dir=/tmp/sed
 
 while getopts c opt; do
   case $opt in
@@ -14,6 +13,7 @@ shift $[$OPTIND-1]
 case $1 in
   e)
     [[ -d $dir ]] || mkdir $dir
+    echo 'Enter encryption password'
     while :; do
       read -rs 'pass?Password: '
       if [[ -f $archive ]] && unzip -P $pass -t $archive |& grep -qm1 'incorrect password'; then
@@ -25,12 +25,13 @@ case $1 in
       fi
       break
     done
+    tmp=$(mktemp -u)
     (cd $dir && find . | zip -@ -P $pass $tmp) && mv $tmp $archive
     ;;
   d)
     [[ -d $dir ]] || mkdir $dir
     read -rs 'pass?Password: '
-    unzip -P $pass $archive -d $dir
+    unzip -P $pass $archive -d $dir && chmod 700 $dir
     ;;
   *)
     cat <<e
@@ -39,6 +40,6 @@ Usage: $(basename $0) COMMAND
 Commands:
   e  encrypt
   d  decrypt
-e >&2
+e
     ;;
 esac

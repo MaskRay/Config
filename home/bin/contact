@@ -17,8 +17,8 @@ to_pinyin = ->s {
 
 # Google CSV
 ## remove/rename columns
-google = CSV.parse(File.open(ARGV[0] || '/tmp/google.csv')).transpose
-google.reject! {|x| x[0] =~ /Prefix|Suffix|Given|Family|Type/ || x[0] =~ /Address/ && x[0] !~ /Formatted/ }
+google = CSV.read(ARGV[0] || '/tmp/google.csv', encoding: 'bom|utf-16').map {|l| l.map {|c| c and c.encode 'utf-8' } }.transpose
+google.reject! {|x| x[0] =~ /Prefix|Suffix|Given|Family|Type|Organization|IM/ || x[0] =~ /Address/ && x[0] !~ /Formatted/ }
 google.each {|x|
   x[0].gsub!(/(\S+) \d - Value/) { $1.gsub('-', '') }
   x[0].gsub! /Address.*/, 'Address'
@@ -42,8 +42,8 @@ google[1..-1].each {|x|
 # Mutt aliases
 File.open(File.expand_path('~/.mutt/aliases'), 'w') {|h|
   google[1..-1].each {|x|
-    email_idx.each {|i|
-      h.puts "alias #{x[1]} #{x[0]} <#{x[i]}>" if x[i]
+    email_idx.each_with_index {|i,j|
+      h.puts "alias #{x[1]}#{j>0 ? j : ''} #{x[0]} <#{x[i]}>" if x[i]
     }
   }
 }

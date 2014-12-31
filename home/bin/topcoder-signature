@@ -45,9 +45,9 @@ using namespace std;
 $typedef
 class $class {
 public:
-    $signature {
-        
-    }
+  $signature {
+    
+  }
 };
 
 #include <iostream>
@@ -79,9 +79,9 @@ for (split /, /, $3) {
 
 for ('int', 'll', 'double', 'string', 'vi', 'vll', 'vd', 'vs') {
     next unless scalar %{$_};
-    say "    $_ ${[join ', ', sort(keys %{$_})]}[0];";
+    say "  $_ ${[join ', ', sort(keys %{$_})]}[0];";
 }
-say("    ", join("\n    ", @main));
+say("  ", join("\n  ", @main));
 
 if ($ret =~ /^v/) {
     my $ret2;
@@ -91,8 +91,8 @@ if ($ret =~ /^v/) {
         when ('vd') { $ret2 = 'double'; }
         when ('vs') { $ret2 = 'string'; }
     }
-    say "    $ret R = $class().$method(${[join ', ', @id]}[0]); cout << R.size() << endl; copy(R.begin(), R.end(), ostream_iterator<$ret2>(cout, \"\\n\"));"
+    say "  $ret R = $class().$method(${[join ', ', @id]}[0]); cout << R.size() << endl; copy(R.begin(), R.end(), ostream_iterator<$ret2>(cout, \"\\n\"));"
 } else {
-    say "    cout << $class().$method(${[join ', ', @id]}[0]) << endl;"
+    say "  cout << $class().$method(${[join ', ', @id]}[0]) << endl;"
 }
 say '}';
