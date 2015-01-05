@@ -18,7 +18,7 @@ import System.Process
 import System.Posix.Process (executeFile)
 import System.Posix.Types (ProcessID)
 import Text.Printf
-import Text.Regex
+--import Text.Regex
 
 import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
@@ -83,6 +83,7 @@ import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Master
 import XMonad.Layout.Maximize
+import XMonad.Layout.Minimize
 import XMonad.Layout.MouseResizableTile
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
@@ -93,6 +94,7 @@ import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.Simplest (Simplest(Simplest))
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.Tabbed
 import XMonad.Layout.TrackFloating
@@ -104,9 +106,18 @@ import XMonad.Layout.WindowSwitcherDecoration
  - TABBED
  -}
 
-myTabTheme = (Theme.theme Theme.kavonChristmasTheme)
-    { fontName   = "DejaVu Sans Mono:pixelsize=16"
-    , decoHeight = 20
+myTabTheme =
+    defaultTheme
+    { activeColor         = "black"
+    , inactiveColor       = "black"
+    , urgentColor         = "yellow"
+    , activeBorderColor   = "orange"
+    , inactiveBorderColor = "#333333"
+    , urgentBorderColor   = "black"
+    , activeTextColor     = "orange"
+    , inactiveTextColor   = "#666666"
+    , decoHeight          = 24
+    , fontName = "xft:Dejavu Sans Mono:size=14"
     }
 
 data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
@@ -122,7 +133,7 @@ myNavigation2DConfig = defaultNavigation2DConfig { layoutNavigation   = [("Full"
                                                  }
 
 myLayout = avoidStruts $
-    {-configurableNavigation (navigateColor "#00aa00") $-}
+    configurableNavigation (navigateColor "#333333") $
     mkToggle1 TABBED $
     mkToggle1 NBFULL $
     mkToggle1 REFLECTX $
@@ -130,29 +141,45 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
-    onWorkspace "media" gimpLayout $
+    onWorkspace "code" (termDrawer ||| tiled) $
+    onWorkspace "gimp" gimpLayout $
     --onWorkspaces ["web","irc"] Full $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
-    fullscreenFull Full ||| tall
+    tiled ||| tab
     where
-        tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
+        tiled = named "Tiled" $ minimize $ addTabs shrinkText myTabTheme $ subLayout [] Simplest $ ResizableTall 1 0.03 0.5 []
+        full = named "Full" $ minimize $ fullscreenFull Full
+        tab = named "Tab" $ minimize $ tabbedBottom shrinkText myTabTheme *||* tiled
+        --tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
         termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
-        float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
+        --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
+        myTab = defaultTheme
+                { activeColor         = "black"
+                , inactiveColor       = "black"
+                , urgentColor         = "yellow"
+                , activeBorderColor   = "orange"
+                , inactiveBorderColor = "#333333"
+                , urgentBorderColor   = "black"
+                , activeTextColor     = "orange"
+                , inactiveTextColor   = "#666666"
+                , decoHeight          = 18
+                }
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
-    [ className =? c --> doShift "web" | c <- ["Firefox", "Google-chrome", "Google-chrome-beta", "Chrome"] ] ++
-    [ className =? c --> doShift "code" | c <- ["Gvim"] ] ++
-    [ className =? c --> doShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer", "Wpp"] ] ++
-    [ appName =? c --> doShift "doc" | c <- ["idaq.exe", "idaq64.exe"] ] ++
+    [ className =? c --> viewShift "web" | c <- ["Firefox", "Google-chrome-stable", "Google-chrome-beta", "Chrome"] ] ++
+    [ className =? c --> viewShift "code" | c <- ["Gvim"] ] ++
+    [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer"] ] ++
+    [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
+    [ className =? c --> viewShift "office" | c <- ["Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
     [ title =? "newsbeuter" --> doShift "news"] ++
     [ title =? "mutt" --> doShift "mail"] ++
     [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
-    [ className =? c --> viewShift "media" | c <- ["Gimp", "Inkscape"] ] ++
+    [ className =? c --> viewShift "gimp" | c <- ["Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
-    [ className =? c --> doShift "misc" | c <- ["Wpa_gui", "Idaq"] ] ++
+    [ className =? c --> doShift "misc" | c <- ["Wpa_gui"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ className =? "Do" --> doIgnore ] ++
     [ myFloats --> doSPFloat ] ++
@@ -180,6 +207,7 @@ myManageHook = composeAll $
             ]
         ]
 
+{-
 myDynamicLog h = dynamicLogWithPP $ defaultPP
   { ppCurrent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
   , ppVisible = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
@@ -188,15 +216,26 @@ myDynamicLog h = dynamicLogWithPP $ defaultPP
   , ppSep = dzenColor "#0033FF" "" " | "
   , ppWsSep = ""
   , ppTitle  = dzenColor "green" "" . shorten 45
-  , ppLayout = flip (subRegex (mkRegex "ReflectX")) "[|]" .
-      flip (subRegex (mkRegex "ReflectY")) "[-]" .
-      flip (subRegex (mkRegex "Mirror")) "[+]"
+  , ppLayout = id
   , ppOrder  = \(ws:l:t:exs) -> [t,l,ws]++exs
   , ppSort   = fmap (namedScratchpadFilterOutWorkspace.) (ppSort byorgeyPP)
   , ppExtras = [ dzenColorL "violet" "" $ date "%R %a %y-%m-%d"
                , dzenColorL "orange" "" battery
                ]
   , ppOutput = hPutStrLn h
+  }
+  where
+    clickable w = wrap ("^ca(1,wmctrl -s `wmctrl -d | grep "++w++" | cut -d' ' -f1`)") "^ca()"
+-}
+
+myDynamicLog h = dynamicLogWithPP $ xmobarPP
+  { ppOutput  = hPutStrLn h
+  , ppCurrent = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
+  , ppVisible = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
+  , ppHidden = wrap "<icon=gray/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
+  , ppUrgent = wrap "<icon=highlight/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
+  , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort defaultPP
+  , ppTitle   = (" " ++) . xmobarColor "#ee9a00" ""
   }
   where
     clickable w = wrap ("^ca(1,wmctrl -s `wmctrl -d | grep "++w++" | cut -d' ' -f1`)") "^ca()"
@@ -238,8 +277,8 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["urxvtd -q -f -o", "xterm", "calibre", "firefox", "zsh -c 'feh /tmp/*(on[1])'", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-stable' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -252,11 +291,13 @@ myKeys =
     , ("<XF86Eject>", spawn "eject")
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
-    , ("M-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
+    , ("M-S-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
     -- window management
     , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
+    , ("M-a", toggleSkip ["NSP"])
+    , ("M-N", doTo Prev EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
     , ("M-n", doTo Next EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
     , ("M-<Space>", sendMessage NextLayout)
     , ("M-i", sendMessage Shrink)
@@ -270,6 +311,19 @@ myKeys =
     , ("M-<Backspace>", focusUrgent)
     , ("M-y", nextMatch History (return True))
     , ("M-;", switchLayer)
+    , ("M-m", withFocused minimizeWindow)
+    , ("M-S-m", sendMessage RestoreNextMinimizedWin)
+    , ("M-f", toggleFF)
+
+    -- XMonad.Layout.SubLayouts {{{
+    , ("M-C-h", sendMessage $ pullGroup L)
+    , ("M-C-j", sendMessage $ pullGroup D)
+    , ("M-C-k", sendMessage $ pullGroup U)
+    , ("M-C-l", sendMessage $ pullGroup R)
+    , ("M-C-m", withFocused (sendMessage . MergeAll))
+    , ("M-C-u", withFocused (sendMessage . UnMerge))
+    -- }}}
+
     {-, ("M-h", windowGo L True)-}
     {-, ("M-j", windowGo D True)-}
     {-, ("M-k", windowGo U True)-}
@@ -297,6 +351,15 @@ myKeys =
     , ("M-C-n", addWorkspacePrompt myXPConfig)
     , ("M-C-r", removeWorkspace)
     , ("M-C-S-r", killAll >> removeWorkspace)
+
+    -- backlight
+    , ("M-<F1>", spawnSelected defaultGSConfig [ "xbacklight =30"
+                                               , "xbacklight =20"
+                                               , "xbacklight =10"
+                                               , "xbacklight =15"
+                                               , "xbacklight =25"
+                                               , "xbacklight =5"
+                                               ])
 
     -- Volume
     , ("C-; 9", spawn "change_volume down")
@@ -333,7 +396,6 @@ myKeys =
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
-    , ("M-m", spawn "menu")
     , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
@@ -343,11 +405,17 @@ myKeys =
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
-    , ("M-p m", launchApp myXPConfig "mupdf" ["pdf","ps"])
+    , ("M-p m", spawn "menu")
     , ("M-p z", launchApp myXPConfig "zathura" ["pdf","ps"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
+
+-- Toggle workspaces but ignore some
+toggleSkip :: [WorkspaceId] -> X ()
+toggleSkip skips = do
+    hs <- XMonad.gets (flip skipTags skips . W.hidden . windowset)
+    unless (null hs) (windows . W.view . W.tag $ head hs)
 
 scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
@@ -371,9 +439,9 @@ scratchpads =
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
 {-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
-myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = "urxvt"
-    , focusFollowsMouse  = False
+    , focusFollowsMouse  = False -- see: focusFollow
     , borderWidth        = 1
     , modMask            = mod4Mask
     , workspaces         = myTopicNames
@@ -382,10 +450,27 @@ myConfig dzen = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = fullscreenEventHook -- >> clockEventHook
-    , logHook            = historyHook >> myDynamicLog dzen
-    , startupHook        = checkKeymap (myConfig dzen) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
+    , handleEventHook    = fullscreenEventHook <+> focusFollow -- >> clockEventHook
+    , logHook            = historyHook >> myDynamicLog xmobar
+    , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys
+
+-- {{{ Toggle follow Mouse
+-- from: http://www.haskell.org/haskellwiki/Xmonad/Config_archive/adamvo's_xmonad.hs
+-- A nice little example of extensiblestate
+newtype FocusFollow = FocusFollow {getFocusFollow :: Bool } deriving (Typeable,Read,Show)
+instance ExtensionClass FocusFollow where
+    initialValue = FocusFollow True
+    extensionType = PersistentExtension
+
+-- this eventHook is the same as from xmonad for handling crossing events
+focusFollow e@(CrossingEvent {ev_window=w, ev_event_type=t})
+        | t == enterNotify, ev_mode e == notifyNormal =
+    whenX (XS.gets getFocusFollow) (focus w) >> return (All True)
+focusFollow _ = return (All True)
+
+toggleFF = XS.modify $ FocusFollow . not . getFocusFollow
+--}}}
 
 {-
 defaultFade = 8/10
@@ -443,14 +528,15 @@ main = do
     d <- openDisplay ""
     let w = fromIntegral $ displayWidth d 0 :: Int
         h = fromIntegral $ displayHeight d 0 :: Int
-    let barWidth = h `div` 12
+    let barWidth = 160 --h `div` 12
     let barHeight = h `div` 35
     let fontSize = h `div` 54
-    dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*6) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"
+    {-dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*6) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"-}
+    xmobar <- spawnPipe "killall xmobar; xmobar"
     -- remind <http://www.roaringpenguin.com/products/remind>
     -- dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
     spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height " ++ show barHeight
-    xmonad $ myConfig dzen
+    xmonad $ myConfig xmobar
 
 {-
  - SearchMap
@@ -527,9 +613,9 @@ myTopics =
     , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
     , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "thunderbird.xpm"
     , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
-    , TI "media" "" (return ()) "imagemagick.xpm"
+    , TI "gimp" "" (return ()) "gimp.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
-    , TI "net" "" (return ()) "gtk-network.xpm"
+    , TI "misc" "" (return ()) "gtk-network.xpm"
     ]
   where
     urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""

@@ -1,0 +1,27 @@
+#!/bin/zsh
+
+T=$(mktemp)
+trap "rm $T" 0
+cat > $T <<'e'
+#!/usr/bin/expect --
+eval spawn [lrange $argv 0 end]
+
+send "/diff\r"
+
+interact t {
+  exec tmux splitw -h
+} Q {
+  exit 13
+}
+e
+
+t=$[$(date +%s)-24*60*60]
+for r in ~/projects/dotfiles/*; do
+  (( $(stat -c %Y $r/.git/FETCH_HEAD) > $t )) && continue
+  echo --$r--
+  cd $r && git fetch
+  [[ $(git rev-parse master) != $(git rev-parse origin/master) ]] && expect $T git diff master origin/master
+  r=$?
+  [[ $r -eq 0 || $r -eq 13 ]] && git pull
+  [[ $r -eq 13 ]] && exit
+done

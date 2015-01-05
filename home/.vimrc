@@ -302,7 +302,7 @@ if has("gui_running")
   Bundle 'Shougo/vimproc.vim'
   Bundle 'Shougo/vimshell.vim'
   Bundle 'airblade/vim-gitgutter'
-  Bundle 'gcmt/surfer.vim'
+  Bundle 'vim-scripts/surfer.vim'
   Bundle 'glts/vim-textobj-comment'
   Bundle 'glts/vim-textobj-indblock'
   Bundle 'godlygeek/tabular'
@@ -321,23 +321,24 @@ if has("gui_running")
 
   " FileTypes
   "Bundle 'R-plugin'
+  "Bundle 'Superbil/llvm.vim'
+  "Bundle 'danchoi/ri.vim'
   "Bundle 'emmet'
   "Bundle 'pytest.vim'
   "Bundle 'python-mode'
   "Bundle 'vimside'
-  Bundle 'gkz/vim-ls'
   Bundle 'LaTeX-Box-Team/LaTeX-Box'
   Bundle 'RubyJump'
-  "Bundle 'Superbil/llvm.vim'
-  "Bundle 'danchoi/ri.vim'
+  Bundle 'Valloric/YouCompleteMe'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
+  Bundle 'gkz/vim-ls'
+  Bundle 'marijnh/tern_for_vim'
   Bundle 'spf13/PIV'
-  Bundle 'tern_for_vim'
   Bundle 'tpope/vim-rails'
   Bundle 'vim-ruby/vim-ruby'
-  Bundle 'Valloric/YouCompleteMe'
-  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+  Bundle 'wting/rust.vim'
+  "let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
   let g:ycm_key_invoke_completion = "<F5>"
   let g:ycm_complete_in_comments = 1
@@ -353,18 +354,18 @@ if has("gui_running")
 
   " Syntax
   Bundle 'chrisbra/csv.vim'
+  Bundle 'def-lkb/ocp-indent-vim'
+  Bundle 'digitaltoad/vim-jade'
   Bundle 'evanmiller/nginx-vim-syntax'
   Bundle 'gorodinskiy/vim-coloresque'
   Bundle 'groenewege/vim-less'
   Bundle 'hail2u/vim-css3-syntax'
+  Bundle 'kchmck/vim-coffee-script'
   Bundle 'nvie/vim-flake8'
   Bundle 'sheerun/vim-polyglot'
   Bundle 'slim-template/vim-slim'
   Bundle 'tpope/vim-markdown'
-  Bundle 'vim-scripts/coffee-script'
-  Bundle 'vim-scripts/vim-jade'
   Bundle 'wavded/vim-stylus'
-  Bundle 'def-lkb/ocp-indent-vim'
 
 
   filetype plugin indent on    " required!
@@ -397,10 +398,11 @@ nn <leader>gg :GitGutterToggle<cr>
 " Gundo {{{2
 nn <leader>u :GundoToggle<cr>
 " Global {{{2
-nn <C-\>s :Gtags <C-r><C-w><cr>
-nn <C-\>r :Gtags -r <C-r><C-w><cr>
-nn <C-\>p :Gtags -P <C-r><C-w><cr>
-nn <C-\><C-\> :Gtags
+nn sas :Gtags <C-r><C-w><cr>
+nn sar :Gtags -r <C-r><C-w><cr>
+nn saP :Gtags -P <C-r><C-w><cr>
+nn sag :Gtags -g <C-r><C-w><cr>
+nn sa<space> :Gtags
 " NERDTree {{{2
 "let g:NERDTreeChDirMode=2
 "nn <leader>nt :NERDTreeToggle<cr>

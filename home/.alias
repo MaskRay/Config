@@ -139,9 +139,15 @@ alias stop='sudo systemctl stop'
 #alias disable='sudo systemctl disable'
 
 alias cal='cal -3'
+alias aS='sudo aura -S'
+alias aSs='aura -Ss'
+alias aA='sudo aura -A'
+alias aAs='aura -As'
+alias aSyu='aura -Syu'
 alias pD='sudo pacman -D'
 alias yS='yaourt -S --noconfirm'
 alias ySs='yaourt -Ss'
+alias ySyu='yaourt -Syua'
 alias pSy='sudo pacman -Sy'
 alias pSyu='sudo pacman -Syu'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
 alias pS='sudo pacman -S'		# Install specific package(s) from the repositories

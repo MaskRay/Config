@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+t=$[$(date +%s)-24*60*60]
+printf '%s\0' ~/.vim/bundle/*(/) | xargs -n1 -P8 -0i zsh -c "cd {} && (( \$(stat -c %Y .git/FETCH_HEAD) > $t )) || git pull"

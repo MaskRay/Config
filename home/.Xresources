@@ -102,15 +102,17 @@ URxvt.xftAntialias: true
 !URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:WenQuanYi Micro Hei:bold:antialias=True
 URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:微軟正黑體:bold:antialias=True
 !URxvt.font: xft:DejaVu Sans Mono:bold:size=14,xft:思源黑体:bold:antialias=True
-URxvt.searchable-scrollback:
+URxvt.searchable-scrollback: false
 URxvt.iso14755: false
 
 URxvt.perl-lib: /home/ray/.urxvt/
-URxvt.perl-ext:      default,url-select
+URxvt.perl-ext:      default,keyboard-select,url-select,clipboard
 URxvt.keysym.M-u:    perl:url-select:select_next
 URxvt.url-select.launcher: xdg-open
 URxvt.url-select.underline: true
 URxvt.url-select.autocopy: true
+URxvt.keysym.M-c: perl:clipboard:copy
+URxvt.keysym.M-bracketleft: perl:keyboard-select:activate
 
 URxvt.cutchars: `"()'*<>[]{|}"
 

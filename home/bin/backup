@@ -18,8 +18,13 @@ Options:
 EOF
 }
 
-if ! { mountpoint -q /mnt && [[ -d /mnt/home/ray ]]; }; then
+if ! mountpoint -q /mnt; then
   echo 'please mount the backup disk onto /mnt' >&2
+  exit 1
+fi
+
+if ! [[ -d /mnt/home/ray ]]; then
+  echo 'please create /mnt/home/ray' >&2
   exit 1
 fi
 

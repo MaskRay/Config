@@ -2,6 +2,8 @@
 :set prompt "\x256d\x2500%s\n\x2570\x2500"
 :seti -XFlexibleInstances -XTupleSections -XNoMonomorphismRestriction -XScopedTypeVariables -XOverloadedStrings
 
+:set +t
+
 --import qualified IPPrint
 --import qualified Language.Haskell.HsColour as HsColour
 --import qualified Language.Haskell.HsColour.Colourise as HsColour
@@ -12,3 +14,9 @@
 --let myPrint = putStrLn . HsColour.hscolour (HsColour.TTYg HsColour.XTerm256Compatible) myColourPrefs False False "" False . IPPrint.pshow
 
 -- :set -interactive-print=myPrint
+let ghciEscapeShellArg arg = "'" ++ concatMap (\x -> if x == '\'' then "'\"'\"'" else [x]) arg ++ "'"
+:def! hoogle    return . (":! hoogle --color --count=20 " ++) . ghciEscapeShellArg
+:def! hoogleAll return . (":! hoogle --color " ++) . ghciEscapeShellArg
+:def! doc       return . (":! hoogle --info " ++) . ghciEscapeShellArg
+:def! hlint     return . (":! hlint " ++) . ghciEscapeShellArg
+:def! pf        return . (":! pointfree " ++) . ghciEscapeShellArg

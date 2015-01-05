@@ -159,7 +159,7 @@ set pgp_getkeys_command="gpg --recv-keys %r > /dev/null 2>&1"
 set pgp_good_sign="^\\[GNUPG:\\] GOODSIG"
 
 # Misc {{{1
-set editor="vim %s"
+set editor="vim +7 +'norm o' %s" # insert mode
 #auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
 auto_view application/* image/* text/html
 alternative_order text/plain text/html
