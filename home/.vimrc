@@ -27,7 +27,7 @@ set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
-set sidescroll=10 sidescrolloff=20
+set sidescroll=10 sidescrolloff=10
 set switchbuf=useopen
 "set ignorecase smartcase
 set timeoutlen=300
@@ -210,6 +210,9 @@ if has("autocmd")
   aug Ruby_support
     au!
     au FileType ruby :call Ruby_init()
+  aug Rust_support
+    au!
+    au FileType rust :call Rust_init()
   aug Tex_support
     au!
     au FileType tex :call Tex_init()
@@ -338,6 +341,7 @@ if has("gui_running")
   Bundle 'tpope/vim-rails'
   Bundle 'vim-ruby/vim-ruby'
   Bundle 'wting/rust.vim'
+  let g:rust_recommended_style = 0
   "let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
   let g:ycm_key_invoke_completion = "<F5>"
@@ -680,6 +684,9 @@ fu! Ruby_init()
 
   ia <buffer> #! #!/usr/bin/env ruby
   ia <buffer> #e # encoding: utf-8
+endf
+
+fu! Rust_init()
 endf
 
 func! Tex_init()

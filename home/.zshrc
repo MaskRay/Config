@@ -266,8 +266,8 @@ alias -g L="|less"
 alias -g P="|column -t"
 alias -g S="|sort"
 alias -g X="|xargs"
-alias -g G='|egrep'
-alias -g EG='|& egrep'
+alias -g G='|egrep --color=auto'
+alias -g EG='|& egrep --color=auto'
 alias -g H="|head -n $(($LINES-2))"
 alias -g T="|tail -n $(($LINES-2))"
 alias -g N='>/dev/null'

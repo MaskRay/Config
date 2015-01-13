@@ -142,15 +142,16 @@ myLayout = avoidStruts $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
     onWorkspace "code" (termDrawer ||| tiled) $
+    onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
-    --onWorkspaces ["web","irc"] Full $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
     tiled ||| tab
     where
         tiled = named "Tiled" $ minimize $ addTabs shrinkText myTabTheme $ subLayout [] Simplest $ ResizableTall 1 0.03 0.5 []
         full = named "Full" $ minimize $ fullscreenFull Full
         tab = named "Tab" $ minimize $ tabbedBottom shrinkText myTabTheme *||* tiled
-        --tall = named "Tall" $ ResizableTall 1 0.03 0.5 []
+        --im = named "IM" $ minimize $ withIM (360/1920) (Title "QQ Lite") $ reflectHoriz $ withIM (300/1920) (Title "Hangouts") tiled
+        im = named "IM" $ minimize $ gridIM (360/1920) (Title "QQ Lite")
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
         termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
@@ -169,35 +170,42 @@ myLayout = avoidStruts $
 
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
-    [ className =? c --> viewShift "web" | c <- ["Firefox", "Google-chrome-stable", "Google-chrome-beta", "Chrome"] ] ++
+    [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
+    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome-stable", "Google-chrome-beta"] ] ++
     [ className =? c --> viewShift "code" | c <- ["Gvim"] ] ++
-    [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura", "Calibre-gui", "Calibre-ebook-viewer"] ] ++
+    [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
+    [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
     [ className =? c --> viewShift "office" | c <- ["Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
-    [ title =? "newsbeuter" --> doShift "news"] ++
-    [ title =? "mutt" --> doShift "mail"] ++
-    [ className =? c --> doShift "dict" | c <- ["Goldendict", "Stardict"] ] ++
+    [ role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work
+    {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
+    [ title =? "weechat" --> viewShift "im"] ++
+    [ title =? "newsbeuter" --> viewShift "news"] ++
+    [ title =? "mutt" --> viewShift "mail"] ++
     [ className =? c --> viewShift "gimp" | c <- ["Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "misc" | c <- ["Wpa_gui"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ className =? "Do" --> doIgnore ] ++
-    [ myFloats --> doSPFloat ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
-    [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ]
+    [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ] ++
+    [ mySPFloats --> doSPFloat ] ++
+    [ myCenterFloats --> doCenterFloat ]
   where
     role = stringProperty "WM_WINDOW_ROLE"
     prefixTitle prefix = fmap (prefix `isPrefixOf`) title
     viewShift = doF . liftM2 (.) W.greedyView W.shift
-    myFloats = foldr1 (<||>)
+    myCenterFloats = foldr1 (<||>)
+        [ className =? "feh"
+        , className =? "Display"
+        ]
+    mySPFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
         , className =? "Nautilus" <&&> fmap (not . isSuffixOf " - File Browser") title
-        , className =? "feh"
         , className =? "SDL_App"
-        , className =? "Display"
         , className =? "Gimp" <&&> fmap (not . flip any ["image-window", "toolbox", "dock"] . flip isSuffixOf) role
         , fmap (=="GtkFileChooserDialog") role
-        , stringProperty "WM_WINDOW_ROLE" =? "pop-up"
+        {-, fmap (/= "Google-chrome-stable") className <&&> role =? "pop-up"-}
         , fmap (isPrefixOf "sun-") appName
         , fmap (isPrefixOf "Gnuplot") title
         , flip fmap className $ flip elem
@@ -277,7 +285,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
+    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", urxvt "weechat", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-stable' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -374,6 +382,7 @@ myKeys =
 
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
+    , ("C-' d", namedScratchpadAction scratchpads "goldendict")
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
@@ -387,12 +396,13 @@ myKeys =
     , ("C-' t", namedScratchpadAction scratchpads "task")
     , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' k", namedScratchpadAction scratchpads "pure")
+    , ("C-' z", namedScratchpadAction scratchpads "zeal")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
     , ("M-C-x", sendMessage $ Toggle REFLECTX)
     , ("M-C-y", sendMessage $ Toggle REFLECTY)
-    , ("M-C-m", sendMessage $ Toggle MIRROR)
+    , ("M-C-z", sendMessage $ Toggle MIRROR)
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
@@ -417,6 +427,7 @@ toggleSkip skips = do
     hs <- XMonad.gets (flip skipTags skips . W.hidden . windowset)
     unless (null hs) (windows . W.view . W.tag $ head hs)
 
+urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
@@ -426,9 +437,10 @@ scratchpads =
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvt -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
+  , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
+  , NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where
-    urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
     f s = NS s (urxvt s) (title =? s) doSPFloat
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
@@ -605,14 +617,14 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chrome") "firefox.xpm"
+    [ TI "web" "" (spawn "chrome") "chrome.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
-    , TI "doc" "Documents/" (spawn "xpra attach :7000") "evince.xpm"
+    , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "news" "" (urxvt "newsbeuter") "irssi.xpm"
-    , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "thunderbird.xpm"
-    , TI "dict" "" (spawn "goldendict") "goldendict.xpm"
+    , TI "im" "" (urxvt "weechat") "weechat.xpm"
+    , TI "news" "" (urxvt "newsbeuter") "newsbeuter.xpm"
+    , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "mutt.xpm"
     , TI "gimp" "" (return ()) "gimp.xpm"
     , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
     , TI "misc" "" (return ()) "gtk-network.xpm"

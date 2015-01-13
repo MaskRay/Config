@@ -26,3 +26,6 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps.desk
 ; .ppt .pptx
 application/vnd.ms-powerpoint=wpp.desktop
 application/vnd.openxmlformats-officedocument.presentationml.presentation=wpp.desktop
+
+; .epub
+application/epub+zip=ebook-viewer.desktop

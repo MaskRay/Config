@@ -8,6 +8,7 @@ hdr_order From: To: Cc: Subject: Date:
 unset abort_unmodified
 set assumed_charset="utf-8:gbk"
 set attach_charset="utf-8:gbk"
+set beep_new
 set charset="utf-8"
 set edit_headers
 set fast_reply

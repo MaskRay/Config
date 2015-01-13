@@ -11,7 +11,8 @@ goto-first-unread yes
 # html-renderer "w3m -dump -T text/html"
 ignore-mode "display"
 keep-articles-days 90
-notify-program "notify-send"
+#notify-program "notify-send"
+notify-beep yes
 refresh-on-startup yes
 confirm-exit yes
 prepopulate-query-feeds yes
