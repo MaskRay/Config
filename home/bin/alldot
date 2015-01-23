@@ -16,10 +16,11 @@ interact t {
 e
 
 t=$[$(date +%s)-24*60*60]
-for r in ~/projects/dotfiles/*; do
-  (( $(stat -c %Y $r/.git/FETCH_HEAD) > $t )) && continue
-  echo --$r--
-  cd $r && git fetch
+printf '%s\0' ~/projects/dotfiles/*(/) | xargs -n1 -P8 -0i zsh -c "cd {} && (( \$(stat -c %Y .git/FETCH_HEAD) > $t )) || git fetch"
+
+for r in ~/projects/dotfiles/*(/); do
+  echo --${r##*/}--
+  cd $r
   [[ $(git rev-parse master) != $(git rev-parse origin/master) ]] && expect $T git diff master origin/master
   r=$?
   [[ $r -eq 0 || $r -eq 13 ]] && git pull

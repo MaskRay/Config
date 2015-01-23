@@ -1,0 +1,108 @@
+# software
+apt-get install tmux build-essential autoconf libtool zsh rxvt-unicode-256color mutt-patched offlineimap cloc urlview elfutils vim-gtk vim
+## mail
+apt-get install recutils mutt-patched offlineimap msmtp
+## dev
+apt-get install radare2 cgdb global cscope git subversion mercurial ctags strace ltrace gdb valgrind linux-tools
+## cluster
+apt-get install clustershell
+## doc
+apt-get install mupdf newsbeuter pdfgrep zathura unoconv
+## net
+apt-get install lftp
+## file
+apt-get install ranger p7zip-full renameutils sshfs unzip aria2 inotify-tools
+## misc
+apt-get install rlwrap xstow ncdu nvidia-319 graphviz lnav dstat sysstat
+## x11
+apt-get install feh geeqie trayer dmenu xmobar xmonad xdotool xsel unclutter wmctrl xscreensaver
+## graphics
+apt-get install imagemagick
+# gfw
+apt-get install proxychains tsocks
+
+apt-get install libcurl4-openssl-dev
+
+# perf
+# linux-tools kernel module
+
+# gcc
+add-apt-repository ppa:ubuntu-toolchain-r/test
+apt-get update
+apt-get install g++-4.9-multilib
+#update-alternatives --remove-all gcc
+#update-alternatives --remove-all g++
+update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 30
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 90
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90
+update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-4.9 90
+
+# ocaml (precise) universe since trusty
+add-apt-repository ppa:avsm/ppa
+apt-get update
+apt-get install ocaml opam
+opam install utop
+
+
+# rust
+# 
+# deb http://ppa.launchpad.net/hansjorg/rust/ubuntu YOUR_UBUNTU_VERSION_HERE main 
+app-get update
+app-get install rust-nightly
+
+# python
+apt-get install python3 ipython3 ipython
+
+# ruby
+curl -sSL https://get.rvm.io | bash -s -- --autolibs=read-fail
+rvm install 2.2.0
+rvm use ruby-2.2.0-p0@default
+gem install ruby
+
+# npm
+curl -sS https://raw.github.com/creationix/nvm/master/install.sh | sh
+nvm install 0.10.35
+
+# clang
+add-apt-repository ppa:h-rayflood/llvm-upper # precise
+apt-get update
+apt-get install clang-3.5
+
+wget http://rr-project.org/releases/rr-3.0.0-Linux-$(uname -m).deb
+sudo dpkg -i rr-3.0.0-Linux-$(uname -m).deb
+
+## rr
+wget http://rr-project.org/releases/rr-3.0.0-Linux-$(uname -m).deb
+dpkg -i rr-3.0.0-Linux-$(uname -m).deb
+
+## fcitx
+# see http://wiki.ubuntu.org.cn/Fcitx
+add-apt-repository ppa:fcitx-team/nightly
+apt-get update
+apt-get install fcitx-rime librime-data-double-pinyin
+apt-get install fcitx-pinyin
+
+## vim 7.4
+add-apt-repository ppa:fcwu-tw/ppa
+apt-get update
+apt-get install vim
+
+
+## X11
+
+dpkg-reconfigure x11-common # choose anybody
+
+## tex
+#
+latex-cjk-xcjk
+texlive-latex-recommended
+texlive-latex-extra
+biblatex
+
+
+## taskwarrior
+
+task
+
+cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/.local/stow/task .
+xstow -d ~/.local/stow

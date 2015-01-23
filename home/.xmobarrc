@@ -5,7 +5,7 @@ Config {
     , bgColor = "#2f2e2e"
     , fgColor = "white"
     --, position = TopP 160 0
-    , position = TopSize R 84 30
+    , position = TopSize R 50 30
     , lowerOnStart = True
     , commands = [ Run MultiCpu ["-L","10","-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000"] 50
                  , Run Memory ["-H","50","--low","#777777","--normal","#83AD2E","--high","#FF0000","-t","Mem: <usedratio>%"] 50

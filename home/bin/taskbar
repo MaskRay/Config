@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+old=
+pid=
+while :; do
+  tasks=(${(f)"$(task taskbar | sed -n '4,/^$/{/^$/!p}')"})
+  if [[ $tasks != $old ]]; then
+    [[ -n $pid ]] && kill $pid
+    dzen2 -p -ta l -x 160 -w 524 -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei Mono-18' -l $[${#tasks[@]}-1] <<< ${(F)tasks} &
+    pid=$!
+    old=("${tasks[@]}")
+  fi
+  sleep 300
+done

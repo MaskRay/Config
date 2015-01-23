@@ -168,9 +168,22 @@ fu! MatchUnwantedWhitespaces()
   " and tabs followed by spaces:   /\t\+ \+\s*/
   " combine them together: /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
   if bufname('%') != '' && bufname('%') != 'vimfiler:explorer'
-    hi ExtraWhitespace ctermbg=red guibg=red
-    match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+    if exists('b:showextrawhitespace') && b:showextrawhitespace == 0
+      hi clear ExtraWhitespace
+      match none ExtraWhitespace
+    else
+      hi ExtraWhitespace ctermbg=red guibg=red
+      match ExtraWhitespace /\s\+$\| \+\t\+\s*\|\t\+ \+\s*/
+    endif
   en
+endf
+fu! ToggleUnwantedWhitespaces()
+  if exists('b:showextrawhitespace') && b:showextrawhitespace == 0
+    let b:showextrawhitespace = 1
+  else
+    let b:showextrawhitespace = 0
+  endif
+  call MatchUnwantedWhitespaces()
 endf
 " VSetSearch {{{2
 " makes * and # work on visual mode too.
@@ -342,7 +355,7 @@ if has("gui_running")
   Bundle 'vim-ruby/vim-ruby'
   Bundle 'wting/rust.vim'
   let g:rust_recommended_style = 0
-  "let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"
   let g:ycm_key_invoke_completion = "<F5>"
   let g:ycm_complete_in_comments = 1
@@ -350,7 +363,8 @@ if has("gui_running")
   let g:ycm_seed_identifiers_with_syntax = 1
   let g:ycm_autoclose_preview_window_after_completion = 1
   let g:ycm_autoclose_preview_window_after_insertion = 1
-  let g:ycm_key_list_select_completion = ['<TAB>', '<Down>', '<Enter>']
+  let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+  let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
   let g:ycm_confirm_extra_conf = 0
   let g:ycm_cache_omnifunc = 0
   let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
@@ -545,6 +559,8 @@ function! s:open_junk_file()
 endfunction "}}}
 nnoremap <leader>jf :JunkFile<cr>
 
+nn <leader>wh :call ToggleUnwantedWhitespaces()<cr>
+
 " Beginning & End
 noremap H ^
 noremap L g_
@@ -580,6 +596,8 @@ au BufReadPost *
 nnoremap <Leader>cp :!xsel -ib < %<cr><cr>
 nnoremap <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nnoremap <leader>ig :IndentLinesToggle<cr>:se list!<cr>
+
+nn zz :silent !zeal --query "<cword>" & wmctrl <cr>
 
 " ; :
 nn ; :

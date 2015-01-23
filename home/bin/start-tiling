@@ -32,6 +32,7 @@ List.map Sys.command [
   ; "unclutter &"
   ; "batti &"
   ; "syndaemon -k &"
+  ; "taskbar &"
   ; "keynav &"
   (*; "dorm u"*)
   ; "emacs --daemon >/dev/null 2>/dev/null"

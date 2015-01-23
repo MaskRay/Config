@@ -1,10 +1,12 @@
 #!/bin/zsh
 
-if [[ -f $1 ]]; then
+if [[ -z $1 ]]; then
+  cat $0
+elif [[ -f $1 ]]; then
   #curl -F key="nvvfcCameIpNi15EZGmocn1znOIXLhYX" \
   #  -F file="@$1" \
   #  http://imagebin.ca/upload.php
-  curl -sF "name=@$1" http://img.vim-cn.com/ | tee >(xsel -i)
+  curl -sF "name=@$1" http://img.vim-cn.com/ | tee >(xsel -ipb)
 else
   echo cannot access $1
 fi

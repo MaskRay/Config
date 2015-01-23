@@ -105,7 +105,7 @@ URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:微軟
 URxvt.searchable-scrollback: false
 URxvt.iso14755: false
 
-URxvt.perl-lib: /home/ray/.urxvt/
+URxvt.perl-lib: /home/ray/.local/src/urxvt-perls
 URxvt.perl-ext:      default,keyboard-select,url-select,clipboard
 URxvt.keysym.M-u:    perl:url-select:select_next
 URxvt.url-select.launcher: xdg-open
