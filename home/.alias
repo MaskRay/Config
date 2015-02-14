@@ -219,6 +219,7 @@ udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
 
 use() { rm test; ln -s test-$1 test; }
 aa() { awk -vn=$1 'NR==1 {print n} 1 < NR && NR <= n+1' "$2" > "$3"; }
++x() { chmod +x "$@" }
 
 
 alias cf='cpupower frequency-info'

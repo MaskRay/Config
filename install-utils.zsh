@@ -5,6 +5,8 @@ ubuntu_pkg[pcre]=libpcre3-dev
 ubuntu_pkg[zlib]=libz-dev
 ubuntu_pkg[readline]=libreadline-dev
 ubuntu_pkg[ncurses]=ncurses-dev
+ubuntu_pkg[sqlite]=libsqlite3-dev
+ubuntu_pkg[uuid]=uuid-dev
 
 # versions
 
@@ -68,13 +70,13 @@ install_task() {
   git clone https://git.tasktools.org/scm/tm/task.git
   info dependency: uuid-dev
   pushd task
-  cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/.local/stow/task
+  cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local/stow/task
   make install
   popd
   xstow -d ~/.local/stow task
   git clone https://git.tasktools.org/scm/ex/tasksh.git
   pushd tasksh
-  cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/.local/stow/tasksh
+  cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local/stow/tasksh
   make install
   popd
   xstow -d ~/.local/stow tasksh
@@ -165,13 +167,18 @@ install_nvm() {
 }
 
 install_lnav() {
-  #bin lnav && return
-  #git clone https://github.com/tstack/lnav
+  bin lnav && return
+  git clone https://github.com/tstack/lnav
   pushd lnav
   ./configure --prefix=~/.local/stow/lnav
   make install
   popd
   xstow -d ~/.local/stow lnav
+}
+
+install_jq() {
+  # download binary
+  wget https://stedolan.github.io/jq/download/linux64/jq -O ~/.local/bin/jq
 }
 
 preexec() {
@@ -187,3 +194,4 @@ install_urxvt_perls
 install_rvm
 install_nvm
 install_lnav
+install_jq

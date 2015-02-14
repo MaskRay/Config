@@ -1,6 +1,9 @@
 #!/bin/bash
 [[ $EUID -ne 0 ]] && exec sudo "$0" "$@"
 
-[[ 1000 -le "$1" && "$1" -le 2000 ]] || { echo 'brightness should be in 1000~2000' >&2; exit 1;}
-
-sudo su -c "echo $1 > /sys/class/backlight/intel_backlight/brightness"
+if [[ -n $1 ]]; then
+  [[ 500 -le "$1" && "$1" -le 2000 ]] || { echo 'brightness should be in 500~2000' >&2; exit 1;}
+  sudo su -c "echo $1 > /sys/class/backlight/intel_backlight/brightness"
+else
+  cat /sys/class/backlight/intel_backlight/brightness
+fi

@@ -617,7 +617,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chrome") "chrome.xpm"
+    [ TI "web" "" (spawn "firefox") "chrome.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"

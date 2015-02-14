@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-files=$(git ls-files | grep -v '\.ssh')
+files=$(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee')
 target=~
 
 link() {
@@ -8,18 +8,16 @@ link() {
 }
 
 do_ssh() {
-  cp -rT home/.ssh ~/.ssh
+  cp -auT home/.ssh ~/.ssh
   chmod 700 ~/.ssh
 }
 
 do_mkdir() {
   mkdir -p ~/{.vimtmp/undo,.history,tmp}
-  ln -s /tmp/.distcc -t ~
 }
 
 do_git() {
-  git submodule init
-  git submodule update
+  git submodule update --init --recursive
 }
 
 for f in $files; do

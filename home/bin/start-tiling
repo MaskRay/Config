@@ -20,7 +20,7 @@ List.map Sys.command [
   (*; singleton "fcitx &" *)
   (*; singleton "/usr/lib64/notify-osd/notify-osd &"*)
   ; singleton "dunst &"
-  ; singleton "offlineimap -q &"
+  ; singleton "checkmail &"
   (*; singleton "ibus-daemon -d"*)
 
   (* one-shot *)

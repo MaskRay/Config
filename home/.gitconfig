@@ -66,6 +66,7 @@
   # misc
   save-untracked = !git ls-files --others --exclude-standard -z | cpio -pmd0
   ignored = !git ls-files -v | grep '^[[:lower:]]'
+  conflict = !git ls-files -u | awk '{print $4}' | sort -u
 [branch]
   autosetuprebase = always
 [color]

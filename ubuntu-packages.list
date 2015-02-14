@@ -93,12 +93,25 @@ apt-get install vim
 dpkg-reconfigure x11-common # choose anybody
 
 ## tex
-#
+
 latex-cjk-xcjk
 texlive-latex-recommended
 texlive-latex-extra
 biblatex
 
+## zeal
+
+add-apt-repository ppa:jerzy-kozera/zeal-ppa
+apt-get update
+apt-get install zeal
+
+## git
+
+add-apt-repository ppa:git-core/ppa
+apt-get update
+apt-get install git
+
+## latex
 
 ## taskwarrior
 
@@ -106,3 +119,16 @@ task
 
 cmake -DCMAKE_MAKE_PROGRAM=make -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/.local/stow/task .
 xstow -d ~/.local/stow
+
+## gdb
+
+./configure --prefix=~/.local/stow/gdb --with-gdb-datadir=/usr/share/gcc-4.9/python
+
+~/.gdbinit
+
+     python
+     import sys
+     sys.path.append('/usr/share/gcc-4.9/python')
+     from libstdcxx.v6.printers import register_libstdcxx_printers
+     register_libstdcxx_printers(None)
+     end

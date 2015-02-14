@@ -110,10 +110,12 @@ if has("gui_running")
   "colorscheme badwolf
   "colorscheme harlequin
   "colorscheme molokai
-  colorscheme hemisu
+  "colorscheme hemisu
+  colorscheme hybrid
 else
   set t_Co=256
-  colorscheme bocau
+  "colorscheme bocau
+  colorscheme hybrid
 endif
 
 " Functions --------------------- {{{1
@@ -229,7 +231,7 @@ if has("autocmd")
   aug Tex_support
     au!
     au FileType tex :call Tex_init()
-    au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -1 llpp' &")
+    "au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -1 llpp' &")
   " Show trailing whitespaces when necessary {{{2
   " That is, most of the cases other than editing source code in Whitespace,
   " the programming language.
@@ -277,7 +279,7 @@ if has("autocmd")
     au Filetype dot let &makeprg="dot -Tpng -O -v % && feh %.png"
     au Filetype r let &makeprg="R <% --vanilla"
     au Filetype ocaml let &makeprg='ocaml %'
-    au FileType tex let &makeprg = 'xelatex -shell-escape -interaction=nonstopmode % && xdotool key Super+4'
+    "au FileType tex let &makeprg = 'xelatex -shell-escape -interaction=nonstopmode % && xdotool key Super+4'
   aug misc
     au BufWritePost .Xresources sil !xrdb %
   aug end
@@ -597,7 +599,7 @@ nnoremap <Leader>cp :!xsel -ib < %<cr><cr>
 nnoremap <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nnoremap <leader>ig :IndentLinesToggle<cr>:se list!<cr>
 
-nn zz :silent !zeal --query "<cword>" & wmctrl <cr>
+nn K :silent !zeal --query "<cword>" & wmctrl -a zeal <cr>
 
 " ; :
 nn ; :

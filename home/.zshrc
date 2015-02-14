@@ -382,7 +382,7 @@ fi
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby ghc perl texlive/2014 wps #mpi/impi
+module load ruby/2.2.0 ghc perl texlive/2014 wps #mpi/impi
 
 # rvm
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
