@@ -191,8 +191,17 @@ zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:*:*:processes' force-list always
 zstyle ':completion:*:processes' command 'ps -au$USER '
 
+#zstyle ':completion:*' file-patterns '%p(^-/):globbed-files' '*(-/):directories' '*:all-files'
+zstyle ':completion::complete:feh:*' file-patterns '*.png *.jpg *.bmp *.gif *(/):directories'
+zstyle ':completion::complete:wps:*' file-patterns '*.doc *.docx *(/):directories'
+zstyle ':completion::complete:wpp:*' file-patterns '*.ppt *.pptx *(/):directories'
+zstyle ':completion::complete:llpp:*' file-patterns '*.pdf *(/):directories'
+zstyle ':completion::complete:et:*' file-patterns '*.xls *.xlsx *(/):directories'
+
 # vim ignore
 zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(avi|mkv|rmvb|pyc|wmv)'
+
+zstyle ':completion::*:(-command-|export):*' fake-parameters CFLAGS CXXFLAGS LD_LIBRARY_PATH
 
 # ... completion
 user_complete(){
@@ -254,6 +263,7 @@ bindkey -e
 bindkey -N mymap emacs
 bindkey "\t" user_complete
 bindkey '\e\\' delete-horizontal-space
+bindkey '^xh' _complete_help
 #bindkey '^p' history-beginning-search-backward
 #bindkey '^n' history-beginning-search-forward
 
@@ -378,6 +388,8 @@ if [[ -d $HOME/.zsh/Pinyin-Completion ]]; then
   PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin
   source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh
 fi
+
+[[ -f /etc/profile.d/fzf.zsh ]] && source /etc/profile.d/fzf.zsh
 
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }

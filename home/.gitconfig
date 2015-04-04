@@ -71,9 +71,9 @@
   autosetuprebase = always
 [color]
   ui = true
-  diff = always
+  diff = auto
   status = auto
-  grep = always
+  grep = auto
 [color "branch"]
   current = yellow reverse
   local = yellow

@@ -2,7 +2,9 @@
 
 setopt extendedglob
 
+config=~/.config/backup.dirs
 argv0=${0##*/}
+dryrun=
 usage() {
   cat <<EOF
 Interactively make a backup under /mnt/home/ray/ (USB stick).
@@ -18,19 +20,10 @@ Options:
 EOF
 }
 
-if ! mountpoint -q /mnt; then
-  echo 'please mount the backup disk onto /mnt' >&2
-  exit 1
-fi
-
-if ! [[ -d /mnt/home/ray ]]; then
-  echo 'please create /mnt/home/ray' >&2
-  exit 1
-fi
-
-while getopts dhsv opt; do
+while getopts dnhsv opt; do
   case $opt in
     d) delete=1;;
+    n) dryrun=1;;
     s) stats=1;;
     v) verbose=1;;
     h) usage; exit;;
@@ -38,6 +31,20 @@ while getopts dhsv opt; do
   esac
 done
 shift $[$OPTIND-1]
+destdir=${1:-/mnt/home/ray/}
+echo ++$destdir
+
+if [[ $destdir =~ /mnt/* ]]; then
+  if ! mountpoint -q /mnt; then
+    echo 'please mount the backup disk onto /mnt' >&2
+    exit 1
+  fi
+
+  if ! [[ -d /mnt/home/ray ]]; then
+    echo 'please create /mnt/home/ray' >&2
+    exit 1
+  fi
+fi
 
 rsync_opt=-a
 [[ -n $verbose ]] && rsync_opt="$rsync_opt -P"
@@ -45,11 +52,20 @@ rsync_opt=-a
 [[ -n $stats ]] && rsync_opt="$rsync_opt --stats"
 
 # the next line will be modified by sed -i
-items=(Activities Algo AlgoBook AlgoData Assignment bin Book config Documents maskray.me org Pictures)
+if [[ -f $config ]]; then
+  items=("${(f)$(<~/.config/backup.dirs)}")
+else
+  touch $config
+  items=()
+fi
 
 sync() {
   echo "\e[33msyncing $1 ...\e[0m"
-  rsync $=rsync_opt ~/$1 /mnt/home/ray/
+  if [[ -n $dryrun ]]; then
+    echo rsync $=rsync_opt ~/$1 $destdir
+  else
+    rsync $=rsync_opt ~/$1 $destdir
+  fi
 }
 echo "\e[1m\e[33mrsync options: $rsync_opt\e[0m"
 
@@ -67,6 +83,9 @@ while :; do
         done
       fi
       ;;
+    q)
+      break
+      ;;
     add\ *)
       name=${name:4}
       if ! [[ -d ~/$name ]]; then
@@ -75,9 +94,10 @@ while :; do
       fi
       items=($items[@] $name)
       items=(${(ou)items})
-      x=$(printf "%s " ${(q)items})
-      x=$(print -r -- ${(q)x})
-      sed -i "/^items=(/s'.*'items=($x)'" $0
+      print -rl -- ${items[@]} > $config
+      #x=$(printf "%s " ${(q)items})
+      #x=$(print -r -- ${(q)x})
+      #sed -i "/^items=(/s'.*'items=($x)'" $0
       ;;
     del\ *)
       new_items=("${(@)items:#${name:4}}")
@@ -92,7 +112,8 @@ while :; do
           x=$(printf "%s " ${(q)new_items})
           x=$(print -r -- ${(q)x})
           items=("${new_items[@]}")
-          sed -i "/^items=(/s'.*'items=($x)'" $0
+          print -rl -- ${items[@]} > $config
+          #sed -i "/^items=(/s'.*'items=($x)'" $0
           echo "\e[1m\e[33mdeleted\e[0m"
         fi
       elif (($ndel > 1)); then
@@ -100,21 +121,27 @@ while :; do
       fi
       ;;
     *)
+      exact=
       matched=()
       for i in ${items[@]}; do
+        [[ $i = $name ]] && exact=$i
         [[ $i = *(#i)${(q)name}* ]] && matched=($matched[@] $i)
       done
-      case $#matched in
-        0)
-          echo 'not found'
-          ;;
-        1)
-          sync $matched[1]
-          ;;
-        *)
-          echo "\e[1m\e[33m$#matched items matched\e[0m"
-          ;;
-      esac
+      if [[ -n $exact ]]; then
+        sync $exact
+      else
+        case $#matched in
+          0)
+            echo 'not found'
+            ;;
+          1)
+            sync $matched[1]
+            ;;
+          *)
+            echo "\e[1m\e[33m$#matched items matched\e[0m"
+            ;;
+        esac
+      fi
       ;;
   esac
 done

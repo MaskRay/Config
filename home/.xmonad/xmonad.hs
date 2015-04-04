@@ -145,7 +145,7 @@ myLayout = avoidStruts $
     onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
-    tiled ||| tab
+    tiled ||| tab ||| full
     where
         tiled = named "Tiled" $ minimize $ addTabs shrinkText myTabTheme $ subLayout [] Simplest $ ResizableTall 1 0.03 0.5 []
         full = named "Full" $ minimize $ fullscreenFull Full

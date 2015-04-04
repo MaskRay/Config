@@ -32,3 +32,20 @@ journal.time=on
 report.taskbar.columns=due.countdown,description.count
 report.taskbar.sort=due+
 report.taskbar.filter=+READY
+
+report.list.description=Lists all tasks matching the specified criteria
+report.list.columns=id,project,priority,due,recur,tags,description
+report.list.labels=ID,Project,Pri,Due,Recur,Tags,Description & Annotation
+report.list.sort=priority-,project+,due+
+report.list.filter=status:pending
+
+report.today.description=Lists all tasks matching the specified criteria
+report.today.columns=id,project,priority,due,tags,description
+report.today.labels=ID,Proj,Pri,Due,Tags,Description & Annotation
+report.today.sort=due+,priority-,project+
+report.today.filter=status:pending '( scheduled.before:tomorrow or due.before:tom )'
+report.today.dateformat=b.D
+
+due=3
+default.command=today
+calendar.holidays=full

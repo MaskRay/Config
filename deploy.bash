@@ -10,6 +10,7 @@ link() {
 do_ssh() {
   cp -auT home/.ssh ~/.ssh
   chmod 700 ~/.ssh
+  chmod 600 ~/.ssh/*
 }
 
 do_mkdir() {

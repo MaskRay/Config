@@ -161,6 +161,7 @@ alias pQs='pacman -Qs'			# Search for package(s) in the local database
 alias paclo="pacman -Qdt"		# List all packages which are orphaned
 alias pacc="sudo pacman -Scc"		# Clean cache - delete all not currently installed package files
 alias pQl="pacman -Ql"			# List all files installed by a given package
+alias pQo="pacman -Qo"
 alias pacexp="sudo pacman -D --asexp"	# Mark one or more installed packages as explicitly installed 
 alias pacdep="sudo pacman -D --asdep"	# Mark one or more installed packages as non explicitly installed
 alias api='sudo aptitude install'
@@ -175,6 +176,8 @@ alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0 -C /lib/dhcpcd/dhcpcd-hooks/2
 alias xst='xstow -d ~/.local/stow'
 alias st=strace
 alias lt=ltrace
+alias segfault='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'
+alias lid.std='lid -f ~/Dev/ID/usr-include.ID'
 
 alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
 alias xor=~/Dev/Crypto/xortool/xortool.py
@@ -199,6 +202,10 @@ alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administ
 
 mtrg() {
   sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}' 
+}
+
+info2() {
+  info --subnodes -o - "$1" | less
 }
 
 johnrar() {

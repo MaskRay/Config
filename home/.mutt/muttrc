@@ -32,7 +32,7 @@ set reverse_alias
 set reverse_name
 set rfc2047_parameters=yes
 set search_context=3
-set sendmail="proxychains msmtp"
+set sendmail="msmtp"
 set sort=threads
 set sort_aux=reverse-last-date-received
 set ssl_force_tls = yes
@@ -163,7 +163,7 @@ set pgp_good_sign="^\\[GNUPG:\\] GOODSIG"
 set editor="vim +7 +'norm o' %s" # insert mode
 #auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
 auto_view application/* image/* text/html
-alternative_order text/plain text/html
+alternative_order text/html text/plain
 mime_lookup application/octet-stream
 
 charset-hook gb2312 gbk

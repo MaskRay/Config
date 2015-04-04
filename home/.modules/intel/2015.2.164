@@ -12,7 +12,7 @@ proc setL {args} {
   prepend-path LD_LIBRARY_PATH [join $args :]
 }
 
-set root10 /home/ray/.local/opt/composer_xe_2013_sp1.2.144
+set root10 /opt/intel/composer_xe_2015.2.164
 
 setenv CC icc
 setenv CXX icpc

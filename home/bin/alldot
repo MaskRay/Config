@@ -6,7 +6,7 @@ cat > $T <<'e'
 #!/usr/bin/expect --
 eval spawn [lrange $argv 0 end]
 
-send "/diff\r"
+send "/diff --git\r"
 
 interact t {
   exec tmux splitw -h
@@ -26,3 +26,4 @@ for r in ~/projects/dotfiles/*(/); do
   [[ $r -eq 0 || $r -eq 13 ]] && git pull
   [[ $r -eq 13 ]] && exit
 done
+exit 0

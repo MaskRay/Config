@@ -204,6 +204,7 @@ if has("autocmd")
     au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
     au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
     au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+    au FileType make setl ts=8 sts=0 sw=8 noet
   aug CoffeeScript_support
     au!
     au BufNewFile,BufRead *.iced setfiletype coffee
@@ -327,6 +328,8 @@ if has("gui_running")
   Bundle 'kana/vim-textobj-user'
   Bundle 'lucapette/vim-textobj-underscore'
   Bundle 'qstrahl/vim-matchmaker'
+  Bundle 'rhysd/clever-f.vim'
+  Bundle 'rhysd/vim-clang-format'
   Bundle 'rking/ag.vim'
   Bundle 'scrooloose/nerdcommenter'
   Bundle 'scrooloose/syntastic'
@@ -437,7 +440,7 @@ let g:quickrun_no_default_key_mappings = 1
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
 let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = '-std=c++11'
+let g:syntastic_cpp_compiler_options = '-std=c++11 -isystem/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include -fopenmp'
 nn <leader>st :SyntasticToggleMode<cr>
 " Tabular {{{2
 if exists(":Tabularize")
@@ -616,6 +619,14 @@ nnoremap <leader>sf :Surf<cr>
 vnoremap <leader>sj :SplitJoinJoin<cr>
 vnoremap <leader>sJ :SplitJoinSplit<cr>
 
+" clang-format
+let g:clang_format#style_options = {
+      \ "AccessModifierOffset" : -2,
+      \ "AllowShortIfStatementsOnASingleLine" : "true",
+      \ "AlwaysBreakTemplateDeclarations" : "true",
+      \ "Standard" : "C++11",
+      \ "BreakBeforeBraces" : "Stroustrup"}
+
 nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
 nnoremap <S-F12> :!gtags && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
@@ -636,7 +647,7 @@ fu! C_init()
   setl dictionary=~/.vim/dict/cpp
   abbr #i #include
   setl syntax=cpp11.doxygen
-  let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
+  "let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
   syn keyword cppType u real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
