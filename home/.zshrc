@@ -284,9 +284,7 @@ alias -g N='>/dev/null'
 alias -g NN='>/dev/null 2>&1'
 alias -g X='| xargs'
 alias -g X0='| xargs -0'
-
-# Suffix aliases {{{2
-alias -s B='|sed -r "s:\x1B\[[0-9;]*[mK]::g"'
+alias -g B='|sed '\''s/\x1B\[[0-9;]*[JKmsu]//g'\'
 
 # Path aliases
 hash -d up=/usr/portage

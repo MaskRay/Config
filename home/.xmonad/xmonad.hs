@@ -171,7 +171,7 @@ myLayout = avoidStruts $
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
-    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome-stable", "Google-chrome-beta"] ] ++
+    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome-stable", "Google-chrome-beta", "Chromium"] ] ++
     [ className =? c --> viewShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
@@ -286,7 +286,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", urxvt "weechat", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-stable' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:libreoffice-writer' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-stable' --invert-color-include 'g:e:Google-chrome-beta' --invert-color-include 'g:e:Chromium' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:libreoffice-writer' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -362,6 +362,7 @@ myKeys =
 
     -- backlight
     , ("M-<F1>", spawnSelected defaultGSConfig [ "xbacklight =30"
+                                               , "xbacklight =40"
                                                , "xbacklight =20"
                                                , "xbacklight =10"
                                                , "xbacklight =15"
