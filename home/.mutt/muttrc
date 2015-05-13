@@ -101,6 +101,9 @@ macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
 macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
 
+macro index,pager \Cxp "<enter-command>set sendmail=\"proxychains msmtp\"\n" "proxychains msmtp"
+macro index,pager \Cxm "<enter-command>set sendmail=msmtp\n" "msmtp"
+
 macro attach V "<pipe-entry>cat > /tmp/mail.html && $BROWSER /tmp/mail.html<enter>"
 
 bind pager \Cu half-up
@@ -113,9 +116,9 @@ bind pager H display-toggle-weed
 bind pager N search-opposite
 macro pager \cu "|urlview\n"
 
-macro generic \Cx_ "<enter-command>set sendmail" "Internal macro from the MSMTP module"
-macro generic \Cx| "\Cx_ = \"/usr/bin/msmtp" "Internal macro from the MSMTP module"
-macro generic \Cx& "<enter-command>macro compose \\t \"\\Cx" "Internal macro from the MSMTP module"
+#macro generic \Cx_ "<enter-command>set sendmail" "Internal macro from the MSMTP module"
+#macro generic \Cx| "\Cx_ = \"/usr/bin/msmtp" "Internal macro from the MSMTP module"
+#macro generic \Cx& "<enter-command>macro compose \\t \"\\Cx" "Internal macro from the MSMTP module"
 macro compose <tab> "\Cx1" "Change the current MSMTP account"
 macro compose = "\Cx_\n" "Show the current MSMTP account"
 macro generic \Cx2 "\Cx| -a Gmail\"\n\Cx&2\" \"Change the current MSMTP account\"\n\Cx_\n" "Switch to account Gmail for MSMTP"

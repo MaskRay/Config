@@ -359,6 +359,7 @@ if has("gui_running")
   Bundle 'tpope/vim-rails'
   Bundle 'vim-ruby/vim-ruby'
   Bundle 'wting/rust.vim'
+  Bundle 'zah/nimrod.vim'
   let g:rust_recommended_style = 0
   let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
   let g:ycm_key_detailed_diagnostics = "<Leader>yd"

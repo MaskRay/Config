@@ -432,7 +432,7 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
-  , NS "task" "urxvt -T task -e rlwrap task shell" (title =? "task") doSPFloat
+  , NS "task" "urxvt -T task -e tasksh" (title =? "task") doSPFloat
   , NS "jc" "urxvt -T jc -e ~/.local/opt/j64-803/jconsole.sh" (title =? "jc") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat

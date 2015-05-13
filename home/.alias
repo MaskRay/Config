@@ -29,6 +29,7 @@ alias hopper=~/.local/opt/hopper/usr/bin/hopper-v3
 alias strings='strings -a -tx' # CVE-2014-8485
 
 alias mtr='sudo mtr --curses'
+alias fuck='$(thefuck $(fc -ln -1))'
 
 alias l="ls -l"
 alias la='l -A'
@@ -78,7 +79,7 @@ alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
 alias ntp='sudo /etc/init.d/ntp-client start'
 alias mt=multitail
-#alias luit='luit -encoding gbk'
+alias luit='luit -encoding gbk'
 alias gdb='gdb -q'
 alias getmail='getmail -r rc0 -r rc1'
 alias pwget='proxychains wget'
@@ -97,7 +98,7 @@ alias math='~/.local/opt/mathematica/Executables/Mathematica -graphicssystem nat
 alias matlabc='~/.local/opt/matlab/bin/matlab -nodisplay -r clc'
 alias blockdump='sudo sysctl vm.block_dump=1'
 alias xsel='xsel -l /dev/null'
-alias eclimd=$LOCAL/opt/eclipse/eclimd
+#alias eclimd=$LOCAL/opt/eclipse/eclimd
 alias wine='WINEDEBUG=-all wine'
 alias ctag='ctags -R --c++-kinds=+p --fields=+iaS --extra=+q'
 alias perf='sudo perf'
@@ -149,7 +150,7 @@ alias yS='yaourt -S --noconfirm'
 alias ySs='yaourt -Ss'
 alias ySyu='yaourt -Syua'
 alias pSy='sudo pacman -Sy'
-alias pSyu='sudo pacman -Syu'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
+alias pSyu='sudo pacman -Syu --noconfirm'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
 alias pS='sudo pacman -S'		# Install specific package(s) from the repositories
 alias pU='sudo pacman -U'		# Install specific package not from the repositories but from a file 
 alias pR='sudo pacman -R'		# Remove the specified package(s), retaining its configuration(s) and required dependencies

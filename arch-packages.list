@@ -10,7 +10,6 @@ android-tools
 antiword
 antlr4
 arch-install-scripts
-arch-wiki-lite
 aria2
 at
 atool
@@ -34,6 +33,7 @@ cabal-install
 calibre
 catdoc
 cgdb
+chromium
 cifs-utils
 clang
 cloc
@@ -67,9 +67,11 @@ doxygen
 dsniff
 dstat
 dunst
+dvtm
 dwdiff
 dzen2
 e2fsprogs
+easy-rsa
 elinks
 emacs
 erlang
@@ -88,6 +90,7 @@ file
 filesystem
 findutils
 firefox
+flashplugin
 flex
 fontforge
 fortune-mod
@@ -173,6 +176,7 @@ minicom
 miredo
 mlocate
 mongodb
+mongodb-tools
 moreutils
 mosh
 mplayer
@@ -246,7 +250,6 @@ python-jedi
 python-matplotlib
 python-pip
 python-scipy
-python-virtualenv
 python2
 python2-docs
 python2-jedi
@@ -254,7 +257,6 @@ python2-pip
 python2-pygments
 python2-scikit-learn
 python2-scipy
-python2-virtualenv
 q4wine
 qemu
 r
@@ -474,6 +476,7 @@ aspcud
 aura-bin
 bindfs
 capstone
+care
 chromeos-apk-git
 cppman-git
 create_ap
@@ -482,15 +485,17 @@ crosstool-ng
 datamash
 downgrade
 dropbox-cli
+etcd
 foremost
 fzf
 global
-google-chrome
 google-talkplugin
 hachoir-metadata
 hachoir-subfile
 hachoir-urwid
 idutils
+imwheel
+ipe
 iwatch
 jq-git
 lnav
@@ -508,12 +513,15 @@ powerdown-git
 proot
 python2-capstone
 q
+qemu-user-static
+radare2-git
 recutils
 redsocks-git
 rr
 rust-nightly-bin
 simple-mtpfs
 spideroak
+sqlmap-git
 sysdig
 systemtap
 tiptop
