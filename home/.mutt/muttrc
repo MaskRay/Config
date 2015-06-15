@@ -82,7 +82,7 @@ bind index / limit
 macro index ,p "<pipe-message>cat > /tmp/" "save message as"
 macro index ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
 macro index ,R "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
-macro index ,s \
+macro index ,q \
   "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output \
   /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"
@@ -114,7 +114,7 @@ bind pager h previous-line
 bind pager l next-line
 bind pager H display-toggle-weed
 bind pager N search-opposite
-macro pager \cu "|urlview\n"
+macro pager \cu "|urlscan\n"
 
 #macro generic \Cx_ "<enter-command>set sendmail" "Internal macro from the MSMTP module"
 #macro generic \Cx| "\Cx_ = \"/usr/bin/msmtp" "Internal macro from the MSMTP module"

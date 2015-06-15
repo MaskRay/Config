@@ -1,0 +1,2 @@
+#%Module
+prepend-path PATH /opt/texlive/2015/bin/x86_64-linux

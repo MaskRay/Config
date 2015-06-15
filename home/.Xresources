@@ -100,7 +100,8 @@ URxvt.preeditType: Root
 URxvt.geometry: 105x45
 URxvt.xftAntialias: true
 !URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:WenQuanYi Micro Hei:bold:antialias=True
-URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:微軟正黑體:bold:antialias=True
+!URxvt.font: xft:Monaco:bold:size=13,xft:DejaVu Sans Mono:bold:size=13,xft:微軟正黑體:bold:antialias=True
+URxvt.font: xft:Monaco:bold:size=15,xft:DejaVu Sans Mono:bold:size=15,xft:微軟正黑體:bold:antialias=True
 !URxvt.font: xft:DejaVu Sans Mono:bold:size=14,xft:思源黑体:bold:antialias=True
 URxvt.searchable-scrollback: false
 URxvt.iso14755: false

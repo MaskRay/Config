@@ -101,7 +101,9 @@ if has("gui_running")
   " set guifont=Inconsolata\ 15
   " set guifont=Monofur\ 16
   set guifont=Fantasque\ Sans\ Mono\ 16
+  set guifont=Fantasque\ Sans\ Mono\ 18
   set guifontwide=WenQuanYi\ Micro\ Hei\ 13
+  set guifontwide=WenQuanYi\ Micro\ Hei\ 15
 endif
 
 " Colorschemes ---------------------------------------- {{{1
@@ -492,7 +494,9 @@ let g:vimfiler_as_default_explorer=1
 nn <leader>nt :VimFilerCurrentDir -explorer -winwidth=20<cr>
 let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|zi\|zo\)$'
 
-source ~/.vimrc.local
+if filereadable(glob("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
 " Misc --------------------- {{{1
 " nnoremap zz zz:nohls<CR>
 nnoremap <silent> <C-l> :nohls<cr><C-l>

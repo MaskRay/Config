@@ -311,6 +311,8 @@ autoload -U edit-command-line
 zle -N      edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
+bindkey "\eq" push-line-or-edit
+
 # url-quote-magic
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
@@ -392,7 +394,7 @@ fi
 # Environment Modules {{{1
 module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby/2.2.0 ghc perl texlive/2014 wps #mpi/impi
+module load ruby/2.2.0 ghc perl texlive/2015 wps #mpi/impi
 
 # rvm
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm

@@ -9,16 +9,16 @@ inode/x-empty=gvim.desktop
 text/plain=gvim.desktop
 
 ; html
-; text/html=google-chrome.desktop
-; application/xhtml+xml=google-chrome.desktop
-; x-scheme-handler/http=google-chrome.desktop
-; x-scheme-handler/https=google-chrome.desktop
-; application/x-asp=google-chrome.desktop
-text/html=firefox.desktop
-application/xhtml+xml=firefox.desktop
-x-scheme-handler/http=firefox.desktop
-x-scheme-handler/https=firefox.desktop
-application/x-asp=firefox.desktop
+text/html=google-chrome.desktop
+application/xhtml+xml=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+application/x-asp=google-chrome.desktop
+; text/html=firefox.desktop
+; application/xhtml+xml=firefox.desktop
+; x-scheme-handler/http=firefox.desktop
+; x-scheme-handler/https=firefox.desktop
+; application/x-asp=firefox.desktop
 
 ; .pdf .ps
 application/pdf=llpp.desktop

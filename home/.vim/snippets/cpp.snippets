@@ -14,7 +14,9 @@ for (${1:vector}<${2:int}>::iterator ${3:i} = ${4:a}.begin(); $3 != $4.end(); ++
 }
 endsnippet
 
-snippet main "main()"
+snippet mainwin "main()"
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include <algorithm>
 #include <cstdio>
 #include <functional>
@@ -24,6 +26,8 @@ snippet main "main()"
 #include <vector>
 using namespace std;
 
+typedef int64_t ll;
+#define EACH(i, a) for (__typeof((a).begin()) i = (a).begin(); i != (a).end(); ++i)
 #define REP(i, n) for (int i = 0; i < (n); i++)
 #define REP1(i, n) for (int i = 1; i <= (n); i++)
 #define FOR(i, a, b) for (int i = (a); i < (b); i++)

@@ -8,7 +8,7 @@ data.location=~/.task
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-red-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-green-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-blue-256.theme
-include ~/.local/share/doc/task/rc/dark-violets-256.theme
+include /usr/share/doc/task/rc/dark-violets-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-yellow-green.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-gray-256.theme
 

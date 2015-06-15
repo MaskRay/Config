@@ -467,17 +467,13 @@ zsh-completions
 zshdb
 
 # foreign
-acroread-fonts-systemwide
-android-armv7a-eabi-system-image
 android-sdk-platform-tools
-android-x86_64-system-image-21
 apache-tools
-aspcud
 aura-bin
 bindfs
 capstone
 care
-chromeos-apk-git
+#chromeos-apk-git
 cppman-git
 create_ap
 cross-binutils
@@ -487,7 +483,6 @@ downgrade
 dropbox-cli
 etcd
 foremost
-fzf
 global
 google-talkplugin
 hachoir-metadata
@@ -518,7 +513,7 @@ radare2-git
 recutils
 redsocks-git
 rr
-rust-nightly-bin
+#rust-nightly-bin
 simple-mtpfs
 spideroak
 sqlmap-git
@@ -528,8 +523,6 @@ tiptop
 unzip-iconv
 wavemon
 wps-office
-xflux
-xosview
 yaourt
 z3-bin
 zathura-git
