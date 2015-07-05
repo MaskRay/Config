@@ -21,7 +21,7 @@ fi
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 #export SCALA_HOME=/opt/scala-2.10.1
 #export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.1.0/bin:$HOME/bin/ssh:$PATH:/home/ray/Cross/toolchain-mips_r2_gcc-4.3.3+cs_uClibc-0.9.30.1/usr/bin
-export PATH=~/bin:~/.local/bin:~/.cabal/bin:~/.nimble/bin:~/bin/ssh:$PATH
+export PATH=~/bin:~/.local/bin:~/.cabal/bin:~/.nimble/bin:~/go/bin:~/bin/ssh:$PATH
 export EDITOR=vim
 #export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
 export LESS="-MiR --shift 5"
@@ -31,6 +31,7 @@ export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 export GOPATH=~/go
+export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
 
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -41,7 +42,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Look {{{1
-PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %B%F{magenta}%m %F{white}>>= %B%F{green}%~ %1(j,%F{red}:%j,)\n%F{blue}\u2570\u2500%(?..[%?] )%{%F{red}%}%# %F{white}'
+PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}\u2570\u2500%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
@@ -312,6 +313,7 @@ zle -N      edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
 bindkey "\eq" push-line-or-edit
+bindkey '\C-xf' vi-find-prev-char
 
 # url-quote-magic
 autoload -U url-quote-magic

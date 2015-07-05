@@ -1,3 +1,4 @@
+! color theme shared by xterm.vt100 & urxvt
 ! tvale
 xterm*background: #000000
 xterm*foreground: #FFFFFF
@@ -34,64 +35,59 @@ Xft.hintstyle:          hintslight
 Xft.antialias:          1
 Xft.rgba:               rgb
 
-! xterm
+! Application Resources
+xterm.locale: true
 xterm.termName: xterm-256color
-xterm.title:    Xterm
-xterm.vt100.allowTitleOps:  false
-xterm*geometry: 105x33
-xterm*scrollBar: false
-xterm*rightScrollBar: true
-xterm*loginshell: true
+xterm.utmpInhibit: true
+
+! VT100 Widget Resources
+xterm*allowTitleOps:  false
+xterm*altSendsEscape: true
+xterm*bellIsUrgent: true
 xterm*borderLess: true
-xterm*colorUL: green
+! allow selecting email/url by double click
+xterm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
 xterm*colorBD: wheat
 xterm*colorBDMode: true
+xterm*colorUL: green
 xterm*colorULMode: false
-xterm*veryBoldColors: 4
 xterm*cursorBlink: false
-xterm*cursorUnderLine: False
 xterm*cursorColor: green
-
-xterm*saveLines: 1000
-xterm*fastScroll: true
-XTerm*jumpScroll:               true
-XTerm*multiScroll:              true
-
-xterm*highlightSelection: true
-
-xterm*altSendsEscape: true
+xterm*cursorUnderLine: False
 xterm*eightBitInput: false
+! uncomment to output a summary of each font s metrics
+!xterm.reportFonts: true
+xterm*faceName: DejaVu Sans Mono:size=18
+xterm*faceNameDoublesize: Source Han Sans TC Normal:size=18
+xterm*fastScroll: true
+xterm*highlightSelection: true
+XTerm*jumpScroll: true
+xterm*loginshell: true
+XTerm*multiScroll: true
+xterm*printAttributes: 2
+xterm*printerCommand: xterm -T History -e sh -c 'less -r -o /tmp/xterm.dump <&3' 3<&0
+xterm*rightScrollBar: true
+xterm*saveLines: 10000
+xterm*scrollBar: false
 xterm*trimSelection: true
-XTerm*VT100.Translations: #override \
-    ~Shift ~Ctrl<Btn2Up>: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
-    Ctrl<KeyPress>Insert: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
-    ~Shift <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
-    Meta <KeyPress> /: dabbrev-expand() \n
-! Mod1 <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
-
-*VT100.Translations: #override \
-        <Key>BackSpace: string(0x7F)\n\
-        <Key>Delete:    string("\033[3~")\n\
-        <Key>Home:      string("\033[1~")\n\
-        <Key>End:       string("\033[4~")
-*ttyModes: erase ^?
-
-xterm*locale: true
-xterm.utf8: true
-xterm*utf8Title: true
-xterm*fontMenu*fontdefault*Label: Default
-! xterm*faceName: Bitstream Vera Sans Mono:bold:antialias=True
-xterm*faceName: Monaco:bold:antialias=true:pixelsize=16
-!xterm*faceNameDoublesize: WenQuanYi Micro Hei:bold:antialias=True:pixelsize=18
-xterm*faceNameDoublesize: 思源黑体:bold:antialias=True:pixelsize=16
-!xterm*faceNameDoublesize: 微軟正黑體:bold:antialias=True:pixelsize=18
+xterm*veryBoldColors: 4
 xterm*xftAntialias: true
 
-! allow selecting email/url by double click
-XTerm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
+xterm.vt100.translations: #override \
+    ~Shift ~Ctrl<Btn2Up>: insert-selection(PRIMARY) \n\
+    Ctrl ~Shift <KeyPress>Insert: insert-selection(CLIPBOARD) \n\
+    ~Ctrl ~Meta ~Shift <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n\
+    Meta <KeyPress>/: dabbrev-expand() \n\
+    Meta <KeyPress>i: print-everything() \n\
+    Meta <KeyPress>o: exec-formatted("xdg-open '%t'", PRIMARY) \n
+! Mod1 <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
 
-XTerm*visualBell: false
-XTerm*bellIsUrgent: true
+!xterm.VT100.Translations: #override \
+!        <Key>BackSpace: string(0x7F)\n\
+!        <Key>Delete:    string("\033[3~")\n\
+!        <Key>Home:      string("\033[1~")\n\
+!        <Key>End:       string("\033[4~")
+!xterm.ttyModes: erase ^?
 
 
 URxvt.preeditType: Root
@@ -132,7 +128,7 @@ URxvt.foreground: white
 URxvt.cursorBlink: False
 URxvt.cursorColor: green
 URxvt.iso14755_52: False
-URxvt.urgentOnBell: true 
+URxvt.urgentOnBell: true
 
 Xcursor.theme: ~/.icons/Pulse-Glass
 Xcursor.size: 32
@@ -146,19 +142,8 @@ x11-ssh-askpass*topShadowColor:         #000000
 x11-ssh-askpass*bottomShadowColor:      #000000
 x11-ssh-askpass.*borderWidth:           1
 
-xscreensaver.Dialog.foreground: #ffffff
-xscreensaver.Dialog.background: #000000
-xscreensaver.Dialog.topShadowColor: #000000
-xscreensaver.Dialog.bottomShadowColor: #000000
-xscreensaver.Dialog.Button.foreground: #666666
-xscreensaver.Dialog.Button.background: #ffffff
-!username/password input box and date text colour
-xscreensaver.Dialog.text.foreground: #666666
-xscreensaver.Dialog.text.background: #ffffff
-xscreensaver.Dialog.internalBorderWidth:24
-xscreensaver.Dialog.borderWidth: 20
-xscreensaver.Dialog.shadowThickness: 2
-!timeout bar (background is actually determined by Dialog.text.background)
-xscreensaver.passwd.thermometer.foreground: #666666
-xscreensaver.passwd.thermometer.background: #000000
-xscreensaver.passwd.thermometer.width: 8
+! resource names can be retrieved from ~/.xscreensaver
+xscreensaver.timeout: 3
+xscreensaver.lock: true
+xscreensaver.lockTimeout: 5
+xscreensaver.mode: blank

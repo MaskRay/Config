@@ -291,7 +291,7 @@ endif
 
 " Plugins --------------------------------------------- {{{1
 " Vundle ---------------------------------------------- {{{2
-if has("gui_running")
+if 1 || has("gui_running")
   filetype off
   set rtp+=~/.vim/bundle/vundle/
   call vundle#rc()
@@ -323,7 +323,7 @@ if has("gui_running")
   Bundle 'Shougo/vimproc.vim'
   Bundle 'Shougo/vimshell.vim'
   Bundle 'airblade/vim-gitgutter'
-  Bundle 'vim-scripts/surfer.vim'
+  "Bundle 'vim-scripts/surfer.vim' neovim
   Bundle 'glts/vim-textobj-comment'
   Bundle 'glts/vim-textobj-indblock'
   Bundle 'godlygeek/tabular'
@@ -351,15 +351,15 @@ if has("gui_running")
   "Bundle 'python-mode'
   "Bundle 'vimside'
   Bundle 'LaTeX-Box-Team/LaTeX-Box'
-  Bundle 'RubyJump'
+  "Bundle 'RubyJump' neovim
   Bundle 'Valloric/YouCompleteMe'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
   Bundle 'gkz/vim-ls'
   Bundle 'marijnh/tern_for_vim'
   Bundle 'spf13/PIV'
-  Bundle 'tpope/vim-rails'
-  Bundle 'vim-ruby/vim-ruby'
+  "Bundle 'tpope/vim-rails' " neovim
+  "Bundle 'vim-ruby/vim-ruby' " neovim
   Bundle 'wting/rust.vim'
   Bundle 'zah/nimrod.vim'
   let g:rust_recommended_style = 0
@@ -400,10 +400,11 @@ if has("gui_running")
   so /usr/share/gtags/gtags.vim
   ru macros/matchit.vim
 
-  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-  execute "set rtp+=" . g:opamshare . "/merlin/vim"
-  execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
-  let g:syntastic_ocaml_checkers=['merlin']
+  " TODO neovim
+  "let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  "execute "set rtp+=" . g:opamshare . "/merlin/vim"
+  "execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
+  "let g:syntastic_ocaml_checkers=['merlin']
 endif
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1

@@ -176,7 +176,7 @@ myManageHook = composeAll $
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
-    [ className =? c --> viewShift "office" | c <- ["Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
+    [ className =? c --> viewShift "office" | c <- ["Wireshark", "Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
     [ role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work
     {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
     [ title =? "weechat" --> viewShift "im"] ++
@@ -452,7 +452,7 @@ scratchpads =
 
 {-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
 myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
-    { terminal           = "urxvt"
+    { terminal           = "xterm"
     , focusFollowsMouse  = False -- see: focusFollow
     , borderWidth        = 1
     , modMask            = mod4Mask
@@ -462,7 +462,7 @@ myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = fullscreenEventHook <+> focusFollow -- >> clockEventHook
+    , handleEventHook    = fullscreenEventHook -- <+> focusFollow -- >> clockEventHook
     , logHook            = historyHook >> myDynamicLog xmobar
     , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys
@@ -619,7 +619,7 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
-    , TI "term" "" (urxvt "tmux attach -t default") "xterm.xpm"
+    , TI "term" "" (xterm "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "im" "" (urxvt "weechat") "weechat.xpm"
@@ -631,6 +631,7 @@ myTopics =
     ]
   where
     urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+    xterm prog = spawn . ("xterm -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 
 
 myCommands =

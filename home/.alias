@@ -27,6 +27,7 @@ alias pa=parallel
 alias wee=weechat-curses
 alias hopper=~/.local/opt/hopper/usr/bin/hopper-v3
 alias strings='strings -a -tx' # CVE-2014-8485
+alias vimmin='vi -u NONE --cmd "set nocp | sy on | filetype plugin indent on"' # install aur/neovim-git && ln -sf nvim /usr/bin/vi
 
 alias mtr='sudo mtr --curses'
 alias fuck='$(thefuck $(fc -ln -1))'
