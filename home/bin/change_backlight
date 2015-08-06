@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+display() {
+  hh=$(xrandr | awk '{sub(",","",$10);print $10;exit}')
+  h=120
+  xbacklight $1
+  dzen2 -p 1 -y $[(hh-h)/2] -h $h -fn "-*-dejavu sans-*-*-*-*-$h-*-*-*-*-*-*-*" <<< "Backlight: $(xbacklight -get)"
+}
+
+case "$1" in
+  u|up)
+    display +4;;
+  d|down)
+    display -4;;
+  *)
+    exit 1;;
+esac

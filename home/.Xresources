@@ -79,15 +79,7 @@ xterm.vt100.translations: #override \
     ~Ctrl ~Meta ~Shift <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n\
     Meta <KeyPress>/: dabbrev-expand() \n\
     Meta <KeyPress>i: print-everything() \n\
-    Meta <KeyPress>o: exec-formatted("xdg-open '%t'", PRIMARY) \n
-! Mod1 <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER1) \n\
-
-!xterm.VT100.Translations: #override \
-!        <Key>BackSpace: string(0x7F)\n\
-!        <Key>Delete:    string("\033[3~")\n\
-!        <Key>Home:      string("\033[1~")\n\
-!        <Key>End:       string("\033[4~")
-!xterm.ttyModes: erase ^?
+    Meta <KeyPress>o: exec-formatted("xdg-open '%t'", PRIMARY) \n\
 
 
 URxvt.preeditType: Root

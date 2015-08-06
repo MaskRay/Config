@@ -31,7 +31,7 @@ export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 export GOPATH=~/go
-export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
+#export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
 
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -62,8 +62,8 @@ if [[ -n $MYSELF ]]; then
 else
   alias v='fasd -fe vim'
 fi
-alias j='fasd_cd -d'
-alias jj='fasd_cd -d -i'
+alias j='fasd_cd -d -i'
+alias jj='fasd_cd -d'
 alias o='f -fe xdg-open'
 
 # Options {{{1
@@ -244,8 +244,8 @@ bindkey -v '^E' vi-insert-eol
 bindkey -v '^K' kill-line
 bindkey -v '\ef' forward-word
 bindkey -v '\eb' backward-word
-bindkey -v '^P' up-history
-bindkey -v '^N' down-history
+#bindkey -v '^P' up-history
+#bindkey -v '^N' down-history
 bindkey -v '^F' forward-char
 bindkey -v '^B' backward-char
 bindkey -v '^U' kill-whole-line
@@ -258,7 +258,6 @@ bindkey -v '\eh' run-help
 bindkey -v '\el' down-case-word
 bindkey -v '\eu' up-case-word
 bindkey -v "^[m" copy-prev-shell-word
-bindkey '^]' vi-find-next-char
 
 bindkey -e
 bindkey -N mymap emacs
@@ -313,7 +312,8 @@ zle -N      edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
 bindkey "\eq" push-line-or-edit
-bindkey '\C-xf' vi-find-prev-char
+bindkey '^xf' vi-find-next-char
+bindkey '^xF' vi-find-prev-char
 
 # url-quote-magic
 autoload -U url-quote-magic
@@ -394,7 +394,7 @@ fi
 [[ -f /etc/profile.d/fzf.zsh ]] && source /etc/profile.d/fzf.zsh
 
 # Environment Modules {{{1
-module() { eval `tclsh ~/bin/modulecmd.tcl zsh $*`; }
+module() { eval `~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
 module load ruby/2.2.0 ghc perl texlive/2015 wps #mpi/impi
 
@@ -414,5 +414,12 @@ bindkey  "${terminfo[kcub1]}"    backward-char
 bindkey  "${terminfo[kcuf1]}"    forward-char
 bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
 
-alias u22='clush -l root -ba cpupower frequency-set -u 2201m -d 2201m'
-alias u21='clush -l root -ba cpupower frequency-set -u 2100m -d 2100m'
+alias uf='clush -l root -b -g e cpupower frequency-info -f'
+alias ut='clush -l root -b -g e cpupower frequency-set -u 2600m'
+alias u25='clush -l root -b -g e cpupower frequency-set -u 2500m'
+alias u24='clush -l root -b -g e cpupower frequency-set -u 2400m'
+alias u23='clush -l root -b -g e cpupower frequency-set -u 2300m'
+alias u22='clush -l root -b -g e cpupower frequency-set -u 2200m'
+alias u21='clush -l root -b -g e cpupower frequency-set -u 2100m'
+alias u20='clush -l root -b -g e cpupower frequency-set -u 2000m'
+alias u19='clush -l root -b -g e cpupower frequency-set -u 1900m'

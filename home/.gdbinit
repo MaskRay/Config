@@ -1,4 +1,5 @@
 # Options {{{1
+set debug-file-directory /tmp/debug
 set $ASM = 0
 
 set confirm off

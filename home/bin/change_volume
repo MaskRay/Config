@@ -1,20 +1,22 @@
-#!/bin/sh
+#!/bin/zsh
+
+display() {
+  hh=$(xrandr | awk '{sub(",","",$10);print $10;exit}')
+  h=200
+  dzen2 -p 1 -y $[(hh-h)/2] -h $h -fn "-*-dejavu sans-*-*-*-*-$h-*-*-*-*-*-*-*" <<< $1
+}
 
 volume() {
-  volume=`amixer set Master $1 | grep -oP '\w*(?=%)'`
-  killall osd_cat &> /dev/null
-  osd_cat -f '-adobe-helvetica-bold-*-*-*-30-*-*-*-*-*-*-*' -c orange -A center -o 400 -T "volume: $volume" -b percentage -P $volume -d 2 &
+  display "Volume: $(amixer set Master $1 | grep -oPm1 '\d+(?=%)')"
 }
 
 case "$1" in
-  up)
-    volume 5%+;;
-  down)
-    volume 5%-;;
-	toggle)
-		mute=`amixer set Master toggle | grep -oP '(?<=\\[)(on|off)(?=\\])'`
-		killall osd_cat &> /dev/null
-		osd_cat -f '-adobe-helvetica-bold-*-*-*-30-*-*-*-*-*-*-*' -c blue -A center -o 400 -T "sound: $mute" -b percentage -P $volume -d 2 &;;
+  u|up)
+    volume 4%+;;
+  d|down)
+    volume 4%-;;
+  t|toggle)
+    display "Sound: $(amixer set Master toggle | grep -oPm1 '(?<=\[)(on|off)(?=\])')";;
   *)
     exit 1;;
 esac

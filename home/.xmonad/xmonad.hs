@@ -22,7 +22,7 @@ import Text.Printf
 
 import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
-import XMonad.Util.ExtensibleState as XS
+import XMonad.Util.ExtensibleState as XS hiding (gets)
 import XMonad.Util.EZConfig
 import XMonad.Util.Loggers
 import XMonad.Util.NamedWindows (getName)
@@ -186,7 +186,7 @@ myManageHook = composeAll $
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
     [ className =? c --> doShift "misc" | c <- ["Wpa_gui"] ] ++
     [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
-    [ className =? "Do" --> doIgnore ] ++
+    [ className =? "Synapse" --> doIgnore ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ] ++
     [ mySPFloats --> doSPFloat ] ++
@@ -261,15 +261,15 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 myKeys =
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myTopicNames "1234567890-="
-        , (f, m) <- [ (switchTopic myTopicConfig, "")
+        , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
                     , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
     ]
     ++
     [ ("C-; " ++ m ++ [k], f i)
-        | (i, k) <- zip myTopicNames "asdfghjkl;'\""
-        , (f, m) <- [ (switchTopic myTopicConfig, "")
-                    , (windows . W.shift, "S-")
+        | (i, k) <- zip myTopicNames "asdfghjkl;'"
+        , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
+                    , (switchTopic myTopicConfig, "S-")
                     ]
     ]
     ++
@@ -284,18 +284,24 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "urxvt" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-<Return>", spawn "xterm" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", urxvt "weechat", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:e:Firefox' --invert-color-include 'g:e:Google-chrome-stable' --invert-color-include 'g:e:Chrome' --invert-color-include 'g:e:Chromium' --invert-color-include 'g:e:Wps' --invert-color-include 'g:e:Wpp' --invert-color-include 'g:e:libreoffice-writer' --invert-color-include 'g:e:Goldendict' --invert-color-include 'g:e:com-mathworks-util-PostVMInit' --invert-color-include 'g:e:Skype' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|Chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
     , ("M-C-i", spawn "pkill compton; compton &")
-    , ("M-S-l", spawn "xscreensaver-command -lock")
+    , ("M-S-l", spawn "xautolock -locknow")
     , ("M-S-k", spawn "xkill")
-    , ("<XF86AudioNext>", spawn "mpc_seek forward")
-    , ("<XF86AudioPrev>", spawn "mpc_seek backward")
+    , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
+    , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
+    , ("<XF86AudioNext>", spawn "cmus-remote -n")
+    , ("<XF86AudioPrev>", spawn "cmus-remote -r")
     , ("<XF86AudioRaiseVolume>", spawn "change_volume up")
     , ("<XF86AudioLowerVolume>", spawn "change_volume down")
-    , ("<XF86AudioMute>", spawn "amixer set Master mute")
-    , ("<XF86AudioPlay>", spawn "mpc toggle")
+    , ("<XF86AudioMute>", spawn "change_volume toggle")
+    -- , ("<XF86AudioPlay>", spawn "cmus-remote -p")
+    -- , ("<XF86AudioPause>", spawn "cmus-remote -u")
+    , ("<XF86AudioPlay>", spawn "cmus-remote -u")
+    , ("<XF86AudioPause>", spawn "cmus-remote -u")
+    , ("<XF86Display>", spawn "xset dpms force standby")
     , ("<XF86Eject>", spawn "eject")
     , ("M-S-a", sendMessage Taller)
     , ("M-S-z", sendMessage Wider)
@@ -320,7 +326,6 @@ myKeys =
     , ("M-y", nextMatch History (return True))
     , ("M-m", withFocused minimizeWindow)
     , ("M-S-m", sendMessage RestoreNextMinimizedWin)
-    , ("M-f", toggleFF)
 
     -- XMonad.Layout.SubLayouts {{{
     , ("M-C-h", sendMessage $ pullGroup L)
@@ -365,7 +370,8 @@ myKeys =
                                                , "xbacklight =20"
                                                , "xbacklight =10"
                                                , "xbacklight =15"
-                                               , "xbacklight =25"
+                                               , "xbacklight =50"
+                                               , "xbacklight =60"
                                                , "xbacklight =5"
                                                ])
 
@@ -411,7 +417,8 @@ myKeys =
     , ("M-p d", changeDir myXPConfig)
     --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
-    , ("M-p p", spawn "launcher")
+    , ("M-r", spawn "rofi -show run")
+    , ("M-p p", spawn "pavucontrol")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
@@ -466,23 +473,6 @@ myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , logHook            = historyHook >> myDynamicLog xmobar
     , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys
-
--- {{{ Toggle follow Mouse
--- from: http://www.haskell.org/haskellwiki/Xmonad/Config_archive/adamvo's_xmonad.hs
--- A nice little example of extensiblestate
-newtype FocusFollow = FocusFollow {getFocusFollow :: Bool } deriving (Typeable,Read,Show)
-instance ExtensionClass FocusFollow where
-    initialValue = FocusFollow True
-    extensionType = PersistentExtension
-
--- this eventHook is the same as from xmonad for handling crossing events
-focusFollow e@(CrossingEvent {ev_window=w, ev_event_type=t})
-        | t == enterNotify, ev_mode e == notifyNormal =
-    whenX (XS.gets getFocusFollow) (focus w) >> return (All True)
-focusFollow _ = return (All True)
-
-toggleFF = XS.modify $ FocusFollow . not . getFocusFollow
---}}}
 
 {-
 defaultFade = 8/10
@@ -639,6 +629,12 @@ myCommands =
     , ("wallpaper", safeSpawn "change-wallpaper" [])
     --, ("fade", fadePrompt myXPConfig)
     ]
+
+nongreedySwitchTopic :: TopicConfig -> Topic -> X ()
+nongreedySwitchTopic tg topic = do
+  windows $ W.view topic
+  wins <- gets (W.integrate' . W.stack . W.workspace . W.current . windowset)
+  when (null wins) $ XMonad.Actions.TopicSpace.topicAction tg topic
 
 {-
 fadePrompt xpc = withFocused $ \w -> do

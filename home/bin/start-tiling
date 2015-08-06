@@ -42,5 +42,6 @@ List.map Sys.command [
   ; "urxvtd -f -q -o"
   (* ; "systemctl --user restart mail-inotify" *)
   ; "xsetroot -cursor_name left_ptr"
-  ; "xscreensaver -no-splash &"
+  (* ; "xscreensaver -no-splash &" *)
+  ; "xautolock -time 3 -locker i3lock-wrapper &"
 ];;

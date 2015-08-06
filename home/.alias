@@ -30,7 +30,6 @@ alias strings='strings -a -tx' # CVE-2014-8485
 alias vimmin='vi -u NONE --cmd "set nocp | sy on | filetype plugin indent on"' # install aur/neovim-git && ln -sf nvim /usr/bin/vi
 
 alias mtr='sudo mtr --curses'
-alias fuck='$(thefuck $(fc -ln -1))'
 
 alias l="ls -l"
 alias la='l -A'
@@ -165,7 +164,7 @@ alias pacc="sudo pacman -Scc"		# Clean cache - delete all not currently installe
 alias pQl="pacman -Ql"			# List all files installed by a given package
 alias pQo="pacman -Qo"
 alias pacexp="sudo pacman -D --asexp"	# Mark one or more installed packages as explicitly installed 
-alias pacdep="sudo pacman -D --asdep"	# Mark one or more installed packages as non explicitly installed
+alias pacimp="sudo pacman -D --asdep"	# Mark one or more installed packages as non explicitly installed
 alias api='sudo aptitude install'
 alias aps='sudo aptitude search'
 alias apu='sudo aptitude update'
@@ -237,3 +236,14 @@ aa() { awk -vn=$1 'NR==1 {print n} 1 < NR && NR <= n+1' "$2" > "$3"; }
 
 alias cf='cpupower frequency-info'
 alias cs='cpupower frequency-set'
+
+
+alias aob=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-objdump
+alias are=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-readelf
+alias agcc=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gcc
+alias ag++=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-g++
+alias aas=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-as
+alias anm=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-nm
+alias ald=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld
+alias aldd=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ldd
+alias apopulate=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-populate

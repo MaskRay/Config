@@ -58,24 +58,20 @@ el
 en
 set formatoptions+=nj " support formatting of numbered lists
 set guiheadroom=20
-set grepprg=internal
 
-" tabs and eols
-set listchars+=tab:▸\ ,eol:¬
-" spaces
-set listchars+=trail:⋅,nbsp:⋅
+" tabs and spaces
+set listchars+=tab:▸\ ,trail:⋅,nbsp:⋅
+" eols and others
+set listchars+=eol:¬,extends:»,precedes:«
+
+" highlight columns after 'textwidth'
+set colorcolumn=+1,+2,+4,+5,+6,+7,+8
 
 if has('mouse')
   set mouse=a
 endif
 
 if has("gui_running")
-"  set cursorcolumn
-"  set cursorline
-  set nowrap
-  "set elativenumber
-  " set spell
-
   " Ctrl-F12 Toggle Menubar and Toolbar
   nnoremap <silent> <C-F12> :
     \ if &guioptions =~# 'T' <Bar>
@@ -93,6 +89,27 @@ if has("gui_running")
   set guioptions-=L
 endif
 
+" Status Line ----------------------------------------- {{{1
+set laststatus=2
+
+set statusline=%#ColorColumn#%2n              " buffer number
+set statusline+=%*»                           " separator
+set statusline+=%<                            " truncate here
+set statusline+=%*»                           " separator
+set statusline+=%*»                           " separator
+set statusline+=%#DiffText#%m                 " modified flag
+set statusline+=%r                            " readonly flag
+set statusline+=%*»                           " separator
+set statusline+=%#CursorLine#(%l/%L,%c)%*»    " line no./no. of lines,col no.
+set statusline+=%=«                           " right align the rest
+set statusline+=%#Cursor#%02B                 " value of current char in hex
+set statusline+=%*«                           " separator
+set statusline+=%#ErrorMsg#%o                 " byte offset
+set statusline+=%*«                           " separator
+set statusline+=%#Title#%y                    " filetype
+set statusline+=%*«                           " separator
+set statusline+=%#ModeMsg#%3p%%               " % through file in lines
+set statusline+=%*                            " restore normal highlight
 " Fonts ----------------------------------------------- {{{1
 if has("gui_running")
   " Envy Code R
@@ -100,10 +117,8 @@ if has("gui_running")
   " set guifont=Monaco\ 15
   " set guifont=Inconsolata\ 15
   " set guifont=Monofur\ 16
-  set guifont=Fantasque\ Sans\ Mono\ 16
   set guifont=Fantasque\ Sans\ Mono\ 18
-  set guifontwide=WenQuanYi\ Micro\ Hei\ 13
-  set guifontwide=WenQuanYi\ Micro\ Hei\ 15
+  set guifontwide=Source\ Han\ Sans\ 15
 endif
 
 " Colorschemes ---------------------------------------- {{{1
@@ -163,7 +178,6 @@ function! StripTrailingWhitespace()
   silent! %s/\s*$//e
   call winrestview(l:savedview)
 endfunction
-
 
 " MatchUnwantedWhitespaces {{{2
 fu! MatchUnwantedWhitespaces()
@@ -234,7 +248,6 @@ if has("autocmd")
   aug Tex_support
     au!
     au FileType tex :call Tex_init()
-    "au BufWritePost *.tex call system("zsh -c 'pgrep -a xelatex || make; killall -1 llpp' &")
   " Show trailing whitespaces when necessary {{{2
   " That is, most of the cases other than editing source code in Whitespace,
   " the programming language.
@@ -308,13 +321,15 @@ if 1 || has("gui_running")
   Bundle 'tpope/vim-unimpaired'
 
   " Window
-  Bundle 'bling/vim-airline'
+  "Bundle 'bling/vim-airline'
   Bundle 'majutsushi/tagbar'
-  Bundle 'vim-scripts/ZoomWin'
+  "Bundle 'vim-scripts/ZoomWin' neovim
   Bundle 'mhinz/vim-startify'
   Bundle 'sjl/gundo.vim'
 
   " Tools
+  Bundle 'chrisbra/NrrwRgn'
+  Bundle 'dhruvasagar/vim-table-mode'
   Bundle 'Lokaltog/vim-easymotion'
   Bundle 'Shougo/neocomplete.vim'
   Bundle 'Shougo/neomru.vim'
@@ -324,11 +339,13 @@ if 1 || has("gui_running")
   Bundle 'Shougo/vimshell.vim'
   Bundle 'airblade/vim-gitgutter'
   "Bundle 'vim-scripts/surfer.vim' neovim
+  Bundle 'haya14busa/incsearch.vim'
   Bundle 'glts/vim-textobj-comment'
   Bundle 'glts/vim-textobj-indblock'
   Bundle 'godlygeek/tabular'
   Bundle 'kana/vim-textobj-user'
   Bundle 'lucapette/vim-textobj-underscore'
+  Bundle 'nathanaelkane/vim-indent-guides'
   Bundle 'qstrahl/vim-matchmaker'
   Bundle 'rhysd/clever-f.vim'
   Bundle 'rhysd/vim-clang-format'
@@ -339,6 +356,7 @@ if 1 || has("gui_running")
   Bundle 'terryma/vim-expand-region'
   Bundle 'thinca/vim-quickrun'
   Bundle 'tommcdo/vim-exchange'
+  Bundle 'tpope/vim-abolish'
   Bundle 'tpope/vim-fugitive'
   Bundle 'tpope/vim-surround'
 
@@ -352,7 +370,7 @@ if 1 || has("gui_running")
   "Bundle 'vimside'
   Bundle 'LaTeX-Box-Team/LaTeX-Box'
   "Bundle 'RubyJump' neovim
-  Bundle 'Valloric/YouCompleteMe'
+  "Bundle 'Valloric/YouCompleteMe'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
   Bundle 'gkz/vim-ls'
@@ -362,21 +380,6 @@ if 1 || has("gui_running")
   "Bundle 'vim-ruby/vim-ruby' " neovim
   Bundle 'wting/rust.vim'
   Bundle 'zah/nimrod.vim'
-  let g:rust_recommended_style = 0
-  let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
-  let g:ycm_key_detailed_diagnostics = "<Leader>yd"
-  let g:ycm_key_invoke_completion = "<F5>"
-  let g:ycm_complete_in_comments = 1
-  let g:ycm_collect_identifiers_from_tags_files = 1
-  let g:ycm_seed_identifiers_with_syntax = 1
-  let g:ycm_autoclose_preview_window_after_completion = 1
-  let g:ycm_autoclose_preview_window_after_insertion = 1
-  let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-  let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-  let g:ycm_confirm_extra_conf = 0
-  let g:ycm_cache_omnifunc = 0
-  let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
-  let g:ycm_auto_trigger = 0
 
   " Syntax
   Bundle 'chrisbra/csv.vim'
@@ -412,57 +415,17 @@ let g:EasyMotion_leader_key = ","
 " FSwitch {{{2
 command! A FSHere
 command! AV FSSplitRight
-" Fugitive {{{2
-nn <silent> <leader>gs :Gstatus<CR>
-nn <silent> <leader>gd :Gdiff<CR>
-nn <silent> <leader>gc :Gcommit<CR>
-nn <silent> <leader>gb :Gblame<CR>
-nn <silent> <leader>gl :Glog<CR>
-nn <silent> <leader>gp :Git push<CR>
 " GitGutter {{{2
 let g:gitgutter_enabled = 0
-nn <leader>gg :GitGutterToggle<cr>
-" Gundo {{{2
-nn <leader>u :GundoToggle<cr>
-" Global {{{2
-nn sas :Gtags <C-r><C-w><cr>
-nn sar :Gtags -r <C-r><C-w><cr>
-nn saP :Gtags -P <C-r><C-w><cr>
-nn sag :Gtags -g <C-r><C-w><cr>
-nn sa<space> :Gtags
-" NERDTree {{{2
-"let g:NERDTreeChDirMode=2
-"nn <leader>nt :NERDTreeToggle<cr>
-"nn <leader>ny :NERDTree `=getcwd()`<cr>
-" PinyinSearch --- {{{2
-let g:PinyinSearch_Dict = '/home/ray/.vim/bundle/vim-PinyinSearch/PinyinSearch.dict'
-nn <leader>ps :call PinyinSearch()<cr>
-nn <leader>pn :call PinyinNext()<cr>
-" QuickRun {{{2
-let g:quickrun_no_default_key_mappings = 1
 " Syntastic {{{2
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
 let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = '-std=c++11 -isystem/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include -fopenmp'
-nn <leader>st :SyntasticToggleMode<cr>
-" Tabular {{{2
-if exists(":Tabularize")
-  nn <leader>a= :Tabularize /=<CR>
-  vn <leader>a= :Tabularize /=<CR>
-  nn <leader>a: :Tabularize /:<CR>
-  vn <leader>a: :Tabularize /:<CR>
-  nn <leader>a:: :Tabularize /:\zs<CR>
-  vn <leader>a:: :Tabularize /:\zs<CR>
-  nn <leader>a, :Tabularize /,<CR>
-  vn <leader>a, :Tabularize /,<CR>
-  nn <leader>a<Bar> :Tabularize /<Bar><CR>
-  vn <leader>a<Bar> :Tabularize /<Bar><CR>
-endif
+"let g:syntastic_cpp_compiler_options = '-std=c++11 -isystem/usr/lib/gcc/x86_64-unknown-linux-gnu/5.1.0/include -fopenmp'
+let g:syntastic_cpp_compiler_options = '-std=c++11 -fopenmp -Wno-shift-op-parentheses -Wno-bitwise-op-parentheses'
 " Tagbar {{{2
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
-nn <leader>tb :TagbarToggle<cr>
 " UltiSnips {{{2
 let g:UltiSnipsExpandTrigger = "<Tab>"
 let g:UltiSnipsJumpForwardTrigger = "<Tab>"
@@ -472,15 +435,6 @@ let g:UltiSnipsSnippetDirectories = ["UltiSnips"]
 " vsplit the snippets edit window
 let g:UltiSnipsEditSplit = 'vertical'
 " Unite {{{2
-nn <silent> sr :Unite -no-split -buffer-name=file -start-insert file_mru<cr>
-nn <silent> sf :Unite -no-split -buffer-name=file -start-insert file<cr>
-nn <silent> ss :Unite -no-split -buffer-name=buffer -start-insert buffer<cr>
-nn <silent> sc :Unite -no-split -buffer-name=change change<cr>
-nn <silent> so :Unite -no-split -buffer-name=outline outline<cr>
-nn <silent> sn :Unite -no-split -quick-match buffer<cr>
-nn <silent> sl :Unite -auto-resize -buffer-name=line line<cr>
-nn <silent> sy :Unite -auto-resize -buffer-name=yank history/yank<cr>
-nn <silent> sg :Unite -no-split -buffer-name=ag grep<cr>
 if executable('ag')
   let g:unite_source_grep_command = 'ag'
   let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --smart-case'
@@ -492,68 +446,24 @@ elseif executable('ack')
 endif
 " VimFiler {{{2
 let g:vimfiler_as_default_explorer=1
-nn <leader>nt :VimFilerCurrentDir -explorer -winwidth=20<cr>
 let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|zi\|zo\)$'
-
-if filereadable(glob("~/.vimrc.local"))
-  source ~/.vimrc.local
-endif
+" YouCompleteMe {{{2
+let g:rust_recommended_style = 0
+let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+let g:ycm_key_detailed_diagnostics = "<Leader>yd"
+let g:ycm_key_invoke_completion = "<F5>"
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_cache_omnifunc = 0
+let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+let g:ycm_auto_trigger = 0
 " Misc --------------------- {{{1
-" nnoremap zz zz:nohls<CR>
-nnoremap <silent> <C-l> :nohls<cr><C-l>
-nnoremap <Leader>a :Ag<space>
-nnoremap <CR> i<CR><ESC>
-noremap gz :bdelete<cr>
-
-cnoreab cdh cd %:p:h
-cnoreab lcdh lcd %:p:h
-
-nn <leader>l :call ErrorsToggle()<cr>
-nn <leader>q :call QFixToggle()<cr>
-
-xn * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
-xn # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
-
-" recursively vimgrep for word under cursor or selection if you hit leader-star
-nmap <leader>* :execute 'noautocmd vimgrep /\V' . substitute(escape(expand("<cword>"), '\'), '\n', '\\n', 'g') . '/ **'<CR>
-vmap <leader>* :<C-u>call <SID>VSetSearch()<CR>:execute 'noautocmd vimgrep /' . @/ . '/ **'<CR>
-
-" Edit
-cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
-nnoremap <leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
-nnoremap <leader>w :set wrap!<CR>
-
-" navigating tabs
-nn th :tabfirst<CR>
-nn tj :tabnext<cr>
-nn tk :tabprev<cr>
-nn tl :tablast<cr>
-nn tt :tabedit<space>
-nn tm :tabm<space>
-nn td :tabclose<cr>
-
-" Diff
-nnoremap <leader>dt :diffthis<CR>
-nnoremap <leader>do :bufdo diffoff<CR>
-
-" move in insert mode
-inoremap <m-h> <left>
-inoremap <m-l> <Right>
-inoremap <m-j> <C-o>gj
-inoremap <m-k> <C-o>gk
-
-" Error navigation
-nnoremap <m-down> :lnext<cr>zvzz
-nnoremap <m-up> :lprevious<cr>zvzz
-nnoremap <m-j> :cnext<cr>zvzz
-nnoremap <m-k> :cprevious<cr>zvzz
-
-" search for visual-mode selected text
-vmap // y/<C-R>"<CR>
-
 " vim hacks #181
 " Open junk file."{{{
 command! -nargs=0 JunkFile call s:open_junk_file()
@@ -568,9 +478,6 @@ function! s:open_junk_file()
     execute 'edit ' . l:filename
   endif
 endfunction "}}}
-nnoremap <leader>jf :JunkFile<cr>
-
-nn <leader>wh :call ToggleUnwantedWhitespaces()<cr>
 
 " Beginning & End
 noremap H ^
@@ -582,31 +489,14 @@ nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR
 " Paste toggle
 set pastetoggle=<F7>
 
-" visual shifting (does not exit Visual mode)
-vn < <gv
-vn > >gv
-
-" Buffer
-nn <C-Tab> :bn<cr>
-nn <C-S-Tab> :bp<cr>
-
-xn <C-c> "+y
-"inoremap <C-v> <esc>:se paste<cr>"+p:se nopaste<cr>i
-
-" insert word of the line above
-inoremap <C-Y> <C-C>:let @z = @"<CR>mz
-           \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
-           \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
-           \`zp:let @" = @z<CR>a
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
 
 au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal g`\"" |
       \ endif
-
-nnoremap <Leader>cp :!xsel -ib < %<cr><cr>
-nnoremap <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
-nnoremap <leader>ig :IndentLinesToggle<cr>:se list!<cr>
 
 nn K :silent !zeal --query "<cword>" & wmctrl -a zeal <cr>
 
@@ -633,13 +523,8 @@ let g:clang_format#style_options = {
       \ "Standard" : "C++11",
       \ "BreakBeforeBraces" : "Stroustrup"}
 
-nmap <Leader>fw [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
-nnoremap <S-F12> :!gtags && ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-
 " Command-line editing
 cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
-
-cmap w!! w !sudo tee % >/dev/null
 
 let g:haddock_browser = "firefox"
 autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
@@ -649,12 +534,13 @@ let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
 fu! C_init()
   setl cino+=g0,:0,l1,N-s,t0,(0
+  "setl mps+==:;  neovim
   setl tags+=~/.vim/static/cpp                        " core in cpp
   setl dictionary=~/.vim/dict/cpp
   abbr #i #include
   setl syntax=cpp11.doxygen
   "let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
-  syn keyword cppType u real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
+  syn keyword cppType real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
   noremap <buffer> [[ ?{<cr>w99[{
@@ -782,13 +668,6 @@ endfunc
 
 
 func! Make()						" silent make with quickfix window popup
-	if &ft == 'cpp'
-		if filereadable(getcwd() . "/Makefile")
-			let &makeprg="make"
-		elseif  filereadable(getcwd() . "/../Makefile")
-			let &makeprg="make -C .."
-		endif
-	endif
 	make
 	" silent make ?
 	redraw!
@@ -799,15 +678,99 @@ func! Make()						" silent make with quickfix window popup
 	endfor
 endfunc
 
-nnoremap <Leader>mk :call Make()<cr>
-nnoremap <Leader>dd :Dispatch<cr>
-nnoremap <Leader>di :Dispatch!<cr>
-nnoremap <leader>mm :QuickRun<cr>
+" map --------- {{{1
+" cmap          {{{2
+cmap w!! w !sudo tee % >/dev/null
+cnoreab cdh cd %:p:h
+cnoreab lcdh lcd %:p:h
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+" nmap -------- {{{2
+" nmap - -------- {{{3
+nn -+ :set modified!<cr>
+" nmap <leader> {{{3
+nn <leader>nt :VimFilerCurrentDir -explorer -winwidth=20<cr>
+nn <leader>st :SyntasticToggleMode<cr>
+nn <leader>tb :TagbarToggle<cr>
+nn <leader>u :GundoToggle<cr>
+" nmap <leader>c (ctags) {{{4
+nn <leader>ta :!gtags && ctags -R<cr>
+" nmap <leader>d (diff) {{{4
+nn <leader>dt :diffthis<CR>
+nn <leader>do :bufdo diffoff<CR>
+" nmap <leader>e (edit) {{{4
+nn <leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
+nn <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
+nn <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
+nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+" nmap <leader>g (Fugitive) {{{4
+nn <leader>gg :GitGutterToggle<cr>
+nn <leader>gs :Gstatus<CR>
+nn <leader>gd :Gdiff<CR>
+nn <leader>gc :Gcommit<CR>
+nn <leader>gb :Gblame<CR>
+nn <leader>gp :Git push<CR>
+" nmap <leader> misc {{{4
+nn <leader>w :set wrap!<CR>
+nn <leader>l :call ErrorsToggle()<cr>
+nn <leader>q :call QFixToggle()<cr>
+nn <Leader>cp :!xsel -ib < %<cr><cr>
+nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
+nn <leader>ig :IndentGuidesToggle<cr>:se list!<cr>
+nn <Leader>mk :call Make()<cr>
+nn <Leader>dd :Dispatch<cr>
+nn <Leader>di :Dispatch!<cr>
+nn <leader>jf :JunkFile<cr>
+nn <leader>wh :call ToggleUnwantedWhitespaces()<cr>
+nn <leader>a :Ag<space>
+" nmap s (Unite) {{{3
+nn <silent> sm :Unite -no-split -buffer-name=file -start-insert file_mru<cr>
+nn <silent> sf :Unite -no-split -buffer-name=file -start-insert file<cr>
+nn <silent> sr :Unite -no-split -buffer-name=file_rec -start-insert file_rec/async<cr>
+nn <silent> ss :Unite -no-split -buffer-name=buffer -start-insert buffer<cr>
+nn <silent> sc :Unite -no-split -buffer-name=change change<cr>
+nn <silent> so :Unite -no-split -buffer-name=outline outline<cr>
+nn <silent> sn :Unite -no-split -quick-match buffer<cr>
+nn <silent> sl :Unite -auto-resize -buffer-name=line line<cr>
+nn <silent> sy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+nn <silent> sg :Unite -no-split -buffer-name=ag grep<cr>
+" nmap Y (Gtags) {{{3
+nn Yy :Gtags <C-r><C-w><cr>
+nn Ys :Gtags -s <C-r><C-w><cr>
+nn Yr :Gtags -r <C-r><C-w><cr>
+nn Yp :Gtags -P <C-r><C-w><cr>
+nn Yg :Gtags -g <C-r><C-w><cr>
+nn Y<space> :Gtags
+" nmap misc {{{3
+nn <silent> <C-l> :nohls<cr><C-l>
+nn gz :bdelete<cr>
+" Error navigation
+nn <m-down> :lnext<cr>zvzz
+nn <m-up> :lprevious<cr>zvzz
+nn <m-j> :cnext<cr>zvzz
+nn <m-k> :cprevious<cr>zvzz
+" imap {{{2
+" move in insert mode
+ino <m-h> <left>
+ino <m-l> <Right>
+ino <m-j> <C-o>gj
+ino <m-k> <C-o>gk
+" insert word of the line above
+ino <C-Y> <C-C>:let @z = @"<CR>mz
+      \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
+      \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
+      \`zp:let @" = @z<CR>a
+" xmap {{{2
+xn <C-c> "+y
+" visual shifting (does not exit Visual mode)
+vn < <gv
+vn > >gv
+" * #
+xn * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+xn # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+" search for visual-mode selected text
+vmap // y/<C-R>"<CR>
 
-nmap <Leader>nw :set wrap!<CR>
-
-vmap  <expr>  <LEFT>   DVB_Drag('left')
-vmap  <expr>  <RIGHT>  DVB_Drag('right')
-vmap  <expr>  <DOWN>   DVB_Drag('down')
-vmap  <expr>  <UP>     DVB_Drag('up')
-vmap  <expr>  D        DVB_Duplicate()
+" Load local vimrc if exists -------------------------- {{{1
+if filereadable(glob("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif

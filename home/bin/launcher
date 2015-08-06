@@ -1,6 +1,0 @@
-#!/bin/sh
-
-PROMPT="»"
-FONT="-xos4-terminus-*-*-*-*-24-*-*-*-*-*-iso8859-*"
-
-dmenu_run -i -l 10 -fn $FONT -p $PROMPT
