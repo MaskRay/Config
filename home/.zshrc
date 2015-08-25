@@ -100,7 +100,7 @@ alias 7='cd +7'
 alias 8='cd +8'
 alias 9='cd +9'
 
-setopt complete_aliases         #do not expand aliases _before_ completion has finished
+setopt no_complete_aliases
 setopt auto_continue            #automatically send SIGCON to disowned jobs
 setopt extended_glob            # so that patterns like ^() *~() ()# can be used
 setopt pushd_ignore_dups        # do not push dups on stack
@@ -423,3 +423,6 @@ alias u22='clush -l root -b -g e cpupower frequency-set -u 2200m'
 alias u21='clush -l root -b -g e cpupower frequency-set -u 2100m'
 alias u20='clush -l root -b -g e cpupower frequency-set -u 2000m'
 alias u19='clush -l root -b -g e cpupower frequency-set -u 1900m'
+
+hash -d m=/media/rootfs-mips/home/ctf/services
+hash -d x=/media/rootfs-x64/home/ctf/services

@@ -27,6 +27,7 @@ set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
+set showbreak=↪
 set sidescroll=10 sidescrolloff=10
 set switchbuf=useopen
 "set ignorecase smartcase
@@ -35,10 +36,10 @@ set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
 set laststatus=2
 
-"set backup
-"set backupdir=~/tmp,/var/tmp,/tmp
-"set directory=~/tmp,/var/tmp,/tmp
-set nobackup noswapfile
+set backup
+set backupdir=~/.vimtmp/backup//
+set directory=~/.vimtmp/swap//
+set noswapfile
 if has('persistent_undo')
   set undofile
   set undolevels=200
@@ -92,7 +93,7 @@ endif
 " Status Line ----------------------------------------- {{{1
 set laststatus=2
 
-set statusline=%#ColorColumn#%2n              " buffer number
+set statusline=%#ColorColumn#%2f              " buffer number
 set statusline+=%*»                           " separator
 set statusline+=%<                            " truncate here
 set statusline+=%*»                           " separator
@@ -404,10 +405,10 @@ if 1 || has("gui_running")
   ru macros/matchit.vim
 
   " TODO neovim
-  "let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-  "execute "set rtp+=" . g:opamshare . "/merlin/vim"
-  "execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
-  "let g:syntastic_ocaml_checkers=['merlin']
+  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  execute "set rtp+=" . g:opamshare . "/merlin/vim"
+  execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
+  let g:syntastic_ocaml_checkers=['merlin']
 endif
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
@@ -689,9 +690,6 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 nn -+ :set modified!<cr>
 " nmap <leader> {{{3
 nn <leader>nt :VimFilerCurrentDir -explorer -winwidth=20<cr>
-nn <leader>st :SyntasticToggleMode<cr>
-nn <leader>tb :TagbarToggle<cr>
-nn <leader>u :GundoToggle<cr>
 " nmap <leader>c (ctags) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
 " nmap <leader>d (diff) {{{4
@@ -709,8 +707,21 @@ nn <leader>gd :Gdiff<CR>
 nn <leader>gc :Gcommit<CR>
 nn <leader>gb :Gblame<CR>
 nn <leader>gp :Git push<CR>
+" nmap <leader>h (highlight) {{{4
+nn <leader>hh :execute 'match InterestingWord1 /\<c-r><c-w>\>/'<cr>
+nn <leader>h1 :execute 'match InterestingWord1 /\<c-r><c-w>\>/'<cr>
+nn <leader>h2 :execute '2match InterestingWord2 /\<c-r><c-w>\>/'<cr>
+nn <leader>h3 :execute '3match InterestingWord3 /\<c-r><c-w>\>/'<cr>
+hi InterestingWord1 guifg=#000000 guibg=#FF4300 ctermfg=16 ctermbg=196
+hi InterestingWord2 guifg=#000000 guibg=#53FF00 ctermfg=16 ctermbg=82
+hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
 " nmap <leader> misc {{{4
-nn <leader>w :set wrap!<CR>
+nn <leader>1 :set cmdheight=1<cr>
+nn <leader>2 :set cmdheight=2<cr>
+nn <leader>3 :set cmdheight=3<cr>
+nn <leader>4 :set cmdheight=4<cr>
+nn <leader>5 :set cmdheight=5<cr>
+nn <leader>a :Ag<space>
 nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
@@ -720,8 +731,13 @@ nn <Leader>mk :call Make()<cr>
 nn <Leader>dd :Dispatch<cr>
 nn <Leader>di :Dispatch!<cr>
 nn <leader>jf :JunkFile<cr>
+nn <leader>st :SyntasticToggleMode<cr>
+nn <leader>tb :TagbarToggle<cr>
+nn <leader>u :GundoToggle<cr>
+nn <leader>w :set wrap!<CR>
 nn <leader>wh :call ToggleUnwantedWhitespaces()<cr>
-nn <leader>a :Ag<space>
+nn <leader>z zMzzzv
+nn <leader>S V:execute @@<cr>
 " nmap s (Unite) {{{3
 nn <silent> sm :Unite -no-split -buffer-name=file -start-insert file_mru<cr>
 nn <silent> sf :Unite -no-split -buffer-name=file -start-insert file<cr>
@@ -769,6 +785,35 @@ xn * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
 xn # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
 " search for visual-mode selected text
 vmap // y/<C-R>"<CR>
+vn <leader>S y:execute @@<cr>
+
+" omap {{{2
+" Motion for "next/last object". For example, "din(" would go to the next "()" pair
+" and delete its contents.
+
+onoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
+xnoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
+onoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
+xnoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
+
+onoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
+xnoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
+onoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
+xnoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
+
+function! s:NextTextObject(motion, dir)
+  let c = nr2char(getchar())
+
+  if c ==# "b"
+      let c = "("
+  elseif c ==# "B"
+      let c = "{"
+  elseif c ==# "d"
+      let c = "["
+  endif
+
+  exe "normal! ".a:dir.c."v".a:motion.c
+endfunction
 
 " Load local vimrc if exists -------------------------- {{{1
 if filereadable(glob("~/.vimrc.local"))

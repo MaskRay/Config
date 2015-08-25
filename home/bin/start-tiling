@@ -29,16 +29,16 @@ List.map Sys.command [
   (*; pic*)
   ; "change-wallpaper"
   ; "redshift"
-  ; "unclutter &"
+  (* ; "unclutter &" *)
   (* ; "batti &" *)
-  ; "syndaemon -k &"
+  ; "syndaemon -t -k &"
   ; "taskbar &"
   ; "keynav &"
   (*; "dorm u"*)
   ; "emacs --daemon >/dev/null 2>/dev/null"
   ; "xset r rate 200 50"
   ; "xcape -e 'Control_L=Escape'"
-  ; "compton -cC -i 0.8 &"
+  ; "compton -cC &"
   ; "urxvtd -f -q -o"
   (* ; "systemctl --user restart mail-inotify" *)
   ; "xsetroot -cursor_name left_ptr"

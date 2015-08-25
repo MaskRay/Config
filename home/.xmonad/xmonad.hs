@@ -417,7 +417,7 @@ myKeys =
     , ("M-p d", changeDir myXPConfig)
     --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
-    , ("M-r", spawn "rofi -show run")
+    , ("M-p r", spawn "rofi -show run")
     , ("M-p p", spawn "pavucontrol")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
