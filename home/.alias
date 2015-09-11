@@ -1,136 +1,136 @@
-if [ `uname` = Linux ]; then
-    alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
+# vim: set ft=sh fdm=marker:
+
+if [[ `uname` = Linux ]]; then
+  alias ls=$'ls -XF --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
 else
-    alias ls="ls -F"
+  alias ls="ls -F"
 fi
 
-alias R='R --quiet'
-
-function md() {
+md() {
   mkdir -p "$1"
   cd "$1"
 }
 
 LOCAL=$HOME/.local
 
-alias px=proxychains
-alias p6=ping6
+# core {{{1
+alias L=less
+alias c=cat
 alias d='dirs -v'
-alias cp='cp -iv'
-alias mv='mv -iv'
-alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
-alias pg='pgrep --full --list-full'
-alias pk='pgrep --full'
-alias psg='ps aux|grep --color=auto'
-alias xi='xinit -- -nolisten tcp -ardelay 170 -arinterval 40 :0 vt$XDG_VTNR'
-alias pa=parallel
-alias wee=weechat-curses
-alias hopper=~/.local/opt/hopper/usr/bin/hopper-v3
-alias strings='strings -a -tx' # CVE-2014-8485
-alias vimmin='vi -u NONE --cmd "set nocp | sy on | filetype plugin indent on"' # install aur/neovim-git && ln -sf nvim /usr/bin/vi
-
-alias mtr='sudo mtr --curses'
-
+alias eg='egrep --color=auto -I'
+alias g='grep --color=auto -I'
 alias l="ls -l"
 alias la='l -A'
 alias lh='l -lh'
+alias pa=parallel
+alias pg='pgrep --full --list-full'
+alias pk='pgrep --full'
+alias psg='ps aux|grep --color=auto'
+alias tail='tail -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
 alias which='which -a'
 
-alias mc='make clean'
-alias tmuxa='tmux a || tmux new -s default'
-
-alias o='fasd -fe xdg-open'
-alias sv='fasd -fe "sudo vim"'
-alias se=sudoedit
-alias e='fasd -fe "emacsclient -c -n"'
-alias j='fasd_cd -d'
-alias m='fasd -fe mplayer'
-
-alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
-alias tail='tail -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
-alias clip='xsel -ib'
-alias free='free -m'
-alias gr='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
-alias -g NF=".*(oc[1])"
-alias -g ND="/*(oc[1])"
-alias -g N='>/dev/null'
-alias -g NN='2>/dev/null'
-alias mou='sudo mount -o users,uid=1000,gid=1000,codepage=936,utf8'
-alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
-alias c=cat
-alias L=less
-alias t=task
-alias g='grep --color=auto -I'
-alias eg='egrep --color=auto -I'
-alias off='LC_ALL=C grep --color=auto -Pabo'
+## with common options
+alias cp='cp -iv'
 alias df='df -Th'
+alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
 alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
-alias du1='du --max-depth 1 | sort -rh | head'
-alias dstat='dstat -dnmcl --socket --top-io -N eth0,wlan0'
-alias adate='for i in US/Eastern Australia/{Brisbane,Sydney} Asia/{Hong_Kong,Singapore} Europe/Paris; do printf %-22s "$i:";TZ=$i date +"%m-%d %a %H:%M";done' #date for US and CN
-alias rsync='rsync --progress --partial'
+alias free='free -m'
+alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
+alias mv='mv -iv'
+
+# auto sudo {{{1
+alias brctl='sudo brctl'
+alias ip='sudo ip'
+alias iw='sudo iw'
+alias mount='sudo mount'
+alias netstat='sudo netstat'
+alias nmap='sudo nmap'
+alias perf='sudo perf'
+alias ss='sudo ss'
+alias tc='sudo tc'
+alias umount='sudo umount'
+
+# dev {{{1
+alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
+alias gdb='gdb -q'
+alias jc=/usr/lib/j8/bin/jconsole
+alias jqt=/usr/lib/j8/bin/jqt
+alias lid.sys='lid -f ~/Util/idutils/usr-include.ID'
+alias mkid.sys='mkid -f ~/Util/idutils/usr-include.ID /usr/include'
+alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
+alias segf='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'
+devflag() { set -x; export CFLAGS="-g3 -fsanitize=undefined"; export CXXFLAGS=$CFLAGS; set +x; }
+optflag() { set -x; export CFLAGS="-g3 -O3 -fkeep-inline-functions"; export CXXFLAGS=$CFLAGS; set +x; }
+unflag() { set -x; unset CFLAGS CXXFLAGS; set +x; }
+
+# applications {{{1
+alias book='cd ~/Book && xdg-open http://0:4000; gitbook serve -o /tmp/book'
+alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
+alias clip='xsel -ib'
+alias dhc='sudo dhcpcd -x wlp3s0; sudo dhcpcd wlp3s0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias drsync='rsync --progress --partial --delete --size-only'
+alias mt=multitail
+alias mtr='sudo mtr --curses'
+alias px=proxychains
+alias se=sudoedit
+alias tmuxa='tmux a || tmux new -s default'
+alias vimmin='vi -u NONE --cmd "set nocp | sy on | filetype plugin indent on"' # install aur/neovim-git && ln -sf nvim /usr/bin/vi
+alias wee=weechat-curses
+alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
+alias xi='xinit -- -nolisten tcp -ardelay 170 -arinterval 40 :0 vt$XDG_VTNR'
+alias xst='xstow -d ~/.local/stow'
+
+## with common options
+alias R='R --quiet'
+alias dstat='dstat -dnmcl --socket --top-io -N enp4s0f2,wlp3s0'
+alias rsync='rsync --progress --partial'
+alias xsel='xsel -l /dev/null'
+alias luit='luit -encoding gbk'
+alias wine='WINEDEBUG=-all wine' # turn debugging messages off
+
+# zsh
+if [[ -n $ZSH_VERSION ]]; then
+  alias -g NF=".*(oc[1])"
+  alias -g ND="/*(oc[1])"
+  alias -g N='>/dev/null'
+  alias -g NN='2>/dev/null'
+fi
+
+alias du1='du --max-depth 1 | sort -rh | head'
+alias adate='for i in Asia/{Shanghai,Tokyo} Europe/{Berlin,London} US/{Eastern,Pacific}; do printf %-22s "$i ";TZ=:$i date +"%F %a %T %Z";done'
 alias port='netstat -ntlp'
-alias wgetpaste='wgetpaste -X'
-alias 2pdf='libreoffice --headless --convert-to pdf'
+alias 2pdf='libreoffice --headless --convert-to pdf' # unoconv -f pdf
 alias 2csv='libreoffice --headless --convert-to csv'
 alias g2u='iconv -f GBK -t UTF-8'
 alias u2g='iconv -f UTF-8 -t GBK'
-alias ntp='sudo /etc/init.d/ntp-client start'
-alias mt=multitail
-alias luit='luit -encoding gbk'
-alias gdb='gdb -q'
-alias getmail='getmail -r rc0 -r rc1'
 alias pwget='proxychains wget'
-alias pyftp='python2 -m pyftpdlib'
-#alias wps=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/wps
-#alias wpp=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/wpp
-#alias et=/opt/kingsoft-office_9.1.0.4280~a12p4_x86/et
-alias prx='proxychains'
-alias quartus=$HOME/.local/opt/quartus/quartus/bin/quartus
 alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
 alias spice='spicec -h 0 -p 5900'
-alias burp='java -jar ~/.local/opt/burpsuite_pro_v1.4.07+.jar'
-alias mingw='PATH=$PATH:/opt/mingw/libexec/gcc/i686-w64-mingw32/4.9.0 /opt/mingw/i686-w64-mingw32/bin/g++ -std=c++11 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0 -I/opt/mingw/i686-w64-mingw32/include/c++/4.9.0/i686-w64-mingw32 -I/opt/mingw/i686-w64-mingw32/include -I/opt/mingw/lib/gcc/i686-w64-mingw32/4.9.0/include'
 alias matlab='~/.local/opt/matlab/bin/matlab'
 alias math='~/.local/opt/mathematica/Executables/Mathematica -graphicssystem native'
 alias matlabc='~/.local/opt/matlab/bin/matlab -nodisplay -r clc'
 alias blockdump='sudo sysctl vm.block_dump=1'
-alias xsel='xsel -l /dev/null'
-#alias eclimd=$LOCAL/opt/eclipse/eclimd
-alias wine='WINEDEBUG=-all wine'
-alias ctag='ctags -R --c++-kinds=+p --fields=+iaS --extra=+q'
-alias perf='sudo perf'
 alias mtp='simple-mtpfs /media'
-alias jc='~/.local/opt/j64-803/jconsole.sh'
-alias jqt='~/.local/opt/j64-803/jqt.sh'
 
-alias admb='LDFLAGS="-L$ADMB_HOME/lib -L$ADMB_HOME/contrib" CXXFLAGS=-I$ADMB_HOME/include admb'
-
-alias jdgui=$LOCAL/bin/jd-gui
-
+# git {{{1
 alias ga='git add'
 alias gau='git add -u'
-alias gpu='git push'
-alias gpl='git pull'
-alias gl='git log'
-alias glp='git log -p'
-alias ghost='command gs'
+alias gb='git branch'
+alias gcam='git commit -am'
+alias gcl='git clone'
+alias gcm='git commit -m'
+alias gco='git checkout'
 alias gd='git diff'
 alias gdc='git diff --cached'
-alias gm='git commit -m'
-alias gma='git commit -am'
-alias gb='git branch'
-alias gc='git checkout'
+alias gl='git log'
+alias glp='git log -p'
+alias gpl='git pull'
+alias gpu='git push'
 alias gr='git remote'
-alias gcl='git clone'
+alias grt='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
 
-alias rspec='spring rspec --color'
-
-alias mount='sudo mount'
-alias umount='sudo umount'
-
+# systemd {{{1
 alias sy='sudo systemctl'
 alias syu='systemctl --user'
 alias status='sudo systemctl status'
@@ -142,6 +142,8 @@ alias stop='sudo systemctl stop'
 #alias disable='sudo systemctl disable'
 
 alias cal='cal -3'
+
+# package management {{{1
 alias aS='sudo aura -S'
 alias aSs='aura -Ss'
 alias aA='sudo aura -A'
@@ -152,40 +154,26 @@ alias yS='yaourt -S --noconfirm'
 alias ySs='yaourt -Ss'
 alias ySyu='yaourt -Syua'
 alias pSy='sudo pacman -Sy'
-alias pSyu='sudo pacman -Syu --noconfirm'		# Synchronize with repositories and then upgrade packages that are out of date on the local system.
-alias pS='sudo pacman -S'		# Install specific package(s) from the repositories
-alias pU='sudo pacman -U'		# Install specific package not from the repositories but from a file 
-alias pR='sudo pacman -R'		# Remove the specified package(s), retaining its configuration(s) and required dependencies
-alias pRns='sudo pacman -Rns'		# Remove the specified package(s), its configuration(s) and unneeded dependencies
-alias pSi='pacman -Si'			# Display information about a given package in the repositories
-alias pSs='pacman -Ss'			# Search for package(s) in the repositories
-alias pQi='pacman -Qi'			# Display information about a given package in the local database
-alias pQs='pacman -Qs'			# Search for package(s) in the local database
-alias paclo="pacman -Qdt"		# List all packages which are orphaned
-alias pacc="sudo pacman -Scc"		# Clean cache - delete all not currently installed package files
-alias pQl="pacman -Ql"			# List all files installed by a given package
+alias pSyu='sudo pacman -Syu --noconfirm' # Synchronize with repositories and then upgrade packages that are out of date on the local system.
+alias pS='sudo pacman -S'                 # Install specific package(s) from the repositories
+alias pU='sudo pacman -U'                 # Install specific package not from the repositories but from a file
+alias pR='sudo pacman -R'                 # Remove the specified package(s), retaining its configuration(s) and required dependencies
+alias pRns='sudo pacman -Rns'             # Remove the specified package(s), its configuration(s) and unneeded dependencies
+alias pSi='pacman -Si'                    # Display information about a given package in the repositories
+alias pSs='pacman -Ss'                    # Search for package(s) in the repositories
+alias pQi='pacman -Qi'                    # Display information about a given package in the local database
+alias pQs='pacman -Qs'                    # Search for package(s) in the local database
+alias paclo="pacman -Qdt"                 # List all packages which are orphaned
+alias pacc="sudo pacman -Scc"             # Clean cache - delete all not currently installed package files
+alias pQl="pacman -Ql"                    # List all files installed by a given package
 alias pQo="pacman -Qo"
-alias pacexp="sudo pacman -D --asexp"	# Mark one or more installed packages as explicitly installed 
-alias pacimp="sudo pacman -D --asdep"	# Mark one or more installed packages as non explicitly installed
+alias pacexp="sudo pacman -D --asexp"     # Mark one or more installed packages as explicitly installed
+alias pacimp="sudo pacman -D --asdep"     # Mark one or more installed packages as non explicitly installed
 alias api='sudo aptitude install'
 alias aps='sudo aptitude search'
 alias apu='sudo aptitude update'
 alias yui='sudo yum install'
 alias yus='sudo yum search'
-
-alias ob='objdump -M intel'
-alias re='readelf -W'
-alias dhc='sudo dhcpcd -x wlan0; sudo dhcpcd wlan0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
-alias xst='xstow -d ~/.local/stow'
-alias st=strace
-alias lt=ltrace
-alias segfault='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'
-alias lid.std='lid -f ~/Dev/ID/usr-include.ID'
-
-alias ccode='export CXXFLAGS="-g -D_FORTIFY_SOURCE=1 -fstack-protector -ftrapv"'
-alias xor=~/Dev/Crypto/xortool/xortool.py
-alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
-alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 
 # Gentoo-specific {{{2
 if [[ -n "$EPREFIX" ]]; then
@@ -195,46 +183,20 @@ else
 fi
 alias eme="${SUDO_IFNOT_PREFIX}emerge"
 alias peme='sudo proxychains emerge'
-alias ebuildncd=sudo FEATURES='-collision-detect -protected-owned' ebuild
+alias ebuildncd="sudo FEATURES='-collision-detect -protected-owned' ebuild"
 alias ei='eix -uI --only-names'
 alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\n" eix'
 alias disp='sudo dispatch-conf'
-alias book='cd ~/Book && xdg-open http://0:4000; gitbook serve -o /tmp/book'
 
-alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
+# binary {{{1
+alias off='LC_ALL=C grep --color=auto -Pabo'
+alias lt=ltrace
+alias ob='objdump -M intel'
+alias re='readelf -W'
+alias st=strace
+alias strings='strings -a -tx' # CVE-2014-8485
 
-mtrg() {
-  sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}' 
-}
-
-info2() {
-  info --subnodes -o - "$1" | less
-}
-
-johnrar() {
-   /usr/sbin/rar2john "$1" > /tmp/_.john && \
-     /usr/sbin/john --wordlist=~/Security/Dict/password-dict.txt /tmp/_.john
-}
-
-web() {
-  #twistd web --path "$1" -p "${2:-8000}"
-  ruby -run -e httpd "$1" -p "${2:-8000}"
-}
-
-lst() {
-  r2 -q "$1" -c "s $2; pd 10"
-}
-
-ord() { printf "0x%x\n" "'$1'"; }
-chr() { printf $(printf '\\%03o\\n' "$1"); }
-uniinfo() { python -c "import unicodedata as u; print u.name(unichr("$1"))"; }
-udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
-
-
-use() { rm test; ln -s test-$1 test; }
-aa() { awk -vn=$1 'NR==1 {print n} 1 < NR && NR <= n+1' "$2" > "$3"; }
-+x() { chmod +x "$@" }
-
+# ARM {{{2
 alias aob=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-objdump
 alias are=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-readelf
 alias agcc=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gcc
@@ -245,6 +207,7 @@ alias ald=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld
 alias aldd=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ldd
 alias apopulate=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-populate
 
+# MIPSEL {{{2
 alias moc=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-objcopy
 alias mob=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-objdump
 alias mre=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-readelf
@@ -255,3 +218,25 @@ alias mnm=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-nm
 alias mld=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-ld
 alias mldd=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-ldd
 alias mpopulate=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-populate
+
+# functions {{{1
+
+mtrg() {
+  sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}'
+}
+
+web() {
+  #twistd web --path "$1" -p "${2:-8000}"
+  ruby -run -e httpd "$1" -p "${2:-8000}"
+}
+
+info2() { info --subnodes -o - "$1" | less; }
+johnrar() { rar2john "$1" > /tmp/_.john && john --wordlist=~/Information/Dict/dict.txt /tmp/_.john; }
+lst() { r2 -q "$1" -c "s $2; pd 10"; }
+ord() { printf "0x%x\n" "'$1'"; }
+chr() { printf $(printf '\\%03o\\n' "$1"); }
+uniinfo() { python -c "import unicodedata as u; print u.name(unichr("$1"))"; }
+udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
+if [[ -n $ZSH_VERSION ]]; then
+  eval '+x() { chmod +x "$@" }'
+fi

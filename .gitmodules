@@ -6,3 +6,6 @@
 [submodule "home/Util/zsh-completions"]
 	path = home/Util/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions
+[submodule "home/Util/fasd"]
+	path = home/Util/fasd
+	url = https://github.com/clvv/fasd

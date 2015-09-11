@@ -392,7 +392,7 @@ myKeys =
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' f", namedScratchpadAction scratchpads "coffee")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' j", namedScratchpadAction scratchpads "jc")
+    , ("C-' j", namedScratchpadAction scratchpads "j8")
     , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
     , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' i", namedScratchpadAction scratchpads "rawutop")
@@ -439,7 +439,7 @@ scratchpads =
   map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "task" "urxvt -T task -e tasksh" (title =? "task") doSPFloat
-  , NS "jc" "urxvt -T jc -e ~/.local/opt/j64-803/jconsole.sh" (title =? "jc") doSPFloat
+  , NS "j8" "urxvt -T j8 -e j8 -c" (title =? "j8") doSPFloat
   , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
   , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat

@@ -58,12 +58,12 @@ bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and director
 bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
 bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
 if [[ -n $MYSELF ]]; then
-  alias v='fasd -fe "vim --servername GVIM --remote-tab-silent"'
+  alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
 else
-  alias v='fasd -fe vim'
+  alias v='fasd -fie vim'
 fi
-alias j='fasd_cd -d -i'
-alias jj='fasd_cd -d'
+alias j='fasd_cd -d'
+alias jj='fasd_cd -d -i'
 alias o='f -fe xdg-open'
 
 # Options {{{1
@@ -136,7 +136,7 @@ setopt null_glob
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 zstyle ':completion:*' use-cache true
-zstyle ':completion::complete:*' cache-path .zcache
+#zstyle ':completion::complete:*' cache-path .zcache
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' menu select
 zstyle ':completion:*:*:default' force-list always
@@ -315,7 +315,7 @@ bindkey "\eq" push-line-or-edit
 bindkey '^xf' vi-find-next-char
 bindkey '^xF' vi-find-prev-char
 
-# url-quote-magic
+# url-quote-magic {{{2
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 

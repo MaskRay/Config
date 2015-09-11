@@ -1,0 +1,12 @@
+[Unit]
+Description=OfflineIMAP IMAP/Maildir Synchronization
+Documentation=man:offlineimap
+
+[Service]
+ExecStart=/usr/bin/proxychains /usr/bin/offlineimap -o -u quiet
+Restart=always
+RestartSec=600
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target
