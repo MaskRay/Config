@@ -77,7 +77,6 @@ import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.Accordion
 import XMonad.Layout.Drawer
 import XMonad.Layout.Combo
-import XMonad.Layout.Mosaic
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.Grid
 import XMonad.Layout.LayoutCombinators
@@ -155,6 +154,7 @@ myLayout = avoidStruts $
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
         termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
+
         --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
         myTab = defaultTheme
                 { activeColor         = "black"
@@ -285,7 +285,7 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "xterm" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(on[1])'", "urxvtd -q -f -o", urxvt "weechat", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
+    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|Chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xautolock -locknow")
@@ -303,8 +303,6 @@ myKeys =
     , ("<XF86AudioPause>", spawn "cmus-remote -u")
     , ("<XF86Display>", spawn "xset dpms force standby")
     , ("<XF86Eject>", spawn "eject")
-    , ("M-S-a", sendMessage Taller)
-    , ("M-S-z", sendMessage Wider)
     , ("M-S-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
@@ -616,7 +614,7 @@ myTopics =
     , TI "news" "" (urxvt "newsbeuter") "newsbeuter.xpm"
     , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "mutt.xpm"
     , TI "gimp" "" (return ()) "gimp.xpm"
-    , TI "emacs" "" (spawn "emacsclient -c -n") "emacs.xpm"
+    , TI "emacs" "" (spawn "LC_CTYPE=zh_CN.UTF-8 emacs") "emacs.xpm"
     , TI "misc" "" (return ()) "gtk-network.xpm"
     ]
   where

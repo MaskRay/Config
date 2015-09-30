@@ -11,6 +11,16 @@
 /home/.config/newsbeuter/profile
 /home/.config/newsbeuter/urls
 /home/.config/gtk-3.0/bookmarks
+/home/.emacs.d/eshell
+/home/.emacs.d/ido.last
+/home/.emacs.d/irony
+/home/.emacs.d/helm-history
+/home/.emacs.d/recentf
+/home/.emacs.d/backups
+/home/.emacs.d/auto-save-list
+/home/.emacs.d/places
+/home/.emacs.d/projectile*
+/home/.emacs.d/.*
 /etc/portage/profile/package.use.force
 /etc/portage/profile/package.use.mask
 /etc/portage/env/cross-*

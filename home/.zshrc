@@ -4,9 +4,7 @@
 if [[  "$-" != *i* ]]; then return 0; fi
 
 # Server? {{{1
-if [[ $(hostname) = lap ]]; then
-  MYSELF=true
-else
+if (( ! ${+WINDOWID} )) {
   if [[ -d ~/gentoo ]]; then
     export EPREFIX=~/gentoo
     export PATH="$EPREFIX/usr/bin:$EPREFIX/bin:$EPREFIX/tmp/usr/bin:$EPREFIX/tmp/bin:$PATH"
@@ -15,31 +13,48 @@ else
   alias -g poweroff=
   alias -g shutdown=
   alias -g reboot=
-fi
+}
 
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
-#export SCALA_HOME=/opt/scala-2.10.1
-#export PATH=$SCALA_HOME/bin:/opt/texlive/2012/bin/x86_64-linux:$HOME/.cabal/bin:$HOME/bin:~/.local/bin:~/.gem/ruby/2.1.0/bin:$HOME/bin/ssh:$PATH:/home/ray/Cross/toolchain-mips_r2_gcc-4.3.3+cs_uClibc-0.9.30.1/usr/bin
-export PATH=~/bin:~/.local/bin:~/.cabal/bin:~/.nimble/bin:~/go/bin:~/bin/ssh:$PATH
+export PATH=~/bin:~/.local/bin:~/bin/ssh:$PATH
 export EDITOR=vim
-#export PATH=$PATH:/home/ray/.local/opt/admb-11-linux-gcc4.6.1-64bit/bin
 export LESS="-MiR --shift 5"
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
-#export WINEPATH=z:\\opt\\mingw\\i686-w64-mingw32\\lib
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
-export GOPATH=~/go
 #export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
 
-export LESS_TERMCAP_mb=$'\E[01;31m'
-export LESS_TERMCAP_md=$'\E[01;31m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-#export LESS_TERMCAP_so=$'\E[01;44;33m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[01;32m'
+#export LESS_TERMCAP_mb=$'\E[01;31m'
+# Start bold mode
+if [[ $TERM =~ 256 ]] {
+  export LESS_TERMCAP_md=$'\e[1;38;5;178m'
+} else {
+  export LESS_TERMCAP_md=$'\e[1;31m'
+}
+# End all mode
+export LESS_TERMCAP_me=$'\e[0m'
+# Start standout mode e.g. prompt, matches
+if [[ $TERM =~ 256 ]] {
+  export LESS_TERMCAP_so=$'\e[1;38;5;81m'
+} else {
+  export LESS_TERMCAP_so=$'\e[1;36m'
+}
+# End standout mode
+export LESS_TERMCAP_se=$'\e[0m'
+# Start underlining
+if [[ $TERM =~ 256 ]] {
+  export LESS_TERMCAP_us=$'\e[4;1;38;5;71m'
+} else {
+  export LESS_TERMCAP_us=$'\e[4;1;32m'
+}
+# End underlining
+export LESS_TERMCAP_ue=$'\e[0m'
+
+if (( ! ${+SSH_AUTH_SOCK} )) {
+  export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
+}
 
 # Look {{{1
 PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}\u2570\u2500%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
@@ -51,20 +66,6 @@ if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
 else if [[ -f $HOME/.lscolor ]];
     eval $(dircolors -b ~/.lscolor)
 fi
-
-# fasd {{{1
-eval "$(fasd --init posix-alias zsh-hook zsh-wcomp zsh-wcomp-install)"
-bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
-bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
-bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
-if [[ -n $MYSELF ]]; then
-  alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
-else
-  alias v='fasd -fie vim'
-fi
-alias j='fasd_cd -d'
-alias jj='fasd_cd -d -i'
-alias o='f -fe xdg-open'
 
 # Options {{{1
 # History {{{2
@@ -90,15 +91,7 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
-alias 1='cd -'
-alias 2='cd +2'
-alias 3='cd +3'
-alias 4='cd +4'
-alias 5='cd +5'
-alias 6='cd +6'
-alias 7='cd +7'
-alias 8='cd +8'
-alias 9='cd +9'
+for i ({1..9}) alias $i="cd +$i"; unset i
 
 setopt no_complete_aliases
 setopt auto_continue            #automatically send SIGCON to disowned jobs
@@ -204,6 +197,12 @@ zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(avi|mkv|rmvb|pyc|wmv)
 
 zstyle ':completion::*:(-command-|export):*' fake-parameters CFLAGS CXXFLAGS LD_LIBRARY_PATH
 
+# Don't complete uninteresting users...
+zstyle ':completion:*:*:*:users' ignored-patterns \
+  adm amanda apache avahi beaglidx bin cacti canna chrony clamav colord daemon dbus distcache dnsmasq dovecot etcd fax fcron ftp games gdm git gkrellmd gopher hacluster haldaemon halt hsqldb http ident junkbust ldap lp mail mailman mailnull memcached mldonkey mongodb mysql nagios named nbd netdump news nfsnobody nobody nscd ntp nut nx openvpn operator pcap polipo polkitd postfix postgres privoxy proxy pulse pvm quagga radvd redis rpc rpcuser rpm rtkit shutdown squid sshd sync systemd-bus-proxy systemd-journal-gateway systemd-journal-remote systemd-journal-upload systemd-network systemd-resolve systemd-timesync tor unbound usbmux uucp uuidd vcsa xfs
+
+zstyle ':completion:*:mutt:*' users ${${${(f)"$(<~/.mutt/aliases)"}#alias[[:space:]]}%%[[:space:]]*}
+
 # ... completion
 user_complete(){
 	if [[ -z $BUFFER ]]; then
@@ -239,65 +238,34 @@ bindkey -M menuselect '^o' accept-and-infer-next-history
 bin-exist() {[[ -n ${commands[$1]} ]]}
 
 # Bindings {{{1
-bindkey -v '^A' vi-insert-bol
-bindkey -v '^E' vi-insert-eol
-bindkey -v '^K' kill-line
-bindkey -v '\ef' forward-word
-bindkey -v '\eb' backward-word
-#bindkey -v '^P' up-history
-#bindkey -v '^N' down-history
-bindkey -v '^F' forward-char
-bindkey -v '^B' backward-char
-bindkey -v '^U' kill-whole-line
-bindkey -v '^R' history-incremental-search-backward
-bindkey -v '^S' history-incremental-search-forward
-bindkey -v '^Y' yank-pop
-bindkey -v '\e.' insert-last-word
-bindkey -v '\e?' which-command
-bindkey -v '\eh' run-help
-bindkey -v '\el' down-case-word
-bindkey -v '\eu' up-case-word
-bindkey -v "^[m" copy-prev-shell-word
-
 bindkey -e
-bindkey -N mymap emacs
 bindkey "\t" user_complete
 bindkey '\e\\' delete-horizontal-space
 bindkey '^xh' _complete_help
 #bindkey '^p' history-beginning-search-backward
 #bindkey '^n' history-beginning-search-forward
 
-# Aliases {{{1
-# General {{{2
-
-# Global aliases {{{2
-alias -g E="|sed"
-alias -g L="|less"
-alias -g P="|column -t"
-alias -g S="|sort"
-alias -g X="|xargs"
-alias -g G='|egrep --color=auto'
-alias -g EG='|& egrep --color=auto'
-alias -g H="|head -n $(($LINES-2))"
-alias -g T="|tail -n $(($LINES-2))"
-alias -g N='>/dev/null'
-alias -g NN='>/dev/null 2>&1'
-alias -g X='| xargs'
-alias -g X0='| xargs -0'
-alias -g B='|sed '\''s/\x1B\[[0-9;]*[JKmsu]//g'\'
-
-# Path aliases
-hash -d up=/usr/portage
-hash -d ep=/etc/portage
-hash -d vl=/var/lib
-hash -d vl=/var/lib
-hash -d as=~/Assignment/2014spr
-hash -d d=~/Documents
-
-# Application-specific {{{2
+# Aliases & functions {{{1
+# General aliases & functions (partially shared with bash) {{{2
 . ~/.alias
 
+# terminfo {{{1
+bindkey  "${terminfo[khome]}"    beginning-of-line
+bindkey  "${terminfo[kend]}"     end-of-line
+bindkey  "${terminfo[kich1]}"    overwrite-mode
+bindkey  "${terminfo[kbs]}"      backward-delete-char # original: kbs=^H (\177, Debian)
+bindkey  "${terminfo[kcuu1]}"    up-line-or-history
+bindkey  "${terminfo[kcud1]}"    down-line-or-history
+bindkey  "${terminfo[kcub1]}"    backward-char
+bindkey  "${terminfo[kcuf1]}"    forward-char
+bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
+
 # ZLE {{{1
+# prepend-sudo {{{2
+prepend-sudo() {
+  [[ $BUFFER != su(do|)\ * ]] && { BUFFER="sudo $BUFFER"; ((CURSOR += 5)); }
+}
+zle -N prepend-sudo
 # highlight {{{2
 zle_highlight=(region:bg=magenta
   special:bold,fg=magenta
@@ -312,117 +280,49 @@ zle -N      edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
 bindkey "\eq" push-line-or-edit
+bindkey '^x^f' vi-find-next-char
 bindkey '^xf' vi-find-next-char
-bindkey '^xF' vi-find-prev-char
+bindkey '^xb' vi-find-prev-char
+bindkey '^x^s' prepend-sudo
 
 # url-quote-magic {{{2
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
+# fasd {{{2
+eval "$(fasd --init posix-alias zsh-hook zsh-wcomp zsh-wcomp-install)"
+bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
+bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
+bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
+if (( ${+WINDOWID} )) {
+  alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
+} else {
+  alias v='fasd -fie vim'
+}
+alias j='fasd_cd -d'
+alias jj='fasd_cd -d -i'
+
 # Goodies {{{1
 (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
 
-cl() {
-  cd $1 && ls -a
-}
+# Imports {{{1
 
-ssht() {
-  ssh -t $1 'tmux a || tmux'
-}
+# OPAM
+[[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
 
-# listing stuff
-#a2# Execute \kbd{ls -lSrah}
-alias dir="command ls -lSrah"
-#a2# Only show dot-directories
-alias lad='command ls -d .*(/)'
-#a2# Only show dot-files
-alias lsa='command ls -a .*(.)'
-#a2# Only files with setgid/setuid/sticky flag
-alias lss='command ls -l *(s,S,t)'
-#a2# Only show symlinks
-alias lsl='command ls -l *(@)'
-#a2# Display only executables
-alias lsx='command ls -l *(*)'
-#a2# Display world-{readable,writable,executable} files
-alias lsw='command ls -ld *(R,W,X.^ND/)'
-#a2# Display the ten biggest files
-alias lsbig="command ls -flh *(.OL[1,10])"
-#a2# Only show directories
-alias lsd='command ls -d *(/)'
-#a2# Only show empty directories
-alias lse='command ls -d *(/^F)'
-#a2# Display the ten newest files
-alias lsnew="command ls -rtlh *(D.om[1,10])"
-#a2# Display the ten oldest files
-alias lsold="command ls -rtlh *(D.Om[1,10])"
-#a2# Display the ten smallest files
-alias lssmall="command ls -Srl *(.oL[1,10])"
-#a2# Display the ten newest directories and ten newest .directories
-alias lsnewdir="command ls -rthdl *(/om[1,10]) .*(D/om[1,10])"
-#a2# Display the ten oldest directories and ten oldest .directories
-alias lsolddir="command ls -rthdl *(/Om[1,10]) .*(D/Om[1,10])"
+# archlinuxcn/pinyin-completion
+[[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
-#f5# List files which have been modified within the last {\it n} days, {\it n} defaults to 1
-modified() {
-  print -l -- *(m-${1:-1})
-}
+# aur/fzf
+[[ -s /etc/profile.d/fzf.zsh ]] && . /etc/profile.d/fzf.zsh
 
-# Utils {{{1
-# show 256 color tab
-256tab() {
-    for k in `seq 0 1`;do
-        for j in `seq $((16+k*18)) 36 $((196+k*18))`;do
-            for i in `seq $j $((j+17))`; do
-                printf "\e[01;$1;38;5;%sm%4s" $i $i;
-            done;echo;
-        done;
-    done
-}
+# rvm (Ruby)
+[[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
 
-cowfiles=(/usr/share/cowsay-3.03/cows/*)
-bindkey -s '^zm' "toilet -f bigmono12 --gay<<<'hi all';sleep 2\n"'while :; do fortune -s | cowsay -f${cowfiles[$RANDOM % ${#cowfiles[@]} + 1]}; sleep 0.3; done'"\n"
-
-# OPAM configuration
-. $HOME/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-
-# Pinyin Completion
-if [[ -d $HOME/.zsh/Pinyin-Completion ]]; then
-  PATH=$PATH:$HOME/.zsh/Pinyin-Completion/bin
-  source $HOME/.zsh/Pinyin-Completion/shell/pinyin-comp.zsh
-fi
-
-[[ -f /etc/profile.d/fzf.zsh ]] && source /etc/profile.d/fzf.zsh
+# nvm (Node.js)
+[[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
 
 # Environment Modules {{{1
 module() { eval `~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ruby/2.2.0 ghc perl texlive/2015 wps #mpi/impi
-
-# rvm
-[[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
-
-# nvm
-[[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
-
-bindkey  "${terminfo[khome]}"    beginning-of-line
-bindkey  "${terminfo[kend]}"     end-of-line
-bindkey  "${terminfo[kich1]}"    overwrite-mode
-bindkey  "${terminfo[kbs]}"      backward-delete-char # original: kbs=^H (\177, Debian)
-bindkey  "${terminfo[kcuu1]}"    up-line-or-history
-bindkey  "${terminfo[kcud1]}"    down-line-or-history
-bindkey  "${terminfo[kcub1]}"    backward-char
-bindkey  "${terminfo[kcuf1]}"    forward-char
-bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
-
-alias uf='clush -l root -b -g e cpupower frequency-info -f'
-alias ut='clush -l root -b -g e cpupower frequency-set -u 2600m'
-alias u25='clush -l root -b -g e cpupower frequency-set -u 2500m'
-alias u24='clush -l root -b -g e cpupower frequency-set -u 2400m'
-alias u23='clush -l root -b -g e cpupower frequency-set -u 2300m'
-alias u22='clush -l root -b -g e cpupower frequency-set -u 2200m'
-alias u21='clush -l root -b -g e cpupower frequency-set -u 2100m'
-alias u20='clush -l root -b -g e cpupower frequency-set -u 2000m'
-alias u19='clush -l root -b -g e cpupower frequency-set -u 1900m'
-
-hash -d m=/media/rootfs-mips/home/ctf/services
-hash -d x=/media/rootfs-x64/home/ctf/services
+module load ghc go nim perl ruby/2.2.0 texlive/2015 wps #mpi/impi

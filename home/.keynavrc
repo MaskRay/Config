@@ -24,7 +24,7 @@
 # Use 'daemonize' to background ourselves.
 #daemonize
 
-alt+semicolon start
+super+semicolon start
 Escape end
 ctrl+bracketleft end
 h cut-left

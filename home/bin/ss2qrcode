@@ -1,0 +1,15 @@
+#!/bin/zsh -e
+
+tmp=$(mktemp --suffix .jpg)
+trap 'rm $tmp' 0
+
+method=$(jq -r .method $1)
+password=$(jq -r .password $1)
+server=$(jq -r .server $1)
+serverport=$(jq -r .server_port $1)
+encoded=$(print -rn -- "$method:$password@$server:$serverport" | base64)
+
+xvfb-run -n 99 -w 1 -s '-screen 0 800x800x24' xterm -rv -geometry 800x800+0+0 -hold -e "python2 -c 'import pyqrcode; print pyqrcode.create(\"ss://\" + raw_input().strip()).terminal()' <<< $encoded" &     # -rv for foreground:white & background:black
+sleep ${2:-3}
+DISPLAY=:99 import -window root $tmp
+display $tmp

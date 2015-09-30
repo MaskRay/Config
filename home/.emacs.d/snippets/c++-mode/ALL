@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: (x).begin() (x).end()
+# key: ALL
+# --
+#define ALL(x) (x).begin(), (x).end()

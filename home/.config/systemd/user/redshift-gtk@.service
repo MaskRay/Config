@@ -4,8 +4,8 @@ Documentation=http://jonls.dk/redshift/
 After=display-manager.service
 
 [Service]
+Environment=DISPLAY=:%i
 ExecStart=/usr/bin/redshift-gtk
-Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical.target

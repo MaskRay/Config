@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: rd
+# key: rd
+# --
+double rd()
+{
+  double x;
+  scanf("%lf", &x);
+  return x;
+}

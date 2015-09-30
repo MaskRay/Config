@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: ri
+# key: ri
+# --
+int ri()
+{
+  int x;
+  scanf("%d", &x);
+  return x;
+}

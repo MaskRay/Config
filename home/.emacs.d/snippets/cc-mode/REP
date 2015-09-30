@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: REP
+# key: REP
+# --
+#define REP(i, n) FOR(i, 0, n)

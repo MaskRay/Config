@@ -8,7 +8,7 @@ eval spawn [lrange $argv 0 end]
 
 send "/diff --git\r"
 
-interact t {
+interact s {
   exec tmux splitw -h
 } Q {
   exit 13
