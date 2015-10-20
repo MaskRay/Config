@@ -1,14 +1,40 @@
 #!/bin/zsh
 
+# race condition before the reassignment of 'pid', however the window is tiny
+trap 'kill $pid 2>&-; exit' INT TERM
+
+agenda() {
+  script=$(cat <<EOF
+  (progn
+    (setq org-agenda-custom-commands
+          '(("X" "" agenda ""
+             ((org-agenda-span 7)
+              (org-agenda-start-on-weekday nil)
+              (org-agenda-files '("~/org/gtd.org" "~/org/refile.org"))
+              (org-agenda-entry-types '(:deadline :scheduled :timestamp))))
+            ))
+    (org-batch-agenda-csv "X")
+  )
+EOF
+)
+  emacs -q --batch --eval "$script" 2>/dev/null
+}
+
 old=
 pid=
 while :; do
-  tasks=(${(f)"$(task taskbar | sed -n '4,/^$/{/^$/!p}')"})
+  width=$(xrandr -q | awk 'NR==1{print $8}')
+  #  tasks=(${(f)"$(task taskbar | sed -n '4,/^$/{/^$/!p}')"})
+  tasks=(${(f)"$(agenda | awk -vFPAT='([^,]*)|(\"[^\"]+\")' 'NR>1 && $4=="TODO"{s=$6; if($7){sub("\\.{6}","",$7); s=s" "$7} if($1)print s"  "$2; }')"})
   if [[ $tasks != $old ]]; then
+    echo new
     [[ -n $pid ]] && kill $pid
-    dzen2 -p -ta l -x 160 -w 524 -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei Mono-18' -l $[${#tasks[@]}-1] <<< ${(F)tasks} &
+    dzen2 -p -ta l -x 160 -w $[width/2-160] -h 32 -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei Mono-18' -l $[${#tasks[@]}-1] <<< ${(F)tasks} &
     pid=$!
     old=("${tasks[@]}")
   fi
-  sleep 300
+
+  # 'sleep 300' does not work because zsh will count the number of SIGTERM rather than trigger the handler immediately
+  sleep 300 &
+  wait $!
 done

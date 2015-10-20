@@ -1,3 +1,4 @@
+\#*#
 *~
 *.log
 *.pyc
@@ -11,6 +12,7 @@
 /home/.config/newsbeuter/profile
 /home/.config/newsbeuter/urls
 /home/.config/gtk-3.0/bookmarks
+/home/.emacs.d/bookmarks
 /home/.emacs.d/eshell
 /home/.emacs.d/ido.last
 /home/.emacs.d/irony
@@ -20,7 +22,9 @@
 /home/.emacs.d/auto-save-list
 /home/.emacs.d/places
 /home/.emacs.d/projectile*
+/home/.emacs.d/url
 /home/.emacs.d/.*
+/home/.tmux/resurrect
 /etc/portage/profile/package.use.force
 /etc/portage/profile/package.use.mask
 /etc/portage/env/cross-*

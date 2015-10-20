@@ -9,3 +9,12 @@
 [submodule "home/Util/fasd"]
 	path = home/Util/fasd
 	url = https://github.com/clvv/fasd
+[submodule "home/.tmux/plugins/tmux-copycat"]
+	path = home/.tmux/plugins/tmux-copycat
+	url = https://git::@github.com/tmux-plugins/tmux-copycat
+[submodule "home/.tmux/plugins/tmux-resurrect"]
+	path = home/.tmux/plugins/tmux-resurrect
+	url = https://git::@github.com/tmux-plugins/tmux-resurrect
+[submodule "home/.tmux/plugins/tpm"]
+	path = home/.tmux/plugins/tpm
+	url = https://git::@github.com/tmux-plugins/tpm

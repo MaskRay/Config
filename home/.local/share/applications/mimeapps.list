@@ -25,12 +25,12 @@ application/pdf=llpp.desktop
 application/postscript=zathura.desktop
 
 ; .doc .docx
-application/msword=wps.desktop
-application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps.desktop
+application/msword=wps-office-wps.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps-office-wps.desktop
 
 ; .ppt .pptx
-application/vnd.ms-powerpoint=wpp.desktop
-application/vnd.openxmlformats-officedocument.presentationml.presentation=wpp.desktop
+application/vnd.ms-powerpoint=wps-office-wpp.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=wps-office-wpp.desktop
 
 ; .epub
 application/epub+zip=ebook-viewer.desktop

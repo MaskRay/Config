@@ -314,7 +314,13 @@ alias jj='fasd_cd -d -i'
 [[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
 # aur/fzf
-[[ -s /etc/profile.d/fzf.zsh ]] && . /etc/profile.d/fzf.zsh
+if [[ -s /etc/profile.d/fzf.zsh ]] then
+  source /etc/profile.d/fzf.zsh
+  # redefine __fzfcmd (appending `-e` option) to disable fuzzy matching
+  __fzfcmd() {
+    [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
+  }
+fi
 
 # rvm (Ruby)
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm

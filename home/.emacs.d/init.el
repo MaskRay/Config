@@ -1,5 +1,3 @@
-                                        ; https://github.com/codahale/emacs.d/blob/master/init.el
-
 (require 'cask)
 (cask-initialize)
 
@@ -15,31 +13,34 @@
 (defalias 'yes-or-no-p 'y-or-n-p)       ; accept "y" for "yes"
 (setq ring-bell-function 'ignore)       ; don't blink constantly
 (setq require-final-newline t)          ; always add a final newline
+(setq load-prefer-newer t)
 (setq mouse-wheel-follow-mouse 't)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "chrome")
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq sentence-end-double-space nil)    ; single space ends a sentence
-(setq-default tab-width 2)
+(setq-default tab-width 2
+							indent-tabs-mode nil)
 
 (setq set-mark-command-repeat-pop t)
 
-(ido-mode -1)
 (evil-mode 1)
 (winner-mode 1)
 (global-evil-surround-mode 1)
 (global-diff-hl-mode)                   ; highlight uncommitted changes
 (which-key-mode)                        ; display help for partial key bindings
 (require 'popwin) (popwin-mode 1)       ; manage temporary windows
-(global-anzu-mode t)                    ; show total # of matches in modeline
 (electric-pair-mode t)                  ; automatically pair quotes and such
 (electric-indent-mode t)                ; auto-indent things
-(global-discover-mode t)                ; add contextual menus for things
 (global-hl-line-mode)                   ; highlight the current line
 (delete-selection-mode t)               ; delete selections when yanking etc
 (global-aggressive-indent-mode t)       ; always aggressively indent
 (setq ad-redefinition-action 'accept)   ; stop logging weird crap
+
+;; saveplace
+(require 'saveplace)
+(setq-default save-place t)
 
 ;; undo-tree-mode
 (global-undo-tree-mode)
@@ -86,12 +87,10 @@
 
 ;; enable flycheck everywhere
 (require 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'after-init-hook 'global-flycheck-mode)
 (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
-(eval-after-load 'flycheck
-  '(define-key flycheck-mode-map (kbd "C-c ! h") 'helm-flycheck))
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+;; (add-hook 'flycheck-mode-hook 'flycheck-irony-setup)
+(define-key flycheck-mode-map (kbd "C-c ! h") 'helm-flycheck)
 
 ;;;; Look
 (set-face-attribute 'default nil
@@ -121,10 +120,11 @@
                   (frame-setting))))
   (frame-setting))
 
-(load-theme 'zenburn t)
+(require 'moe-theme)
+(load-theme 'moe-dark t)
+;; (load-theme 'zenburn t)
 
 
-(global-git-gutter-mode +1)
 (setq-default indicate-buffer-boundaries 'left)
 (setq-default indicate-empty-lines +1)
 
@@ -156,7 +156,7 @@
                            " Paredit"
                            )))
 
-(setq sml/theme 'respectful) ; make smart-mode-line respect the theme
+(setq sml/theme 'dark) ; make smart-mode-line respect the theme
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 
@@ -168,39 +168,19 @@
                                         ; (define-key company-active-map [remap hippie-expand] 'company-complete)
 ;; (setq company-backends (delete 'company-semantic company-backends))
 (setq company-backends (set-difference company-backends '(company-semantic company-clang)))
-;; (define-key c-mode-map  [(tab)] 'company-complete)
-;; (define-key c++-mode-map  [(tab)] 'company-complete)
-
-;; (setq tab-always-indent 'complete)
-;; (define-key company-mode-map [remap indent-for-tab-command]
-;; 'company-indent-for-tab-command)
-;; 
-;; (defvar completion-at-point-functions-saved nil)
-;; 
-;; (defun company-indent-for-tab-command (&optional arg)
-;; (interactive "P")
-;; (let ((completion-at-point-functions-saved completion-at-point-functions)
-;; (completion-at-point-functions '(company-complete-common-wrapper)))
-;; (indent-for-tab-command arg)))
-;; 
-;; (defun company-complete-common-wrapper ()
-;; (let ((completion-at-point-functions completion-at-point-functions-saved))
-;; (company-complete-common)))
 
 (add-hook 'after-init-hook 'global-company-mode)
 
 (setq hippie-expand-try-functions-list
-      '(yas-hippie-try-expand
-        try-expand-all-abbrevs
-        try-complete-file-name-partially
+      '(
+        yas-hippie-try-expand
+        try-expand-dabbrev-visible         ; visible window
+        try-complete-lisp-symbol-partially ; as many as unique
+        try-complete-lisp-symbol
+        try-complete-file-name-partially   ; as many as unique
         try-complete-file-name
-        try-expand-dabbrev
-        try-expand-dabbrev-from-kill
-        try-expand-dabbrev-all-buffers
-        try-expand-list
-        try-expand-line
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
+        (lambda (arg) (call-interactively 'company-complete))
+        ))
 
 ;; company-coq
 (require 'proof-site)
@@ -219,8 +199,11 @@
 
 (loop for (mode . state) in '((inferior-emacs-lisp-mode . emacs)
                               (nrepl-mode . insert)
+                              (cider-repl-mode . emacs)
+                              (cider-stacktrace-mode . emacs)
+                              (cider-test-report-mode . emacs)
                               (pylookup-mode . emacs)
-                              (comint-mode . normal)
+                              (comint-mode . emacs)
                               (shell-mode . insert)
                               (git-commit-mode . insert)
                               (git-rebase-mode . emacs)
@@ -243,7 +226,8 @@
 ;; use normal Emacs bindings in insert mode
 (setcdr evil-insert-state-map nil)
 (define-key evil-insert-state-map (read-kbd-macro evil-toggle-key) 'evil-normal-state)
-(define-key evil-insert-state-map [escape] 'evil-normal-state)
+(evil-global-set-key 'insert [escape] 'evil-normal-state)
+(evil-global-set-key 'insert "\C-w" 'evil-delete-backward-word)
 
 ;;;; HELM
 
@@ -278,6 +262,44 @@
 (helm-projectile-on)                    ; integrate w/ projectile
 (helm-adaptive-mode t)                  ; use adaptive mode to rank common items
 (helm-mode 1)                           ; enable helm!
+
+;;;; C
+
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (setq flycheck-gcc-language-standard "c++11")
+            (setq flycheck-clang-language-standard "c++11")
+            ))
+(eval-after-load 'cc-mode
+  (lambda ()
+    (modify-syntax-entry ?_ "w" c-mode-syntax-table)
+    (modify-syntax-entry ?_ "w" c++-mode-syntax-table)))
+
+(autoload 'realgud:gdb "realgud" "Invoke the gdb debugger and start the Emacs user interface." t)
+
+(setq compilation-window-height 9)
+(setq-default c-basic-offset 4)
+
+;;;; CLOJURE
+
+(setq cider-prompt-for-symbol nil)
+
+;; (add-hook 'cider-mode-hook (lambda ()
+;;                              (define-key evil-normal-state-local-map (kbd "M-.") 'cider-find-var)
+;;                              (define-key evil-normal-state-local-map (kbd "M-,") 'cider-jump-back)
+;;                              ))
+
+(with-eval-after-load "clojure-mode"
+  (define-key clojure-mode-map (kbd "C-k") 'sp-kill-hybrid-sexp)
+  (make-local-variable 'hippie-expand-try-functions-list)
+  (setq hippie-expand-try-functions-list '(try-expand-dabbrev))
+  (define-key clojure-mode-map (kbd "C-k") 'sp-kill-hybrid-sexp)
+  (define-key clojure-mode-map (kbd "M-k") 'sp-kill-sexp)
+  (define-key clojure-mode-map (kbd "M-q") 'sp-indent-defun)
+  (evil-define-key 'normal clojure-mode-map "D" 'sp-kill-hybrid-sexp)
+  (evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-jump-to-var)
+  (evil-define-key 'normal clojure-mode-map (kbd "M-,") 'cider-jump-back)
+  )
 
 ;;;; Haskell (TODO)
 
@@ -316,7 +338,7 @@
                                    (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
                                    (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
                                    (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-                                   (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+                                   ))
 
 (add-to-list 'company-backends 'company-ghc)
 
@@ -324,9 +346,20 @@
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
+;;;; Makefile
+
+(defun my/makefile-hook ()
+  (setq tab-width 8)
+  )
+(add-hook 'makefile-mode-hook 'my/makefile-hook)
+
 ;;;; Nim
 
 (add-to-list 'company-backends 'company-nim)
+
+;;;; OCaml (TODO)
+
+(add-hook 'tuareg-mode-hook 'merlin-mode)
 
 ;;;; Ruby (TODO)
 
@@ -345,20 +378,39 @@
       web-mode-code-indent-offset 2        ; JavaScript/PHP/... indent
       )
 
+(setq css-indent-offset 2)
+
 ;;;; KEYBINDINGS
+(global-set-key (kbd "C-s")		'isearch-forward-regexp)
+(global-set-key (kbd "C-r")		'isearch-backward-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(global-set-key (kbd "M-;")   'comment-dwim-2)
+(global-set-key (kbd "C-x p") popwin:keymap)
+(global-set-key (kbd "C-c g") 'magit-status)
+(global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
+(global-set-key (kbd "C-c R") 'compile)
+(global-set-key (kbd "C-c r") 'recompile)
+(eval-after-load 'cc-mode
+  '(define-key c-mode-base-map (kbd "C-c C-r") 'realgud:gdb))
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c b") 'org-iswitchb)
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "C-=")   'er/expand-region)
+(global-set-key (kbd "C-`")   ctl-x-r-map)
+(global-set-key (kbd "M-/")   'hippie-expand)
+(global-set-key (kbd "<tab>") (lambda ()
+                                (interactive)
+                                (if (looking-at "\\>") (hippie-expand nil)
+                                  (indent-for-tab-command))))
+(define-key yas-minor-mode-map (kbd "<tab>")  nil)
 
-(global-set-key (kbd "M-;")         'comment-dwim-2)
-(global-set-key (kbd "M-\\")        'ggtags-find-tag-dwim)
-(global-set-key (kbd "C-c c")       'compile)
-(global-set-key (kbd "C-c g")       'magit-status)
-(global-set-key (kbd "C-c l p")     'list-packages)
-(global-set-key (kbd "C-c r")       'recompile)
-(global-set-key (kbd "C-c t")       'coda/visit-term-buffer)
-(global-set-key (kbd "C-=")         'er/expand-region)
-(define-key yas-minor-mode-map [(tab)]        nil)
-(define-key yas-minor-mode-map (kbd "TAB")    nil)
-(define-key yas-minor-mode-map [backtab]     'yas-expand)
-
+(global-unset-key (kbd "C-j"))
+(define-key lisp-interaction-mode-map (kbd "C-j") nil)
+(global-set-key (kbd "C-j h") 'windmove-left)
+(global-set-key (kbd "C-j j") 'windmove-down)
+(global-set-key (kbd "C-j k") 'windmove-up)
+(global-set-key (kbd "C-j l") 'windmove-right)
 
 (defun my/expand-lines ()
   (interactive)
@@ -366,19 +418,14 @@
          '(try-expand-line)))
     (call-interactively 'hippie-expand)))
 (define-key evil-insert-state-map (kbd "C-x C-l") 'my/expand-lines)
-;; (defun indent-or-complete ()
-;;   (interactive)
-;;   (if (looking-at "\\_>")
-;;       (company-complete-common)
-;;     (indent-according-to-mode)))
-; (global-set-key (kbd "TAB") 'indent-or-complete)
 
 ;; evil bindings
-(define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
-(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
-(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode)      ; similar to f
-(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ; similar to t
-(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
+(define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-word-mode)
+(define-key evil-motion-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)
+(define-key evil-motion-state-map (kbd "M-SPC") #'evil-ace-jump-line-mode)
+(define-key evil-operator-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)      ; similar to f
+(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-char-to-mode)   ; similar to t
+(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-word-mode)
 (defadvice evil-visual-line (before spc-for-line-jump activate)
   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
 (defadvice evil-visual-char (before spc-for-char-jump activate)
@@ -387,7 +434,6 @@
   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
 
 ;; helm bindings
-(global-set-key (kbd "C-c M-x")     'execute-extended-command) ; old M-x
 (global-set-key (kbd "C-x C-d")     'helm-browse-project)
 (global-set-key (kbd "C-x C-b")     'helm-buffers-list)
 (global-set-key (kbd "C-c f")       'helm-recentf)
@@ -395,15 +441,13 @@
 (global-set-key (kbd "C-x C-f")     'helm-find-files)
 (global-set-key (kbd "M-x")         'helm-M-x)
 (global-set-key (kbd "M-y")         'helm-show-kill-ring)
-(global-set-key (kbd "C-c I")       'helm-imenu)
-(global-set-key (kbd "C-c i")       'helm-imenu-in-all-buffers)
-(global-set-key (kbd "C-c j")       'helm-register)
-(global-set-key (kbd "C-c O")       'helm-swoop)
-(global-set-key (kbd "C-c o")       'helm-multi-swoop-all)
 (global-set-key (kbd "C-c SPC")     'helm-all-mark-rings)
 (global-set-key (kbd "C-x b")       'helm-mini)
 (global-set-key (kbd "C-x C-f")     'helm-find-files)
-(define-key helm-command-map (kbd "o") 'helm-occur)
+(global-set-key (kbd "M-s o")       'helm-swoop)
+(define-key helm-command-map (kbd "I") 'helm-imenu-in-all-buffers)
+(define-key helm-command-map (kbd "j") 'helm-register)
+(define-key helm-command-map (kbd "o") 'helm-multi-swoop-current-mode)
 (define-key helm-command-map (kbd "g") 'helm-do-grep-ag)
 
 (define-key global-map [remap jump-to-register]      'helm-register)
@@ -412,25 +456,115 @@
 
 (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 
-(eval-after-load "helm-gtags"
-  '(progn
-     (define-key evil-normal-state-map (kbd "M-.") nil) ; unset evil-repeat-pop-next
-     (define-key evil-normal-state-map (kbd "C-t") nil) ; unset pop-tag-mark
-     (define-prefix-command 'my-helm-gtags-map)
-     (global-set-key (kbd "C-t") 'my-helm-gtags-map)
-     (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-resume) ; override tags-loop-continue
-     (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
-     (define-key helm-gtags-mode-map (kbd "M-*") 'helm-gtags-pop-stack) ; override pop-tag-mark
-     (define-key my-helm-gtags-map (kbd "c") 'helm-gtags-create-tags)
-     (define-key my-helm-gtags-map (kbd "f") 'helm-gtags-parse-file)
-     (define-key my-helm-gtags-map (kbd "g") 'helm-gtags-find-pattern)
-     (define-key my-helm-gtags-map (kbd "r") 'helm-gtags-find-rtag)
-     (define-key my-helm-gtags-map (kbd "s") 'helm-gtags-find-symbol)
-     (define-key my-helm-gtags-map (kbd "S") 'helm-gtags-show-stack)
-     (define-key my-helm-gtags-map (kbd "t") 'helm-gtags-select)
-     (define-key my-helm-gtags-map (kbd "C-o") 'helm-gtags-previous-history)
-     (define-key my-helm-gtags-map (kbd "C-i") 'helm-gtags-next-history)))
+(with-eval-after-load "helm-gtags"
+  (define-key evil-normal-state-map (kbd "M-.") nil) ; unset evil-repeat-pop-next
+  (define-key evil-normal-state-map (kbd "C-t") nil) ; unset pop-tag-mark
+  (define-prefix-command 'my-helm-gtags-map)
+  (global-set-key (kbd "C-t") 'my-helm-gtags-map)
+  (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+  (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack) ; override tags-loop-continue
+  (define-key helm-gtags-mode-map (kbd "M-*") 'helm-gtags-resume) ; override pop-tag-mark
+  (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+  (define-key my-helm-gtags-map (kbd "c") 'helm-gtags-create-tags)
+  (define-key my-helm-gtags-map (kbd "f") 'helm-gtags-parse-file)
+  (define-key my-helm-gtags-map (kbd "g") 'helm-gtags-find-pattern)
+  (define-key my-helm-gtags-map (kbd "r") 'helm-gtags-find-rtag)
+  (define-key my-helm-gtags-map (kbd "s") 'helm-gtags-find-symbol)
+  (define-key my-helm-gtags-map (kbd "S") 'helm-gtags-show-stack)
+  (define-key my-helm-gtags-map (kbd "t") 'helm-gtags-select)
+  (define-key my-helm-gtags-map (kbd "C-o") 'helm-gtags-previous-history)
+  (define-key my-helm-gtags-map (kbd "C-i") 'helm-gtags-next-history))
+
+;; smartparens bindings
+
+(define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
+(define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
+(define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
+(define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
+(define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
+(define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
+(define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
+(define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
+(define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
+(define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
+(define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
+(define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+(define-key smartparens-mode-map (kbd "M-D") 'sp-splice-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+(define-key smartparens-mode-map (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key smartparens-mode-map (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
+
+(defun my/wrap-with-paren (&optional arg)
+  (interactive "p")
+  (sp-select-next-thing-exchange arg)
+  (execute-kbd-macro (kbd "(")))
+(define-key smartparens-mode-map (kbd "C-(") 'my/wrap-with-paren)
+
+;;;; ORG
+
+(setq org-directory "~/org"
+      org-default-notes-file "~/org/refile.org"
+      org-agenda-files '("~/org/refile.org" "~/org/gtd.org" "~/org/notes.org")
+      org-startup-indented t                           ; org-indent-mode
+      org-treat-S-cursor-todo-selection-as-state-change nil
+      org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+        (sequence "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))
+      org-todo-keyword-faces
+      '(("TODO" :foreground "#cc9393" :weight bold)
+        ("NEXT" :foreground "#8cd0d3" :weight bold)
+        ("DONE" :foreground "#afd8af" :weight bold)
+        ("HOLD" :foreground "#dc8cc3" :weight bold)
+        ("CANCELLED" :foreground "#bfebbf" :weight bold)))
+
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("HOLD" ("HOLD" . t))
+              (done ("HOLD"))
+              ("TODO" ("CANCELLED") ("HOLD"))
+              ("NEXT" ("CANCELLED") ("HOLD"))
+              ("DONE" ("CANCELLED") ("HOLD")))))
+
+(setq org-capture-templates
+      '(("t" "Tasks" entry (file "~/org/refile.org")
+         "* TODO %?\n  SCHEDULED: %^t")
+        ("d" "Diary" entry (file+datetree "~/org/diary.org")
+         "* %?")
+        ("n" "Notes" entry (file "~/org/notes.org")
+         "* %? :NOTE:")
+        ("m" "Meeting" entry (file "~/org/refile.org")
+         "* MEETING with %? :MEETING:\n%U")
+        ("p" "Phone call" entry (file "~/org/refile.org")
+         "* PHONE %? :PHONE:\n%U")
+        ))
+
+;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+(setq org-refile-targets '((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9)))
+(setq org-agenda-custom-commands
+      (quote (("N" "Notes" tags "NOTE"
+               ((org-agenda-overriding-header "Notes")
+                (org-tags-match-list-sublevels t)))
+              ("h" "Habits" tags-todo "STYLE=\"habit\""
+               ((org-agenda-overriding-header "Habits")
+                (org-agenda-sorting-strategy
+                 '(todo-state-down effort-up category-keep))))
+              )))
+
+(setq org-use-sub-superscripts nil)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (ledger . t)
+   (sh . t)))
+
+(require 'ox-md)
 
 ;;;; PROJECTILE
 
@@ -438,21 +572,16 @@
       projectile-switch-project-action 'projectile-dired)
 (projectile-global-mode t)
 
-;;;; SKEWER
-
-(add-hook 'js2-mode-hook 'skewer-mode)
-(add-hook 'css-mode-hook 'skewer-css-mode)
-(add-hook 'html-mode-hook 'skewer-html-mode)
-
 ;;;; SMARTPARENS
 
 (require 'smartparens-config)
 (smartparens-global-mode 1)
+;; (add-hook 'lisp-mode-hook #'smartparens-mode)
+;; (add-hook 'emacs-lisp-mode-hook #'smartparens-mode)
+;; (add-hook 'clojure-mode-hook #'smartparens-mode)
+;; (add-hook 'cider-repl-mode-hook #'smartparens-mode)
 
 ;;;; YASNIPPET
 
-(setq yas-snippet-dirs `(,(concat user-emacs-directory "snippets"))
-      yas-expand-only-for-last-commands '(self-insert-command)
-      )
+(setq yas-snippet-dirs `(,(concat user-emacs-directory "snippets")))
 (yas-global-mode 1)
-(put 'set-goal-column 'disabled nil)

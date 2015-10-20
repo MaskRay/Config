@@ -64,8 +64,8 @@ import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
 --import XMonad.Hooks.FadeInactive
-{-import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)-}
-import EwmhDesktops hiding (fullscreenEventHook)
+import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)
+{-import EwmhDesktops hiding (fullscreenEventHook)-}
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
@@ -171,13 +171,13 @@ myLayout = avoidStruts $
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
-    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome-stable", "Chrome", "Chromium"] ] ++
+    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["google-chrome", "Chrome", "Chromium"] ] ++
     [ className =? c --> viewShift "code" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
     [ className =? c --> viewShift "office" | c <- ["Wireshark", "Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
-    [ role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work
+    [ role =? r --> doFloat | r <- ["pop-up", "app"]] ++ -- chrome has pop-up windows
     {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
     [ title =? "weechat" --> viewShift "im"] ++
     [ title =? "newsbeuter" --> viewShift "news"] ++
@@ -189,7 +189,6 @@ myManageHook = composeAll $
     [ className =? "Synapse" --> doIgnore ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ] ++
-    [ mySPFloats --> doSPFloat ] ++
     [ myCenterFloats --> doCenterFloat ]
   where
     role = stringProperty "WM_WINDOW_ROLE"
@@ -286,9 +285,9 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "xterm" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|Chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
     , ("M-C-i", spawn "pkill compton; compton &")
-    , ("M-S-l", spawn "xautolock -locknow")
+    , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
     , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
     , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
@@ -438,15 +437,13 @@ scratchpads =
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "task" "urxvt -T task -e tasksh" (title =? "task") doSPFloat
   , NS "j8" "urxvt -T j8 -e j8 -c" (title =? "j8") doSPFloat
-  , NS "agenda" "org-agenda" (title =? "Agenda Frame") orgFloat
-  , NS "capture" "org-capture" (title =? "Capture Frame") orgFloat
   , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
   , NS "getmail" "urxvt -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
   , NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where
-    f s = NS s (urxvt s) (title =? s) doSPFloat
+    f s = NS s (urxvt s) (fmap (s `isPrefixOf`) title) doSPFloat
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
@@ -535,7 +532,7 @@ main = do
     xmobar <- spawnPipe "killall xmobar; xmobar"
     -- remind <http://www.roaringpenguin.com/products/remind>
     -- dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
-    spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height " ++ show barHeight
+    spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 32"
     xmonad $ myConfig xmobar
 
 {-

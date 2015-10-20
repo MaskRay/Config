@@ -1,6 +1,6 @@
 shopt -s checkwinsize cmdhist extglob globstar histappend
 
-PS1='\[\e[1;36m\u \e[m@ \e[1;35mhacking \e[m>>= \e[1;32m\w\n\e[1;31m\]\$ \[\e[m\]' # bug: line-wrap will overlap
+PS1='\e[1;36m\u \e[m@ \e[1;35mhacking \e[m>>= \e[1;32m\w\n\[\e[1;31m\]\$ \[\e[m\]'
 PS4='(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]} - [${SHLVL},${BASH_SUBSHELL}, $?]'
 
 HISTCONTROL=ignoreboth
