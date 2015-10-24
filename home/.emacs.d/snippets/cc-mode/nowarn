@@ -1,0 +1,7 @@
+# name: nowarn
+# key: nowarn
+# --
+/* Local variables:
+   flycheck-clang-warnings: nil
+   End:
+*/

@@ -265,39 +265,45 @@
 
 ;;;; C
 
+(add-hook 'c-mode-common-hook #'ggtags-mode)
+
 (add-hook 'c++-mode-hook
           (lambda ()
             (setq flycheck-gcc-language-standard "c++11")
             (setq flycheck-clang-language-standard "c++11")
             ))
-(eval-after-load 'cc-mode
-  (lambda ()
-    (modify-syntax-entry ?_ "w" c-mode-syntax-table)
-    (modify-syntax-entry ?_ "w" c++-mode-syntax-table)))
+;; (eval-after-load 'cc-mode
+;; (lambda ()
+;; (modify-syntax-entry ?_ "w" c-mode-syntax-table)
+;; (modify-syntax-entry ?_ "w" c++-mode-syntax-table)))
+(with-eval-after-load "cc-mode"
+  (modify-syntax-entry ?_ "w" c-mode-syntax-table)
+  (modify-syntax-entry ?_ "w" c++-mode-syntax-table))
 
 (autoload 'realgud:gdb "realgud" "Invoke the gdb debugger and start the Emacs user interface." t)
 
 (setq compilation-window-height 9)
-(setq-default c-basic-offset 4)
+(setq-default c-basic-offset 2)
 
 ;;;; CLOJURE
 
-(setq cider-prompt-for-symbol nil)
+(setq cider-prompt-for-symbol nil
+      cider-show-error-buffer 'only-in-repl
+      )
 
-;; (add-hook 'cider-mode-hook (lambda ()
-;;                              (define-key evil-normal-state-local-map (kbd "M-.") 'cider-find-var)
-;;                              (define-key evil-normal-state-local-map (kbd "M-,") 'cider-jump-back)
-;;                              ))
+(add-hook 'cider-mode-hook (lambda () (smartparens-strict-mode 1)))
+(add-hook 'cider-repl-mode-hook (lambda ()
+                                  (smartparens-strict-mode 1)
+                                  (rainbow-delimiters-mode 1)))
 
-(with-eval-after-load "clojure-mode"
-  (define-key clojure-mode-map (kbd "C-k") 'sp-kill-hybrid-sexp)
+(with-eval-after-load 'clojure-mode
   (make-local-variable 'hippie-expand-try-functions-list)
   (setq hippie-expand-try-functions-list '(try-expand-dabbrev))
   (define-key clojure-mode-map (kbd "C-k") 'sp-kill-hybrid-sexp)
-  (define-key clojure-mode-map (kbd "M-k") 'sp-kill-sexp)
   (define-key clojure-mode-map (kbd "M-q") 'sp-indent-defun)
-  (evil-define-key 'normal clojure-mode-map "D" 'sp-kill-hybrid-sexp)
-  (evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-jump-to-var)
+  (define-key clojure-mode-map (kbd "C-c J") 'cider-restart)
+  (define-key clojure-mode-map (kbd "C-x M-e") 'cider-eval-print-last-sexp)
+  (evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-find-var)
   (evil-define-key 'normal clojure-mode-map (kbd "M-,") 'cider-jump-back)
   )
 
@@ -319,26 +325,25 @@
 (autoload 'ghc-init "ghc" nil t)
 (autoload 'ghc-debug "ghc" nil t)
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+(with-eval-after-load 'flycheck
+  (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
 (require 'haskell-mode)
 (require 'haskell-cabal)
 
-(eval-after-load 'haskell-mode '(progn
-                                  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-                                  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-                                  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-                                  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-                                  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-                                  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)
-                                  (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-                                  (define-key haskell-mode-map (kbd "C-c C-p") 'coda-haskell-pointfree-region)))
-(eval-after-load 'haskell-cabal '(progn
-                                   (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-                                   (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-                                   (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-                                   ))
+(with-eval-after-load 'haskell-mode
+  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
+  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
+  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
+  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)
+  (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+  (define-key haskell-mode-map (kbd "C-c C-p") 'coda-haskell-pointfree-region)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+  )
 
 (add-to-list 'company-backends 'company-ghc)
 
@@ -380,6 +385,14 @@
 
 (setq css-indent-offset 2)
 
+;;;; GGTAGS
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t)
+
 ;;;; KEYBINDINGS
 (global-set-key (kbd "C-s")		'isearch-forward-regexp)
 (global-set-key (kbd "C-r")		'isearch-backward-regexp)
@@ -387,12 +400,14 @@
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 (global-set-key (kbd "M-;")   'comment-dwim-2)
 (global-set-key (kbd "C-x p") popwin:keymap)
+(global-set-key (kbd "C-x M-e") 'eval-print-last-sexp)
 (global-set-key (kbd "C-c g") 'magit-status)
 (global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
 (global-set-key (kbd "C-c R") 'compile)
 (global-set-key (kbd "C-c r") 'recompile)
-(eval-after-load 'cc-mode
-  '(define-key c-mode-base-map (kbd "C-c C-r") 'realgud:gdb))
+(global-set-key (kbd "C-c t") 'neotree-toggle)
+(with-eval-after-load 'cc-mode
+  (define-key c-mode-base-map (kbd "C-c C-r") 'realgud:gdb))
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c b") 'org-iswitchb)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -419,19 +434,20 @@
     (call-interactively 'hippie-expand)))
 (define-key evil-insert-state-map (kbd "C-x C-l") 'my/expand-lines)
 
+(defun kill-region-or-backward-word ()
+  "If the region is active and non-empty, call `kill-region'. Otherwise, call `backward-kill-word'."
+  (interactive)
+  (call-interactively
+   (if (use-region-p) 'kill-region 'backward-kill-word)))
+(global-set-key (kbd "C-w") 'kill-region-or-backward-word)
+
 ;; evil bindings
 (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-word-mode)
-(define-key evil-motion-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)
 (define-key evil-motion-state-map (kbd "M-SPC") #'evil-ace-jump-line-mode)
-(define-key evil-operator-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)      ; similar to f
-(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-char-to-mode)   ; similar to t
+(define-key evil-motion-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)
 (define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-word-mode)
-(defadvice evil-visual-line (before spc-for-line-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
-(defadvice evil-visual-char (before spc-for-char-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
-(defadvice evil-visual-block (before spc-for-char-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
+(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-char-to-mode)   ; similar to t
+(define-key evil-operator-state-map (kbd "S-SPC") #'evil-ace-jump-char-mode)      ; similar to f
 
 ;; helm bindings
 (global-set-key (kbd "C-x C-d")     'helm-browse-project)
@@ -456,7 +472,9 @@
 
 (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 
-(with-eval-after-load "helm-gtags"
+;; helm-gtags & ggtags bindings
+;; prefer helm-gtags over ggtags, ggtags is only used for references
+(with-eval-after-load 'helm-gtags
   (define-key evil-normal-state-map (kbd "M-.") nil) ; unset evil-repeat-pop-next
   (define-key evil-normal-state-map (kbd "C-t") nil) ; unset pop-tag-mark
   (define-prefix-command 'my-helm-gtags-map)
@@ -464,7 +482,7 @@
   (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
   (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack) ; override tags-loop-continue
   (define-key helm-gtags-mode-map (kbd "M-*") 'helm-gtags-resume) ; override pop-tag-mark
-  (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+  ;; (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
   (define-key my-helm-gtags-map (kbd "c") 'helm-gtags-create-tags)
   (define-key my-helm-gtags-map (kbd "f") 'helm-gtags-parse-file)
   (define-key my-helm-gtags-map (kbd "g") 'helm-gtags-find-pattern)
@@ -475,14 +493,22 @@
   (define-key my-helm-gtags-map (kbd "C-o") 'helm-gtags-previous-history)
   (define-key my-helm-gtags-map (kbd "C-i") 'helm-gtags-next-history))
 
+(with-eval-after-load 'ggtags
+  (define-key ggtags-mode-map (kbd "M-.") nil)
+  (define-key ggtags-mode-map (kbd "M-<") nil)
+  (define-key ggtags-mode-map (kbd "M->") nil)
+  (define-key ggtags-mode-map (kbd "M-n") nil)
+  (define-key ggtags-mode-map (kbd "M-p") nil)
+  (define-key ggtags-mode-map (kbd "M-,") nil)
+  (define-key ggtags-mode-map (kbd "M-]") nil)
+  (define-key ggtags-mode-map (kbd "M-r") 'ggtags-find-reference))
+
 ;; smartparens bindings
 
 (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
 (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
 (define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
 (define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
-(define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
-(define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
 (define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
 (define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
 (define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
@@ -490,22 +516,25 @@
 (define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
 (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
 (define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
+(define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
+(define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
+(define-key smartparens-mode-map (kbd "C-S-f") 'sp-forward-symbol)
+(define-key smartparens-mode-map (kbd "C-S-b") 'sp-backward-symbol)
+(define-key smartparens-mode-map (kbd "M-k") 'sp-backward-kill-sexp)
+(define-key smartparens-mode-map (kbd "M-]") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "M-[") 'sp-backward-unwrap-sexp)
 (define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
 (define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
 (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
 (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
 (define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
 (define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-backward-barf-sexp)
-(define-key smartparens-mode-map (kbd "M-D") 'sp-splice-sexp)
-(define-key smartparens-mode-map (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
-(define-key smartparens-mode-map (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
-(define-key smartparens-mode-map (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
 
-(defun my/wrap-with-paren (&optional arg)
-  (interactive "p")
-  (sp-select-next-thing-exchange arg)
-  (execute-kbd-macro (kbd "(")))
-(define-key smartparens-mode-map (kbd "C-(") 'my/wrap-with-paren)
+(define-key smartparens-mode-map (kbd "C-c \"") (lambda () (interactive) (sp-wrap-with-pair "\"")))
+(define-key smartparens-mode-map (kbd "C-c '") (lambda () (interactive) (sp-wrap-with-pair "'")))
+(define-key smartparens-mode-map (kbd "C-c (") (lambda () (interactive) (sp-wrap-with-pair "(")))
+(define-key smartparens-mode-map (kbd "C-c [") (lambda () (interactive) (sp-wrap-with-pair "[")))
+(define-key smartparens-mode-map (kbd "C-c {") (lambda () (interactive) (sp-wrap-with-pair "{")))
 
 ;;;; ORG
 
@@ -576,12 +605,19 @@
 
 (require 'smartparens-config)
 (smartparens-global-mode 1)
+(add-hook 'smartparens-enabled-hook (lambda () (electric-pair-mode -1)))
 ;; (add-hook 'lisp-mode-hook #'smartparens-mode)
 ;; (add-hook 'emacs-lisp-mode-hook #'smartparens-mode)
 ;; (add-hook 'clojure-mode-hook #'smartparens-mode)
 ;; (add-hook 'cider-repl-mode-hook #'smartparens-mode)
+(sp-local-pair 'c++-mode "/*" "*/" :post-handlers '((" | " "SPC")
+                                                    ("* ||\n[i]" "RET")))
 
 ;;;; YASNIPPET
 
 (setq yas-snippet-dirs `(,(concat user-emacs-directory "snippets")))
 (yas-global-mode 1)
+
+(require 'server)
+(unless (server-running-p)
+  (server-start))

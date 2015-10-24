@@ -1,0 +1,18 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: getPrimes()
+# key: getPrimes
+# binding: direct-keybinding
+# --
+int pr[N/10], np = 0;
+bool sieved[N];
+
+void getPrimes()
+{
+  for (int i = 2; i < N; i++) {
+    if (!sieved[i]) pr[np++] = i;
+    for (int j = 0; j < np && i*pr[j] < N; j++) {
+      sieved[i*pr[j]] = true;
+      if (i%pr[j] == 0) break;
+    }
+  }
+}

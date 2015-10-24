@@ -1,0 +1,11 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: rl
+# key: rl
+# binding: direct-keybinding
+# --
+ll rl()
+{
+  ll x;
+  scanf("%lld", &x);
+  return x;
+}

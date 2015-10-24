@@ -29,6 +29,7 @@
 (depends-on "flycheck-pos-tip")
 (depends-on "flycheck-rust")
 (depends-on "flyspell-lazy")
+(depends-on "ggtags")
 (depends-on "ghc")
 (depends-on "god-mode")
 (depends-on "graphviz-dot-mode")
