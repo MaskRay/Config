@@ -374,6 +374,7 @@ if 1 || has("gui_running")
   "Bundle 'Valloric/YouCompleteMe'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
+  Bundle 'ervandew/eclim'
   Bundle 'gkz/vim-ls'
   Bundle 'marijnh/tern_for_vim'
   Bundle 'spf13/PIV'
@@ -450,7 +451,7 @@ let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|zi\|zo\)$'
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
-let g:ycm_global_ycm_extra_conf = $HOME . "/.vim/static/ycm_extra_conf.py"
+let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
 let g:ycm_key_detailed_diagnostics = "<Leader>yd"
 let g:ycm_key_invoke_completion = "<F5>"
 let g:ycm_complete_in_comments = 1

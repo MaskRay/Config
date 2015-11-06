@@ -39,15 +39,23 @@
 --regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2!/f,function,aasm_event/
 --regex-ruby=/(^|;)[ \t]*event\(? *:([[:alnum:]_]+)/\2?/f,function,aasm_event/
 
---langdef=markdown
---langmap=markdown:.md.mdown.mkdown.markdown
---regex-markdown=/^# (.*)(#)?/\1/1,header1/
---regex-markdown=/^#{2} (.*)(#{2})?/\1/2,header2/
---regex-markdown=/^#{3} (.*)(#{3})?/\1/3,header3/
---regex-markdown=/^#{4} (.*)(#{4})?/\1/4,header4/
---regex-markdown=/^#{5} (.*)(#{5})?/\1/5,header5/
---regex-markdown=/^#{6} (.*)(#{6})?/\1/6,header6/
---regex-markdown=/^#{7} (.*)(#{7})?/\1/7,header7/
+--langdef=latex
+--langmap=latex:.tex
+--regex-latex=/^\\part[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/PART \2/s,part/
+--regex-latex=/^\\part[[:space:]]*\*[[:space:]]*\{([^}]+)\}/PART \1/s,part/
+--regex-latex=/^\\chapter[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/CHAP \2/s,chapter/
+--regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
+--regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
+--regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
+--regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
+--regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
+--regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
+--regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
+--regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+--regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
+--regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
+--regex-latex=/\\ref[[:space:]]*\{([^}]+)\}/\1/r,ref/
+--regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
 
 --langdef=coffee
 --langmap=coffee:.coffee
@@ -86,30 +94,58 @@
 --regex-css=/,[ \t]*([A-Za-z_][A-Za-z0-9_:()="' \t\-]*)[ \t]*,/\1/t,tags/
 --regex-css=/^[ \t]*\*[ \t]*[,{]/*/t,tags/
 
+--langdef=markdown
+--langmap=markdown:.md.mdown.mkdown.markdown
+--regex-markdown=/^# (.*)(#)?/\1/1,header1/
+--regex-markdown=/^#{2} (.*)(#{2})?/\1/2,header2/
+--regex-markdown=/^#{3} (.*)(#{3})?/\1/3,header3/
+--regex-markdown=/^#{4} (.*)(#{4})?/\1/4,header4/
+--regex-markdown=/^#{5} (.*)(#{5})?/\1/5,header5/
+--regex-markdown=/^#{6} (.*)(#{6})?/\1/6,header6/
+--regex-markdown=/^#{7} (.*)(#{7})?/\1/7,header7/
+
+--langmap=PHP:.php.phpt.hhi
+--regex-PHP=/^ *(abstract +|final +)*class +([a-zA-Z0-9_]+)/\2/c/
+--regex-PHP=/^ *(abstract +|final +)*trait +([a-zA-Z0-9_]+)/\2/c/
+--regex-PHP=/^ *(abstract +|final +)*class :([a-zA-Z0-9:_\\-]+)/\2/c/
+--regex-PHP=/^ *(abstract +|final +)*class :([a-zA-Z0-9:_\\-]+)/:\2/c/
+--regex-PHP=/^ *interface +([a-zA-Z0-9_]+)/\1/c/
+--regex-PHP=/^ *(public +|static +|abstract +|protected +|private +)function +&? *([a-zA-Z0-9_]+)/\2/f/
+--regex-PHP=/^const +([a-zA-Z0-9_]+) += /\1/d/
+--regex-PHP=/^ *enum +([a-zA-Z0-9_]+)/\1/c/
+--regex-PHP=/^ *type +([a-zA-Z0-9_]+) +=/\1/c/
+--regex-PHP=/^ *newtype +([a-zA-Z0-9_]+) +=/\1/c/
+
 --langdef=R
 --langmap=R:.R.r
 --regex-R=/^[ \t]*"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t]function/\1/f,Functions/
 --regex-R=/^"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/g,GlobalVars/ 
 --regex-R=/[ \t]"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/v,FunctionVariables/
 
+--langdef=Scala
+--langmap=Scala:.scala
+--regex-Scala=/^[ \t]*(((implicit|private|public)?[ \t]*)*(\[[a-zA-Z0-9_]*\])?[ \t]*)*class[ \t]*([a-zA-Z0-9_]+)/\5/c,classes/
+--regex-Scala=/^[ \t]*(((implicit|private|public)?[ \t]*)*(\[[a-zA-Z0-9_]*\])?[ \t]*)*object[ \t]*([a-zA-Z0-9_]+)/\5/o,objects/
+--regex-Scala=/^[ \t]*trait[ \t]*([a-zA-Z0-9_]+)/\1/t,traits/
+--regex-Scala=/^[ \t]*case[ \t]*class[ \t]*([a-zA-Z0-9_]+)/\1/r,cclasses/
+--regex-Scala=/^[ \t]*abstract[ \t]*class[ \t]*([a-zA-Z0-9_]+)/\1/a,aclasses/
+--regex-Scala=/[ \t]*(((implicit|override|lazy|private|public)?[ \t]*)*(\[[a-zA-Z0-9_]*\])?[ \t]*)*def[ \t]*([a-zA-Z0-9_=]+)[ \t]*.*[:={]/\5/m,methods/
+--regex-Scala=/[ \t]*(((override|lazy|private|public)?[ \t]*)*(\[[a-zA-Z0-9_]*\])?[ \t]*)*val[ \t]*([a-zA-Z0-9_]+)[ \t]*[:=]/\5/V,values/
+--regex-Scala=/[ \t]*(((override|lazy|private|public)?[ \t]*)*(\[[a-zA-Z0-9_]*\])?[ \t]*)*var[ \t]*([a-zA-Z0-9_]+)[ \t]*[:=]/\5/v,variables/
+--regex-Scala=/^[ \t]*type[ \t]*([a-zA-Z0-9_]+)[ \t]*[\[<>=]/\1/T,types/
+--regex-Scala=/^[ \t]*import[ \t]*([a-zA-Z0-9_{}., \t=>]+$)/\1/i,includes/
+--regex-Scala=/^[ \t]*package[ \t]*([a-zA-Z0-9_.]+$)/\1/p,packages/
+
 --langdef=snippets
 --langmap=snippets:.snippets
 --regex-snippets=/^snippet (.*)/\1/s,snippet/
 
---langdef=latex
---langmap=latex:.tex
---regex-latex=/^\\part[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/PART \2/s,part/
---regex-latex=/^\\part[[:space:]]*\*[[:space:]]*\{([^}]+)\}/PART \1/s,part/
---regex-latex=/^\\chapter[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/CHAP \2/s,chapter/
---regex-latex=/^\\chapter[[:space:]]*\*[[:space:]]*\{([^}]+)\}/CHAP \1/s,chapter/
---regex-latex=/^\\section[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\. \2/s,section/
---regex-latex=/^\\section[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\. \1/s,section/
---regex-latex=/^\\subsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\. \2/s,subsection/
---regex-latex=/^\\subsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\. \1/s,subsection/
---regex-latex=/^\\subsubsection[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\.\.\. \2/s,subsubsection/
---regex-latex=/^\\subsubsection[[:space:]]*\*[[:space:]]*\{([^}]+)\}/\.\.\. \1/s,subsubsection/
---regex-latex=/^\\includegraphics[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
---regex-latex=/^\\lstinputlisting[[:space:]]*(\[[^]]*\])?[[:space:]]*(\[[^]]*\])?[[:space:]]*\{([^}]+)\}/\3/g,graphic+listing/
---regex-latex=/\\label[[:space:]]*\{([^}]+)\}/\1/l,label/
---regex-latex=/\\ref[[:space:]]*\{([^}]+)\}/\1/r,ref/
---regex-latex=/\\pageref[[:space:]]*\{([^}]+)\}/\1/p,pageref/
+--langdef=thrift
+--langmap=thrift:.thrift
+--regex-thrift=/^[ \t]*exception[ \t]+([a-zA-Z0-9_]+)/\1/x,exception/
+--regex-thrift=/^[ \t]*enum[ \t]+([a-zA-Z0-9_]+)/\1/e,enum/
+--regex-thrift=/^[ \t]*struct[ \t]+([a-zA-Z0-9_]+)/\1/s,struct/
+--regex-thrift=/^[ \t]*service[ \t]+([a-zA-Z0-9_]+)/\1/v,service/
+--regex-thrift=/^[ \t]*[0-9]+:[ \t]+([a-zA-Z0-9_]+)[ \t]+([a-zA-Z0-9_]+)/\2/m,member/
+--regex-thrift=/^[ \t]*([a-zA-Z0-9_]+)[ \t]+=/\1/a,value/
+--regex-thrift=/^[ \t]*[a-zA-Z0-9_<>]+[ \t]+([a-zA-Z0-9_]+)[ \t]*\(/\1/f,function/

@@ -18,3 +18,6 @@
 [submodule "home/.tmux/plugins/tpm"]
 	path = home/.tmux/plugins/tpm
 	url = https://git::@github.com/tmux-plugins/tpm
+[submodule "home/Util/ycmd"]
+	path = home/Util/ycmd
+	url = https://github.com/Valloric/ycmd

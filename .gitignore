@@ -12,7 +12,9 @@
 /home/.config/newsbeuter/profile
 /home/.config/newsbeuter/urls
 /home/.config/gtk-3.0/bookmarks
+/home/.emacs.d/abbrev_defs
 /home/.emacs.d/bookmarks
+/home/.emacs.d/elpa
 /home/.emacs.d/eshell
 /home/.emacs.d/ido.last
 /home/.emacs.d/irony

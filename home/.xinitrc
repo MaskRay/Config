@@ -32,8 +32,6 @@ synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
 export GPG_TTY=$(tty)
 eval $(gpg-agent --daemon)
 
-ln -sf ~/.vim/.ycm_extra_conf.py /tmp/
-
 # vim merlin
 echo 'PKG core' > /tmp/.merlin
 
