@@ -283,8 +283,8 @@ myKeys =
 
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "xterm" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark", "ida", "ida64", "winecfg"])
+    , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -306,6 +306,7 @@ myKeys =
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
     -- window management
+    , ("M-u", swapNextScreen)
     , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
     , ("M-a", toggleSkip ["NSP"])
     , ("M-N", doTo Prev EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
@@ -380,25 +381,20 @@ myKeys =
     -- preferred cui programs
     , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
-    , ("C-' g", namedScratchpadAction scratchpads "ghci")
-    , ("C-' l", namedScratchpadAction scratchpads "livescript")
-
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
     , ("C-' d", namedScratchpadAction scratchpads "goldendict")
     , ("C-' e", namedScratchpadAction scratchpads "erl")
-    , ("C-' f", namedScratchpadAction scratchpads "coffee")
+    , ("C-' g", namedScratchpadAction scratchpads "ghci")
     , ("C-' h", namedScratchpadAction scratchpads "htop")
-    , ("C-' j", namedScratchpadAction scratchpads "j8")
-    , ("C-' m", namedScratchpadAction scratchpads "ncmpcpp")
-    , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' i", namedScratchpadAction scratchpads "rawutop")
+    , ("C-' j", namedScratchpadAction scratchpads "j8")
+    , ("C-' n", namedScratchpadAction scratchpads "node")
+    , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
-    , ("C-' q", namedScratchpadAction scratchpads "swipl")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
-    , ("C-' t", namedScratchpadAction scratchpads "task")
-    , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' k", namedScratchpadAction scratchpads "pure")
+    , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' z", namedScratchpadAction scratchpads "zeal")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
@@ -432,18 +428,18 @@ toggleSkip skips = do
     unless (null hs) (windows . W.view . W.tag $ head hs)
 
 urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
+
 scratchpads =
-  map f ["cmus", "erl", "ghci", "gst", "node", "swipl", "coffee", "ipython", "livescript", "pry", "R", "alsamixer", "htop", "xosview", "ncmpcpp", "utop"] ++
+  map f ["alsamixer", "cmus", "erl", "ghci", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
-  , NS "task" "urxvt -T task -e tasksh" (title =? "task") doSPFloat
-  , NS "j8" "urxvt -T j8 -e j8 -c" (title =? "j8") doSPFloat
-  , NS "eix-sync" "urxvt -T eix-sync -e sh -c \"sudo eix-sync; read\"" (title =? "eix-sync") doTopFloat
-  , NS "getmail" "urxvt -T getmail -e getmail -r rc0 -r rc1" (title =? "getmail") doTopRightFloat
   , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
   , NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where
-    f s = NS s (urxvt s) (fmap (s `isPrefixOf`) title) doSPFloat
+    f cmd = NS name (termite cmd) (fmap (name `isPrefixOf`) title) doSPFloat
+      where
+        name = head $ words cmd
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
     doTopLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) (1/3)
     doTopRightFloat = customFloating $ W.RationalRect (2/3) 0 (1/3) (1/3)
@@ -454,7 +450,7 @@ scratchpads =
 
 {-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
 myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
-    { terminal           = "xterm"
+    { terminal           = "termite"
     , focusFollowsMouse  = False -- see: focusFollow
     , borderWidth        = 1
     , modMask            = mod4Mask
@@ -604,19 +600,16 @@ myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
     , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
-    , TI "term" "" (xterm "tmux attach -t default") "xterm.xpm"
+    , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "im" "" (urxvt "weechat") "weechat.xpm"
-    , TI "news" "" (urxvt "newsbeuter") "newsbeuter.xpm"
-    , TI "mail" "" (urxvt "mutt" >> spawn "killall -WINCH mutt") "mutt.xpm"
+    , TI "im" "" (spawn $ termite "weechat") "weechat.xpm"
+    , TI "news" "" (spawn $ termite "newsbeuter") "newsbeuter.xpm"
+    , TI "mail" "" (spawn (termite "mutt") >> spawn "killall -WINCH mutt") "mutt.xpm"
     , TI "gimp" "" (return ()) "gimp.xpm"
     , TI "emacs" "" (spawn "LC_CTYPE=zh_CN.UTF-8 emacs") "emacs.xpm"
     , TI "misc" "" (return ()) "gtk-network.xpm"
     ]
-  where
-    urxvt prog = spawn . ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
-    xterm prog = spawn . ("xterm -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 
 
 myCommands =

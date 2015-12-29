@@ -3,7 +3,6 @@ Description=keynav
 Documentation=man:keynav(1)
 
 [Service]
-Environment=DISPLAY=:%i
 ExecStart=/home/ray/.local/bin/keynav
 
 [Install]

@@ -33,6 +33,7 @@ TERM screen-w
 TERM screen-256color
 TERM vt100
 TERM Eterm
+TERM xterm-termite
 # Below are the color init strings for the basic file types. A color init
 # string consists of one or more of the following numeric codes:
 # Attribute codes:

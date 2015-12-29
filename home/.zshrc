@@ -26,6 +26,8 @@ export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 #export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
 
+[[ $TERM = xterm-termite ]] && export TERM=xterm-256color
+
 #export LESS_TERMCAP_mb=$'\E[01;31m'
 # Start bold mode
 if [[ $TERM =~ 256 ]] {
@@ -260,19 +262,40 @@ bindkey  "${terminfo[kcub1]}"    backward-char
 bindkey  "${terminfo[kcuf1]}"    forward-char
 bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
 
+# http://lilydjwg.is-programmer.com/2014/2/2/systemd-user-daemons.42631.html
+function juser () {
+  # sadly, this won't have nice completion
+  typeset -a args
+  integer nextIsService=0
+  for i; do
+    if [[ $i == -u ]]; then
+      nextIsService=1
+      args=($args _SYSTEMD_CGROUP=/user.slice/user-$UID.slice/user@$UID.service/)
+    else
+      if [[ $nextIsService -eq 1 ]]; then
+        nextIsService=0
+        args[$#args]="${args[$#args]}$i.service"
+      else
+        args=($args $i)
+      fi
+    fi
+  done
+  journalctl -n --user ${^args}
+}
+
 # ZLE {{{1
 # prepend-sudo {{{2
 prepend-sudo() {
-  [[ $BUFFER != su(do|)\ * ]] && { BUFFER="sudo $BUFFER"; ((CURSOR += 5)); }
+    [[ $BUFFER != su(do|)\ * ]] && { BUFFER="sudo $BUFFER"; ((CURSOR += 5)); }
 }
 zle -N prepend-sudo
 # highlight {{{2
 zle_highlight=(region:bg=magenta
-  special:bold,fg=magenta
-  default:bold
-  isearch:underline
-  suffix:fg=cyan
-)
+               special:bold,fg=magenta
+               default:bold
+               isearch:underline
+               suffix:fg=cyan
+              )
 
 # edit-command-line {{{2
 autoload -U edit-command-line
@@ -295,22 +318,22 @@ bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and director
 bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
 bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
 if (( ${+WINDOWID} )) {
-  alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
-} else {
-  alias v='fasd -fie vim'
-}
-alias j='fasd_cd -d'
-alias jj='fasd_cd -d -i'
+       alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
+   } else {
+       alias v='fasd -fie vim'
+   }
+   alias j='fasd_cd -d'
+   alias jj='fasd_cd -d -i'
 
-# Goodies {{{1
-(bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
+   # Goodies {{{1
+   (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
 
-# Imports {{{1
+   # Imports {{{1
 
-# OPAM
-[[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
+   # OPAM
+   [[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
 
-# archlinuxcn/pinyin-completion
+   # archlinuxcn/pinyin-completion
 [[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
 # aur/fzf
@@ -328,7 +351,9 @@ fi
 # nvm (Node.js)
 [[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
 
+[[ -s ~/.zshrc.local ]] && . ~/.zshrc.local
+
 # Environment Modules {{{1
 module() { eval `~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ghc go nim perl ruby/2.2.0 texlive/2015 wps #mpi/impi
+module load ghc go nim nodejs perl ruby/2.2.0 texlive/2015 wps #mpi/impi

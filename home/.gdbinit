@@ -47,10 +47,19 @@ end
 # C++ related beautifiers (optional)
 #
 
-set print pretty on
-set print object on
-set print static-members on
-set print vtbl on
-set demangle-style gnu-v3
+#set print pretty on
+#set print object on
+#set print static-members on
+#set print vtbl on
+#set demangle-style gnu-v3
+
+python
+import sys
+sys.path.insert(0, '/usr/share/gdb/python/gdb/command')
+import pretty_printers
+pretty_printers.register_pretty_printer_commands()
+end
+
+set python print-stack full
 
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-

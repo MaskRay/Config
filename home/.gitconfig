@@ -96,6 +96,6 @@
 [merge]
   tool = vimdiff
 [push]
-  default = tracking
+  default = simple
 [url "git://github.com/"]
   insteadOf = gh:

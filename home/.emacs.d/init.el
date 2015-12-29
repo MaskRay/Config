@@ -22,6 +22,9 @@
 ;; browse-url-generic-program "chrome")
 (setq browse-url-can-use-xdg-open t)
 
+(setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+(setq recentf-max-menu-items 100)
+
 ;; Core ------------------------------------------------------------------------
 
 (require 'cl)
@@ -108,6 +111,8 @@
   (define-key evil-insert-state-map (read-kbd-macro evil-toggle-key) 'evil-normal-state)
   (evil-global-set-key 'insert [escape] 'evil-normal-state)
   (evil-global-set-key 'insert "\C-w" 'evil-delete-backward-word)
+
+  (define-key evil-normal-state-map "\M-." nil)
   )
 
 (use-package evil-leader
@@ -280,7 +285,7 @@
 
 ;; Packages --------------------------------------------------------------------
 
-(use-package aggressive-indent :init (global-aggressive-indent-mode 1))
+(use-package aggressive-indent :defer t)
 
 (use-package avy
   :defer t
@@ -917,6 +922,7 @@ The initialization function is hooked to `MODE-hook'."
   ;; applications
   "ad" 'dired
   "ap" 'proced
+  "aP" 'list-packages
   "au" 'undo-tree-visualize
 
   ;; +buffers
@@ -933,15 +939,18 @@ The initialization function is hooked to `MODE-hook'."
   "ep" 'my/previous-error
 
                                         ; +files
+  "fF" 'helm-find-files
   "fL" 'helm-locate
   "fR" 'spacemacs/rename-current-buffer-file
   "fS" 'evil-write-all
   "fj" 'dired-jump
   "fl" 'find-file-literally
   "fs" 'write-buffer
+  "fr" 'helm-recentf
 
   "hb" 'helm-filtered-bookmarks
-  "hi" 'helm-info-at-point
+  "hi" 'helm-imenu
+  "hI" 'helm-info-at-point
   "hl" 'helm-resume
 
   "iu" 'helm-ucs
@@ -1034,13 +1043,17 @@ The initialization function is hooked to `MODE-hook'."
 
 ;;;; Clojure
 
-(add-hook 'clojure-mode-hook (lambda () (smartparens-strict-mode 1)))
+(add-hook 'clojure-mode-hook (lambda ()
+                               (smartparens-strict-mode 1)
+                               (aggressive-indent-mode 1)))
 
 (use-package cider
   :defer t
   :init
   (setq cider-prompt-for-symbol nil
-        cider-show-error-buffer 'only-in-repl)
+        cider-show-error-buffer 'only-in-repl
+        nrepl-hide-special-buffers t
+        )
   (add-hook 'cider-mode-hook (lambda () (smartparens-strict-mode 1)))
   (add-hook 'cider-repl-mode-hook (lambda ()
                                     (smartparens-strict-mode 1)
@@ -1414,6 +1427,27 @@ The initialization function is hooked to `MODE-hook'."
     (evil-leader/set-key-for-mode 'enh-ruby-mode "mx\"" 'ruby-tools-to-double-quote-string)
     (evil-leader/set-key-for-mode 'enh-ruby-mode "mx:" 'ruby-tools-to-symbol)))
 
+;;;; Rust
+
+(use-package rust-mode
+  :defer t
+  :init
+  (setq rust-indent-offset 2)
+  :config
+  (when (fboundp 'sp-local-pair)
+        ;; Don't pair lifetime specifiers
+        (sp-local-pair 'rust-mode "'" nil :actions nil))
+  )
+
+(use-package racer
+  :defer t
+  :init
+  (add-hook 'rust-mode-hook 'racer-mode))
+
+;;;; Shell
+
+(setq sh-basic-offset 2)
+
 ;;;; Web
 
 (use-package web-mode
@@ -1429,6 +1463,12 @@ The initialization function is hooked to `MODE-hook'."
         web-mode-code-indent-offset 2        ; JavaScript/PHP/... indent
         )
   )
+
+(use-package js2-mode
+  :defer t
+  :mode ("\\.js\\'" . js2-mode)
+  :init
+  (setq js2-strict-missing-semi-warning nil))
 
 (use-package jade-mode :defer t :mode ("\\.jade\\'" . jade-mode))
 (use-package less-css-mode :defer t :mode ("\\.less\\'" . less-css-mode))

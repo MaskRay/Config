@@ -1,0 +1,9 @@
+[Unit]
+Description=Break Service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/notify-send 'Time for a Break' 'Take a walk, get some hot bevarage, you know what to do...'
+
+[Install]
+WantedBy=graphical.target

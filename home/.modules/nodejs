@@ -1,0 +1,2 @@
+#%Module
+prepend-path PATH $env(HOME)/node_modules/.bin

@@ -374,7 +374,7 @@ if 1 || has("gui_running")
   "Bundle 'Valloric/YouCompleteMe'
   Bundle 'davidhalter/jedi-vim'
   Bundle 'derekwyatt/vim-fswitch'
-  Bundle 'ervandew/eclim'
+  "Bundle 'ervandew/eclim'
   Bundle 'gkz/vim-ls'
   Bundle 'marijnh/tern_for_vim'
   Bundle 'spf13/PIV'

@@ -1,0 +1,10 @@
+[Unit]
+Description=Flexible Input Method Framwork
+Documentation=man:fcitx(1)
+
+[Service]
+Environment=XMODIFIERS=@im=fcitx GTK_IM_MODULE=fcitx QT_IM_MODULE=fcitx
+ExecStart=/usr/bin/fcitx -D
+
+[Install]
+WantedBy=graphical.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=Randomize Wallpaper
+Documentation=man:feh(1)
+
+[Service]
+ExecStart=/usr/bin/feh --randomize --bg-fill %h/wallpaper
+
+[Install]
+WantedBy=graphical.target

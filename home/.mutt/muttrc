@@ -32,7 +32,7 @@ set reverse_alias
 set reverse_name
 set rfc2047_parameters=yes
 set search_context=3
-set sendmail="msmtp"
+set sendmail="proxychains msmtp"
 set sort=threads
 set sort_aux=reverse-last-date-received
 set ssl_force_tls = yes
@@ -79,10 +79,10 @@ bind index zb current-bottom
 bind index h previous-page
 bind index l next-page
 bind index / limit
-macro index ,p "<pipe-message>cat > /tmp/" "save message as"
-macro index ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
-macro index ,R "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
-macro index ,q \
+macro index,pager ,p "<pipe-message>cat > /tmp/" "save message as"
+macro index,pager ,z "<shell-escape>offlineimap -q -o<return>" "sync IMAP"
+macro index,pager ,R "<tag-pattern>all<return><tag-prefix><clear-flag>N<untag-pattern>all<return>" "mark all as read"
+macro index,pager ,q \
   "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --output \
   /tmp/.notmuch --prompt search<enter><change-folder-readonly>/tmp/.notmuch<enter>" \
   "search mail (using notmuch)"

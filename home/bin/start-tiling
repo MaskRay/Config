@@ -22,7 +22,6 @@ List.map Sys.command [
   ; "xrdb ~/.Xresources"
   (*; pic*)
   ; "change-wallpaper"
-  ; "redshift"
   (* ; "unclutter &" *)
   (* ; "batti &" *)
   ; "syndaemon -t -k &"

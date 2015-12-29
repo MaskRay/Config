@@ -10,7 +10,7 @@ export BROWSER=chrome
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
-systemctl --user start fcitx@0
+systemctl --user start fcitx
 
 xset s off dpms 600 600 600
 #xset r rate 200 50
@@ -27,10 +27,6 @@ synclient MinSpeed=1.5 MaxSpeed=3.5 AccelFactor=0.1
 
 # scrolling using two fingers
 synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
-
-# GPG agent
-export GPG_TTY=$(tty)
-eval $(gpg-agent --daemon)
 
 # vim merlin
 echo 'PKG core' > /tmp/.merlin

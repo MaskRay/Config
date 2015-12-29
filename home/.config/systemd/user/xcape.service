@@ -1,0 +1,10 @@
+[Unit]
+Description=Combine Ctrl+Escape
+Documentation=man:xcape(1) https://github.com/alols/xcape
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/xcape
+
+[Install]
+WantedBy=graphical.target

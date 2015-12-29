@@ -1,0 +1,9 @@
+[Unit]
+Description=Break Encouragement
+
+[Timer]
+OnBootSec=30min
+OnUnitActiveSec=30min
+
+[Install]
+WantedBy=timers.target

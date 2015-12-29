@@ -1,3 +1,0 @@
-#!/bin/sh
-pkill -f -0 /usr/bin/redshift || /usr/bin/redshift -l 40:116.326 &
-#pkill -f -0 gtk-redshift || gtk-redshift -l 31.217:121.467 &
