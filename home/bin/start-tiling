@@ -18,7 +18,7 @@ List.map Sys.command [
   ; singleton "dunst &"
 
   (* one-shot *)
-  ; "xrandr | grep -q 'HDMI1 connected' && di 3"
+  ; "xrandr | grep -q 'HDMI1 connected' && di l"
   ; "xrdb ~/.Xresources"
   (*; pic*)
   ; "change-wallpaper"

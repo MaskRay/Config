@@ -9,8 +9,8 @@ Config {
     , lowerOnStart = True
     , commands = [ -- Run MultiCpu ["-L","10","-H","50","--low","#808080","--normal","#83AD2E","--high","#FF0000"] 50
                    Run BatteryP ["BAT0"] ["-t","<left>","-L","30","-H","80","-l","red","-n","orange","-h","#00c000"] 300
-                 , Run Com "ponymix" ["get-volume"] "volume" 10
-                 , Run Date "%H:%M %a %y-%m-%d " "date" 10
+                 , Run Com "ponymix" ["get-volume"] "volume" 50
+                 , Run Date "%H:%M %a %y-%m-%d " "date" 50
                  , Run Mail [ ("<fc=green>INBOX</fc>", "~/Maildir/INBOX")] "mail"
                  , Run Memory ["-H","50","--low","#808080","--normal","#83AD2E","--high","#FF0000","-t","Mem: <usedratio>%"] 50
                  , Run StdinReader

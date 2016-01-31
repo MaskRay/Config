@@ -25,6 +25,9 @@
 (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
 (setq recentf-max-menu-items 100)
 
+(setq url-proxy-services nil)
+;; (setq url-proxy-services '(("http" . "192.168.8.1:3129")))
+
 ;; Core ------------------------------------------------------------------------
 
 (require 'cl)
@@ -174,6 +177,8 @@
   (helm-mode 1)
   (global-unset-key (kbd "C-x c"))
   (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "M-x")		'helm-M-x)
   (when (executable-find "curl")
     (setq helm-net-prefer-curl t))
   )
@@ -501,10 +506,11 @@
         neo-smart-open t
         neo-dont-be-alone t
         neo-persist-show nil
-        neo-show-hidden-files t
+        neo-show-hidden-files nil
         neo-auto-indent-point t
         neo-modern-sidebar t
-        neo-vc-integration '(face))
+        neo-vc-integration '(face)
+        neo-hidden-regexp-list '("^\\." "\\.pyc$" "~$" "^#.*#$" "\\.elc$"))
   (evil-leader/set-key
     "ft" 'neotree-toggle
     "pt" 'neotree-find-project-root)
@@ -520,6 +526,8 @@
   )
 
 (use-package pangu-spacing :defer t)
+
+(use-package paradox :defer t)
 
 (use-package projectile
   :init
@@ -770,6 +778,7 @@
              :init
              (set-variable 'ycmd-server-command '("python2" "/home/ray/Util/ycmd/ycmd"))
              (set-variable 'ycmd-global-config "/home/ray/.config/ycmd/ycm_extra_conf.py")
+             (set-variable 'ycmd-extra-conf-whitelist "/home/ray/Work/*")
              (global-ycmd-mode 1)
              )
 
@@ -922,7 +931,7 @@ The initialization function is hooked to `MODE-hook'."
   ;; applications
   "ad" 'dired
   "ap" 'proced
-  "aP" 'list-packages
+  "aP" 'paradox-list-packages
   "au" 'undo-tree-visualize
 
   ;; +buffers
@@ -1110,7 +1119,7 @@ The initialization function is hooked to `MODE-hook'."
 ;;;; Haskell
 
 (use-package haskell-mode :defer t)
-(use-package ghc :defer t)
+;; (use-package ghc :defer t)
 (use-package shm
   :defer t
   :init
@@ -1263,9 +1272,9 @@ The initialization function is hooked to `MODE-hook'."
 (use-package nim-mode
   :defer t
   :init
-  (spacemacs|defvar-company-backends nim-mode)
-  (my|add-company-hook nim-mode)
-  (push 'company-nim company-backends-nim-mode)
+  ; (spacemacs|defvar-company-backends nim-mode)
+  ; (my|add-company-hook nim-mode)
+  ; (push 'company-nim company-backends-nim-mode)
   )
 
 ;;;; OCaml
@@ -1381,6 +1390,10 @@ The initialization function is hooked to `MODE-hook'."
 
 ;;;; Python
 
+(use-package python-mode)
+
+(use-package cython-mode :defer t :mode ("\\.pyx\\'" . cython-mode))
+
 (use-package anaconda-mode
   :defer t
   :init
@@ -1454,6 +1467,7 @@ The initialization function is hooked to `MODE-hook'."
   :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
   (setq web-mode-enable-css-colorization t
         web-mode-enable-block-face t
         web-mode-enable-part-face t
@@ -1462,6 +1476,40 @@ The initialization function is hooked to `MODE-hook'."
         web-mode-css-indent-offset 2         ; CSS indent
         web-mode-code-indent-offset 2        ; JavaScript/PHP/... indent
         )
+  :config
+  (define-key web-mode-map (kbd "M-;") nil)
+  (mapcar (lambda (x)
+            (evil-define-key 'emacs web-mode-map (kbd (car x)) (cadr x)))
+          '(
+            ("c" web-mode-element-clone)
+            ("d" web-mode-element-vanish)
+            ("D" web-mode-element-kill)
+            ("j" web-mode-element-next)
+            ("J" web-mode-element-sibling-next)
+            ("gj" web-mode-element-sibling-next)
+            ("k" web-mode-element-previous)
+            ("K" web-mode-element-sibling-previous)
+            ("gk" web-mode-element-sibling-previous)
+            ("h" web-mode-element-parent)
+            ("l" web-mode-element-child)
+            ("p" web-mode-dom-xpath)
+            ("r" web-mode-element-rename)
+            ("q" evil-normal-state)
+            ("w" web-mode-element-wrap)
+            ))
+  )
+
+(use-package emmet-mode
+  :defer t
+  :init
+  (add-hook 'css-mode 'emmet-mode)
+  (add-hook 'html-mode 'emmet-mode)
+  (add-hook 'web-mode 'emmet-mode)
+  :config
+  (evil-define-key 'insert emmet-mode-keymap (kbd "TAB") 'emmet-expand-yas)
+  (evil-define-key 'insert emmet-mode-keymap (kbd "<tab>") 'emmet-expand-yas)
+  (evil-define-key 'emacs emmet-mode-keymap (kbd "TAB") 'emmet-expand-yas)
+  (evil-define-key 'emacs emmet-mode-keymap (kbd "<tab>") 'emmet-expand-yas)
   )
 
 (use-package js2-mode
@@ -1475,7 +1523,7 @@ The initialization function is hooked to `MODE-hook'."
 (use-package livescript-mode :defer t :mode ("\\.ls\\'" . livescript-mode))
 (use-package sass-mode :defer t :mode ("\\.sass\\'" . sass-mode))
 (use-package scss-mode :defer t :mode ("\\.scss\\'" . scss-mode))
-(use-package slim-mode :defer t :mode ("\\.slim\\'" . slim-mode))
+(use-package slim-mode :defer t :mode ("\\.[sp]lim\\'" . slim-mode))
 (use-package stylus-mode :defer t :mode ("\\.styl\\'" . stylus-mode))
 
 (use-package restclient :defer t :mode ("\\.http\\'" . restclient-mode))

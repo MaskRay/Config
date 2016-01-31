@@ -19,7 +19,7 @@ if (( ! ${+WINDOWID} )) {
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 export PATH=~/bin:~/.local/bin:~/bin/ssh:$PATH
 export EDITOR=vim
-export LESS="-MiR --shift 5"
+export LESS="-FiMRwX --shift 5 -z-4"
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines
@@ -112,8 +112,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 setopt nobeep
 
-#fpath=($HOME/.zsh/site-functions/ $fpath)
-fpath=($HOME/Util/zsh-completions/src/ $fpath)
+fpath=($HOME/Util/zsh-completions/src/ $HOME/.zsh/zsh-jump-target/functions $fpath)
 
 # Completion {{{1
 autoload -U compinit
@@ -131,7 +130,7 @@ setopt null_glob
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 zstyle ':completion:*' use-cache true
-#zstyle ':completion::complete:*' cache-path .zcache
+zstyle ':completion:*' cache-path $HOME/.cache/zsh
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' menu select
 zstyle ':completion:*:*:default' force-list always
@@ -186,13 +185,18 @@ compdef pkill=killall
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:*:*:processes' force-list always
 zstyle ':completion:*:processes' command 'ps -au$USER '
+zstyle ':completion:*:processes-names' command  'ps c -u ${USER} -o command | uniq'
 
 #zstyle ':completion:*' file-patterns '%p(^-/):globbed-files' '*(-/):directories' '*:all-files'
-zstyle ':completion::complete:feh:*' file-patterns '*.png *.jpg *.bmp *.gif *(/):directories'
-zstyle ':completion::complete:wps:*' file-patterns '*.doc *.docx *(/):directories'
-zstyle ':completion::complete:wpp:*' file-patterns '*.ppt *.pptx *(/):directories'
-zstyle ':completion::complete:llpp:*' file-patterns '*.pdf *(/):directories'
-zstyle ':completion::complete:et:*' file-patterns '*.xls *.xlsx *(/):directories'
+zstyle ':completion::complete:display:*' file-patterns '*.{gif,png,jpeg,jpg,svg,webp}:images *(-/):directories'
+zstyle ':completion::complete:et:*' file-patterns '*.{xls,xlsx}:files:files *(/):directories'
+zstyle ':completion::complete:evince:*' file-patterns '*.{pdf,ps,eps,dvi,djvu,pdf.gz,ps.gz,dvi.gz}:documents:documents *(-/):directories:directories'
+zstyle ':completion::complete:feh:*' file-patterns '*.{gif,png,jpeg,jpg,svg}:images:images *(-/):directories:directories'
+zstyle ':completion::complete:geeqie:*' file-patterns '*.{gif,png,jpeg,jpg,svg}:images:images *(-/):directories:directories'
+zstyle ':completion::complete:llpp:*' file-patterns '*.pdf:files:files *(-/):directories:directories'
+zstyle ':completion::complete:wpp:*' file-patterns '*.{ppt,pptx}:files:files *(/):directories'
+zstyle ':completion::complete:wps:*' file-patterns '*.{doc,docx}:files:files *(/):directories'
+zstyle ':completion::complete:x:*' file-patterns '*.{7z,bz2,gz,rar,tar,tbz,tgz,zip,chm,xz,exe,xpi,apk,maff,crx}:compressed-files:compressed\ files *(-/):directories:directories'
 
 # vim ignore
 zstyle ':completion:*:*:vim:*:*files' ignored-patterns '*.(avi|mkv|rmvb|pyc|wmv)'
@@ -204,6 +208,10 @@ zstyle ':completion:*:*:*:users' ignored-patterns \
   adm amanda apache avahi beaglidx bin cacti canna chrony clamav colord daemon dbus distcache dnsmasq dovecot etcd fax fcron ftp games gdm git gkrellmd gopher hacluster haldaemon halt hsqldb http ident junkbust ldap lp mail mailman mailnull memcached mldonkey mongodb mysql nagios named nbd netdump news nfsnobody nobody nscd ntp nut nx openvpn operator pcap polipo polkitd postfix postgres privoxy proxy pulse pvm quagga radvd redis rpc rpcuser rpm rtkit shutdown squid sshd sync systemd-bus-proxy systemd-journal-gateway systemd-journal-remote systemd-journal-upload systemd-network systemd-resolve systemd-timesync tor unbound usbmux uucp uuidd vcsa xfs
 
 zstyle ':completion:*:mutt:*' users ${${${(f)"$(<~/.mutt/aliases)"}#alias[[:space:]]}%%[[:space:]]*}
+
+compdef pgrep=killall
+compdef pkill=killall
+compdef proxychains=command
 
 # ... completion
 user_complete(){
@@ -250,6 +258,12 @@ bindkey '^xh' _complete_help
 # Aliases & functions {{{1
 # General aliases & functions (partially shared with bash) {{{2
 . ~/.alias
+
+s() {
+  re=$1
+  shift
+  find . -regextype posix-extended -iregex ".*$re.*"
+}
 
 # terminfo {{{1
 bindkey  "${terminfo[khome]}"    beginning-of-line
@@ -312,26 +326,15 @@ bindkey '^x^s' prepend-sudo
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-# fasd {{{2
-eval "$(fasd --init posix-alias zsh-hook zsh-wcomp zsh-wcomp-install)"
-bindkey '^X^A' fasd-complete    # C-x C-a to do fasd-complete (fils and directories)
-bindkey '^X^F' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
-bindkey '^X^D' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
-if (( ${+WINDOWID} )) {
-       alias v='fasd -fie "vim --servername GVIM --remote-tab-silent"'
-   } else {
-       alias v='fasd -fie vim'
-   }
-   alias j='fasd_cd -d'
-   alias jj='fasd_cd -d -i'
 
-   # Goodies {{{1
-   (bin-exist cowsay) && (bin-exist fortune) && command_not_found_handler() { fortune -s| cowsay -W 70}
+# jump-target {{{2
+# https://github.com/scfrazer/zsh-jump-target
+autoload -Uz jump-target
+zle -N jump-target
+bindkey "^J" jump-target
+
 
    # Imports {{{1
-
-   # OPAM
-   [[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
 
    # archlinuxcn/pinyin-completion
 [[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
@@ -345,15 +348,28 @@ if [[ -s /etc/profile.d/fzf.zsh ]] then
   }
 fi
 
-# rvm (Ruby)
+# Ruby
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
 
-# nvm (Node.js)
+# Node
 [[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
 
+# OCaml
+[[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
+
 [[ -s ~/.zshrc.local ]] && . ~/.zshrc.local
+
+
+# command-not-found {{{1
+# Load command-not-found on Debian-based distributions.
+if [[ -s '/etc/zsh_command_not_found' ]]; then
+  source '/etc/zsh_command_not_found'
+# Load command-not-found on Arch Linux-based distributions.
+elif [[ -s '/usr/share/doc/pkgfile/command-not-found.zsh' ]]; then
+  source '/usr/share/doc/pkgfile/command-not-found.zsh'
+fi
 
 # Environment Modules {{{1
 module() { eval `~/bin/modulecmd.tcl zsh $*`; }
 module use ~/.modules
-module load ghc go nim nodejs perl ruby/2.2.0 texlive/2015 wps #mpi/impi
+module load ghc go nim nodejs perl ruby/2.3.0 texlive/2015 wps #mpi/impi

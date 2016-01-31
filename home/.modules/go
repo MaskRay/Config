@@ -1,0 +1,3 @@
+#%Module
+prepend-path PATH $env(HOME)/go/bin
+setenv GOPATH $env(HOME)/go

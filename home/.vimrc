@@ -28,6 +28,7 @@ set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
 set showbreak=↪
+set breakindent
 set sidescroll=10 sidescrolloff=10
 set switchbuf=useopen
 "set ignorecase smartcase
@@ -338,6 +339,7 @@ if 1 || has("gui_running")
   Bundle 'Shougo/vimfiler.vim'
   Bundle 'Shougo/vimproc.vim'
   Bundle 'Shougo/vimshell.vim'
+  Bundle 'Shougo/deoplete.nvim'
   Bundle 'airblade/vim-gitgutter'
   "Bundle 'vim-scripts/surfer.vim' neovim
   Bundle 'haya14busa/incsearch.vim'

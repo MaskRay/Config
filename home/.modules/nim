@@ -1,0 +1,2 @@
+#%Module
+prepend-path PATH $env(HOME)/.nimble/bin

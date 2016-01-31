@@ -46,6 +46,8 @@
  '(nrepl-message-colors
    (quote
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(paradox-automatically-star nil)
+ '(paradox-github-token "41a34f1cd79eca2b1ba273da308acd307fdc90d6 ")
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(term-default-bg-color "#002b36")

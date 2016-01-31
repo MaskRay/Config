@@ -140,7 +140,7 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
-    onWorkspace "code" (termDrawer ||| tiled) $
+    onWorkspace "gvim" (termDrawer ||| tiled) $
     onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
@@ -172,7 +172,7 @@ doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
     [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["google-chrome", "Chrome", "Chromium"] ] ++
-    [ className =? c --> viewShift "code" | c <- ["Gvim"] ] ++
+    [ className =? c --> viewShift "gvim" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
@@ -180,7 +180,6 @@ myManageHook = composeAll $
     [ role =? r --> doFloat | r <- ["pop-up", "app"]] ++ -- chrome has pop-up windows
     {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
     [ title =? "weechat" --> viewShift "im"] ++
-    [ title =? "newsbeuter" --> viewShift "news"] ++
     [ title =? "mutt" --> viewShift "mail"] ++
     [ className =? c --> viewShift "gimp" | c <- ["Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
@@ -259,14 +258,14 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 
 myKeys =
     [ ("M-" ++ m ++ [k], f i)
-        | (i, k) <- zip myTopicNames "1234567890-="
+        | (i, k) <- zip myTopicNames "1234567890"
         , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
                     , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
     ]
     ++
     [ ("C-; " ++ m ++ [k], f i)
-        | (i, k) <- zip myTopicNames "asdfghjkl;'"
+        | (i, k) <- zip myTopicNames "asdfghjkl;"
         , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
                     , (switchTopic myTopicConfig, "S-")
                     ]
@@ -277,7 +276,10 @@ myKeys =
         , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
     ]
     ++
-    [ ("M-S-q", io exitFailure)
+    [ ("M-l", switchTopic myTopicConfig "web")
+    , ("M-;", switchTopic myTopicConfig "emacs")
+    , ("M-'", switchTopic myTopicConfig "term")
+    , ("M-S-q", io exitFailure)
     , ("M-S-c", kill)
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
@@ -285,7 +287,7 @@ myKeys =
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|Chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -334,10 +336,6 @@ myKeys =
     , ("M-C-u", withFocused (sendMessage . UnMerge))
     -- }}}
 
-    {-, ("M-h", windowGo L True)-}
-    {-, ("M-j", windowGo D True)-}
-    {-, ("M-k", windowGo U True)-}
-    {-, ("M-l", windowGo R True)-}
     , ("M-j", windows W.focusDown)
     , ("M-k", windows W.focusUp)
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
@@ -405,7 +403,6 @@ myKeys =
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
-    , ("M-'", workspacePrompt myXPConfig (switchTopic myTopicConfig) )
     , ("M-p c", mainCommandPrompt myXPConfig)
     , ("M-p d", changeDir myXPConfig)
     --, ("M-p f", fadePrompt myXPConfig)
@@ -550,12 +547,10 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       , mk "w" "http://en.wikipedia.org/wiki/Special:Search?go=Go&search="
       , mk "d" "http://duckduckgo.com/?q="
       , mk "m" "https://developer.mozilla.org/en-US/search?q="
-      , mk "e" "http://erldocs.com/R15B/mnesia/mnesia.html?search="
       , mk "r" "http://www.ruby-doc.org/search.html?sa=Search&q="
       , mk "p" "http://docs.python.org/search.html?check_keywords=yes&area=default&q="
       , mk "s" "https://scholar.google.de/scholar?q="
       , mk "i" "https://ixquick.com/do/search?q="
-      , mk "gt" "https://bugs.gentoo.org/buglist.cgi?quicksearch="
       , mk "dict" "http://www.dict.cc/?s="
       , mk "imdb" "http://www.imdb.com/find?s=all&q="
       , mk "def" "http://www.google.com/search?q=define:"
@@ -599,16 +594,15 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
-    , TI "code" "" (spawn "/usr/bin/gvim") "gvim.xpm"
+    , TI "gvim" "" (spawn "/usr/bin/gvim") "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "im" "" (spawn $ termite "weechat") "weechat.xpm"
-    , TI "news" "" (spawn $ termite "newsbeuter") "newsbeuter.xpm"
+    , TI "misc" "" (return ()) "gtk-network.xpm"
     , TI "mail" "" (spawn (termite "mutt") >> spawn "killall -WINCH mutt") "mutt.xpm"
     , TI "gimp" "" (return ()) "gimp.xpm"
     , TI "emacs" "" (spawn "LC_CTYPE=zh_CN.UTF-8 emacs") "emacs.xpm"
-    , TI "misc" "" (return ()) "gtk-network.xpm"
     ]
 
 

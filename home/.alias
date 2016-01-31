@@ -32,7 +32,7 @@ alias which='which -a'
 ## with common options
 alias cp='cp -iv'
 alias df='df -Th'
-alias rm='rm -v' # -d since coreutils-8.19, `rm -rf` is evil
+alias rm='rm -v --one-file-system' # -d since coreutils-8.19, `rm -rf` is evil
 alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
 alias free='free -m'
