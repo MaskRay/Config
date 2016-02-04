@@ -24,7 +24,8 @@ export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
-#export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
+export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
+export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 [[ $TERM = xterm-termite ]] && export TERM=xterm-256color
 
@@ -347,6 +348,7 @@ if [[ -s /etc/profile.d/fzf.zsh ]] then
     [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
   }
 fi
+[[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
 
 # Ruby
 [[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm

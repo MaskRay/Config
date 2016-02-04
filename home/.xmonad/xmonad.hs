@@ -140,7 +140,7 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
-    onWorkspace "gvim" (termDrawer ||| tiled) $
+    onWorkspace "nvim" (termDrawer ||| tiled) $
     onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
@@ -172,7 +172,7 @@ doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
     [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["google-chrome", "Chrome", "Chromium"] ] ++
-    [ className =? c --> viewShift "gvim" | c <- ["Gvim"] ] ++
+    [ className =? c --> viewShift "nvim" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
@@ -462,24 +462,6 @@ myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
     , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
 } `additionalKeysP` myKeys
 
-{-
-defaultFade = 8/10
-data FadeState = FadeState Rational (M.Map Window Rational) deriving (Typeable,Read,Show)
-instance ExtensionClass FadeState where
-  initialValue = FadeState defaultFade M.empty
-  extensionType = PersistentExtension
-
-myFadeHook :: Query Rational
-myFadeHook = do
-  w <- ask
-  FadeState fadeUnfocused fadeSet <- liftX XS.get
-  case M.lookup w fadeSet of
-    Just v -> return v
-    Nothing -> do
-      b <- isUnfocused
-      return $ if b then fadeUnfocused else 1
--}
-
 myPromptKeymap = M.union defaultXPKeymap $ M.fromList
                  [
                    ((controlMask, xK_g), quit)
@@ -594,7 +576,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
-    , TI "gvim" "" (spawn "/usr/bin/gvim") "gvim.xpm"
+    , TI "nvim" "" (spawn (termite "nvim")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
@@ -617,17 +599,6 @@ nongreedySwitchTopic tg topic = do
   windows $ W.view topic
   wins <- gets (W.integrate' . W.stack . W.workspace . W.current . windowset)
   when (null wins) $ XMonad.Actions.TopicSpace.topicAction tg topic
-
-{-
-fadePrompt xpc = withFocused $ \w -> do
-  mkXPrompt (TitledPrompt "fade to") xpc (\s -> return [show x | x <- [0..10], s `isPrefixOf` show x]) $ \i -> do
-    let v = read i :: Int
-    FadeState u s <- XS.get
-    XS.put . FadeState u $ if all isDigit i && 0 <= v && v <= 10
-      then M.insert w (toRational v/10) s
-      else M.delete w s
--}
-
 
 data TitledPrompt = TitledPrompt String
 

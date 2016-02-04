@@ -101,3 +101,7 @@
   insteadOf = gh:
 [core]
 	quotePath = false
+[http]
+	proxy = http://192.168.7.23:3128
+[https]
+	proxy = http://192.168.7.23:3128
