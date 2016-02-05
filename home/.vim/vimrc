@@ -296,8 +296,16 @@ aug C
   au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
   au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
   au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+" Haskell {{{2
+aug Haskell
+  au!
+  au FileType haskell :call Haskell_init()
+fu! Haskell_init()
+  setl omnifunc=necoghc#omnifunc
+endf
 " Make {{{2
 au FileType make setl ts=8 sts=0 sw=8 noet
+au FileType snippets setl ts=8 sts=0 sw=8 noet
 " Python {{{2
 aug Python
   au!
@@ -310,6 +318,12 @@ fu! Python_init()
   " tabs and spaces, I go as far as mark all tabs as error.
   autocmd Syntax python syn match ExtraWhitespace /\t/
 endf
+let g:pymode_folding = 0
+" failed to disable [Pymode] Init Rope project: $HOME, too slow, prefer YouCompleteMe
+let g:pymode_rope = 0
+"let g:pymode_breakpoint_bind = '<leader>mb'
+"let g:pymode_rope_goto_definition_bind = '<m-.>'
+"let g:pymode_rope_goto_definition_cmd = 'e'
 " Ruby {{{2
 aug Ruby
   au!
@@ -335,8 +349,8 @@ so ~/.vim/bundle/vim-plug/plug.vim
 call plug#begin('~/.vim/bundle')
 
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'Rykka/colorv.vim'
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+"Plug 'Rykka/colorv.vim'
+Plug 'SirVer/ultisnips'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch'
@@ -385,7 +399,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 
-" FileTypes
+" Languages
 "Plug 'emmet'
 "Plug 'pytest.vim'
 Plug 'python-mode', { 'branch': 'develop' }
@@ -397,13 +411,12 @@ Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'wting/rust.vim', { 'for': 'rust' }
 Plug 'zah/nim.vim', { 'for': 'nim' }
-Plug 'python-rope/ropevim', { 'for': 'python' }
-
-" Syntax
+Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
+Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'chrisbra/csv.vim', { 'for': 'csv' }
 Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
-Plug 'gorodinskiy/vim-coloresque'
+"Plug 'gorodinskiy/vim-coloresque'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'sheerun/vim-polyglot'
 
@@ -454,6 +467,8 @@ aug Startup
   au!
   au VimEnter * nested call Startup()
 aug END
+" deoplete {{{2
+let g:deoplete#enable_at_startup = 1
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
@@ -477,9 +492,9 @@ let g:syntastic_cpp_compiler_options = '-std=c++11 -fopenmp -Wno-shift-op-parent
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
 " UltiSnips {{{2
-let g:UltiSnipsExpandTrigger = "<Tab>"
-let g:UltiSnipsJumpForwardTrigger = "<Tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<S-tab>"
 " local snippets only:
 let g:UltiSnipsSnippetDirectories = ["UltiSnips"]
 " vsplit the snippets edit window
@@ -511,7 +526,7 @@ let g:ycm_key_list_select_completion = ['<c-n>', '<down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<up>']
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_cache_omnifunc = 1
-let g:ycm_filetype_blacklist = {'markdown' : 1,  'txt' : 1, 'help' : 1}
+let g:ycm_filetype_blacklist = {'python': 1}
 let g:ycm_auto_trigger = 0
 " Misc --------------------- {{{1
 " vim hacks #181
@@ -617,7 +632,7 @@ fu! Fortran_init()
 endf
 
 fu! MarkDown_init()
-  ia <buffer> ``` ```<cr>```<up><end><esc>
+  "ia <buffer> ``` ```<cr>```<up><end><esc>
   ia <buffer> more <!-- more -->
 endf
 
@@ -689,6 +704,7 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap - -------- {{{3
 nn -+ :set modified!<cr>
 " nmap <leader> {{{3
+nn <leader>fc :lcd %:p:h<cr>
 nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 " nmap <leader>c (ctags) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
@@ -757,12 +773,13 @@ nn ga <Plug>(EasyAlign)
 "nn Yp :Gtags -P <C-r><C-w><cr>
 "nn Yg :Gtags -g <C-r><C-w><cr>
 "nn Y<space> :Gtags
-nn Yd :YcmCompleter GoToDefinition<cr>
-nn Ye :YcmCompleter GoToDeclaration<cr>
+nn Yc :YcmCompleter GoToDeclaration<cr>
+nn Yd :YcmCompleter GetDoc<cr>
+nn Yf :YcmCompleter FixIt<cr>
+nn Yf :YcmCompleter GoToDefinition<cr>
 nn Yi :YcmCompleter GoToInclude<cr>
 nn Yr :YcmCompleter GoToReferences<cr>
 nn Yt :YcmCompleter GetType<cr>
-nn Yf :YcmCompleter FixIt<cr>
 " nmap Alt {{{3
 nn <silent> <m-;> :Unite -buffer-name=buffer -start-insert buffer file<cr>
 nn <silent> <m-,> :Gtags <C-r><C-w><cr>

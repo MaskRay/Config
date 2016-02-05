@@ -1,0 +1,367 @@
+extends c
+
+snippet bend "$1.begin(), $1.end()"
+${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
+endsnippet
+
+snippet pair
+typedef pair<${1:int}, ${2:int}> `!p snip.rv = 'p'+t[1][0]+t[2][0]`
+endsnippet
+
+snippet foit "for int loop (foi)"
+for (${1:vector}<${2:int}>::iterator ${3:i} = ${4:a}.begin(); $3 != $4.end(); ++$3) {
+  ${0:/* code */}
+}
+endsnippet
+
+snippet mainw "main()"
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#include <algorithm>
+#include <cstdio>
+#include <functional>
+#include <map>
+#include <set>
+#include <utility>
+#include <vector>
+using namespace std;
+
+typedef int64_t ll;
+#define EACH(i, a) for (__typeof((a).begin()) i = (a).begin(); i != (a).end(); ++i)
+#define REP(i, n) for (int i = 0; i < (n); i++)
+#define REP1(i, n) for (int i = 1; i <= (n); i++)
+#define FOR(i, a, b) for (int i = (a); i < (b); i++)
+#define ROF(i, a, b) for (int i = (b); --i >= (a); )
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+
+typedef vector<int> VI;
+typedef pair<int, int> PII;
+
+int ri()
+{
+  int x;
+  scanf("%d", &x);
+  return x;
+}
+
+int main()
+{
+  $0
+}
+endsnippet
+
+snippet cl "class .. (class)"
+class ${1:`!p snip.rv = snip.basename or "name"`}
+{
+public:
+  ${1/(\w+).*/$1/}(${2:arguments});
+  virtual ~${1/(\w+).*/$1/} ();
+protected:
+  ${0:/* data */}
+};
+endsnippet
+
+snippet map "std::map (map)"
+map<${1:int}, ${2:int}> $0;
+endsnippet
+
+snippet vector "std::vector (v)"
+vector<${1:int}> $0;
+endsnippet
+
+snippet tp "template <typename ..> (template)"
+template <typename ${1:_InputIter}>
+endsnippet
+
+snippet fenwick
+void add(int a[], int n, int x, int delta)
+{
+  for (; x < n; x |= x+1)
+    fenwick[x] += delta;
+}
+
+void getSum(int a[], int x)
+{
+  int sum = 0;
+  for (; x; x &= x-1)
+    sum += fenwick[x-1];
+  return sum;
+}
+endsnippet
+
+snippet heavylight
+endsnippet
+
+snippet minv
+${1:a} = min($1, ${2:b});
+endsnippet
+
+snippet maxv
+${1:a} = max($1, ${2:b});
+endsnippet
+
+snippet ll
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#include <stdint.h>
+
+#ifndef LLONG_MAX
+#define LLONG_MAX 9223372036854775807LL
+#endif
+
+typedef int64_t i64;
+endsnippet
+
+snippet using
+using namespace std;
+endsnippet
+
+snippet suffix
+struct P
+{
+  int key[2], id;
+  bool operator<(const P &rhs) const {
+    return key[0] < rhs.key[0] || key[0] == rhs.key[0] && key[1] < rhs.key[1];
+  }
+} sa[N], sa2[N];
+
+void radix_sort(P *sa, P *sa2, int n, int k)
+{
+  fill_n(lcp, n, 0);
+  REP(i, n)
+    lcp[sa[i].key[k]]++;
+  FOR(i, 1, n)
+    lcp[i] += lcp[i-1];
+  ROF(i, 0, n)
+    sa2[--lcp[sa[i].key[k]]] = sa[i];
+}
+
+void suffix_array(const char a[], int n)
+{
+  REP(i, n)
+    sa[i].id = i, sa[i].key[0] = a[i], sa[i].key[1] = 0;
+  sort(sa, sa+n);
+  for (int k = 1; ; k *= 2) {
+    rnk[sa[0].id] = 0;
+    FOR(i, 1, n)
+      rnk[sa[i].id] = rnk[sa[i-1].id] + (sa[i-1] < sa[i]);
+    if (k >= n || rnk[sa[n-1].id] == n-1) break;
+    REP(i, n) {
+      sa[i].id = i;
+      sa[i].key[0] = rnk[i];
+      sa[i].key[1] = i+k < n ? rnk[i+k]+1 : 0;
+    }
+    radix_sort(sa, sa2, n, 1);
+    radix_sort(sa2, sa, n, 0);
+  }
+  for (int k = 0, i = 0; i < n; i++)
+    if (rnk[i]) {
+      for (int j = sa[rnk[i]-1].id; a[j+k] == a[i+k]; k++);
+      lcp[rnk[i]] = k;
+      if (k) k--;
+    }
+}
+endsnippet
+
+snippet morris
+void morrisPratt(int n)
+{
+  pi[0] = 0;
+  for (int j = 0, i = 1; i < n; i++) {
+    while (j && a[j] != a[i]) j = pi[j-1];
+    if (a[j] == a[i]) j++;
+    pi[i] = j;
+  }
+}
+endsnippet
+
+snippet lmcs
+int i = 0, j = 1;
+while (i < n && j < n) {
+  int k = 0;
+  while (k < n && a[(i+k)%n] == a[(j+k)%n])
+    k++;
+  if (a[(i+k)%n] < a[(j+k)%n]) j += k+1;
+  else i += k+1;
+  if (i == j) j++;
+}
+endsnippet
+
+snippet prime
+int pr[N/10], np = 0;
+bool sieved[N];
+
+void getPrimes()
+{
+    for (int i = 2; i < N; i++) {
+        if (!sieved[i]) pr[np++] = i;
+        for (int j = 0; j < np && i*pr[j] < N; j++) {
+            sieved[i*pr[j]] = true;
+            if (i%pr[j] == 0) break;
+        }
+    }
+}
+endsnippet
+
+snippet exgcd
+ll exgcd(ll a, ll b, ll &x, ll &y)
+{
+    if (!b) return x = 1, y = 0, a;
+    ll gcd = exgcd(b, a%b, y, x);
+    y -= a/b*x;
+    return gcd;
+}
+endsnippet
+
+snippet vec
+struct Vec
+{
+  double x, y;
+  Vec() {}
+  Vec(double x, double y) : x(x), y(y) {}
+  double cross(Vec a, Vec b) const {
+    return (a.x - x) * (b.y - y) - (a.y - y) * (b.x - x);
+  }
+  Vec operator+(Vec r) const { return Vec(x + r.x, y + r.y); }
+  Vec operator*(double r) const { return Vec(x * r, y * r); }
+  Vec operator/(double r) const { return Vec(x / r, y / r); }
+} $0;
+endsnippet
+
+snippet l2l
+Vec lineIntersectLine(Line p, Line q)
+{
+  double s = p.a.cross(q.a, p.b),
+    t = p.a.cross(p.b, q.b);
+  return (q.a * t + q.b * s) / (s + t);
+}
+endsnippet
+
+snippet area
+double polygonArea(const Vec pt[], int n)
+{
+  double area = 0;
+  Vec o(0, 0);
+  for (int i = 0; i < n; i++)
+    area += o.cross(pt[i], pt[(i+1)%n]);
+  return area / 2;
+}
+endsnippet
+
+snippet halfp
+bool cmp_ang(Line p, Line q)
+{
+  if (fabs(p.ang - q.ang) > eps) return p.ang < q.ang;
+  return q.a.cross(q.b, p.a) > 0;
+}
+
+int halfPlane(Line* a, int n, Vec* pt)
+{
+  sort(a, a+n, cmp_ang);
+
+  int m = 1;
+  for (int i = 1; i < n; i++)
+    if (fabs(a[i].ang - a[i-1].ang) > eps)
+      a[m++] = a[i];
+
+  int bot = 0, top = 1;
+  for (int i = 2; i < m; i++) {
+    while (bot < top && a[i].a.cross(a[i].b, lineIntersectLine(a[top-1], a[top])) < -eps)
+      top--;
+    while (bot < top && a[i].a.cross(a[i].b, lineIntersectLine(a[bot], a[bot+1])) < -eps)
+      bot++;
+    a[++top] = a[i];
+  }
+  while (bot < top && a[bot].a.cross(a[bot].b, lineIntersectLine(a[top-1], a[top])) < -eps)
+    top--;
+  while (bot < top && a[top].a.cross(a[top].b, lineIntersectLine(a[bot], a[bot+1])) < -eps)
+    bot++;
+
+  if (top - bot < 2) return 0;
+  m = 0;
+  for (int i = bot; i < top; i++)
+    pt[m++] = lineIntersectLine(a[i], a[i+1]);
+  pt[m++] = lineIntersectLine(a[top], a[bot]);
+  return m;
+}
+endsnippet
+
+snippet scc
+int scc[N], dfn[N], nscc, tick;
+vector<int> e[N];
+
+int tarjanScc(int u)
+{
+  static stack<int> S;
+  dfn[u] = tick;
+  int low = tick++;
+  S.push(u);
+  for (vector<int>::iterator i = e[u].begin(); i != e[u].end(); ++i)
+    if (dfn[*i] == -1)
+      low = min(low, tarjanScc(*i));
+    else if (scc[*i] == -1)
+      low = min(low, dfn[*i]);
+  if (low == dfn[u]) {
+    int v;
+    do scc[v = S.top()] = nscc, S.pop();
+    while (v != u);
+    nscc++;
+  }
+  return low;
+}
+
+fill_n(dfn, n, -1);
+fill_n(scc, n, -1);
+nscc = 0;
+for (int i = 0; i < n; i++)
+  if (dfn[i] == -1)
+    tarjanScc(i);
+endsnippet
+
+snippet bridge
+int bcc[N], dfn[N], parent[N], nbcc, tick;
+struct Edge
+{
+  Edge *next, *pair;
+  int v;
+} *e[N], *ee[N], pool[M*2], *pit;
+
+int bridgeConnected(int u, Edge* pre)
+{
+  static stack<int> S;
+  dfn[u] = tick;
+  int low = tick++;
+  S.push(u);
+  for (Edge* i = e[u]; i; i = i->next)
+    if (dfn[i->v] == -1) {
+      parent[i->v] = u;
+      low = min(low, bridgeConnected(i->v, i));
+      // if (low[i->v] > dfn[u]) then mark i as bridge
+    } else if (i->pair != pre)
+      low = min(low, dfn[i->v]);
+  if (low == dfn[u]) {
+    int v;
+    do bcc[v = S.top()] = nbcc, S.pop(), sum[nbcc] += val[v];
+    while (v != u);
+    nbcc++;
+  }
+  return low;
+}
+endsnippet
+
+snippet fi
+#define fi first
+endsnippet
+
+snippet se
+#define se second
+endsnippet
+
+snippet ALL
+#define ALL(x) (x).begin(), (x).end()
+endsnippet
+
+# vim:ft=snippets:
