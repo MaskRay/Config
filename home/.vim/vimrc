@@ -295,7 +295,7 @@ aug C
   au BufEnter *.cpp let b:fswitchdst = 'hpp,hh,h' | let b:fswitchlocs = './,../include'
   au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
   au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
-  au BufEnter *.h let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
+  au BufEnter *.h let b:fswitchdst = 'cpp,cc,c' | let b:fswitchlocs = '.'
 " Haskell {{{2
 aug Haskell
   au!
@@ -482,6 +482,7 @@ let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
 let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
+let g:ycm_extra_conf_globlist = ['~/Dev/*']
 let g:ycm_key_invoke_completion = '<c-s-i>'
 let g:ycm_key_detailed_diagnostics = "<leader>yd"
 let g:ycm_complete_in_comments = 1
@@ -491,7 +492,7 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_key_list_select_completion = ['<c-n>', '<down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<up>']
-let g:ycm_confirm_extra_conf = 0
+let g:ycm_confirm_extra_conf = 1
 let g:ycm_cache_omnifunc = 1
 let g:ycm_filetype_blacklist = {'python': 1}
 let g:ycm_auto_trigger = 0
