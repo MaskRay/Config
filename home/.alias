@@ -143,7 +143,6 @@ alias xst='xstow -d ~/.local/stow'
 alias R='R --quiet'
 alias dstat='dstat -dnmcl --socket --top-io -N enp4s0f2,wlp3s0'
 alias rsync='rsync --progress --partial'
-alias xsel='xsel -l /dev/null'
 alias luit='luit -encoding gbk'
 alias wine='WINEDEBUG=-all wine' # turn debugging messages off
 
@@ -157,7 +156,7 @@ fi
 
 alias du1='du --max-depth 1 | sort -rh | head'
 alias adate='for i in Asia/{Shanghai,Tokyo} Europe/{Berlin,London} US/{Eastern,Pacific}; do printf %-22s "$i ";TZ=:$i date +"%F %a %T %Z";done'
-alias port='netstat -ntlp'
+alias port='sudo netstat -ntlp'
 alias 2pdf='libreoffice --headless --convert-to pdf' # unoconv -f pdf
 alias 2csv='libreoffice --headless --convert-to csv'
 alias g2u='iconv -f GBK -t UTF-8'

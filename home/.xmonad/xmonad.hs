@@ -277,7 +277,6 @@ myKeys =
     ]
     ++
     [ ("M-l", switchTopic myTopicConfig "web")
-    , ("M-;", switchTopic myTopicConfig "emacs")
     , ("M-'", switchTopic myTopicConfig "term")
     , ("M-S-q", io exitFailure)
     , ("M-S-c", kill)
@@ -286,8 +285,8 @@ myKeys =
     , ("<Print>", spawn "import /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", urxvt "weechat", "emacs --daemon", "xterm", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype' &")
+    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -431,7 +430,7 @@ scratchpads =
   map f ["alsamixer", "cmus", "erl", "ghci", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
-  , NS "zeal" "zeal" (className =? "Zeal") doSPFloat
+  --, NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where
     f cmd = NS name (termite cmd) (fmap (name `isPrefixOf`) title) doSPFloat
@@ -576,7 +575,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
-    , TI "nvim" "" (spawn (termite "nvim")) "gvim.xpm"
+    , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"

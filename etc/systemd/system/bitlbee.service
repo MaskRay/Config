@@ -1,9 +1,0 @@
-[Unit]
-Description=Bitlbee
-After=syslog-ng.target
-
-[Service]
-ExecStart=/usr/sbin/bitlbee -D -n -u bitlbee
-
-[Install]
-WantedBy=multi-user.target

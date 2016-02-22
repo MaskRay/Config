@@ -32,7 +32,7 @@ set breakindent
 set sidescroll=10 sidescrolloff=10
 set switchbuf=useopen
 "set ignorecase smartcase
-set timeoutlen=300
+set timeoutlen=600
 set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
 set laststatus=2
@@ -125,8 +125,8 @@ if has("gui_running")
 endif
 if has('nvim')
   " Neovim-qt Guifont command
-  command -nargs=? Guifont call rpcnotify(0, 'Gui', 'SetFont', "<args>") | let g:Guifont="<args>"
-  Guifont Fantasque Sans Mono:h18
+  "command -nargs=? Guifont call rpcnotify(0, 'Gui', 'SetFont', "<args>") | let g:Guifont="<args>"
+  "Guifont Fantasque Sans Mono:h18
 endif
 
 " Colorschemes ---------------------------------------- {{{1
@@ -398,9 +398,10 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'KabbAmine/zeavim.vim'
 
 " Languages
-"Plug 'emmet'
+Plug 'mattn/emmet-vim'
 "Plug 'pytest.vim'
 Plug 'python-mode', { 'branch': 'develop' }
 Plug 'LaTeX-Box-Team/LaTeX-Box'
@@ -422,57 +423,23 @@ Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 
-"so ~/.opam/system/share/vim/syntax/ocp-indent.vim
-so /usr/share/gtags/gtags.vim
+if filereadable('/usr/share/gtags/gtags.vim')
+  so /usr/share/gtags/gtags.vim
+endif
 ru macros/matchit.vim
 
 " TODO neovim
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
-execute "set rtp+=" . g:opamshare . "/merlin/vimbufsync"
-let g:syntastic_ocaml_checkers=['merlin']
-" Startify {{{1
-let g:unite_source_alias_aliases = {
-      \   "startup_file_mru" : {
-      \       "source" : "file_mru",
-      \   },
-      \   "startup_directory_mru" : {
-      \       "source" : "directory_mru",
-      \   },
-      \}
-if !exists("g:unite_source_menu_menus")
-  let g:unite_source_menu_menus = {}
+if filereadable(glob('~/.opam'))
+  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  execute "set rtp+=" . g:opamshare . "/merlin/vim"
+  let g:syntastic_ocaml_checkers=['merlin']
 endif
-let g:unite_source_menu_menus.startup = {
-      \   "description" : "startup menu",
-      \   "command_candidates" : [
-      \       [ "vimrc",  "edit " . $MYVIMRC ],
-      \       [ "unite-file_mru", "Unite file_mru" ],
-      \       [ "unite-directory_mru", "Unite directory_mru" ],
-      \   ]
-      \}
-call unite#custom_max_candidates("startup_file_mru", 5)
-call unite#custom_max_candidates("startup_directory_mru", 5)
-fu! Startup()
-  if ! argc()
-    exe 'UniteStartup'
-  endif
-endf
-command! UniteStartup Unite
-      \ -quick-match -hide-source-names -no-split
-      \ output:echo\ "===\ file\ mru\ ===" startup_file_mru
-      \ output:echo\ "===\ directory\ mru\ ===" startup_directory_mru
-      \ output:echo\ "===\ menu\ ===" menu:startup
-aug Startup
-  au!
-  au VimEnter * nested call Startup()
-aug END
-" deoplete {{{2
-let g:deoplete#enable_at_startup = 1
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_leader_key = "s"
+" emmet {{{2
+let g:user_emmet_leader_key = '<C-z>'
 " FSwitch {{{2
 command! A FSHere
 command! AV FSSplitRight
@@ -565,8 +532,6 @@ au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal g`\"" |
       \ endif
-
-nn K :silent !zeal --query "<cword>" & wmctrl -a zeal <cr>
 
 " ; :
 nn ; :
@@ -701,11 +666,16 @@ cnoreab cdh cd %:p:h
 cnoreab lcdh lcd %:p:h
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap -------- {{{2
-" nmap - -------- {{{3
-nn -+ :set modified!<cr>
 " nmap <leader> {{{3
 nn <leader>fc :lcd %:p:h<cr>
 nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
+" nmap <leader>a {{{4
+nn <leader>at :TagbarToggle<cr>
+nn <leader>as :terminal<cr>
+nn <leader>au :GundoToggle<cr>
+" nmap <leader>b (buffer) {{{4
+nn <leader>bd :bdelete<cr>
+nn <leader>bR :e<cr>
 " nmap <leader>c (ctags) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
 " nmap <leader>d (diff) {{{4
@@ -716,13 +686,16 @@ nn <leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
-" nmap <leader>g (Fugitive) {{{4
-nn <leader>gg :GitGutterToggle<cr>
-nn <leader>gs :Gstatus<CR>
-nn <leader>gd :Gdiff<CR>
-nn <leader>gc :Gcommit<CR>
+" nmap <leader>f (file) {{{4
+nn <leader>fed :e ~/.vim/vimrc<cr>
+nn <leader>feR :so ~/.vim/vimrc<cr>
+" nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<CR>
+nn <leader>gc :Gcd<CR>
+nn <leader>gd :Gdiff<CR>
+nn <leader>gg :GitGutterToggle<cr>
 nn <leader>gp :Git push<CR>
+nn <leader>gs :Gstatus<CR>
 " nmap <leader>h (highlight) {{{4
 nn <leader>hh :execute 'match InterestingWord1 /\<c-r><c-w>\>/'<cr>
 nn <leader>h1 :execute 'match InterestingWord1 /\<c-r><c-w>\>/'<cr>
@@ -731,16 +704,33 @@ nn <leader>h3 :execute '3match InterestingWord3 /\<c-r><c-w>\>/'<cr>
 hi InterestingWord1 guifg=#000000 guibg=#FF4300 ctermfg=16 ctermbg=196
 hi InterestingWord2 guifg=#000000 guibg=#53FF00 ctermfg=16 ctermbg=82
 hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
+" nmap <leader>w (window) {{{4
+nn <leader>w- :sp<cr>
+nn <leader>w/ :vsp<cr>
 " nmap <leader>h (Unite) {{{4
 nn <silent> <leader>hb :Unite -quick-match buffer<cr>
 nn <silent> <leader>hc :Unite -buffer-name=change change<cr>
 nn <silent> <leader>hd :Unite -buffer-name=file -start-insert directory_mru<cr>
 nn <silent> <leader>hf :Unite -buffer-name=file -start-insert file<cr>
-nn <silent> <leader>hg :Unite -buffer-name=ag grep<cr>
+nn <silent> <leader>hF :UniteWithBufferDir -buffer-name=file -start-insert file<cr>
+nn <silent> <leader>hg :Unite -buffer-name=grep grep<cr>
+nn <silent> <leader>hG :UniteResume grep<cr>
 nn <silent> <leader>hl :Unite -auto-resize -start-insert -buffer-name=line line<cr>
 nn <silent> <leader>hm :Unite -buffer-name=file -start-insert file_mru<cr>
-nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/async<cr>
+nn <silent> <leader>hM :Unite mapping<cr>
+if has('nvim')
+  nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/neovim<cr>
+else
+  nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/async<cr>
+endif
 nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+" nmap <leader>t (toggle) {{{4
+nn <leader>thc :set cursorcolumn!<cr>
+nn <leader>tb :set breakindent!<cr>
+nn <leader>ti :IndentGuidesToggle<cr>
+nn <leader>tl :set wrap!<cr>
+nn <leader>ts :SyntasticToggleMode<cr>
+nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
 " nmap <leader> misc {{{4
 nn <leader>1 :set cmdheight=1<cr>
 nn <leader>2 :set cmdheight=2<cr>
@@ -753,21 +743,15 @@ nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nn <leader>ig :IndentGuidesToggle<cr>:se list!<cr>
-nn <Leader>mk :call Make()<cr>
 nn <leader>jf :JunkFile<cr>
-nn <leader>st :SyntasticToggleMode<cr>
-nn <leader>tb :TagbarToggle<cr>
-nn <leader>u :GundoToggle<cr>
-nn <leader>w :set wrap!<CR>
-nn <leader>wh :call ToggleUnwantedWhitespaces()<cr>
-nn <leader>z zMzzzv
+"nn <leader>z zMzzzv
 nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
-" nmap s (EasyMotion) TODO {{{3
+" nmap s (easymotion) TODO {{{3
 "nn sl <Plug>(easymotion-lineforward)
 "nn sh <Plug>(easymotion-linebackward)
-" nmap Y (YouCompleteMe) {{{3
+" nmap Y (youcompleteme) {{{3
 "nn Ys :Gtags -s <C-r><C-w><cr>
 "nn Yr :Gtags -r <C-r><C-w><cr>
 "nn Yp :Gtags -P <C-r><C-w><cr>
@@ -775,23 +759,25 @@ nn ga <Plug>(EasyAlign)
 "nn Y<space> :Gtags
 nn Yc :YcmCompleter GoToDeclaration<cr>
 nn Yd :YcmCompleter GetDoc<cr>
-nn Yf :YcmCompleter FixIt<cr>
+nn Yx :YcmCompleter FixIt<cr>
 nn Yf :YcmCompleter GoToDefinition<cr>
 nn Yi :YcmCompleter GoToInclude<cr>
 nn Yr :YcmCompleter GoToReferences<cr>
 nn Yt :YcmCompleter GetType<cr>
 " nmap Alt {{{3
-nn <silent> <m-;> :Unite -buffer-name=buffer -start-insert buffer file<cr>
-nn <silent> <m-,> :Gtags <C-r><C-w><cr>
-nn <silent> <m-.> :YcmCompleter GoTo<cr>
+nn <silent> <M-;> :Unite -buffer-name=buffer -start-insert buffer file<cr>
+nn <silent> <M-,> :Gtags <C-r><C-w><cr>
+nn <silent> <M-.> :YcmCompleter GoTo<cr>
+nn <M-down> :lnext<cr>zvzz
+nn <M-up> :lprevious<cr>zvzz
+nn <M-n> :cnext<cr>zvzz
+nn <M-p> :cprevious<cr>zvzz
+nn <M-h> <C-w>h
+nn <M-j> <C-w>j
+nn <M-k> <C-w>k
+nn <M-l> <C-w>l
 " nmap misc {{{3
 nn <silent> <C-l> :nohls<cr><C-l>
-nn gz :bdelete<cr>
-" Error navigation
-nn <m-down> :lnext<cr>zvzz
-nn <m-up> :lprevious<cr>zvzz
-nn <m-j> :cnext<cr>zvzz
-nn <m-k> :cprevious<cr>zvzz
 " imap {{{2
 " move in insert mode
 ino <m-h> <left>
@@ -843,6 +829,13 @@ function! s:NextTextObject(motion, dir)
 
   exe "normal! ".a:dir.c."v".a:motion.c
 endfunction
+" tmap {{{2
+if exists(':tnoremap')
+  tno <M-h> <C-\><C-n><C-w>h
+  tno <M-j> <C-\><C-n><C-w>j
+  tno <M-k> <C-\><C-n><C-w>k
+  tno <M-l> <C-\><C-n><C-w>l
+endif
 
 " Load local vimrc if exists -------------------------- {{{1
 if filereadable(glob("~/.vimrc.local"))

@@ -101,7 +101,10 @@
   insteadOf = gh:
 [core]
 	quotePath = false
-[http]
-	proxy = http://192.168.7.23:3128
-[https]
-	proxy = http://192.168.7.23:3128
+#[http]
+#	proxy = http://192.168.7.23:3128
+#[https]
+#	proxy = http://192.168.7.23:3128
+[pager]
+	diff = diff-so-fancy | less --tabs=1,5 -RFX
+	show = diff-so-fancy | less --tabs=1,5 -RFX

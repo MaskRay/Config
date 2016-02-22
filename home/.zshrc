@@ -17,7 +17,8 @@ if (( ! ${+WINDOWID} )) {
 
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
-export PATH=~/bin:~/.local/bin:~/bin/ssh:$PATH
+typeset -U path
+path=(~/bin ~/.local/bin ~/bin/ssh "$path[@]")
 export EDITOR=vim
 export LESS="-FiMRwX --shift 5 -z-4"
 export MENUCONFIG_COLOR=blackbg

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=llpp
-Type=Application
-Comment=a graphical PDF viewer which aims to superficially resemble less(1)
-Terminal=false
-TryExec=llpp
-Exec=llpp %f
-Categories=Office;Viewer;
-MimeType=application/pdf;
