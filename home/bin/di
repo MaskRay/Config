@@ -1,0 +1,23 @@
+#!/bin/zsh
+case $1 in
+  1)
+    xrandr --output eDP1 --mode 1920x1080 --output HDMI1 --off
+    ;;
+  2)
+    xrandr --output eDP1 --off --output HDMI1 --auto
+    ;;
+  3)
+    xrandr --output HDMI1 --mode 1920x1080 --output eDP1 --mode 1920x1080 --right-of HDMI1
+    ;;
+  l)
+    read dev size <<< $(xrandr | awk '/^[A-Z]{2,}[0-9] connected/{dev=$1} /^   [0-9x]+/&&dev&&dev!="eDP1"{print dev" "$1;exit}')
+    xrandr --output eDP1 --mode 1920x1080 --output $dev --mode $size --right-of eDP1
+    ;;
+  r)
+    read dev size <<< $(xrandr | awk '/^[A-Z]{2,}[0-9] connected/{dev=$1} /^   [0-9x]+/&&dev&&dev!="eDP1"{print dev" "$1;exit}')
+    xrandr --output $dev --mode $size --output eDP1 --mode 1920x1080 --right-of $dev
+    ;;
+  asc)
+    xrandr --output eDP1 --mode 1920x1080 --output VGA1 --mode 1440x900 --right-of eDP1
+    ;;
+esac

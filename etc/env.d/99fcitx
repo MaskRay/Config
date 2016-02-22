@@ -1,2 +1,0 @@
-GTK_IM_MODULE="xim"
-XMODIFIERS="@im=fcitx"

@@ -1,0 +1,13 @@
+[Unit]
+Description=Create AP Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/create_ap --no-virt wlp3s0 -g 10.0.0.1 enp4s0f2 raymeow meowmeow
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

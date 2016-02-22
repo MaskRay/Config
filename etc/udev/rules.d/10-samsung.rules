@@ -1,7 +1,0 @@
-KERNEL!="sdb", GOTO="samsung_exit"
-
-ACTION=="change", RUN+="/bin/mkdir /media/%E{ID_MODEL}", RUN+="/bin/mount -o uid=1000,user,codepage=936,utf8 $root/%k /media/%E{ID_MODEL}"
-ACTION=="remove", ENV{ID_USB_DRIVER}=="usb-storage", RUN+="/bin/umount /media/%E{ID_MODEL}", RUN+="/bin/rmdir /media/%E{ID_MODEL}"
-
-
-LABEL="samsung_exit"
