@@ -1,6 +1,6 @@
 #%Module
 prepend-path PATH $env(HOME)/perl5/bin
-prepend-path PERL_LOCAL_LIB_ROOT "$env(HOME)/perl5"
-prepend-path PERL5LIB "$env(HOME)/perl5/lib"
-setenv PERL_MB_OPT "--install_base $env(HOME)/perl5"
-setenv PERL_MM_OPT "INSTALL_BASE=$env(HOME)/perl5"
+#prepend-path PERL_LOCAL_LIB_ROOT "$env(HOME)/perl5"
+prepend-path PERL5LIB "$env(HOME)/perl5/lib/perl5"
+#setenv PERL_MB_OPT "--install_base $env(HOME)/perl5"
+#setenv PERL_MM_OPT "INSTALL_BASE=$env(HOME)/perl5"

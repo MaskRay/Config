@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+# Generate .in/.out test cases from Codeforces Examples
+# codeforces -u http://codeforces.com/contest/.../problem/A A
+# codeforces -u http://codeforces.com/contest/.../problem/B B
+# codeforces C < C.html
+from argparse import ArgumentParser
+from pyquery import PyQuery as pq
+import os, re, sys, urllib.request
+
+
+def dump(options, case, input, output):
+    name = options.name[0]
+    with open(os.path.join(options.path, '{}.{}.in'.format(
+            name, case)), 'w') as f:
+        for l in input:
+            f.write(l)
+            f.write('\n')
+    with open(os.path.join(options.path, '{}.{}.out'.format(
+            name, case)), 'w') as f:
+        for l in output:
+            f.write(l)
+            f.write('\n')
+
+
+def main():
+    ap = ArgumentParser(description='Generate .in/.out test cases from Codeforces Examples')
+    ap.add_argument('-p', '--path', default='.')
+    ap.add_argument('-u', '--url')
+    ap.add_argument('name', nargs=1, help='Problem name')
+    options = ap.parse_args()
+    state = 0
+    case = 0
+    input, output = [], []
+
+    if options.url:
+        with urllib.request.urlopen(options.url) as r:
+            data = r.read()
+            doc = pq(data)
+            e = doc('.sample-test')
+            inpre = e('.input > pre')
+            outpre = e('.output > pre')
+            assert len(inpre) == len(outpre)
+            for inpre, outpre in zip(inpre, outpre):
+                input = [inpre.text.rstrip()]
+                for br in inpre:
+                    if br.tail is not None:
+                        input.append(br.tail.rstrip())
+                output = [outpre.text.rstrip()]
+                for br in outpre:
+                    if br.tail is not None:
+                        output.append(br.tail.rstrip())
+                dump(options, case, input, output)
+                case += 1
+
+    else:
+        data = sys.stdin.read()
+        for line in data.splitlines():
+            if state == 0:
+                if line == 'Examples':
+                    state = 1
+            elif state == 1:
+                if line == 'input':
+                    state = 2
+            elif state == 2:
+                if not line:
+                    state = 0
+                elif line == 'output':
+                    state = 3
+                else:
+                    input.append(line.rstrip())
+            else:
+                if re.match(r'(Note|)$', line):
+                    state = 0
+                elif line == 'input':
+                    state = 2
+                else:
+                    output.append(line.rstrip())
+                if state != 3:
+                    dump(options, case, input, output)
+                    case += 1
+                    input.clear()
+                    output.clear()
+
+
+if __name__ == '__main__':
+    sys.exit(main())

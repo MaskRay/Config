@@ -1,0 +1,33 @@
+settings set target.x86-disassembly-flavor intel
+
+command script import ~/.lldb/python/parray.py
+command script add --function parray.parray parray
+
+# 't' was an abbreviation for 'thread select'
+command unalias t
+command regex t 's/^([0-9]+)[[:space:]]*$/thread select %1/' 's/(.*)/thread %1/'
+
+# 'r' was an abbreviation for 'process launch -c /bin/sh --'
+command unalias r
+command alias r process launch
+
+# 'd'
+command alias d breakpoint delete
+command alias delete breakpoint delete
+
+# 'dis'
+command alias dis breakpoint disable
+command alias disable breakpoint disable
+
+# 'en'
+# 'enable'
+command alias en breakpoint enable
+command alias enable breakpoint enable
+
+# ignore <breakpoint> <count>
+command alias ignore breakpoint modify -i %2 %1
+
+# 'u'
+# 'until'
+command alias u thread until
+command alias until thread until

@@ -107,6 +107,8 @@ alias umount='sudo umount'
 # dev {{{1
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 alias gdb='gdb -q'
+alias cl=clang++
+alias db=lldb
 alias jc=/usr/lib/j8/bin/jconsole
 alias jqt=/usr/lib/j8/bin/jqt
 alias lid.sys='lid -f ~/Util/idutils/usr-include.ID'
@@ -120,7 +122,7 @@ unflag() { set -x; unset CFLAGS CXXFLAGS; set +x; }
 # applications {{{1
 alias book='cd ~/Book && xdg-open http://0:4000; gitbook serve -o /tmp/book'
 alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
-alias clip='xsel -ib'
+alias clip='xclip -i -selection clipboard'
 alias dhc='sudo dhcpcd -x wlp3s0; sudo dhcpcd wlp3s0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias drsync='rsync --progress --partial --delete --size-only'
 alias mt=multitail

@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+if [[ -z $1 ]]; then
+  cat $0
+elif [[ -f $1 ]]; then
+  curl -F 'vimcn=<-' https://cfp.vim-cn.com/ | tee >(xclip -i)
+else
+  echo cannot access $1
+fi

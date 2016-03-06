@@ -53,6 +53,13 @@ int main()
 }
 endsnippet
 
+snippet main
+int main()
+{
+  $0
+}
+endsnippet
+
 snippet cl "class .. (class)"
 class ${1:`!p snip.rv = snip.basename or "name"`}
 {
@@ -362,6 +369,50 @@ endsnippet
 
 snippet ALL
 #define ALL(x) (x).begin(), (x).end()
+endsnippet
+
+snippet blankinship
+ll blankinship(ll a, ll b, ll &x, ll &y)
+{
+  for (ll u = y = 1, v = x = 0; a; ) {
+    ll q = b/a;
+    swap(x -= q*u, u);
+    swap(y -= q*v, v);
+    swap(b -= q*a, a);
+  }
+  return b;
+}
+endsnippet
+
+snippet mul_mod
+ll mul_mod(ll a, ll b, ll mod)
+{ 
+  // mod < 2**62
+  ll x = a*b, r = x - mod*ll(double(a)*double(b)/mod+0.5);
+  return r < 0 ? r + mod : r;
+}
+endsnippet
+
+snippet inv
+ll inv(ll a, ll mod)
+{
+  ll x, y;
+  blankinship(a, mod, x, y);
+  return x < 0 ? x + mod : x;
+}
+endsnippet
+
+snippet pow_mod
+ll pow_mod(ll a, ll b, ll mod)
+{
+  ll r = 1;
+  for (; b; b >>= 1) {
+    if (b & 1)
+      r = r * a % mod;
+    a = a * a % mod;
+  }
+  return r;
+}
 endsnippet
 
 # vim:ft=snippets:

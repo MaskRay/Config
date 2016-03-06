@@ -1,6 +1,0 @@
-#!/bin/bash
-f=()
-for x in /var/log/emerge.log*; do
-    f=("${f[@]}" -f "$x")
-done
-exec /usr/bin/genlop "${f[@]}" "$@"

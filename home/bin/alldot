@@ -6,7 +6,8 @@ cat > $T <<'e'
 #!/usr/bin/expect --
 eval spawn [lrange $argv 0 end]
 
-send "/diff --git\r"
+#send "/diff --git\r"
+send "/--- a\/\r"
 
 interact s {
   exec tmux splitw -h

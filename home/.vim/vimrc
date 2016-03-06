@@ -670,12 +670,16 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap <leader> {{{3
 nn <leader>fc :lcd %:p:h<cr>
 nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
+" nmap <leader><leader> (easymotion) TODO {{{3
+"nn <leader><leader>l <Plug>(easymotion-lineforward)
+"nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
 nn <leader>at :TagbarToggle<cr>
 nn <leader>as :terminal<cr>
 nn <leader>au :GundoToggle<cr>
+nn <leader>ag :%!genhdr<cr>
 " nmap <leader>b (buffer) {{{4
-nn <leader>bd :bdelete<cr>
+nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
 " nmap <leader>c (ctags) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
@@ -749,22 +753,20 @@ nn <leader>jf :JunkFile<cr>
 nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
-" nmap s (easymotion) TODO {{{3
-"nn sl <Plug>(easymotion-lineforward)
-"nn sh <Plug>(easymotion-linebackward)
-" nmap Y (youcompleteme) {{{3
-"nn Ys :Gtags -s <C-r><C-w><cr>
-"nn Yr :Gtags -r <C-r><C-w><cr>
-"nn Yp :Gtags -P <C-r><C-w><cr>
-"nn Yg :Gtags -g <C-r><C-w><cr>
-"nn Y<space> :Gtags
-nn Yc :YcmCompleter GoToDeclaration<cr>
-nn Yd :YcmCompleter GetDoc<cr>
-nn Yx :YcmCompleter FixIt<cr>
-nn Yf :YcmCompleter GoToDefinition<cr>
-nn Yi :YcmCompleter GoToInclude<cr>
-nn Yr :YcmCompleter GoToReferences<cr>
-nn Yt :YcmCompleter GetType<cr>
+" nmap Y (global) {{{3
+nn Ys :Gtags -s <C-r><C-w><cr>
+nn Yr :Gtags -r <C-r><C-w><cr>
+nn Yp :Gtags -P <C-r><C-w><cr>
+nn Yg :Gtags -g <C-r><C-w><cr>
+nn Y<space> :Gtags
+" nmap s (youcompleteme) {{{3
+nn sc :YcmCompleter GoToDeclaration<cr>
+nn sd :YcmCompleter GetDoc<cr>
+nn sx :YcmCompleter FixIt<cr>
+nn sf :YcmCompleter GoToDefinition<cr>
+nn si :YcmCompleter GoToInclude<cr>
+nn sr :YcmCompleter GoToReferences<cr>
+nn st :YcmCompleter GetType<cr>
 " nmap Alt {{{3
 nn <silent> <M-;> :Unite -buffer-name=buffer -start-insert buffer file<cr>
 nn <silent> <M-,> :Gtags <C-r><C-w><cr>
@@ -790,6 +792,11 @@ ino <C-Y> <C-C>:let @z = @"<CR>mz
       \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
       \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
       \`zp:let @" = @z<CR>a
+" imap Alt {{{3
+ino <M-h> <C-w>h
+ino <M-j> <C-w>j
+ino <M-k> <C-w>k
+ino <M-l> <C-w>l
 " xmap {{{2
 xn ga <Plug>(EasyAlign)
 xn <C-c> "+y
