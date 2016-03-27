@@ -287,7 +287,7 @@ myKeys =
     , ("S-<Print>", spawn "import /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Zeal' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
@@ -428,9 +428,10 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "ghci", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
+  map f ["alsamixer", "cmus", "erl", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
+  , NS "ghci" "termite -t ghci -e 'stack ghci'" (title =? "ghci") doSPFloat
   --, NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where

@@ -8,7 +8,6 @@ command unalias t
 command regex t 's/^([0-9]+)[[:space:]]*$/thread select %1/' 's/(.*)/thread %1/'
 
 # 'r' was an abbreviation for 'process launch -c /bin/sh --'
-command unalias r
 command alias r process launch
 
 # 'd'

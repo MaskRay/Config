@@ -31,4 +31,5 @@ synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
 # vim merlin
 echo 'PKG core' > /tmp/.merlin
 
+systemd --user start graphical.target
 exec xmonad

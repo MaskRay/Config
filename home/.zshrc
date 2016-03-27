@@ -18,12 +18,12 @@ if (( ! ${+WINDOWID} )) {
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 typeset -U path
-path=(~/bin ~/.local/bin ~/bin/ssh "$path[@]")
+path=(~/bin ~/.local/bin "$path[@]")
 
 [[ $TERM = xterm-termite ]] && export TERM=xterm-256color
 
 # Look {{{1
-PROMPT=$'%F{blue}\u256d\u2500%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}\u2570\u2500%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
+PROMPT=$'%F{blue}%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
@@ -76,7 +76,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 setopt nobeep
 
-fpath=($HOME/Util/zsh-completions/src/ $HOME/.zsh/zsh-jump-target/functions $fpath)
+fpath=($HOME/Util/zsh-completions/src/ $fpath)
 
 # Completion {{{1
 autoload -U compinit
@@ -292,9 +292,9 @@ zle -N self-insert url-quote-magic
 
 # jump-target {{{2
 # https://github.com/scfrazer/zsh-jump-target
-autoload -Uz jump-target
-zle -N jump-target
-bindkey "^J" jump-target
+#autoload -Uz jump-target
+#zle -N jump-target
+#bindkey "^J" jump-target
 
 
    # Imports {{{1

@@ -415,4 +415,119 @@ ll pow_mod(ll a, ll b, ll mod)
 }
 endsnippet
 
+snippet find
+int find(int x)
+{
+  while (uf[x] >= 0) {
+    if (uf[uf[x]] >= 0)
+      uf[x] = uf[uf[x]];
+    x = uf[x];
+  }
+  return x;
+}
+endsnippet
+
+snippet lct
+namespace LCT
+{
+  extern struct Node null;
+  struct Edge;
+  struct Node {
+    int flip, w;
+    Node *c[2], *p, *opt;
+    void init() {
+      c[0] = c[1] = p = &null;
+      flip = 0;
+      w = -1;
+      opt = this;
+    }
+    void mconcat() {
+      opt = this;
+      REP(d, 2)
+        if (c[d]->opt->w > opt->w)
+          opt = c[d]->opt;
+    }
+    void setc(int d, Node *x) {
+      c[d] = x;
+      x->p = this;
+      mconcat();
+    }
+    void untag() {
+      if (! flip) return;
+      flip = 0;
+      c[0]->flip ^= 1;
+      c[1]->flip ^= 1;
+      swap(c[0], c[1]);
+    }
+    void zag(int d) {
+      Node *x = c[d], *p = this->p;
+      setc(d, x->c[d^1]);
+      x->setc(d^1, this);
+      x->p = p;
+      if (p->c[0] == this)
+        p->c[0] = x;
+      else if (p->c[1] == this)
+        p->c[1] = x;
+    }
+    void splay() {
+      while (p->c[0] == this || p->c[1] == this) {
+        Node *p = this->p, *g = p->p;
+        if (g->c[0] == p || g->c[1] == p) {
+          g->untag();
+          p->untag();
+          untag();
+          if (g->c[0] == p) {
+            if (p->c[0] != this)
+              p->zag(1);
+            g->zag(0);
+          } else {
+            if (p->c[0] == this)
+              p->zag(0);
+            g->zag(1);
+          }
+        } else {
+          p->untag();
+          untag();
+          p->zag(p->c[0] != this);
+        }
+      }
+      untag();
+    }
+    void expose() {
+      Node *x = this, *y = &null;
+      for (; x != &null; y = x, x = x->p) {
+        x->splay();
+        x->setc(1, y);
+      }
+      splay();
+    }
+    void evert() {
+      expose();
+      flip = 1;
+    }
+    bool same_root(Node *o) {
+      expose();
+      o->expose();
+      return p != &null;
+    }
+    void link(Node *o) {
+      o->evert();
+      o->p = this;
+    }
+    void cut(Node *o) {
+      evert();
+      o->expose();
+      p = &null;
+      o->setc(0, &null);
+    }
+    Edge *query(Node *o) {
+      evert();
+      o->expose();
+      return (Edge *)o->opt;
+    }
+  } null, nodes[N];
+  struct Edge : Node { Node *x, *y; } edges[N];
+};
+endsnippet
+
 # vim:ft=snippets:

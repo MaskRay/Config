@@ -1,0 +1,11 @@
+[Unit]
+Description=Create socks5 proxy
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/autossh -N -M 0 -D 1088 -o ControlMaster=no -i /home/ray/.ssh/id_ed25519 %I
+Restart=always
+RestartSec=600
+
+[Install]
+WantedBy=default.target

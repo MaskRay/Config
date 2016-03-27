@@ -103,6 +103,7 @@ alias perf='sudo perf'
 alias ss='sudo ss'
 alias tc='sudo tc'
 alias umount='sudo umount'
+alias sv='sudo vi'
 
 # dev {{{1
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'

@@ -302,6 +302,18 @@ aug Haskell
   au FileType haskell :call Haskell_init()
 fu! Haskell_init()
   setl omnifunc=necoghc#omnifunc
+  nn <buffer> <leader>mc :GhcModCheck<cr>
+  nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
+  nn <buffer> <leader>mt :GhcModType<cr>
+  nn <buffer> <leader>mT :GhcModTypeInsert<cr>
+  nn <buffer> <leader>mi :GhcModInfo<cr>
+  nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T stack runghc <C-r>=expand('%:p')<cr> < i<cr>
+endf
+" Java {{{2
+aug Java
+  au!
+  au FileType java :call Java_init()
+fu! Java_init()
 endf
 " Make {{{2
 au FileType make setl ts=8 sts=0 sw=8 noet
@@ -364,9 +376,10 @@ Plug 'majutsushi/tagbar'
 Plug 'sjl/gundo.vim'
 
 " Tools
+"Plug 'Shougo/neocomplete.vim'
+Plug 'kassio/neoterm'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'Shougo/deoplete.nvim'
-"Plug 'Shougo/neocomplete.vim'
 Plug 'Shougo/neomru.vim'
 Plug 'Shougo/neoyank.vim'
 Plug 'Shougo/unite.vim'
@@ -379,10 +392,11 @@ Plug 'chrisbra/NrrwRgn'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'glts/vim-textobj-comment'
 Plug 'glts/vim-textobj-indblock'
-Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
+Plug 'haya14busa/incsearch.vim'
 Plug 'janko-m/vim-test'
 Plug 'kana/vim-textobj-user'
+Plug 'kassio/zeavim.vim'
 Plug 'lucapette/vim-textobj-underscore'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'qstrahl/vim-matchmaker'
@@ -398,7 +412,6 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'KabbAmine/zeavim.vim'
 
 " Languages
 Plug 'mattn/emmet-vim'
@@ -420,6 +433,7 @@ Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
 "Plug 'gorodinskiy/vim-coloresque'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'sheerun/vim-polyglot'
+Plug 'ledger/vim-ledger', { 'for': 'ledger' }
 
 call plug#end()
 
@@ -438,6 +452,8 @@ endif
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_leader_key = "s"
+" eclim {{{2
+let g:EclimCompletionMethod = 'omnifunc'
 " emmet {{{2
 let g:user_emmet_leader_key = '<C-z>'
 " FSwitch {{{2
@@ -445,6 +461,8 @@ command! A FSHere
 command! AV FSSplitRight
 " GitGutter {{{2
 let g:gitgutter_enabled = 0
+" neoterm {{{2
+let g:neoterm_position = 'vertical'
 " Syntastic {{{2
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
@@ -496,6 +514,10 @@ let g:ycm_confirm_extra_conf = 1
 let g:ycm_cache_omnifunc = 1
 let g:ycm_filetype_blacklist = {'python': 1}
 let g:ycm_auto_trigger = 0
+let g:ycm_filetype_specific_completion_to_disable = {
+      \ 'gitcommit': 1,
+      \ 'make': 1
+      \}
 " Misc --------------------- {{{1
 " vim hacks #181
 " Open junk file."{{{
@@ -668,14 +690,17 @@ cnoreab lcdh lcd %:p:h
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap -------- {{{2
 " nmap <leader> {{{3
+nn <leader>ec :SyntasticClear<cr>
+nn <leader>ev :SyntasticInfo<cr>
 nn <leader>fc :lcd %:p:h<cr>
 nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 " nmap <leader><leader> (easymotion) TODO {{{3
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
 "nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
+nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
 nn <leader>at :TagbarToggle<cr>
-nn <leader>as :terminal<cr>
+nn <leader>as :Ttoggle<cr>
 nn <leader>au :GundoToggle<cr>
 nn <leader>ag :%!genhdr<cr>
 " nmap <leader>b (buffer) {{{4
@@ -736,6 +761,7 @@ nn <leader>ti :IndentGuidesToggle<cr>
 nn <leader>tl :set wrap!<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
 nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
+nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>
 " nmap <leader> misc {{{4
 nn <leader>1 :set cmdheight=1<cr>
 nn <leader>2 :set cmdheight=2<cr>
@@ -754,7 +780,7 @@ nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
 " nmap Y (global) {{{3
-nn Ys :Gtags -s <C-r><C-w><cr>
+nn Ys :Gtags <C-r><C-w><cr>
 nn Yr :Gtags -r <C-r><C-w><cr>
 nn Yp :Gtags -P <C-r><C-w><cr>
 nn Yg :Gtags -g <C-r><C-w><cr>

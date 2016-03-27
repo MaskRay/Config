@@ -3,7 +3,7 @@ Description=OfflineIMAP IMAP/Maildir Synchronization
 Documentation=man:offlineimap
 
 [Service]
-ExecStart=/usr/bin/proxychains /usr/bin/offlineimap -o -u quiet
+ExecStart=/usr/bin/offlineimap -u quiet -a %i
 Restart=always
 RestartSec=600
 TimeoutStopSec=10

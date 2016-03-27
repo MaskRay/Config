@@ -3,6 +3,7 @@ Description=Disable Screen Blanking
 Documentation=man:xset(1)
 
 [Service]
+Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/xset s 0 0
 ExecStart=/usr/bin/xset s noblank
