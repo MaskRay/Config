@@ -1,0 +1,8 @@
+[Unit]
+Description=Taskbar
+
+[Service]
+ExecStart=/home/ray/bin/taskbar
+
+[Install]
+WantedBy=graphical.target

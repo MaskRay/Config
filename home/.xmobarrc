@@ -1,5 +1,5 @@
 Config {
-    font = "xft:Sans-13:bold"
+    font = "xft:DejaVu Sans:bold:size=13,Source Han Sans:bold:size=13"
     , border = NoBorder
     , borderColor = "black"
     , bgColor = "black"

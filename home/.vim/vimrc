@@ -303,6 +303,7 @@ aug Haskell
 fu! Haskell_init()
   setl omnifunc=necoghc#omnifunc
   nn <buffer> <leader>mc :GhcModCheck<cr>
+  nn <buffer> <leader>md :GhcModDiagnostics<cr>
   nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
   nn <buffer> <leader>mt :GhcModType<cr>
   nn <buffer> <leader>mT :GhcModTypeInsert<cr>
@@ -323,6 +324,7 @@ aug Python
   au!
   au FileType python :call Python_init()
 fu! Python_init()
+  let b:deoplete_disable_auto_complete = 1
   ia <buffer> #! #!/usr/bin/env python
   ia <buffer> #e # -*- coding: utf-8 -*-
   syn keyword pythonDecorator self
@@ -434,6 +436,7 @@ Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'sheerun/vim-polyglot'
 Plug 'ledger/vim-ledger', { 'for': 'ledger' }
+Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
 
 call plug#end()
 
@@ -448,6 +451,8 @@ if filereadable(glob('~/.opam'))
   execute "set rtp+=" . g:opamshare . "/merlin/vim"
   let g:syntastic_ocaml_checkers=['merlin']
 endif
+" deoplete {{{2
+let g:deoplete#enable_at_startup = 1
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
@@ -463,6 +468,8 @@ command! AV FSSplitRight
 let g:gitgutter_enabled = 0
 " neoterm {{{2
 let g:neoterm_position = 'vertical'
+" polyglot {{{2
+let g:polyglot_disabled = ['haskell']
 " Syntastic {{{2
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
@@ -500,8 +507,8 @@ let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
 let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
-let g:ycm_extra_conf_globlist = ['~/Dev/*']
-let g:ycm_key_invoke_completion = '<c-s-i>'
+let g:ycm_extra_conf_globlist = ['~/Dev/*', '~/Work/*']
+let g:ycm_key_invoke_completion = '<C-u>'
 let g:ycm_key_detailed_diagnostics = "<leader>yd"
 let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_tags_files = 1
@@ -512,8 +519,8 @@ let g:ycm_key_list_select_completion = ['<c-n>', '<down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<up>']
 let g:ycm_confirm_extra_conf = 1
 let g:ycm_cache_omnifunc = 1
-let g:ycm_filetype_blacklist = {'python': 1}
-let g:ycm_auto_trigger = 0
+let g:ycm_filetype_whitelist = {'c': 1, 'cpp': 1, 'javascript': 1, 'python': 1}
+let g:ycm_auto_trigger = 1
 let g:ycm_filetype_specific_completion_to_disable = {
       \ 'gitcommit': 1,
       \ 'make': 1
@@ -582,13 +589,11 @@ let g:clang_format#style_options = {
 " Command-line editing
 cnoremap <C-R><C-L> <C-R>=getline('.')<CR>
 
-let g:haddock_browser = "firefox"
-autocmd BufRead *.hs setlocal equalprg=~/bin/pp-haskell.hs
-
 let g:Tex_Flavor='latex'
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
 fu! C_init()
+  let b:deoplete_disable_auto_complete = 1
   setl cino+=g0,:0,l1,N-s,t0,(0
   "setl mps+==:;  neovim
   setl tags+=~/.vim/static/cpp                        " core in cpp
@@ -609,6 +614,8 @@ fu! C_init()
 
   command! A FSHere
   command! AV FSSplitRight
+
+  nn <buffer> <leader>aa :T make && ./<C-r>=expand('%:r')<cr><cr>
 endf
 
 fu! CSS_init()
@@ -698,7 +705,7 @@ nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
 "nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
-nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
+nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr> < i<cr>
 nn <leader>at :TagbarToggle<cr>
 nn <leader>as :Ttoggle<cr>
 nn <leader>au :GundoToggle<cr>
@@ -761,7 +768,8 @@ nn <leader>ti :IndentGuidesToggle<cr>
 nn <leader>tl :set wrap!<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
 nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
-nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>
+nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
+nn <leader>td :let b:deoplete_disable_auto_complete = exists('b:deoplete_disable_auto_complete') ? ! b:deoplete_disable_auto_complete : 1<cr>:echo ! b:deoplete_disable_auto_complete<cr>
 " nmap <leader> misc {{{4
 nn <leader>1 :set cmdheight=1<cr>
 nn <leader>2 :set cmdheight=2<cr>

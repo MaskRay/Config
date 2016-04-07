@@ -9,11 +9,11 @@ inode/x-empty=gvim.desktop
 text/plain=gvim.desktop
 
 ; html
-text/html=google-chrome.desktop
-application/xhtml+xml=google-chrome.desktop
-x-scheme-handler/http=google-chrome.desktop
-x-scheme-handler/https=google-chrome.desktop
-application/x-asp=google-chrome.desktop
+text/html=chromium.desktop
+application/xhtml+xml=chromium.desktop
+x-scheme-handler/http=chromium.desktop
+x-scheme-handler/https=chromium.desktop
+application/x-asp=chromium.desktop
 ; text/html=firefox.desktop
 ; application/xhtml+xml=firefox.desktop
 ; x-scheme-handler/http=firefox.desktop

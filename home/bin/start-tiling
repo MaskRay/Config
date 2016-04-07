@@ -18,17 +18,17 @@ List.map Sys.command [
   ; singleton "dunst &"
 
   (* one-shot *)
-  ; "xrandr | grep -q 'HDMI1 connected' && di l"
+  ; "xrandr | egrep -q '(HDMI1|VGA1) connected' && di l"
   ; "xrdb ~/.Xresources"
   (*; pic*)
   ; "change-wallpaper"
   (* ; "unclutter &" *)
   (* ; "batti &" *)
   ; "syndaemon -t -k &"
-  ; "taskbar &"
+  (* ; "taskbar &" *)
   (*; "keynav &" *)
   ; "xset r rate 200 50"
-  ; "xcape -e 'Control_L=Escape'"
+  (* ; "xcape -e 'Control_L=Escape'" *)
   ; "compton -cC &"
   ; "urxvtd -f -q -o"
   (* ; "systemctl --user restart mail-inotify" *)

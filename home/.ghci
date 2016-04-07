@@ -1,6 +1,6 @@
 :m Data.List Control.Applicative Control.Monad
 :set prompt "\x256d\x2500%s\n\x2570\x2500"
-:seti -XFlexibleInstances -XTupleSections -XNoMonomorphismRestriction -XScopedTypeVariables -XOverloadedStrings
+:seti -XFlexibleInstances -XTupleSections -XNoMonomorphismRestriction -XScopedTypeVariables
 
 :set +t
 

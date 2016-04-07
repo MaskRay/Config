@@ -153,7 +153,7 @@ myLayout = avoidStruts $
         im = named "IM" $ minimize $ gridIM (360/1920) (Title "QQ Lite")
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
-        termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "URxvt") `onBottom` Full
+        termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "Termite") `onBottom` Full
 
         --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
         myTab = defaultTheme
@@ -171,7 +171,7 @@ myLayout = avoidStruts $
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
-    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["google-chrome", "Chrome", "Chromium"] ] ++
+    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["google-chrome", "Chrome", "chromium"] ] ++
     [ className =? c --> viewShift "nvim" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
@@ -576,7 +576,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chrome") "chrome.xpm"
+    [ TI "web" "" (spawn "chromium") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
