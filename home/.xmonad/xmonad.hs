@@ -140,7 +140,6 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
-    onWorkspace "nvim" (termDrawer ||| tiled) $
     onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
@@ -153,7 +152,6 @@ myLayout = avoidStruts $
         im = named "IM" $ minimize $ gridIM (360/1920) (Title "QQ Lite")
         {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
-        termDrawer = named "TermDrawer" $ simpleDrawer 0.0 0.4 (ClassName "Termite") `onBottom` Full
 
         --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
         myTab = defaultTheme

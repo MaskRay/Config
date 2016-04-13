@@ -11,6 +11,7 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 #systemctl --user start fcitx
+#systemctl --user start graphical.target
 systemctl --user start graphical.target
 
 xset s off dpms 600 600 600
@@ -32,5 +33,4 @@ synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
 # vim merlin
 echo 'PKG core' > /tmp/.merlin
 
-systemd --user start graphical.target
 exec xmonad

@@ -1,0 +1,9 @@
+[Unit]
+Description=Check for new versions
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=180min
+
+[Install]
+WantedBy=timers.target

@@ -308,7 +308,9 @@ fu! Haskell_init()
   nn <buffer> <leader>mt :GhcModType<cr>
   nn <buffer> <leader>mT :GhcModTypeInsert<cr>
   nn <buffer> <leader>mi :GhcModInfo<cr>
+  " Override
   nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T stack runghc <C-r>=expand('%:p')<cr> < i<cr>
+  nn <buffer> <leader>ta :!fast-tags -R .<cr>
 endf
 " Java {{{2
 aug Java
@@ -325,7 +327,7 @@ aug Python
   au FileType python :call Python_init()
 fu! Python_init()
   let b:deoplete_disable_auto_complete = 1
-  ia <buffer> #! #!/usr/bin/env python
+  ia <buffer> #! #!/usr/bin/env python3
   ia <buffer> #e # -*- coding: utf-8 -*-
   syn keyword pythonDecorator self
   " Setting 'python_space_error_highlight' = 1 will only highlight mixed
@@ -379,7 +381,9 @@ Plug 'sjl/gundo.vim'
 
 " Tools
 "Plug 'Shougo/neocomplete.vim'
-Plug 'kassio/neoterm'
+if has('nvim')
+  Plug 'kassio/neoterm'
+endif
 Plug 'Lokaltog/vim-easymotion'
 Plug 'Shougo/deoplete.nvim'
 Plug 'Shougo/neomru.vim'
@@ -594,7 +598,7 @@ let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 
 fu! C_init()
   let b:deoplete_disable_auto_complete = 1
-  setl cino+=g0,:0,l1,N-s,t0,(0
+  setl cino+=g0,:0,j1,l1,N-s,t0,(0
   "setl mps+==:;  neovim
   setl tags+=~/.vim/static/cpp                        " core in cpp
   setl dictionary=~/.vim/dict/cpp
@@ -615,7 +619,11 @@ fu! C_init()
   command! A FSHere
   command! AV FSSplitRight
 
-  nn <buffer> <leader>aa :T make && ./<C-r>=expand('%:r')<cr><cr>
+  if expand('%:p:h') == '/home/ray/CC'
+    nn <buffer> <leader>aa :T make <C-r>=expand('%:r')<cr>.<cr>
+  else
+    nn <buffer> <leader>aa :T make && ./<C-r>=expand('%:r')<cr><cr>
+  endif
 endf
 
 fu! CSS_init()
@@ -705,7 +713,7 @@ nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
 "nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
-nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr> < i<cr>
+nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
 nn <leader>at :TagbarToggle<cr>
 nn <leader>as :Ttoggle<cr>
 nn <leader>au :GundoToggle<cr>

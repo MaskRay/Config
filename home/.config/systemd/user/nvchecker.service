@@ -3,8 +3,3 @@ Description=Check for new versions
 
 [Service]
 ExecStart=/usr/bin/nvchecker -n /home/ray/abs/nvchecker.ini
-Restart=always
-RestartSec=14400
-
-[Install]
-WantedBy=graphical.target
