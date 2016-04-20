@@ -381,15 +381,15 @@ myKeys =
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
     , ("C-' d", namedScratchpadAction scratchpads "goldendict")
     , ("C-' e", namedScratchpadAction scratchpads "erl")
-    , ("C-' g", namedScratchpadAction scratchpads "ghci")
-    , ("C-' h", namedScratchpadAction scratchpads "htop")
+    , ("C-' g", namedScratchpadAction scratchpads "gp")
+    , ("C-' h", namedScratchpadAction scratchpads "ghci")
     , ("C-' i", namedScratchpadAction scratchpads "rawutop")
     , ("C-' j", namedScratchpadAction scratchpads "j8")
     , ("C-' n", namedScratchpadAction scratchpads "node")
     , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
-    , ("C-' k", namedScratchpadAction scratchpads "pure")
+    , ("C-' t", namedScratchpadAction scratchpads "htop")
     , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' z", namedScratchpadAction scratchpads "zeal")
 
@@ -426,7 +426,7 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
+  map f ["alsamixer", "cmus", "erl", "gp", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
   , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
   , NS "ghci" "termite -t ghci -e 'stack ghci'" (title =? "ghci") doSPFloat

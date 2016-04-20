@@ -296,6 +296,14 @@ aug C
   au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
   au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
   au BufEnter *.h let b:fswitchdst = 'cpp,cc,c' | let b:fswitchlocs = '.'
+" GP {{{2
+aug GP
+  au!
+  au FileType gp :call GP_init()
+fu! GP_init()
+  " Override
+  nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T gp <C-r>=expand('%:p')<cr><cr>
+endf
 " Haskell {{{2
 aug Haskell
   au!
@@ -329,6 +337,8 @@ fu! Python_init()
   let b:deoplete_disable_auto_complete = 1
   ia <buffer> #! #!/usr/bin/env python3
   ia <buffer> #e # -*- coding: utf-8 -*-
+  nn <buffer> <leader>mb Ofrom ipdb import set_trace as bp; bp()<esc>^j
+  nn <buffer> <leader>mr Ofrom remote_pdb import RemotePdb; RemotePdb('0', 4444).set_trace()<esc>^j
   syn keyword pythonDecorator self
   " Setting 'python_space_error_highlight' = 1 will only highlight mixed
   " tabs and spaces, I go as far as mark all tabs as error.
@@ -361,88 +371,91 @@ fu! Ruby_init()
   nnoremap <buffer><space>rv :Rview<space><tab>
 endf
 " Plugins --------------------------------------------- {{{1
-so ~/.vim/bundle/vim-plug/plug.vim
-call plug#begin('~/.vim/bundle')
-
-Plug 'AndrewRadev/splitjoin.vim'
-"Plug 'Rykka/colorv.vim'
-Plug 'SirVer/ultisnips'
-Plug 'junegunn/vim-easy-align'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-unimpaired'
-Plug 'vim-scripts/VisIncr'
-
-" Window
-"Plug 'bling/vim-airline'
-Plug 'majutsushi/tagbar'
-"Plug 'vim-scripts/ZoomWin' neovim
-Plug 'sjl/gundo.vim'
-
-" Tools
-"Plug 'Shougo/neocomplete.vim'
 if has('nvim')
-  Plug 'kassio/neoterm'
+  so ~/.vim/bundle/vim-plug/plug.vim
+  call plug#begin('~/.vim/bundle')
+
+  Plug 'AndrewRadev/splitjoin.vim'
+  "Plug 'Rykka/colorv.vim'
+  Plug 'SirVer/ultisnips'
+  Plug 'junegunn/vim-easy-align'
+  Plug 'tpope/vim-endwise'
+  Plug 'tpope/vim-eunuch'
+  Plug 'tpope/vim-unimpaired'
+  Plug 'vim-scripts/VisIncr'
+
+  " Window
+  "Plug 'bling/vim-airline'
+  Plug 'majutsushi/tagbar'
+  "Plug 'vim-scripts/ZoomWin' neovim
+  Plug 'sjl/gundo.vim'
+
+  " Tools
+  "Plug 'Shougo/neocomplete.vim'
+  if has('nvim')
+    Plug 'kassio/neoterm'
+  endif
+  Plug 'Lokaltog/vim-easymotion'
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'Shougo/neomru.vim'
+  Plug 'Shougo/neoyank.vim'
+  Plug 'Shougo/unite.vim'
+  Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerCurrentDir' }
+  Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+  Plug 'Shougo/vimshell.vim'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'benekastah/neomake'
+  Plug 'chrisbra/NrrwRgn'
+  Plug 'dhruvasagar/vim-table-mode'
+  Plug 'glts/vim-textobj-comment'
+  Plug 'glts/vim-textobj-indblock'
+  Plug 'haya14busa/incsearch-easymotion.vim'
+  Plug 'haya14busa/incsearch.vim'
+  Plug 'janko-m/vim-test'
+  Plug 'kana/vim-textobj-user'
+  Plug 'kassio/zeavim.vim'
+  Plug 'lucapette/vim-textobj-underscore'
+  Plug 'nathanaelkane/vim-indent-guides'
+  Plug 'qstrahl/vim-matchmaker'
+  Plug 'rhysd/clever-f.vim'
+  Plug 'rhysd/vim-clang-format'
+  Plug 'rking/ag.vim'
+  Plug 'scrooloose/syntastic'
+  Plug 'terryma/vim-expand-region'
+  Plug 'terryma/vim-multiple-cursors'
+  Plug 'thinca/vim-quickrun'
+  Plug 'tommcdo/vim-exchange'
+  Plug 'tpope/vim-abolish'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-surround'
+
+  " Languages
+  Plug 'mattn/emmet-vim'
+  Plug 'neovimhaskell/haskell-vim'
+  "Plug 'pytest.vim'
+  Plug 'python-mode', { 'branch': 'develop' }
+  Plug 'LaTeX-Box-Team/LaTeX-Box'
+  "Plug 'Valloric/YouCompleteMe' use archlinuxcn/vim-youcompleteme-git
+  "Plug 'davidhalter/jedi-vim'
+  Plug 'derekwyatt/vim-fswitch'
+  Plug 'tpope/vim-rails', { 'for': 'ruby' }
+  Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+  Plug 'wting/rust.vim', { 'for': 'rust' }
+  Plug 'zah/nim.vim', { 'for': 'nim' }
+  Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
+  Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
+  Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+  Plug 'chrisbra/csv.vim', { 'for': 'csv' }
+  Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
+  "Plug 'gorodinskiy/vim-coloresque'
+  Plug 'nvie/vim-flake8', { 'for': 'python' }
+  Plug 'sheerun/vim-polyglot'
+  Plug 'ledger/vim-ledger', { 'for': 'ledger' }
+  Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
+
+  call plug#end()
 endif
-Plug 'Lokaltog/vim-easymotion'
-Plug 'Shougo/deoplete.nvim'
-Plug 'Shougo/neomru.vim'
-Plug 'Shougo/neoyank.vim'
-Plug 'Shougo/unite.vim'
-Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerCurrentDir' }
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'Shougo/vimshell.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'benekastah/neomake'
-Plug 'chrisbra/NrrwRgn'
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'glts/vim-textobj-comment'
-Plug 'glts/vim-textobj-indblock'
-Plug 'haya14busa/incsearch-easymotion.vim'
-Plug 'haya14busa/incsearch.vim'
-Plug 'janko-m/vim-test'
-Plug 'kana/vim-textobj-user'
-Plug 'kassio/zeavim.vim'
-Plug 'lucapette/vim-textobj-underscore'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'qstrahl/vim-matchmaker'
-Plug 'rhysd/clever-f.vim'
-Plug 'rhysd/vim-clang-format'
-Plug 'rking/ag.vim'
-Plug 'scrooloose/syntastic'
-Plug 'terryma/vim-expand-region'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'thinca/vim-quickrun'
-Plug 'tommcdo/vim-exchange'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-
-" Languages
-Plug 'mattn/emmet-vim'
-"Plug 'pytest.vim'
-Plug 'python-mode', { 'branch': 'develop' }
-Plug 'LaTeX-Box-Team/LaTeX-Box'
-"Plug 'Valloric/YouCompleteMe' use archlinuxcn/vim-youcompleteme-git
-"Plug 'davidhalter/jedi-vim'
-Plug 'derekwyatt/vim-fswitch'
-Plug 'tpope/vim-rails', { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-Plug 'wting/rust.vim', { 'for': 'rust' }
-Plug 'zah/nim.vim', { 'for': 'nim' }
-Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
-Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
-Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'chrisbra/csv.vim', { 'for': 'csv' }
-Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
-"Plug 'gorodinskiy/vim-coloresque'
-Plug 'nvie/vim-flake8', { 'for': 'python' }
-Plug 'sheerun/vim-polyglot'
-Plug 'ledger/vim-ledger', { 'for': 'ledger' }
-Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
-
-call plug#end()
 
 if filereadable('/usr/share/gtags/gtags.vim')
   so /usr/share/gtags/gtags.vim
@@ -460,7 +473,7 @@ let g:deoplete#enable_at_startup = 1
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
-let g:EasyMotion_leader_key = "s"
+let g:EasyMotion_leader_key = "<leader><leader>"
 " eclim {{{2
 let g:EclimCompletionMethod = 'omnifunc'
 " emmet {{{2
@@ -707,7 +720,7 @@ cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap <leader> {{{3
 nn <leader>ec :SyntasticClear<cr>
 nn <leader>ev :SyntasticInfo<cr>
-nn <leader>fc :lcd %:p:h<cr>
+nn <leader>fc :cd %:p:h<cr>
 nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 " nmap <leader><leader> (easymotion) TODO {{{3
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
@@ -824,21 +837,16 @@ nn <M-l> <C-w>l
 " nmap misc {{{3
 nn <silent> <C-l> :nohls<cr><C-l>
 " imap {{{2
-" move in insert mode
-ino <m-h> <left>
-ino <m-l> <Right>
-ino <m-j> <C-o>gj
-ino <m-k> <C-o>gk
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz
       \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
       \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
       \`zp:let @" = @z<CR>a
 " imap Alt {{{3
-ino <M-h> <C-w>h
-ino <M-j> <C-w>j
-ino <M-k> <C-w>k
-ino <M-l> <C-w>l
+ino <M-h> <C-o><C-w>h
+ino <M-j> <C-o><C-w>j
+ino <M-k> <C-o><C-w>k
+ino <M-l> <C-o><C-w>l
 " xmap {{{2
 xn ga <Plug>(EasyAlign)
 xn <C-c> "+y

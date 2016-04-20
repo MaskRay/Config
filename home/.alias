@@ -104,6 +104,7 @@ alias ss='sudo ss'
 alias tc='sudo tc'
 alias umount='sudo umount'
 alias sv='sudo vi'
+alias sd='sudo sysdig'
 
 # dev {{{1
 alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
@@ -112,7 +113,7 @@ alias cl=clang++
 alias db=lldb
 alias jc=/usr/lib/j8/bin/jconsole
 alias jqt=/usr/lib/j8/bin/jqt
-alias lid.sys='lid -f ~/Util/idutils/usr-include.ID'
+alias lid.sys='lid-idutils -f ~/Util/idutils/usr-include.ID'
 alias mkid.sys='mkid -f ~/Util/idutils/usr-include.ID /usr/include'
 alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
 alias segf='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'

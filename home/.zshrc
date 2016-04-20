@@ -169,8 +169,7 @@ zstyle ':completion::*:(-command-|export):*' fake-parameters CFLAGS CXXFLAGS LD_
 # Don't complete uninteresting users...
 zstyle ':completion:*:*:*:users' ignored-patterns \
   adm amanda apache avahi beaglidx bin cacti canna chrony clamav colord daemon dbus distcache dnsmasq dovecot etcd fax fcron ftp games gdm git gkrellmd gopher hacluster haldaemon halt hsqldb http ident junkbust ldap lp mail mailman mailnull memcached mldonkey mongodb mysql nagios named nbd netdump news nfsnobody nobody nscd ntp nut nx openvpn operator pcap polipo polkitd postfix postgres privoxy proxy pulse pvm quagga radvd redis rpc rpcuser rpm rtkit shutdown squid sshd sync systemd-bus-proxy systemd-journal-gateway systemd-journal-remote systemd-journal-upload systemd-network systemd-resolve systemd-timesync tor unbound usbmux uucp uuidd vcsa xfs
-
-zstyle ':completion:*:mutt:*' users ${${${(f)"$(<~/.mutt/aliases)"}#alias[[:space:]]}%%[[:space:]]*}
+[[ -f ~/.mutt/aliases ]] && zstyle ':completion:*:mutt:*' users ${${${(f)"$(<~/.mutt/aliases)"}#alias[[:space:]]}%%[[:space:]]*}
 
 compdef pgrep=killall
 compdef pkill=killall

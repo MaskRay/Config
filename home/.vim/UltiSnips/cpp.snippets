@@ -213,6 +213,16 @@ void get_primes()
 }
 endsnippet
 
+snippet
+int gcd(int x, int y)
+{
+  int z;
+  while (y)
+    z = x%y, x = y, y = z;
+  return x;
+}
+endsnippet
+
 snippet exgcd
 ll exgcd(ll a, ll b, ll &x, ll &y)
 {
@@ -220,6 +230,25 @@ ll exgcd(ll a, ll b, ll &x, ll &y)
     ll gcd = exgcd(b, a%b, y, x);
     y -= a/b*x;
     return gcd;
+}
+endsnippet
+
+snippet jacobi "Jacobi symbol"
+// n > 0 && n % 2
+int jacobi(int m, int n)
+{
+  int r = 1;
+  m = (m % n + n) % n;
+  while (m) {
+    for (; (m & 1) == 0; m >>= 1)
+      if (n % 8 == 3 || n % 8 == 5)
+        r = - r;
+    swap(m, n);
+    if (m % 4 == 3 && n % 4 == 3)
+      r = - r;
+    m = m % n;
+  }
+  return n == 1 ? r : 0;
 }
 endsnippet
 
