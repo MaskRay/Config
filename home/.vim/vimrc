@@ -308,10 +308,35 @@ endf
 aug Haskell
   au!
   au FileType haskell :call Haskell_init()
+  au BufEnter *.hs call LoadHscope()
+" Automatically make cscope connections
+fu! LoadHscope()
+  let db = findfile("hscope.out", ".;")
+  if (!empty(db))
+    let path = strpart(db, 0, match(db, "/hscope.out$"))
+    set nocscopeverbose " suppress 'duplicate connection' error
+    exe "cs add " . db . " " . path
+    set cscopeverbose
+  endif
+endf
+fu! Pointfree()
+  call setline('.', split(system('pointfree '.shellescape(join(getline(a:firstline, a:lastline), "\n"))), "\n"))
+endf
+fu! Pointful()
+  call setline('.', split(system('pointful '.shellescape(join(getline(a:firstline, a:lastline), "\n"))), "\n"))
+endf
 fu! Haskell_init()
   setl omnifunc=necoghc#omnifunc
+  setl cscopeprg=hscope
+  setl cscopetagorder=1
+  setl cscopeverbose
+
+  nn <buffer> sf :cs find g <C-r><C-w><cr>
+  nn <buffer> sr :cs find c <C-r><C-w><cr>
   nn <buffer> <leader>mc :GhcModCheck<cr>
   nn <buffer> <leader>md :GhcModDiagnostics<cr>
+  nn <buffer> <leader>mh :HoogleInfo<cr>
+  nn <buffer> <leader>mH :Hoogle 
   nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
   nn <buffer> <leader>mt :GhcModType<cr>
   nn <buffer> <leader>mT :GhcModTypeInsert<cr>
@@ -319,6 +344,9 @@ fu! Haskell_init()
   " Override
   nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T stack runghc <C-r>=expand('%:p')<cr> < i<cr>
   nn <buffer> <leader>ta :!fast-tags -R .<cr>
+
+  vn <buffer><silent> <leader>h. :call Pointfree()<cr>
+  vn <buffer><silent> <leader>h> :call Pointful()<cr>
 endf
 " Java {{{2
 aug Java
@@ -347,6 +375,7 @@ endf
 let g:pymode_folding = 0
 " failed to disable [Pymode] Init Rope project: $HOME, too slow, prefer YouCompleteMe
 let g:pymode_rope = 0
+let g:pymode_lint = 0
 "let g:pymode_breakpoint_bind = '<leader>mb'
 "let g:pymode_rope_goto_definition_bind = '<m-.>'
 "let g:pymode_rope_goto_definition_cmd = 'e'
@@ -388,7 +417,7 @@ if has('nvim')
   "Plug 'bling/vim-airline'
   Plug 'majutsushi/tagbar'
   "Plug 'vim-scripts/ZoomWin' neovim
-  Plug 'sjl/gundo.vim'
+  Plug 'simnalamburt/vim-mundo'
 
   " Tools
   "Plug 'Shougo/neocomplete.vim'
@@ -413,7 +442,7 @@ if has('nvim')
   Plug 'haya14busa/incsearch.vim'
   Plug 'janko-m/vim-test'
   Plug 'kana/vim-textobj-user'
-  Plug 'kassio/zeavim.vim'
+  Plug 'KabbAmine/zeavim.vim'
   Plug 'lucapette/vim-textobj-underscore'
   Plug 'nathanaelkane/vim-indent-guides'
   Plug 'qstrahl/vim-matchmaker'
@@ -429,12 +458,13 @@ if has('nvim')
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-surround'
+  Plug 'jpalardy/vim-slime'
 
   " Languages
   Plug 'mattn/emmet-vim'
   Plug 'neovimhaskell/haskell-vim'
   "Plug 'pytest.vim'
-  Plug 'python-mode', { 'branch': 'develop' }
+  Plug 'klen/python-mode', { 'branch': 'develop' }
   Plug 'LaTeX-Box-Team/LaTeX-Box'
   "Plug 'Valloric/YouCompleteMe' use archlinuxcn/vim-youcompleteme-git
   "Plug 'davidhalter/jedi-vim'
@@ -445,6 +475,7 @@ if has('nvim')
   Plug 'zah/nim.vim', { 'for': 'nim' }
   Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
   Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
+  Plug 'Twinside/vim-hoogle', { 'for': 'haskell' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
   Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
@@ -482,11 +513,16 @@ let g:user_emmet_leader_key = '<C-z>'
 command! A FSHere
 command! AV FSSplitRight
 " GitGutter {{{2
+let g:gitgutter_map_keys = 0
 let g:gitgutter_enabled = 0
 " neoterm {{{2
 let g:neoterm_position = 'vertical'
 " polyglot {{{2
 let g:polyglot_disabled = ['haskell']
+" slime {{{2
+let g:slime_no_mappings = 1
+let g:slime_target = 'tmux'
+let g:slime_default_config = {'socket_name': 'default', 'target_pane': '1'}
 " Syntastic {{{2
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
@@ -585,8 +621,6 @@ nn ; :
 nn : ;
 vn ; :
 vn : ;
-
-ino jk <esc>
 
 " surf
 nnoremap <leader>sf :Surf<cr>
@@ -729,8 +763,9 @@ nn <leader>ft :VimFilerCurrentDir -explorer -winwidth=20<cr>
 nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
 nn <leader>at :TagbarToggle<cr>
 nn <leader>as :Ttoggle<cr>
-nn <leader>au :GundoToggle<cr>
+nn <leader>au :MundoToggle<cr>
 nn <leader>ag :%!genhdr<cr>
+nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
@@ -836,6 +871,9 @@ nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap misc {{{3
 nn <silent> <C-l> :nohls<cr><C-l>
+nn [c <Plug>GitGutterPrevHunk
+nn ]c <Plug>GitGutterNextHunk
+nmap <C-c><C-c> <Plug>SlimeParagraphSend
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz
@@ -849,7 +887,7 @@ ino <M-k> <C-o><C-w>k
 ino <M-l> <C-o><C-w>l
 " xmap {{{2
 xn ga <Plug>(EasyAlign)
-xn <C-c> "+y
+xmap <C-c><C-c> <Plug>SlimeRegionSend
 " visual shifting (does not exit Visual mode)
 vn < <gv
 vn > >gv

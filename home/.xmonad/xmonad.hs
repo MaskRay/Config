@@ -140,6 +140,7 @@ myLayout = avoidStruts $
     mkToggle1 MIRROR $
     mkToggle1 NOBORDERS $
     lessBorders Screen $
+    onWorkspace "web" (full ||| tiled) $
     onWorkspace "im" im $
     onWorkspace "gimp" gimpLayout $
     --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
@@ -275,6 +276,7 @@ myKeys =
     ]
     ++
     [ ("M-l", switchTopic myTopicConfig "web")
+    , ("M-;", switchTopic myTopicConfig "nvim")
     , ("M-'", switchTopic myTopicConfig "term")
     , ("M-S-q", io exitFailure)
     , ("M-S-c", kill)
@@ -574,7 +576,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chromium") "chrome.xpm"
+    [ TI "web" "" (spawn "chromium --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chromium") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"

@@ -219,12 +219,11 @@ bindkey '^xh' _complete_help
 
 # Aliases & functions {{{1
 # General aliases & functions (partially shared with bash) {{{2
-. ~/.alias
+[[ -f ~/.alias ]] && source ~/.alias
 
 s() {
   re=$1
-  shift
-  find . -regextype posix-extended -iregex ".*$re.*"
+  find ${2:-.} -regextype posix-extended -iregex ".*$re.*"
 }
 
 # terminfo {{{1
@@ -333,6 +332,8 @@ elif [[ -s '/usr/share/doc/pkgfile/command-not-found.zsh' ]]; then
 fi
 
 # Environment Modules {{{1
-module() { eval `~/bin/modulecmd.tcl zsh $*`; }
-module use ~/.modules
-module load ghc go nodejs perl ruby/2.3.0 texlive/2015 #nim wps mpi/impi
+if [[ -f ~/bin/modulecmd.tcl ]]; then
+  module() { eval `~/bin/modulecmd.tcl zsh $*`; }
+  module use ~/.modules
+  module load ghc go nodejs perl ruby/2.3.0 texlive/2015 #nim wps mpi/impi
+fi

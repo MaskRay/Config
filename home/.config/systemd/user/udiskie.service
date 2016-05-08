@@ -1,0 +1,8 @@
+[Unit]
+Description=Removable disk automounter using udisks
+
+[Service]
+ExecStart=/usr/bin/udiskie -aNt2
+
+[Install]
+WantedBy=default.target

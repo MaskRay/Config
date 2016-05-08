@@ -1,0 +1,8 @@
+[Trigger]
+Operation = Upgrade
+Type = File
+Target = usr/share/i18n/charmaps/UTF-8.gz
+
+[Action]
+When = PostTransaction
+Exec = /etc/pacman.d/hooks/update-charmaps-UTF-8.py

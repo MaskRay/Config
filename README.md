@@ -2,6 +2,13 @@
 
 Ray's comprehensive configuration archive.
 
+## Installation
+
+```
+pacman -S stack
+stack install fast-tags ghc-mod hoogle hscope hledger pointfree pointful
+```
+
 ## Features
 
 Default applications:
@@ -49,11 +56,9 @@ Systemd services:
 Others:
 
 - Mutt
-- Idesk
 - GDB
 - Tmux
 - Mailcap
-- Newsbeuter
 - Pentadactyl (for Firefox)
 - Udev
 - Xorg

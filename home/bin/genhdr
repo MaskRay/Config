@@ -1,0 +1,179 @@
+#!/usr/bin/env ruby
+require 'set'
+
+body = []
+
+while l = gets
+  case l.strip
+  when ''
+  when /^#/
+  when /^using /
+  when /^typedef /
+  when 'int ri()', 'double rd()', 'long rl()'
+    nil while (l = gets) and l.strip != '}'
+    redo if (l = gets).strip.empty?
+    break
+  else
+    body << l.chomp
+    break
+  end
+end
+
+idents = ['ri', 'rd', 'rl', 'long', 'rb_tree_tag']
+idents_use = Set.new
+
+defines = {
+  'REP' => '#define REP(i, n) FOR(i, 0, n)',
+  'REP1' => '#define REP1(i, n) for (remove_cv<remove_reference<decltype(n)>::type>::type i = 1; i <= (n); i++)',
+  'FOR' => '#define FOR(i, a, b) for (remove_cv<remove_reference<decltype(b)>::type>::type i = (a); i < (b); i++)',
+  'PER1' => '#define PER1(i, n) for (remove_cv<remove_reference<decltype(n)>::type>::type i = (n); i > 0; i--)',
+  'ROF' => '#define ROF(i, a, b) for (remove_cv<remove_reference<decltype(b)>::type>::type i = (b); --i >= (a); )',
+  'SIZE' => '#define SIZE(x) (sizeof(x)/sizeof(*x))',
+  'ALL' => '#define ALL(x) (x).begin(), (x).end()',
+  'eb' => '#define eb emplace_back',
+  'pb' => '#define pb push_back',
+  'mp' => '#define mp make_pair',
+  'fi' => '#define fi first',
+  'se' => '#define se second',
+  'smax' => '#define smax(x,y) ((x) = max(x, y))',
+  'smin' => '#define smin(x,y) ((x) = min(x, y))',
+}
+defines_use = Set.new
+
+typedefs = {
+  'll' => 'typedef int64_t ll;',
+  'vi' => 'typedef vector<int> vi;',
+  'pii' => 'typedef pair<int, int> pii;',
+  'pil' => 'typedef pair<int, long> pil;',
+  'pli' => 'typedef pair<long, int> pli;',
+  'pll' => 'typedef pair<long, long> pll;',
+  'tiii' => 'typedef tuple<int, int, int> tiii;',
+  'vpii' => 'typedef vector<pair<int, int> > vpii;',
+}
+typedefs_use = Set.new
+
+headers = {
+  'algorithm' => ['find','iota','swap','max','min','sort','unique','lower_bound','max_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','reverse','transform'],
+  'bitset' => ['bitset'],
+  'cfloat' => ['DBL_MAX'],
+  'climits' => ['INT_MAX', 'INT_MIN', 'LONG_MAX', 'LONG_MIN', 'LLONG_MAX', 'LLONG_MIN'],
+  'cmath' => ['atan2','exp','hypot','sin','sqrt'],
+  'cstdio' => ['printf','puts','scanf','gets'],
+  'cctype' => ['isdigit','isalpha','isalnum'],
+  'cstdlib' => ['abs','atoi','atof','rand'],
+  'cstring' => ['strlen','strstr', 'strcpy', 'memcpy', 'memcmp', 'memset', 'strcmp'],
+  'deque' => ['deque'],
+  'functional' => ['bind','bit_xor','hash','less','greater'],
+  'iostream' => ['cout','cin'],
+  'list' => ['list'],
+  'map' => ['map','multimap'],
+  'numeric' => ['accumulate','partial_sum'],
+  'queue' => ['queue', 'priority_queue'],
+  'set' => ['set','multiset'],
+  'stack' => ['stack'],
+  'string' => ['string'],
+  'unordered_map' => ['unordered_map','unordered_multimap'],
+  'unordered_set' => ['unordered_set','unordered_multiset'],
+  'utility' => ['pair','tuple','fi','se','first','pii','pll'],
+  'tuple' => ['tuple','tiii','tie'],
+  'type_traits' => ['remove_cv','remove_reference'],
+  'vector' => ['vector'],
+}
+headers_r = {}
+for k, vs in headers
+  for v in vs
+    headers_r[v] = k
+  end
+end
+headers_use = Set.new
+
+### Scan
+
+out = []
+
+body << l.chomp while l = gets
+words = body.map {|l| l.scan /\w+/ }.flatten.to_set
+loop do
+  size = idents_use.size + typedefs_use.size + defines_use.size + headers_use.size
+  idents_use |= words & idents
+  typedefs_use |= words & typedefs.keys
+  defines_use |= words & defines.keys
+  headers_use |= headers_r.values_at(*(words & headers_r.keys))
+  break if idents_use.size + typedefs_use.size + defines_use.size + headers_use.size == size
+  words |= (typedefs.values_at(*typedefs_use) | defines.values_at(*defines_use)).map {|l| l.scan /\w+/ }.flatten
+end
+
+### Output
+
+# int64_t
+#if idents_use.member?('long') || idents_use.member?('pli') || idents_use.member?('pil')
+if idents_use.member?('PRId64') || idents_use.member?('SCNd64')
+  out << '#define __STDC_FORMAT_MACROS'
+  headers_use << 'inttypes.h'
+end
+
+# headers
+## dependencies
+if idents_use.member? 'ri' or idents_use.member? 'rd' or idents_use.member? 'rl'
+  headers_use << 'cstdio'
+end
+
+for x in headers_use.to_a.sort
+  out << "#include <#{x}>"
+end
+out << 'using namespace std;' unless headers_use.empty?
+
+if idents_use.member? 'rb_tree_tag'
+  out << '#include <ext/pb_ds/assoc_container.hpp>'
+  out << '#include <ext/pb_ds/tree_policy.hpp>'
+  out << 'using namespace __gnu_pbds;'
+end
+
+# typedefs & defines
+out << '' if ! out.empty? and (! defines_use.empty? or ! typedefs_use.empty?)
+for x in typedefs_use.to_a.sort
+  out << typedefs[x]
+end
+for x in defines_use.to_a.sort
+  out << defines[x]
+end
+
+# functions
+out << '' if ! out.empty? && ! idents.empty?
+
+if idents_use.member? 'ri'
+  out.push << 'int ri()
+{
+  int x;
+  scanf("%d", &x);
+  return x;
+}
+'
+end
+
+if idents_use.member? 'rl'
+  out.push << %{long rl()
+{
+  long x;
+  scanf(#{idents_use.member?('PRId64') ? '"%" SCNd64' : '"%lld"'}, &x);
+  return x;
+}
+}
+end
+
+if idents_use.member? 'rd'
+  out.push << 'double rd()
+{
+  double x;
+  scanf("%lf", &x);
+  return x;
+}
+'
+end
+
+for x in out
+  print x, "\n"
+end
+for x in body
+  print x, "\n"
+end
