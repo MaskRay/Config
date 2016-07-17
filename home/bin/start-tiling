@@ -18,7 +18,7 @@ List.map Sys.command [
   ; singleton "dunst &"
 
   (* one-shot *)
-  ; "xrandr | egrep -q '(HDMI1|VGA1) connected' && di l"
+  ; "xrandr | egrep -q '(HDMI-1|VGA-1) connected' && di l"
   ; "xrdb ~/.Xresources"
   (*; pic*)
   ; "change-wallpaper"

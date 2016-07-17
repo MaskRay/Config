@@ -76,7 +76,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 setopt nobeep
 
-fpath=($HOME/Util/zsh-completions/src/ $fpath)
+fpath=($HOME/Util/zsh-completions/src/ ~/.zsh/ $fpath)
 
 # Completion {{{1
 autoload -U compinit

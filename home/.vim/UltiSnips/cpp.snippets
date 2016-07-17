@@ -72,11 +72,11 @@ protected:
 endsnippet
 
 snippet map "std::map (map)"
-map<${1:int}, ${2:int}> $0;
+map<${1:long}, ${2:long}> $0;
 endsnippet
 
 snippet vector "std::vector (v)"
-vector<${1:int}> $0;
+vector<${1:long}> $0;
 endsnippet
 
 snippet tp "template <typename ..> (template)"
@@ -84,22 +84,68 @@ template <typename ${1:_InputIter}>
 endsnippet
 
 snippet fenwick
-void add(int a[], int n, int x, int delta)
+void add(long a[], long n, long x, long delta)
 {
   for (; x < n; x |= x+1)
     fenwick[x] += delta;
 }
 
-void getSum(int a[], int x)
+void getSum(long a[], long x)
 {
-  int sum = 0;
+  long sum = 0;
   for (; x; x &= x-1)
     sum += fenwick[x-1];
   return sum;
 }
 endsnippet
 
-snippet heavylight
+snippet hld
+long chain[N], dep[N], dfn[N], par[N], tick;
+
+long dfs(long u, long p)
+{
+  long size = 1, maxs = 0;
+  par[u] = p;
+  chain[u] = -1;
+  for (long v: adj[u])
+    if (v != p) {
+      dep[v] = dep[u]+1;
+      long s = dfs(v, u);
+      size += s;
+      if (s > maxs)
+        maxs = s, chain[u] = v;
+    }
+  return size;
+}
+
+void hld(long u, long p, long top)
+{
+  dfn[u] = tick++;
+  if (chain[u] >= 0) {
+    hld(chain[u], u, top);
+    for (long v: adj[u])
+      if (v != p && v != chain[u])
+        hld(v, u, v);
+  }
+  chain[u] = top;
+}
+
+long path(long u, long v)
+{
+  long r = 0;
+  while (chain[u] != chain[v]) {
+    if (dep[chain[u]] > dep[chain[v]]) {
+      u = par[chain[u]];
+    } else {
+      v = par[chain[v]];
+    }
+  }
+  if (dep[u] > dep[v])
+    ;
+  else if (dep[u] < dep[v])
+    ;
+  return r;
+}
 endsnippet
 
 snippet minv
@@ -124,6 +170,131 @@ endsnippet
 
 snippet using
 using namespace std;
+endsnippet
+
+snippet st
+const long N = 100000, V = 2*N;
+long allo, fork, suff, len[V], sl[V];
+char* pos[V];
+map<long, long> to[V];
+
+long new_node(char* p, long l)
+{
+  pos[allo] = p;
+  len[allo] = l;
+  sl[allo] = 0;
+  to[allo].clear();
+  return allo++;
+}
+
+void add(char* s)
+{
+  long size = strlen(s);
+  REP(i, size+1) {
+    long last = 0, c = s[i]; // may be NUL
+    suff++;
+    while (suff > 0) {
+      long cc = s[i+1-suff]; // may be NUL
+      auto it = to[fork].find(cc);
+      while (it != to[fork].end() && suff > len[it->second]) {
+        fork = it->second;
+        suff -= len[fork];
+        cc = s[i+1-suff]; // may be NUL
+        it = to[fork].find(cc);
+      }
+      if (it == to[fork].end()) {
+        if (c)
+          to[fork][cc] = new_node(&s[i+1-suff], size-(i+1-suff));
+        sl[last] = fork;
+        last = 0;
+      } else {
+        long u, t = pos[it->second][suff-1]; // may be NUL
+        if (c == t) {
+          sl[last] = fork;
+          break;
+        }
+        u = new_node(pos[it->second], suff-1);
+        if (c)
+          to[u][c] = new_node(&s[i], size-i);
+        to[u][t] = it->second;
+        pos[it->second] += suff-1;
+        len[it->second] -= suff-1;
+        it->second = u;
+        sl[last] = u;
+        last = u;
+      }
+      if (fork)
+        fork = sl[fork];
+      else
+        suff--;
+    }
+  }
+}
+endsnippet
+
+snippet gst
+const long N = 100000, V = 2*N;
+long allo, fork, suff, len[V], sl[V];
+char* pos[V];
+map<long, long> to[V];
+
+long new_node(char* p, long l)
+{
+  pos[allo] = p;
+  len[allo] = l;
+  sl[allo] = 0;
+  to[allo].clear();
+  return allo++;
+}
+
+void add(char* s)
+{
+  long size = strlen(s);
+  REP(i, size+1) {
+    long last = 0, c = s[i]; // may be NUL
+    suff++;
+    while (suff > 0) {
+      long cc = s[i+1-suff]; // may be NUL
+      auto it = to[fork].find(cc);
+      while (it != to[fork].end() && suff > len[it->second] && to[it->second].size()) {
+        fork = it->second;
+        suff -= len[fork];
+        cc = s[i+1-suff]; // may be NUL
+        it = to[fork].find(cc);
+      }
+      if (it == to[fork].end()) {
+        if (c)
+          to[fork][cc] = new_node(&s[i+1-suff], size-(i+1-suff));
+        sl[last] = fork;
+        last = 0;
+      } else {
+        long u, t = pos[it->second][suff-1]; // may be NUL
+        if (c == t) {
+          sl[last] = fork;
+          break;
+        }
+        if (! t) { // extend leaf of a preceding string
+          u = it->second;
+          to[u][c] = new_node(&s[i], size-i);
+        } else {
+          u = new_node(pos[it->second], suff-1);
+          if (c)
+            to[u][c] = new_node(&s[i], size-i);
+          to[u][t] = it->second;
+          pos[it->second] += suff-1;
+          len[it->second] -= suff-1;
+          it->second = u;
+        }
+        sl[last] = u;
+        last = u;
+      }
+      if (fork)
+        fork = sl[fork];
+      else
+        suff--;
+    }
+  }
+}
 endsnippet
 
 snippet suffix
@@ -177,7 +348,7 @@ snippet morris
 void morrisPratt(int n)
 {
   pi[0] = 0;
-  for (int j = 0, i = 1; i < n; i++) {
+  for (long j = 0, i = 1; i < n; i++) {
     while (j && a[j] != a[i]) j = pi[j-1];
     if (a[j] == a[i]) j++;
     pi[i] = j;
@@ -198,25 +369,25 @@ while (i < n && j < n) {
 endsnippet
 
 snippet prime
-int pr[N/10], np = 0;
+long pr[N/10], np = 0;
 bool sieved[N];
 
 void get_primes()
 {
-    for (int i = 2; i < N; i++) {
-        if (!sieved[i]) pr[np++] = i;
-        for (int j = 0; j < np && i*pr[j] < N; j++) {
-            sieved[i*pr[j]] = true;
-            if (i%pr[j] == 0) break;
-        }
+  for (long i = 2; i < N; i++) {
+    if (!sieved[i]) pr[np++] = i;
+    for (long j = 0; j < np && i*pr[j] < N; j++) {
+      sieved[i*pr[j]] = true;
+      if (i%pr[j] == 0) break;
     }
+  }
 }
 endsnippet
 
-snippet
-int gcd(int x, int y)
+snippet gcd
+long gcd(long x, long y)
 {
-  int z;
+  i gcdnt z;
   while (y)
     z = x%y, x = y, y = z;
   return x;
@@ -326,22 +497,22 @@ int halfPlane(Line* a, int n, Vec* pt)
 endsnippet
 
 snippet scc
-int scc[N], dfn[N], nscc, tick;
-vector<int> e[N];
+long scc[N], dfn[N], nscc, tick;
+vector<long> e[N];
 
-int tarjanScc(int u)
+long tarjanScc(long u)
 {
-  static stack<int> S;
+  static stack<long> S;
   dfn[u] = tick;
-  int low = tick++;
+  long low = tick++;
   S.push(u);
-  for (vector<int>::iterator i = e[u].begin(); i != e[u].end(); ++i)
+  for (vector<long>::iterator i = e[u].begin(); i != e[u].end(); ++i)
     if (dfn[*i] == -1)
       low = min(low, tarjanScc(*i));
     else if (scc[*i] == -1)
       low = min(low, dfn[*i]);
   if (low == dfn[u]) {
-    int v;
+    long v;
     do scc[v = S.top()] = nscc, S.pop();
     while (v != u);
     nscc++;
@@ -352,24 +523,24 @@ int tarjanScc(int u)
 fill_n(dfn, n, -1);
 fill_n(scc, n, -1);
 nscc = 0;
-for (int i = 0; i < n; i++)
+for (long i = 0; i < n; i++)
   if (dfn[i] == -1)
     tarjanScc(i);
 endsnippet
 
 snippet bridge
-int bcc[N], dfn[N], parent[N], nbcc, tick;
+long bcc[N], dfn[N], parent[N], nbcc, tick;
 struct Edge
 {
   Edge *next, *pair;
-  int v;
+  long v;
 } *e[N], *ee[N], pool[M*2], *pit;
 
-int bridgeConnected(int u, Edge* pre)
+long bridgeConnected(long u, Edge* pre)
 {
-  static stack<int> S;
+  static stack<long> S;
   dfn[u] = tick;
-  int low = tick++;
+  long low = tick++;
   S.push(u);
   for (Edge* i = e[u]; i; i = i->next)
     if (dfn[i->v] == -1) {
@@ -379,7 +550,7 @@ int bridgeConnected(int u, Edge* pre)
     } else if (i->pair != pre)
       low = min(low, dfn[i->v]);
   if (low == dfn[u]) {
-    int v;
+    long v;
     do bcc[v = S.top()] = nbcc, S.pop(), sum[nbcc] += val[v];
     while (v != u);
     nbcc++;
@@ -423,18 +594,18 @@ ll mul_mod(ll a, ll b, ll mod)
 endsnippet
 
 snippet inv
-ll inv(ll a, ll mod)
+long inv(long a, long mod)
 {
-  ll x, y;
+  long x, y;
   blankinship(a, mod, x, y);
   return x < 0 ? x + mod : x;
 }
 endsnippet
 
 snippet pow_mod
-ll pow_mod(ll a, ll b, ll mod)
+long pow_mod(long a, long b, long mod)
 {
-  ll r = 1;
+  long r = 1;
   for (; b; b >>= 1) {
     if (b & 1)
       r = r * a % mod;
@@ -445,7 +616,7 @@ ll pow_mod(ll a, ll b, ll mod)
 endsnippet
 
 snippet find
-int find(int x)
+long find(long x)
 {
   while (uf[x] >= 0) {
     if (uf[uf[x]] >= 0)
@@ -457,106 +628,237 @@ int find(int x)
 endsnippet
 
 snippet lct
-namespace LCT
-{
-  extern struct Node null;
-  struct Edge;
-  struct Node {
-    int flip, w;
-    Node *c[2], *p, *opt;
-    void init() {
-      c[0] = c[1] = p = &null;
-      flip = 0;
-      w = -1;
-      opt = this;
-    }
-    void mconcat() {
-      opt = this;
-      REP(d, 2)
-        if (c[d]->opt->w > opt->w)
-          opt = c[d]->opt;
-    }
-    void setc(int d, Node *x) {
-      c[d] = x;
-      x->p = this;
-      mconcat();
-    }
-    void untag() {
-      if (! flip) return;
-      flip = 0;
-      c[0]->flip ^= 1;
-      c[1]->flip ^= 1;
-      swap(c[0], c[1]);
-    }
-    void zag(int d) {
-      Node *x = c[d], *p = this->p;
-      setc(d, x->c[d^1]);
-      x->setc(d^1, this);
-      x->p = p;
-      if (p->c[0] == this)
-        p->c[0] = x;
-      else if (p->c[1] == this)
-        p->c[1] = x;
-    }
-    void splay() {
-      while (p->c[0] == this || p->c[1] == this) {
-        Node *p = this->p, *g = p->p;
-        if (g->c[0] == p || g->c[1] == p) {
-          g->untag();
-          p->untag();
-          untag();
-          if (g->c[0] == p) {
-            if (p->c[0] != this)
-              p->zag(1);
-            g->zag(0);
-          } else {
-            if (p->c[0] == this)
-              p->zag(0);
-            g->zag(1);
-          }
+namespace LCT {
+extern struct Node null;
+struct Node {
+  long w, opt;
+  Node *c[2], *p;
+  void init() {
+    w = opt = 0;
+    c[0] = c[1] = p = &null;
+  }
+  void mconcat() {
+    opt = max(max(c[0]->opt, w), c[1]->opt);
+  }
+  void untag() {}
+  void setc(long d, Node* x) {
+    c[d] = x;
+    x->p = this;
+  }
+  void zag(long d) {
+    Node *x = c[d], *p = this->p;
+    setc(d, x->c[d^1]);
+    mconcat();
+    x->setc(d^1, this);
+    x->p = p;
+    if (p->c[0] == this)
+      p->c[0] = x;
+    else if (p->c[1] == this)
+      p->c[1] = x;
+  }
+  void splay() {
+    while (p->c[0] == this || p->c[1] == this) {
+      Node *p = this->p, *g = p->p;
+      if (g->c[0] == p || g->c[1] == p) {
+        g->untag(); p->untag(); untag();
+        if (g->c[0] == p) {
+          if (p->c[0] == this) g->zag(0), p->zag(0);
+          else p->zag(1), g->zag(0);
         } else {
-          p->untag();
-          untag();
-          p->zag(p->c[0] != this);
+          if (p->c[0] != this) g->zag(1), p->zag(1);
+          else p->zag(0), g->zag(1);
+        }
+      } else {
+        p->untag(); untag();
+        p->zag(p->c[0] != this);
+      }
+    }
+    untag();
+    mconcat();
+  }
+  void expose() {
+    Node *x = this, *y = &null;
+    for (; x != &null; y = x, x = x->p) {
+      x->splay();
+      x->c[1] = y; // mconcat in last splay
+    }
+    splay();
+  }
+  long query(Node* x) {
+    expose();
+    Node *y = &null, *z = x;
+    for (; ; y = x, x = x->p) {
+      x->splay();
+      if (x->p == &null) break;
+      x->c[1] = y;
+      x->mconcat();
+    }
+    long r = max(max(y->opt, x->w), x->c[1]->opt);
+    z->splay();
+    return r;
+  }
+} null, nodes[N];
+};
+endsnippet
+
+snippet lctx
+namespace LCT {
+extern struct Node null;
+struct Node {
+  char flip;
+  long w, opt;
+  Node *c[2], *p;
+  void init() {
+    flip = w = opt = 0;
+    c[0] = c[1] = p = &null;
+  }
+  void mconcat() {
+    opt = max(max(c[0]->opt, w), c[1]->opt);
+  }
+  void untag() {
+    if (! flip) return;
+    flip = 0;
+    c[0]->flip ^= 1;
+    c[1]->flip ^= 1;
+    swap(c[0], c[1]);
+  }
+  void setc(long d, Node* x) {
+    c[d] = x;
+    x->p = this;
+  }
+  void zag(long d) {
+    Node *x = c[d], *p = this->p;
+    setc(d, x->c[d^1]);
+    mconcat();
+    x->setc(d^1, this);
+    x->p = p;
+    if (p->c[0] == this)
+      p->c[0] = x;
+    else if (p->c[1] == this)
+      p->c[1] = x;
+  }
+  void splay() {
+    while (p->c[0] == this || p->c[1] == this) {
+      Node *p = this->p, *g = p->p;
+      if (g->c[0] == p || g->c[1] == p) {
+        g->untag(); p->untag(); untag();
+        if (g->c[0] == p) {
+          if (p->c[0] == this) g->zag(0), p->zag(0);
+          else p->zag(1), g->zag(0);
+        } else {
+          if (p->c[0] != this) g->zag(1), p->zag(1);
+          else p->zag(0), g->zag(1);
+        }
+      } else {
+        p->untag(); untag();
+        p->zag(p->c[0] != this);
+      }
+    }
+    untag();
+    mconcat();
+  }
+  void expose() {
+    Node *x = this, *y = &null;
+    for (; x != &null; y = x, x = x->p) {
+      x->splay();
+      x->c[1] = y; // mconcat in last splay
+    }
+    splay();
+  }
+  void evert() {
+    expose();
+    flip = 1;
+  }
+  void link(Node* par) {
+    evert();
+    p = par;
+  }
+  void cut(Node* par) {
+    par->evert();
+    expose();
+    par->p = &null;
+    setc(0, &null);
+    mconcat();
+  }
+  bool same_root(Node *x) {
+    expose();
+    x->expose();
+    return p != &null;
+  }
+  long query(Node* x) {
+    evert();
+    x->expose();
+    return x->opt;
+  }
+} null, nodes[N];
+};
+endsnippet
+
+snippet mincost
+long h[V], hsrc, src, sink;
+vector<pll> adj[V];
+struct Edge { long v, c, w; Edge *next, *dual; } *e[V], pool[M << 1], *allo;
+
+void insert(long u, long v, long c, long w)
+{
+  allo->v = v; allo->c = c; allo->w = w; allo->next = e[u]; e[u] = allo++;
+  allo->v = u; allo->c = 0; allo->w = - w; allo->next = e[v]; e[v] = allo++;
+  e[u]->dual = e[v];
+  e[v]->dual = e[u];
+}
+
+bool relabel()
+{
+  static deque<long> q;
+  q.clear();
+  q.push_back(sink);
+  fill_n(vis, sink+1, false);
+  fill_n(h, sink+1, LONG_MAX);
+  h[sink] = 0;
+  vis[sink] = true;
+  while (q.size()) {
+    long v = q.front(), t;
+    q.pop_front();
+    vis[v] = false;
+    for (Edge* it = e[v]; it; it = it->next)
+      if (it->dual->c && (t = h[v]-it->w) < h[it->v]) {
+        h[it->v] = t;
+        if (! vis[it->v]) {
+          if (t <= h[q.size() ? q.front() : src])
+            q.push_front(it->v);
+          else
+            q.push_back(it->v);
         }
       }
-      untag();
+  }
+  REP(u, sink+1)
+    for (Edge* it = e[u]; it; it = it->next)
+      it->w += h[it->v]-h[u];
+  hsrc += h[src];
+  return h[src] < LONG_MAX;
+}
+
+long augment(long u, long f)
+{
+  if (u == sink) return f;
+  vis[u] = true;
+  long old = f;
+  for (Edge* it = e[u]; it; it = it->next)
+    if (it->c > 0 && ! vis[it->v] && ! it->w) {
+      long ff = augment(it->v, min(f, it->c));
+      it->c -= ff;
+      it->dual->c += ff;
+      if (! (f -= ff)) break;
     }
-    void expose() {
-      Node *x = this, *y = &null;
-      for (; x != &null; y = x, x = x->p) {
-        x->splay();
-        x->setc(1, y);
-      }
-      splay();
-    }
-    void evert() {
-      expose();
-      flip = 1;
-    }
-    bool same_root(Node *o) {
-      expose();
-      o->expose();
-      return p != &null;
-    }
-    void link(Node *o) {
-      o->evert();
-      o->p = this;
-    }
-    void cut(Node *o) {
-      evert();
-      o->expose();
-      p = &null;
-      o->setc(0, &null);
-    }
-    Edge *query(Node *o) {
-      evert();
-      o->expose();
-      return (Edge *)o->opt;
-    }
-  } null, nodes[N];
-  struct Edge : Node { Node *x, *y; } edges[N];
-};
+  return old-f;
+}
+
+long w;
+fill_n(h, sink+1, 0);
+hsrc = 0;
+while (relabel())
+  while (fill_n(vis, sink+1, false), w = augment(src, LONG_MAX))
+    cost += w*hsrc;
 endsnippet
 
 # vim:ft=snippets:

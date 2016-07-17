@@ -144,6 +144,12 @@ else
 endif
 
 " Functions --------------------- {{{1
+fu! Inc(...)
+  let result = g:i
+  let g:i += a:0 > 0 ? a:1 : 1
+  return result
+endf
+
 " DiffOrig {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -230,6 +236,9 @@ if has("autocmd")
   aug OCaml_support
     au!
     au FileType ocaml :call OCaml_init()
+  aug Rust_support
+    au!
+    au FileType rust :call Rust_init()
   aug Tex_support
     au!
     au FileType tex :call Tex_init()
@@ -333,16 +342,17 @@ fu! Haskell_init()
 
   nn <buffer> sf :cs find g <C-r><C-w><cr>
   nn <buffer> sr :cs find c <C-r><C-w><cr>
+  nn <buffer> <leader>mH :Hoogle 
+  nn <buffer> <leader>mT :GhcModTypeInsert<cr>
   nn <buffer> <leader>mc :GhcModCheck<cr>
   nn <buffer> <leader>md :GhcModDiagnostics<cr>
   nn <buffer> <leader>mh :HoogleInfo<cr>
-  nn <buffer> <leader>mH :Hoogle 
+  nn <buffer> <leader>mi :HdevtoolsInfo<cr>
+  nn <buffer> <leader>mq :HdevtoolsClear<cr>
   nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
-  nn <buffer> <leader>mt :GhcModType<cr>
-  nn <buffer> <leader>mT :GhcModTypeInsert<cr>
-  nn <buffer> <leader>mi :GhcModInfo<cr>
+  nn <buffer> <leader>mt :HdevtoolsType<cr>
   " Override
-  nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T stack runghc <C-r>=expand('%:p')<cr> < i<cr>
+  nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T runghc <C-r>=expand('%:p')<cr> < i<cr>
   nn <buffer> <leader>ta :!fast-tags -R .<cr>
 
   vn <buffer><silent> <leader>h. :call Pointfree()<cr>
@@ -440,6 +450,7 @@ if has('nvim')
   Plug 'glts/vim-textobj-indblock'
   Plug 'haya14busa/incsearch-easymotion.vim'
   Plug 'haya14busa/incsearch.vim'
+  Plug 'hewes/unite-gtags'
   Plug 'janko-m/vim-test'
   Plug 'kana/vim-textobj-user'
   Plug 'KabbAmine/zeavim.vim'
@@ -459,6 +470,7 @@ if has('nvim')
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-surround'
   Plug 'jpalardy/vim-slime'
+  Plug 'AndrewRadev/linediff.vim'
 
   " Languages
   Plug 'mattn/emmet-vim'
@@ -476,6 +488,7 @@ if has('nvim')
   Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
   Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
   Plug 'Twinside/vim-hoogle', { 'for': 'haskell' }
+  Plug 'bitc/vim-hdevtools', { 'for': 'haskell' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
   Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
@@ -516,7 +529,8 @@ command! AV FSSplitRight
 let g:gitgutter_map_keys = 0
 let g:gitgutter_enabled = 0
 " neoterm {{{2
-let g:neoterm_position = 'vertical'
+"let g:neoterm_position = 'vertical'
+let g:neoterm_position = 'horizontal'
 " polyglot {{{2
 let g:polyglot_disabled = ['haskell']
 " slime {{{2
@@ -557,6 +571,7 @@ endif
 " VimFiler {{{2
 let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|zi\|zo\)$'
+let g:vimfiler_ignore_pattern = '^\.\|\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\|fst\|far\)$'
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
 let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
@@ -690,6 +705,10 @@ fu! OCaml_init()
   setl isk-=.
 endf
 
+fu! Rust_init()
+  nn <buffer> <leader>aa :T rustc <C-r>=expand('%')<cr> && <C-r>=expand('%:r')<cr><cr>
+endf
+
 func! Tex_init()
     " pdf auto refresh preview
 
@@ -816,6 +835,7 @@ if has('nvim')
 else
   nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/async<cr>
 endif
+nn <silent> <leader>hR :UniteResume<cr>
 nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
 " nmap <leader>t (toggle) {{{4
 nn <leader>thc :set cursorcolumn!<cr>
@@ -871,9 +891,10 @@ nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap misc {{{3
 nn <silent> <C-l> :nohls<cr><C-l>
-nn [c <Plug>GitGutterPrevHunk
-nn ]c <Plug>GitGutterNextHunk
+nn [C <Plug>GitGutterPrevHunk
+nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
+nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz
@@ -933,7 +954,8 @@ if exists(':tnoremap')
   tno <M-l> <C-\><C-n><C-w>l
 endif
 
-" Load local vimrc if exists -------------------------- {{{1
+" Loadaaq
+" local vimrc if exists -------------------------- {{{1
 if filereadable(glob("~/.vimrc.local"))
   source ~/.vimrc.local
 endif

@@ -3,33 +3,40 @@
 exec tclsh "$0" "$@"
 package require Expect
 
-spawn luit -encoding gbk ssh -1 -p22 yaray@bbs.net9.org
+trap {
+  set rows [stty rows]
+  set cols [stty columns]
+  stty rows $rows columns $cols < $spawn_out(slave,name)
+} WINCH
+
+spawn luit -encoding gbk ssh -2 -p22 yaray@bbs.net9.org
 set fp [open ~/Sed/bbs]
 set password [read -nonewline $fp]
 close $fp
 expect {
-  "password: " { send "$password\r"; exp_continue }
+  "password:" { send "$password\r"; exp_continue }
   -re "酸甜苦辣板|欢迎光临|上次连线时间|欢迎关注|今天夜间|本日十大衷心祝福" { send "\r"; exp_continue }
-  "主选单"
+  "主选单" { send "f\r" }
 }
 interact {
   -o
   # menu move down
-  -re {\033\[\d+;28H\033\[44m } { send_user $interact_out(0,string); send_user "\010" }
-  -re {\033\[\d+D\010\010\033\[44m  } { send_user $interact_out(0,string); send_user " "}
-  # menu move up
-  -re {\033\[\d+A\010\010 } { send_user [string range $interact_out(0,string) 0 end]; send_user "\010" }
-  -re {\033\[44m   ◆} { send_user [string range $interact_out(0,string) 0 end-1]; send_user " "; send_user [string index $interact_out(0,string) end] }
+  #-re {\033\[\d+;28H\033\[44m } { send_user $interact_out(0,string); send_user "\010" }
+  #-re {\033\[\d+D\010\010\033\[44m  } { send_user $interact_out(0,string); send_user " "}
+  ## menu move up
+  #-re {\033\[\d+A\010\010 } { send_user [string range $interact_out(0,string) 0 end]; send_user "\010" }
+  #-re {\033\[44m   ◆} { send_user [string range $interact_out(0,string) 0 end-1]; send_user " "; send_user [string index $interact_out(0,string) end] }
   # 主选单
   #-re {\015\│ ◆} { send_user [string range $interact_out(0,string) 0 end-1]; send_user " "; send_user [string index $interact_out(0,string) end] }
   #-re {\033\[\d+;4H\033\[m } { send_user $interact_out(0,string); send_user "\010" }
   # 讨论区选单
-  -re {(\033\[K\033\[\d+;)7H} { send_user $interact_out(1,string)6H }
-  # 分类讨论区
-  -re {\033\[\d+;23H\033\[m } { send_user $interact_out(0,string); send_user "\010"}
-  -re {\033\[\d+;23H } { send_user $interact_out(0,string); send_user "\010"}
-  -re {\033\[16C\│  ◆} { send_user [string range $interact_out(0,string) 0 end-1]; send_user " "; send_user [string index $interact_out(0,string) end] }
+  #-re {(\033\[K\033\[\d+;)7H} { send_user $interact_out(1,string)6H }
+  ## 分类讨论区
+  #-re {\033\[\d+;23H\033\[m } { send_user $interact_out(0,string); send_user "\010"}
+  #-re {\033\[\d+;23H } { send_user $interact_out(0,string); send_user "\010"}
+  #-re {\033\[16C\│  ◆} { send_user [string range $interact_out(0,string) 0 end-1]; send_user " "; send_user [string index $interact_out(0,string) end] }
   #-nobuffer "离开本BBS站" { send "\r\r" }
   -re {\033\[37m] 离开本BBS站} { send "\r\r" }
-  -re {\033\[m9#BBS  竭  诚} { send "\r" }
+  -re {\033\[m9#BBS  竭  诚} { send "\r"; close; break }
+  "Shared connection to bbs.net9.org closed." exit
 }

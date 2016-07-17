@@ -428,10 +428,10 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "gp", "htop", "ipython", "j8 -c", "node --harmony --harmony_destructuring", "pry", "R", "utop", "xosview"] ++
+  map f ["alsamixer", "cmus", "erl", "gp", "htop", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview"] ++
   [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
-  , NS "goldendict" "goldendict" (className =? "Goldendict") doSPFloat
-  , NS "ghci" "termite -t ghci -e 'stack ghci'" (title =? "ghci") doSPFloat
+  , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
+  , NS "ghci" "termite -t ghci -e 'ghci'" (title =? "ghci") doSPFloat
   --, NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
   where
@@ -576,7 +576,8 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    [ TI "web" "" (spawn "chromium --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chromium") "chrome.xpm"
+    --[ TI "web" "" (spawn "chrome --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
+    [ TI "web" "" (spawn "chrome --new-window https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
