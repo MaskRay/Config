@@ -1,2 +1,0 @@
-#!/bin/zsh
-gdb -q -nx -p $1 <<< 't a a bt' 2>&- | sed -ne '/^#/p'

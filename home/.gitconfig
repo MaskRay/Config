@@ -103,10 +103,10 @@
 	quotePath = false
 [http]
         #proxy = http://192.168.8.2:3128
-        proxy = http://192.168.7.85:3128
+        #proxy = http://192.168.7.85:3128
 [https]
         #proxy = http://192.168.8.2:3128
-        proxy = http://192.168.7.85:3128
+        #proxy = http://192.168.7.85:3128
 [pager]
 	diff = diff-so-fancy | less --tabs=1,5 -RFX
 	show = diff-so-fancy | less --tabs=1,5 -RFX

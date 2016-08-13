@@ -298,48 +298,41 @@ void add(char* s)
 endsnippet
 
 snippet suffix
-struct P
-{
-  int key[2], id;
-  bool operator<(const P &rhs) const {
-    return key[0] < rhs.key[0] || key[0] == rhs.key[0] && key[1] < rhs.key[1];
-  }
-} sa[N], sa2[N];
+long sa[M], rnk[M], h[M], x[M];
 
-void radix_sort(P *sa, P *sa2, int n, int k)
+void suffix_array(long n, long m)
 {
-  fill_n(lcp, n, 0);
-  REP(i, n)
-    lcp[sa[i].key[k]]++;
-  FOR(i, 1, n)
-    lcp[i] += lcp[i-1];
-  ROF(i, 0, n)
-    sa2[--lcp[sa[i].key[k]]] = sa[i];
-}
-
-void suffix_array(const char a[], int n)
-{
-  REP(i, n)
-    sa[i].id = i, sa[i].key[0] = a[i], sa[i].key[1] = 0;
-  sort(sa, sa+n);
-  for (int k = 1; ; k *= 2) {
-    rnk[sa[0].id] = 0;
-    FOR(i, 1, n)
-      rnk[sa[i].id] = rnk[sa[i-1].id] + (sa[i-1] < sa[i]);
-    if (k >= n || rnk[sa[n-1].id] == n-1) break;
-    REP(i, n) {
-      sa[i].id = i;
-      sa[i].key[0] = rnk[i];
-      sa[i].key[1] = i+k < n ? rnk[i+k]+1 : 0;
+  fill_n(h, m, 0);
+  copy_n(a, n, r);
+  REP(i, n) h[r[i]]++;
+  FOR(i, 1, m) h[i] += h[i-1];
+  ROF(i, 0, n) sa[--h[r[i]]] = i;
+  int k = 1;
+  for (; ; k <<= 1) {
+    iota(x, x+k, n-k);
+    int j = k;
+    REP(i, n) if (sa[i] >= k) x[j++] = sa[i]-k;
+    fill_n(h, m, 0);
+    REP(i, n) h[r[x[i]]]++;
+    FOR(i, 1, m) h[i] += h[i-1];
+    ROF(i, 0, n) sa[--h[r[x[i]]]] = x[i];
+    fill_n(h, m, 0);
+    m = 1;
+    h[sa[0]] = 0;
+    FOR(i, 1, n) {
+      if (r[sa[i]] != r[sa[i-1]] || max(sa[i], sa[i-1]) >= n-k || r[sa[i]+k] != r[sa[i-1]+k]) m++;
+      h[sa[i]] = m-1;
     }
-    radix_sort(sa, sa2, n, 1);
-    radix_sort(sa2, sa, n, 0);
+    copy_n(h, n, r);
+    if (m == n) break;
   }
-  for (int k = 0, i = 0; i < n; i++)
-    if (rnk[i]) {
-      for (int j = sa[rnk[i]-1].id; a[j+k] == a[i+k]; k++);
-      lcp[rnk[i]] = k;
-      if (k) k--;
+  k = 0;
+  h[0] = 0;
+  REP(i, n)
+    if (r[i]) {
+      for (int j = sa[r[i]-1]; max(i, j)+k < n && a[i+k] == a[j+k]; k++);
+      h[r[i]] = k;
+      k && k--;
     }
 }
 endsnippet

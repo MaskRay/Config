@@ -1,0 +1,12 @@
+#!/bin/zsh
+no=0
+dev=meow
+
+trap 'kill $!; ip tuntap del dev $dev mode tun' TERM
+
+ip tuntap add dev $dev mode tun user ray
+ip a a 169.254.$no.1/24 dev $dev
+ip a a fd72:6fdd:e6b1::$no:1/126 dev $dev
+ip l s $dev up
+badvpn-tun2socks --tundev $dev --netif-ipaddr 169.254.$no.2 --netif-ip6addr fd72:6fdd:e6b1::$no:2 --netif-netmask 255.255.255.0 --socks-server-addr $1 &
+wait

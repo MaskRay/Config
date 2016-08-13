@@ -381,6 +381,7 @@ fu! Python_init()
   " Setting 'python_space_error_highlight' = 1 will only highlight mixed
   " tabs and spaces, I go as far as mark all tabs as error.
   autocmd Syntax python syn match ExtraWhitespace /\t/
+  nn <buffer> <leader>aa :T ./<C-r>=expand('%')<cr> -f /tmp/a.cap<cr>
 endf
 let g:pymode_folding = 0
 " failed to disable [Pymode] Init Rope project: $HOME, too slow, prefer YouCompleteMe
@@ -667,7 +668,7 @@ fu! C_init()
   abbr #i #include
   setl syntax=cpp11.doxygen
   "let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
-  syn keyword cppType real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
+  syn keyword cppType ulong i8 i16 i32 i64 u8 u16 u32 u64 real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
   noremap <buffer> [[ ?{<cr>w99[{

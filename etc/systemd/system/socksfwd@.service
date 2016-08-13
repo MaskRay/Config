@@ -1,0 +1,5 @@
+[Unit]
+Description=tun -> socks5
+
+[Service]
+ExecStart=/home/ray/bin/socksfwd %I
