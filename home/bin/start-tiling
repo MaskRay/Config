@@ -1,37 +1,15 @@
-#!/usr/bin/env ocaml
+#!/bin/zsh
+wallpapers=(~/Wallpapers/*)
+if (( $#wallpapers )); then
+  feh --bg-scale ${wallpapers[$((RANDOM%${#wallpapers[@]}+1))]}
+fi
 
- Random.self_init ();;
-
-(* randomly choose a wallpaper *)
-let pics = Sys.readdir "/home/ray/Wallpapers";;
-let pic = "feh --bg-scale /home/ray/Wallpapers/" ^ (Array.get pics (Random.int (Array.length pics))) ^ " &";;
-
-let singleton s =
-  let comm =
-    try String.sub s 0 (String.index s ' ')
-    with Not_found -> s
-  in "killall -0 -r " ^ comm ^ " || " ^ s;;
-
-List.map Sys.command [
-  (* resident *)
-  singleton "TERM=screen-256color tmux new -d -s default \\; new-window"
-  ; singleton "dunst &"
-
-  (* one-shot *)
-  ; "xrandr | egrep -q '(HDMI-1|VGA-1) connected' && di l"
-  ; "xrdb ~/.Xresources"
-  (*; pic*)
-  ; "change-wallpaper"
-  (* ; "unclutter &" *)
-  (* ; "batti &" *)
-  ; "syndaemon -t -k &"
-  (* ; "taskbar &" *)
-  (*; "keynav &" *)
-  ; "xset r rate 200 50"
-  (* ; "xcape -e 'Control_L=Escape'" *)
-  ; "compton -cC &"
-  ; "urxvtd -f -q -o"
-  (* ; "systemctl --user restart mail-inotify" *)
-  ; "xsetroot -cursor_name left_ptr"
-  ; "xscreensaver -no-splash &"
-];;
+xrandr | egrep -q '(HDMI-1|VGA-1) connected' && di l
+TERM=screen-256color tmux new -d -s default \; new-window
+dunst &
+xrdb ~/.Xresources
+syndaemon -t -k &
+xset r rate 200 50
+compton -cC &
+xsetroot -cursor_name left_ptr
+xscreenaver -no-splash &

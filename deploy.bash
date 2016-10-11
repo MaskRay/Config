@@ -14,7 +14,9 @@ do_ssh() {
 }
 
 do_mkdir() {
-  mkdir -p ~/{.vimtmp/undo,.history,tmp}
+  mkdir -p ~/{.history,tmp}
+  mkdir -p ~/.vimtmp/{backup,swap,undo}
+  mkdir -p ~/Wallpapers
 }
 
 do_git() {

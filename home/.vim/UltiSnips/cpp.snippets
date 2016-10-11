@@ -362,17 +362,16 @@ while (i < n && j < n) {
 endsnippet
 
 snippet prime
-long pr[N/10], np = 0;
-bool sieved[N];
+long pr[N], primes[N];
 
-void get_primes()
+void sieve()
 {
+  long np = 0;
   for (long i = 2; i < N; i++) {
-    if (!sieved[i]) pr[np++] = i;
-    for (long j = 0; j < np && i*pr[j] < N; j++) {
-      sieved[i*pr[j]] = true;
-      if (i%pr[j] == 0) break;
-    }
+    if (! pr[i])
+      primes[np++] = pr[i] = i;
+    for (long j = 0; j < np && primes[j] <= pr[i] && i*primes[j] < N; j++)
+      pr[i*primes[j]] = primes[j];
   }
 }
 endsnippet
@@ -565,10 +564,10 @@ snippet ALL
 endsnippet
 
 snippet blankinship
-ll blankinship(ll a, ll b, ll &x, ll &y)
+long blankinship(long a, long b, long &x, long &y)
 {
-  for (ll u = y = 1, v = x = 0; a; ) {
-    ll q = b/a;
+  for (long u = y = 1, v = x = 0; a; ) {
+    long q = b/a;
     swap(x -= q*u, u);
     swap(y -= q*v, v);
     swap(b -= q*a, a);
@@ -578,11 +577,17 @@ ll blankinship(ll a, ll b, ll &x, ll &y)
 endsnippet
 
 snippet mul_mod
-ll mul_mod(ll a, ll b, ll mod)
+u64 mul_mod(u64 a, u64 b, u64 mod)
 { 
-  // mod < 2**62
-  ll x = a*b, r = x - mod*ll(double(a)*double(b)/mod+0.5);
-  return r < 0 ? r + mod : r;
+  u64 x = a*b, r = x - mod*u64((long double)a*b/mod+0.5);
+  return i64(r) < 0 ? r + mod : r;
+}
+
+extern inline u64 mul_mod(u64 a, u64 b, u64 m)
+{
+  u64 r;
+  asm("mulq %2\n\tdivq %3" : "=&d"(r), "+a"(a) : "rm"(b), "rm"(m) : "cc");
+  return r;
 }
 endsnippet
 

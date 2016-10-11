@@ -175,7 +175,7 @@ myManageHook = composeAll $
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
     [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
-    [ className =? c --> viewShift "office" | c <- ["Wireshark", "Idaq", "Inkscape", "Geeqie", "Wps", "Wpp"] ] ++
+    [ className =? c --> viewShift "office" | c <- ["Wireshark", "Idaq", "Inkscape", "Geeqie", "Wps", "Wpp", "mpv"] ] ++
     [ role =? r --> doFloat | r <- ["pop-up", "app"]] ++ -- chrome has pop-up windows
     {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
     [ title =? "weechat" --> viewShift "im"] ++
@@ -287,7 +287,7 @@ myKeys =
     , ("S-<Print>", spawn "import /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|google-chrome|chromium|idaq.exe|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")
