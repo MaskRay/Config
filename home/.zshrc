@@ -311,15 +311,15 @@ fi
 [[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
 
 # Ruby
-[[ -s ~/.rvm/scripts/rvm ]] && . ~/.rvm/scripts/rvm
+[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
 
 # Node
-[[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh
+[[ -s ~/.nvm/nvm.sh ]] && source ~/.nvm/nvm.sh
 
 # OCaml
-[[ -s ~/.opam/opam-init/init.zsh ]] && . ~/.opam/opam-init/init.zsh
+[[ -s ~/.opam/opam-init/init.zsh ]] && source ~/.opam/opam-init/init.zsh
 
-[[ -s ~/.zshrc.local ]] && . ~/.zshrc.local
+[[ -s ~/.zshrc.local ]] && source ~/.zshrc.local
 
 
 # command-not-found {{{1

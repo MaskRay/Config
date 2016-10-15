@@ -1,0 +1,149 @@
+[options]
+resize_grip = true
+scroll_on_output = false
+scroll_on_keystroke = true
+audible_bell = false
+visible_bell = true
+mouse_autohide = true
+allow_bold = true
+dynamic_title = true
+urgent_on_bell = true
+clickable_url = true
+#font = Droid Sans Mono for Powerline 10
+#font = Source Code Pro for Powerline 14
+#font = DejaVu Sans Mono 18
+font = Monospace 22
+scrollback_lines = 65536
+search_wrap = true
+#icon_name = terminal
+#geometry = 640x480
+# transparency = 0.2
+# "system", "on" or "off"
+cursor_blink = system
+# "block", "underline" or "ibeam"
+cursor_shape = block
+# $BROWSER is used by default
+# browser = chromium
+# browser = qutebrowser
+# word characters used for word selection
+# (default if unset: all graphic non-punctuation/space characters)
+#word_chars = -A-Za-z0-9,./?%&#:_=+@~
+#default color theme
+#[colors]
+#foreground = #dcdccc
+#foreground_bold = #ffffff
+##foreground_dim = #888888
+#background = #3f3f3f
+##cursor = #dcdccc
+#
+## if unset, will reverse foreground and background
+#highlight = #2f2f2f
+#
+## colors from color0 to color254 can be set
+#color0 = #3f3f3f
+#color1 = #705050
+#color2 = #60b48a
+#color3 = #dfaf8f
+#color4 = #506070
+#color5 = #dc8cc3
+#color6 = #8cd0d3
+#color7 = #dcdccc
+#color8 = #709080
+#color9 = #dca3a3
+#color10 = #c3bf9f
+#color11 = #f0dfaf
+#color12 = #94bff3
+#color13 = #ec93d3
+#color14 = #93e0e3
+#color15 = #ffffff
+# Solarized-dark
+[colors]
+#foreground = #839496
+#foreground_bold = #fdf6e3
+##foreground_dim = #888888
+#background = #002b36
+#cursor = #93a1a1
+#
+## if unset, will reverse foreground and background
+#highlight = #000000
+#
+## colors from color0 to color254 can be set
+#color0 = #073642
+#color1 = #dc322f
+#color2 = #859900
+#color3 = #b58900
+#color4 = #268bd2
+#color5 = #d33682
+#color6 = #2aa198
+#color7 = #eee8d5
+#color8 = #002b36
+#color9 = #cb4b16
+#color10 = #586e75
+#color11 = #657b83
+#color12 = #839496
+#color13 = #6c71c4
+#color14 = #93a1a1
+#color15 = #fdf6e3
+## Used color for urxvt
+#[colors]
+#background = #101010
+#foreground = #66FF66
+#highlight = #505050
+#cursor = #66ff66
+##black
+#color0 = #1c1c1c
+#color8 = #4d4d4d
+##red
+#color1 = #D81860
+#color9 = #F00060
+##green
+#color2 = #60FF60
+#color10 = #70FF70
+##yellow
+#color3 = #f9fd75
+#color11 = #f9fd80
+##blue
+#color4 = #4695c8
+#color12 = #5a9dc8
+##magenta
+#color5 = #a78edb
+#color13 = #b29fdb
+##cyan
+#color6 = #43afce
+#color14 = #69b8ce
+##white
+#color7 = #f3ebe2
+#color15 = #eeeeee
+# Molokai theme
+# [colors]
+#background= rgba(32,32,32,0.8)
+background= rgba(20,20,20,1)
+foreground= #d0d0d0
+#foreground= #66ff66
+highlight = #505050
+cursor = #66ff66
+color0= #101010
+color1= #960050
+color2= #66aa11
+color3= #c47f2c
+color4= #30309b
+color5= #7e40a5
+color6= #3579a8
+color7= #9999aa
+color8= #303030
+color9= #ff0090
+color10= #80ff00
+color11= #ffba68
+color12= #5f5fee
+color13= #bb88dd
+color14= #4eb4fa
+color15= #f0f0f0
+[hints]
+#font = Monospace 12
+#foreground = #dcdccc
+#background = #3f3f3f
+#padding = 2
+#border = #3f3f3f
+#border_width = 0.5
+#roundness = 2.0
+# vim: ft=dosini
