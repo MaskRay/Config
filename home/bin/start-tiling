@@ -12,4 +12,4 @@ syndaemon -t -k &
 xset r rate 200 50
 compton -cC &
 xsetroot -cursor_name left_ptr
-xscreenaver -no-splash &
+xscreensaver -no-splash &

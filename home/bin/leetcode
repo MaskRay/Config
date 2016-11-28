@@ -1,0 +1,133 @@
+#!/usr/bin/env ruby
+require 'mechanize'
+require 'optparse'
+require 'set'
+require 'pry'
+require 'json'
+
+opt = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: a.rb"
+  opts.on '-h', '--help' do opt[:help] = true end
+  opts.on '-r', '--readme', 'Change ~/Algo/leetcode/README.md' do
+    opt[:readme] = true
+  end
+  opts.on '-m', '--maskray.me', 'Change ~/maskray.me/source/_posts/2014-06-29-leetcode-solutions.md' do
+    opt[:maskrayme] = true
+  end
+  opts.on '-c', '--copy', 'copy ~/Algo/leetcode/ to ~/projects/leetcode/' do
+    opt[:copy] = true
+  end
+end.parse!
+
+if ! opt[:maskrayme] && ! opt[:readme]
+  opt[:readme] = opt[:maskrayme] = opt[:copy] = true
+end
+
+def getpass
+  print 'password: '
+  system "stty -echo"
+  r = gets
+  system "stty echo"
+  puts
+  r.chomp
+end
+
+if true
+  sources = Set.new Dir[File.expand_path '~/Algo/leetcode/*.cc'].map {|x| x.gsub(/.*\/(.*)\.cc/, '\1') }
+
+  agent = Mechanize.new
+  page = agent.get 'https://leetcode.com/accounts/login/'
+  page.form_with {|form|
+    form['login'] = 'MaskRay'
+    form['password'] = begin File.read(File.expand_path '~/Sed/leetcode').chomp rescue getpass end
+  }.submit
+  page = agent.get('https://leetcode.com/api/problems/algorithms/')
+  problems = JSON.parse(page.body)['stat_status_pairs']
+  total = problems.size
+  list = []
+  for problem in problems
+    stat = problem['stat']
+    name = stat['question__title_slug']
+    if sources.member? name
+      list << "|#{stat['question_id']}|[#{stat['question__title']}](https://leetcode.com/problems/#{name})|[#{name}.cc](#{name}.cc)|"
+    end
+  end
+  solved = list.size
+  if solved < 100
+    STDERR.puts "solved < 100: something goes wrong"
+    exit 2
+  end
+else ### debug ###
+  total = 2
+  solved = 1
+  list = [
+    '|2|[Add Two Numbers](https://leetcode.com/problems/add-two-numbers/)|[add-two-numbers.cc](add-two-numbers.cc)|',
+    '|1|[Two Sum](https://leetcode.com/problems/two-sum/)|[two-sum.cc](two-sum.cc)|'
+  ]
+end
+
+if opt[:readme]
+  readme = File.expand_path '~/Algo/leetcode/README.md'
+  begin
+    lines = File.readlines readme
+    re = /^\|---\| ----- \|/ # match |---| ----- | -------- |
+    re1 = /^\|\d+\|\[/ # match |1|[Two Sum](/problems/two-sum/)|[two-sum.cc](two-sum.cc)|
+    first = true
+    File.open readme, 'w' do |h|
+      for line in lines
+        case line
+        when /Solved \d+\/\d+/
+          h.puts "Solved #{solved}/#{total} problems."
+        when re
+          h.puts line
+          h.puts list.join "\n"
+        when re1
+        else
+          h.puts line
+        end
+      end
+    end
+    puts "Updated #{readme}"
+  rescue => e
+    STDERR.puts "failed to open #{readme}: #{e.message}"
+    STDERR.puts "restoring #{readme}"
+    File.write readme, lines.join("\n")
+    exit 1
+  end
+end
+
+if opt[:maskrayme]
+  maskrayme = File.expand_path '~/maskray.me/source/_posts/2014-06-29-leetcode-solutions.md'
+  begin
+    lines = File.readlines maskrayme
+    re = /^\|---\| ----- \|/ # match |---| ----- | -------- |
+    re1 = /^\|\d+\|\[/ # match |1|[Two Sum](/problems/two-sum/)|[two-sum.cc](two-sum.cc)|
+    first = true
+    File.open maskrayme, 'w' do |h|
+      for line in lines
+        case line
+        when /You have solved \d+\/\d+/
+          h.puts "You have solved #{solved}/#{total} problems."
+        when re
+          h.puts line
+          h.puts list.map{|l| l.sub /\(([.\w-]+)\)\|$/, '(/leetcode/\\1)|'}.join "\n"
+        when re1
+        else
+          h.puts line
+        end
+      end
+    end
+    puts "Updated #{maskrayme}"
+  rescue => e
+    STDERR.puts "failed to open #{maskrayme}: #{e.message}"
+    STDERR.puts "restoring #{maskrayme}"
+    File.write maskrayme, lines.join("\n")
+    exit 1
+  end
+end
+
+if opt[:copy]
+  system 'zsh', '-c', 'cp -auv ~/Algo/leetcode/{*.cc,*.md} ~/maskray.me/out/leetcode/'
+  system 'zsh', '-c', 'cp -auv ~/Algo/leetcode/{*.cc,*.md} ~/projects/leetcode/'
+end

@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+import json, socket, subprocess, threading, traceback
+
+def client(clisock):
+    data = json.loads(clisock.recv(4096).decode())
+    subprocess.run(['notify-send', '-a', data['title'], '--', data['body']])
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+sock.bind(('127.0.0.1', 9010))
+sock.listen(5)
+while 1:
+    clisock, _ = sock.accept()
+    thr = threading.Thread(target=client, args=(clisock,), daemon=True)
+    thr.start()

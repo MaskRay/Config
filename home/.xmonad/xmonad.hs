@@ -170,7 +170,7 @@ myLayout = avoidStruts $
 doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
-    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome", "Chrome", "chromium"] ] ++
+    [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome", "Chrome", "Chromium"] ] ++
     [ className =? c --> viewShift "nvim" | c <- ["Gvim"] ] ++
     [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
     [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
@@ -282,7 +282,7 @@ myKeys =
     , ("M-S-c", kill)
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
-    , ("<Print>", spawn "import /tmp/screen.jpg")
+    , ("<Print>", spawn "import -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
     , ("S-<Print>", spawn "import /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
@@ -413,7 +413,6 @@ myKeys =
     , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
     , ("M-p m", spawn "menu")
-    , ("M-p z", launchApp myXPConfig "zathura" ["pdf","ps"])
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
@@ -577,12 +576,12 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     --[ TI "web" "" (spawn "chrome --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
-    [ TI "web" "" (spawn "chrome --new-window https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
+    [ TI "web" "" (spawn "chrome") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "im" "" (spawn $ termite "weechat") "weechat.xpm"
+    , TI "im" "" (spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'") "weechat.xpm"
     , TI "misc" "" (return ()) "gtk-network.xpm"
     , TI "mail" "" (spawn (termite "mutt") >> spawn "killall -WINCH mutt") "mutt.xpm"
     , TI "gimp" "" (return ()) "gimp.xpm"

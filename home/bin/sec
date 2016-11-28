@@ -3,9 +3,10 @@
 archive=/home/ray/Sed/sed.zip
 dir=/tmp/sed
 
-while getopts c opt; do
+while getopts h opt; do
   case $opt in
-    c) change=1;;
+    d) delete=1;;
+    h) change=1;;
   esac
 done
 shift $[$OPTIND-1]
@@ -26,12 +27,17 @@ case $1 in
       break
     done
     tmp=$(mktemp -u)
-    (cd $dir && find . | zip -@ -P $pass $tmp) && mv $tmp $archive
+    if (cd $dir && find . | zip -@ -P $pass $tmp) && mv $tmp $archive; then
+      [[ -n $delete ]] && rm -r $dir
+    fi
     ;;
   d)
     [[ -d $dir ]] || mkdir $dir
     read -rs 'pass?Password: '
     unzip -P $pass $archive -d $dir && chmod 700 $dir
+    ;;
+  r)
+    rm -r $dir
     ;;
   *)
     cat <<e
@@ -40,6 +46,7 @@ Usage: $(basename $0) COMMAND
 Commands:
   e  encrypt
   d  decrypt
+  r  remove
 e
     ;;
 esac

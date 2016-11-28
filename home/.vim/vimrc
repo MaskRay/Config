@@ -716,7 +716,7 @@ func! Tex_init()
     setl nocursorline                                " for performance
     hi clear Conceal
     setl sw=2 sts=2 expandtab
-    setl textwidth=150
+    setl textwidth=0
     setl errorformat=aaaaaaa                        " disable quickfix
     setl fo-=q
     setl cole=0
