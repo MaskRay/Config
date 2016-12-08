@@ -32,8 +32,14 @@ int process(const char* fpath, const struct stat* sb, int typeflag, struct FTW* 
   string line;
   int lineno = 0, local_matches = 0;
   while (getline(f, line)) {
+    u32string utf32;
     lineno++;
-    u32string utf32 = cvt.from_bytes(line.data());
+    try {
+      utf32 = cvt.from_bytes(line.data());
+    } catch (range_error&) {
+      return 0;
+      break;
+    }
     string py;
     vector<size_t> offsets;
     vector<pair<size_t, size_t>> matches;

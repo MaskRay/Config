@@ -167,7 +167,7 @@ myLayout = avoidStruts $
                 , decoHeight          = 18
                 }
 
-doSPFloat = customFloating $ W.RationalRect (1/6) (1/6) (4/6) (4/6)
+doSPFloat = customFloating $ W.RationalRect (1/7) (1/7) (5/7) (5/7)
 myManageHook = composeAll $
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
     [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome", "Chrome", "Chromium"] ] ++
@@ -287,7 +287,7 @@ myKeys =
     , ("S-<Print>", spawn "import /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|Google-chrome|chromium|idaq.exe|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
+    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'g:p:Firefox|Google-chrome|chromium|idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|Goldendict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
     , ("M-S-k", spawn "xkill")

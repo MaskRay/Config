@@ -347,7 +347,7 @@ fu! Haskell_init()
   nn <buffer> <leader>mc :GhcModCheck<cr>
   nn <buffer> <leader>md :GhcModDiagnostics<cr>
   nn <buffer> <leader>mh :HoogleInfo<cr>
-  nn <buffer> <leader>mi :HdevtoolsInfo<cr>
+  nn <buffer> <leader>mi :GhcModInfoPreview<cr>
   nn <buffer> <leader>mq :HdevtoolsClear<cr>
   nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
   nn <buffer> <leader>mt :HdevtoolsType<cr>
@@ -456,9 +456,10 @@ if has('nvim')
   Plug 'kana/vim-textobj-user'
   Plug 'KabbAmine/zeavim.vim'
   Plug 'lucapette/vim-textobj-underscore'
+  Plug 'neovim/node-host'
   Plug 'nathanaelkane/vim-indent-guides'
   Plug 'qstrahl/vim-matchmaker'
-  Plug 'rhysd/clever-f.vim'
+  "Plug 'rhysd/clever-f.vim'
   Plug 'rhysd/vim-clang-format'
   Plug 'rking/ag.vim'
   Plug 'scrooloose/syntastic'
@@ -475,7 +476,7 @@ if has('nvim')
 
   " Languages
   Plug 'mattn/emmet-vim'
-  Plug 'neovimhaskell/haskell-vim'
+  "Plug 'neovimhaskell/haskell-vim'
   "Plug 'pytest.vim'
   Plug 'klen/python-mode', { 'branch': 'develop' }
   Plug 'LaTeX-Box-Team/LaTeX-Box'
@@ -866,6 +867,9 @@ nn <leader>jf :JunkFile<cr>
 nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
+" nmap t {{{3
+nmap t <Plug>(easymotion-f)
+nmap T <Plug>(easymotion-F)
 " nmap Y (global) {{{3
 nn Ys :Gtags <C-r><C-w><cr>
 nn Yr :Gtags -r <C-r><C-w><cr>

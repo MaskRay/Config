@@ -1,6 +1,6 @@
 -- https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/ghci-commands.html
 
-:m Data.List Control.Applicative Control.Monad
+:m Control.Applicative Control.Monad
 :set prompt "\x256d\x2500%s\n\x2570\x2500"
 :seti -XFlexibleInstances -XMagicHash -XTupleSections -XNoMonomorphismRestriction -XScopedTypeVariables
 
