@@ -476,7 +476,8 @@ if has('nvim')
 
   " Languages
   Plug 'mattn/emmet-vim'
-  "Plug 'neovimhaskell/haskell-vim'
+  Plug 'neovimhaskell/haskell-vim'
+  Plug 'idris-hackers/idris-vim'
   "Plug 'pytest.vim'
   Plug 'klen/python-mode', { 'branch': 'develop' }
   Plug 'LaTeX-Box-Team/LaTeX-Box'
@@ -490,6 +491,7 @@ if has('nvim')
   Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
   Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
   Plug 'Twinside/vim-hoogle', { 'for': 'haskell' }
+  "Plug 'alx741/vim-hindent', { 'for': 'haskell' }
   Plug 'bitc/vim-hdevtools', { 'for': 'haskell' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
@@ -868,8 +870,8 @@ nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
 " nmap t {{{3
-nmap t <Plug>(easymotion-f)
-nmap T <Plug>(easymotion-F)
+nmap t <Plug>(easymotion-w)
+nmap T <Plug>(easymotion-b)
 " nmap Y (global) {{{3
 nn Ys :Gtags <C-r><C-w><cr>
 nn Yr :Gtags -r <C-r><C-w><cr>

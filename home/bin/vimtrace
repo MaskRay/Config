@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+
+'''strace wrapper'''
+
+import os
+import sys
+import subprocess
+import signal
+
+def sigchld(signo, sigframe):
+  pass
+
+def main():
+  tracer = sys.argv[1]
+  if tracer not in ('strace', 'ltrace'):
+    sys.exit('%s not supported.' % tracer)
+
+  vim = subprocess.Popen(
+    ["vim", "+set buftype=nofile", "+setf strace", "-"],
+    preexec_fn = os.setpgrp,
+    stdin = subprocess.PIPE,
+  )
+  fd = vim.stdin.fileno()
+  tracerp = subprocess.Popen(
+    [tracer, '-o', '/proc/self/fd/%s' % fd] + sys.argv[2:],
+    pass_fds=(fd,),
+  )
+  try:
+    tracerp.wait()
+  except KeyboardInterrupt:
+    # wait for it to exit on SIGINT
+    tracerp.wait()
+  finally:
+    vim.stdin.close()
+
+  # ignore SIGTTOU so that we can fg ourself
+  signal.signal(signal.SIGTTOU, signal.SIG_IGN)
+  # Kernel, send me SIGCHLDs please!
+  signal.signal(signal.SIGCHLD, sigchld)
+  continued = False
+  while True:
+    if not continued:
+      # fg the Vim process (which has its group id the same as its pid)
+      os.tcsetpgrp(0, vim.pid)
+      # continue it in case it's outputed some text before we make it the
+      # foreground process
+      vim.send_signal(signal.SIGCONT)
+
+    siginfo = signal.sigwaitinfo([signal.SIGCHLD])
+    if siginfo.si_status == signal.SIGTSTP:
+      # fg ourself
+      os.tcsetpgrp(0, os.getpgid(0))
+      # suspend ourself
+      os.kill(0, signal.SIGTSTP)
+      continued = False
+    elif siginfo.si_status == signal.SIGCONT:
+      continued = True
+      continue
+    else:
+      vim.wait()
+      break
+
+if __name__ == '__main__':
+  try:
+    import setproctitle
+    setproctitle.setproctitle('vimtrace')
+  except ImportError:
+    pass
+
+  main()

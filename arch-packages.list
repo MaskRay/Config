@@ -19,13 +19,13 @@ archlinuxcn-keyring
 aria2
 arptables
 at
-atom-editor
 atool
 audacity
 autoconf
 autojump
 automake
 autossh
+awesome
 badvpn
 bash
 bash-completion
@@ -46,7 +46,6 @@ byzanz-git
 bzip2
 bzr
 cabal-install
-cairo
 calibre
 cargo
 catdoc
@@ -66,7 +65,6 @@ colordiff
 compton
 conntrack-tools
 convmv
-coq
 coreutils
 couchdb
 coursera-dl-git
@@ -79,7 +77,6 @@ cscope
 cups
 curl
 curlftpfs
-cutegram
 dash
 dcfldd
 desmume
@@ -99,6 +96,8 @@ dosfstools
 downgrade
 doxygen
 dropbear
+dropbox
+dropbox-cli
 dsniff
 dstat
 dunst
@@ -149,7 +148,6 @@ gcc-multilib
 gdb
 geeqie
 geoip
-getmail
 gettext
 ghc-mod
 gifsicle
@@ -179,6 +177,7 @@ haskell-lens
 hasktags
 haveged
 hdparm
+hindent
 hlint
 hoogle
 hostapd
@@ -201,6 +200,8 @@ intel-gpu-tools
 inxi
 iodine
 iotop
+iperf
+iperf3
 ipmitool
 iproute2
 ipset
@@ -214,7 +215,6 @@ jfsutils
 jnettop
 john
 jq
-jruby
 jsoncpp
 junit
 jupyter
@@ -233,7 +233,6 @@ licenses
 linux
 linux-tools-meta
 lldb
-llvm-ocaml
 lm_sensors
 logrotate
 lshw
@@ -249,7 +248,6 @@ man-db
 man-pages
 mariadb
 mathjax
-mc
 mdadm
 meld
 memcached
@@ -297,10 +295,12 @@ noto-fonts-emoji
 npm
 ntfs-3g
 ntp
+nvchecker-git
 obexfs
 ocaml
 octave
 offlineimap
+opam
 openbsd-netcat
 opencc
 openconnect
@@ -321,9 +321,11 @@ patch
 patchelf
 patchutils
 pavucontrol
+pax-utils
 pciutils
 pcmciautils
 pdfgrep
+pdfpc
 perl
 perl-image-exiftool
 perl-rename
@@ -352,7 +354,6 @@ procmail
 procps-ng
 proxychains-ng
 psmisc
-pssh
 pulseaudio
 pulseaudio-alsa
 pulseaudio-bluetooth
@@ -361,6 +362,7 @@ pwsafe
 pygmentize
 pypy
 python-jedi
+python-lxml
 python-matplotlib
 python-neovim
 python-nltk
@@ -392,6 +394,7 @@ reiserfsprogs
 remmina
 renameutils
 rfkill
+ripgrep
 rlwrap
 rogue
 rsync
@@ -414,7 +417,6 @@ shadowsocks
 shellcheck
 siege
 simple-mtpfs
-skype
 smartmontools
 socat
 sox
@@ -436,6 +438,7 @@ supervisor
 surfraw
 swftools
 sxiv
+synergy
 sysdig
 sysfsutils
 sysstat
@@ -443,17 +446,20 @@ systemd-sysvcompat
 tar
 tcpdump
 tcpflow
+telegram-desktop
 terminator
 termite
 tesseract
 tesseract-data-eng
 texinfo
+tftp-hpa
 the_silver_searcher
 tig
 tigervnc
 tilda
 time
 tinc-pre
+tinyproxy
 tk
 tor
 transmission-gtk
@@ -480,10 +486,9 @@ ttf-liberation
 ttf-linux-libertine
 ttf-linux-libertine-g
 ttf-mph-2b-damase
-ttf-oxygen
+ttf-ms-fonts
 ttf-sazanami
 ttf-tibetan-machine
-ttf-tlwg
 ttf-ubraille
 ttf-ubuntu-font-family
 udiskie
@@ -530,6 +535,7 @@ winetricks
 wireless_tools
 wireshark-gtk
 wmctrl
+wmname
 wpa_actiond
 wpa_supplicant
 wps-office
@@ -553,6 +559,7 @@ xf86-input-mouse
 xf86-input-synaptics
 xf86-input-vmmouse
 xf86-input-void
+xf86-video-dummy
 xf86-video-fbdev
 xfsprogs
 xinetd
@@ -635,18 +642,20 @@ zshdb
 # foreign
 aura-bin
 aura-bin-debug
+azure-vhd-utils-for-go-git
 bindfs
 binwalk-git
 bitlbee-facebook-git
 bitlbee-libpurple-unicode-channel
 bvi
 bviplus
+cairo-coloredemoji
 care
 clustershell
 colm
+coq
 crosstool-ng
 eclim
-elvish-git
 esotope-bfc-git
 fatrace
 firmware-mod-kit
@@ -662,6 +671,7 @@ influxdb
 input-utils
 isabelle
 j8-git
+keybase-git
 leiningen
 libcgroup
 libfreenect-git
@@ -676,13 +686,14 @@ multipath-tools
 mupdf-git
 mutt-sidebar
 mypy-git
-nvchecker-git
-opam
 openfst
 perf-tools-git
 proofgeneral
+pssh
+python-bcc
+python2-bcc
 q
-qemu-user-static-deb
+qemu-user-static
 radare2-git
 recutils
 rofi-git
@@ -690,11 +701,11 @@ samsung-printers
 scid
 selenium-server-standalone
 shantz-xwinwrap-bzr
+skype
 strongswan
 system76-driver
 systemtap
 task-git
-telegram-desktop-bin-dev
 telegram-purple-git
 telegramircd-git
 thermald
@@ -703,6 +714,7 @@ tiptop
 tmate
 tmux-fullwidth-backspace
 trace-cmd
+ttf-oxygen
 urlscan-git
 vte3-ng-fullwidth-emoji
 webqqircd-git
@@ -711,3 +723,4 @@ xcape
 xmobar-git
 xstow
 ycm-generator-git
+zoom

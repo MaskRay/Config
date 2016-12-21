@@ -76,7 +76,7 @@ setopt prompt_subst             # prompt more dynamic, allow function in prompt
 setopt nonomatch
 setopt nobeep
 
-fpath=($HOME/Util/zsh-completions/src/ ~/.zsh/ $fpath)
+fpath=($HOME/Util/zsh-completions/src/ ~/.zsh/functions $fpath)
 
 # Completion {{{1
 autoload -U compinit
@@ -290,10 +290,34 @@ zle -N self-insert url-quote-magic
 
 # jump-target {{{2
 # https://github.com/scfrazer/zsh-jump-target
-#autoload -Uz jump-target
-#zle -N jump-target
-#bindkey "^J" jump-target
+autoload -Uz jump-target
+zle -N jump-target
+bindkey "^J" jump-target
+# move by shell word {{{2
+zsh-word-movement () {
+  # see select-word-style for more
+  local -a word_functions
+  local f
 
+  word_functions=(backward-kill-word backward-word
+    capitalize-word down-case-word
+    forward-word kill-word
+    transpose-words up-case-word)
+
+  if ! zle -l $word_functions[1]; then
+    for f in $word_functions; do
+      autoload -Uz $f-match
+      zle -N zsh-$f $f-match
+    done
+  fi
+  # set the style to shell
+  zstyle ':zle:zsh-*' word-style shell
+}
+zsh-word-movement
+unfunction zsh-word-movement
+bindkey '^[^b' zsh-backward-word
+bindkey '^[^f' zsh-forward-word
+bindkey '^[^w' zsh-backward-kill-word
 
    # Imports {{{1
 
@@ -301,8 +325,8 @@ zle -N self-insert url-quote-magic
 [[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
 # aur/fzf
-if [[ -s /etc/profile.d/fzf.zsh ]] then
-  source /etc/profile.d/fzf.zsh
+if [[ -s /usr/share/fzf/completion.zsh ]] then
+  source /usr/share/fzf/completion.zsh
   # redefine __fzfcmd (appending `-e` option) to disable fuzzy matching
   __fzfcmd() {
     [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"

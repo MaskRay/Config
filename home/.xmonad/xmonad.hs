@@ -385,12 +385,13 @@ myKeys =
     , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' g", namedScratchpadAction scratchpads "gp")
     , ("C-' h", namedScratchpadAction scratchpads "ghci")
-    , ("C-' i", namedScratchpadAction scratchpads "rawutop")
+    , ("C-' i", namedScratchpadAction scratchpads "idris")
     , ("C-' j", namedScratchpadAction scratchpads "j8")
     , ("C-' n", namedScratchpadAction scratchpads "node")
     , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
+    , ("C-' s", namedScratchpadAction scratchpads "ydcv")
     , ("C-' t", namedScratchpadAction scratchpads "htop")
     , ("C-' u", namedScratchpadAction scratchpads "R")
     , ("C-' z", namedScratchpadAction scratchpads "zeal")
@@ -427,9 +428,8 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "gp", "htop", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview"] ++
-  [ NS "rawutop" "urxvt -T rawutop -e utop -init /dev/null" (title =? "rawutop") doSPFloat
-  , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
+  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
+  [ NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
   , NS "ghci" "termite -t ghci -e 'ghci'" (title =? "ghci") doSPFloat
   --, NS "zeal" "zeal" (className =? "Zeal") doSPFloat
   ]
