@@ -486,6 +486,7 @@ if has('nvim')
   Plug 'derekwyatt/vim-fswitch'
   Plug 'tpope/vim-rails', { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+  Plug 'vim-llvm' " ln -s ~/Dev/llvm/utils/vim ~/.vim/bundle/vim-llvm
   Plug 'wting/rust.vim', { 'for': 'rust' }
   Plug 'zah/nim.vim', { 'for': 'nim' }
   Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
@@ -614,8 +615,8 @@ endif
 endfunction "}}}
 
 " Beginning & End
-noremap H ^
-noremap L g_
+"noremap H ^
+"noremap L g_
 
 " Open a Quickfix window for the last search.
 nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR>
@@ -626,8 +627,8 @@ set pastetoggle=<F7>
 "map /  <Plug>(incsearch-forward)
 "map ?  <Plug>(incsearch-backward)
 "map g/ <Plug>(incsearch-stay)
-"map z/ <Plug>(incsearch-easymotion-/)
-"map z? <Plug>(incsearch-easymotion-?)
+map z/ <Plug>(incsearch-easymotion-/)
+map z? <Plug>(incsearch-easymotion-?)
 "map zg/ <Plug>(incsearch-easymotion-stay)
 
 au BufReadPost *
@@ -643,10 +644,6 @@ vn : ;
 
 " surf
 nnoremap <leader>sf :Surf<cr>
-
-" SplitJoin
-vnoremap <leader>sj :SplitJoinJoin<cr>
-vnoremap <leader>sJ :SplitJoinSplit<cr>
 
 " clang-format
 let g:clang_format#style_options = {
@@ -843,6 +840,9 @@ else
 endif
 nn <silent> <leader>hR :UniteResume<cr>
 nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+" nmap <leader>s (SplitJoin) {{{4
+nn <leader>sj :SplitjoinJoin<cr>
+nn <leader>sJ :SplitjoinSplit<cr>
 " nmap <leader>t (toggle) {{{4
 nn <leader>thc :set cursorcolumn!<cr>
 nn <leader>tb :set breakindent!<cr>
@@ -869,9 +869,11 @@ nn <leader>jf :JunkFile<cr>
 nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 nn ga <Plug>(EasyAlign)
-" nmap t {{{3
+" nmap easymotion {{{3
 nmap t <Plug>(easymotion-w)
 nmap T <Plug>(easymotion-b)
+nmap H <Plug>(easymotion-F)
+nmap L <Plug>(easymotion-f)
 " nmap Y (global) {{{3
 nn Ys :Gtags <C-r><C-w><cr>
 nn Yr :Gtags -r <C-r><C-w><cr>
@@ -884,8 +886,11 @@ nn sd :YcmCompleter GetDoc<cr>
 nn sx :YcmCompleter FixIt<cr>
 nn sf :YcmCompleter GoToDefinition<cr>
 nn si :YcmCompleter GoToInclude<cr>
+nn sp :YcmCompleter GetParent<cr>
 nn sr :YcmCompleter GoToReferences<cr>
+nn ss :YcmCompleter GoTo<cr>
 nn st :YcmCompleter GetType<cr>
+nn <C-j> :YcmCompleter GoToDeclaration<cr>
 " nmap Alt {{{3
 nn <silent> <M-;> :Unite -buffer-name=buffer -start-insert buffer file<cr>
 nn <silent> <M-,> :Gtags <C-r><C-w><cr>
