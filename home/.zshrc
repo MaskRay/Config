@@ -290,9 +290,11 @@ zle -N self-insert url-quote-magic
 
 # jump-target {{{2
 # https://github.com/scfrazer/zsh-jump-target
-autoload -Uz jump-target
-zle -N jump-target
-bindkey "^J" jump-target
+if [[ -n $TMUX ]]; then # prevent :T command in neovim from triggering
+  autoload -Uz jump-target
+  zle -N jump-target
+  bindkey "^J" jump-target
+fi
 # move by shell word {{{2
 zsh-word-movement () {
   # see select-word-style for more
@@ -324,14 +326,17 @@ bindkey '^[^w' zsh-backward-kill-word
    # archlinuxcn/pinyin-completion
 [[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
-# aur/fzf
+# community/fzf
 if [[ -s /usr/share/fzf/completion.zsh ]] then
   source /usr/share/fzf/completion.zsh
+  source /usr/share/fzf/key-bindings.zsh
   # redefine __fzfcmd (appending `-e` option) to disable fuzzy matching
-  __fzfcmd() {
-    [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
-  }
+  #__fzfcmd() {
+  #  [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
+  #}
 fi
+export FZF_CTRL_T_OPTS="--select-1 --exit-0 --preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+
 [[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
 
 # Ruby

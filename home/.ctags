@@ -4,7 +4,9 @@
 --fields=+l
 --extra=+f
 --exclude=.bundle
+--exclude=.hg
 --exclude=.git
+--exclude=.svn
 --exclude=.vagrant
 --exclude=*.min.js
 --exclude=log

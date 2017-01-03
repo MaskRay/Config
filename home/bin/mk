@@ -1,2 +1,3 @@
 #!/bin/sh
-/usr/bin/make "$@" 2>&1 | mtail -q --config ~/bin/ColorMake.mtailrc
+#/usr/bin/make "$@" 2>&1 | mtail -q --config ~/bin/ColorMake.mtailrc
+/usr/bin/make "$@"
