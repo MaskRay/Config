@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=nvr
+Comment=neovim-remote
+# TODO xdg-open does not expand environment variables
+Exec=nvr --servername /run/user/1000/nvim -- %F
+Terminal=true
+Type=Application
+MimeType=text/c;text/plain
+Categories=Development;

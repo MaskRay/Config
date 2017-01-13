@@ -4,9 +4,15 @@
 ; x-scheme-handler/http=firefox-bin.desktop
 ; x-scheme-handler/https=firefox-bin.desktop
 
+; image
+image/jpeg=geeqie.desktop
+image/gif=geeqie.desktop
+image/png=geeqie.desktop
+
 ; text
 inode/x-empty=gvim.desktop
-text/plain=gvim.desktop
+text/c=nvr.desktop
+text/plain=nvr.desktop
 
 ; html
 text/html=chromium.desktop

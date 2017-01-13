@@ -1,0 +1,19 @@
+[general]
+status_path = "~/.local/share/vdirsyncer/status/"
+
+[pair google_calendar]
+a = "google_calendar_local"
+b = "google_calendar_remote"
+collections = ["from b"]
+conflict_resolution = "b wins"
+
+[storage google_calendar_local]
+type = "filesystem"
+path = "/home/ray/Calendar"
+fileext = ".ics"
+
+[storage google_calendar_remote]
+type = "google_calendar"
+token_file = "~/.local/share/vdirsyncer/google_calendar_remote_token_file.json"
+client_id = "yourpassword"
+client_secret = "yourpassword"

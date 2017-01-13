@@ -418,6 +418,8 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
+"let g:airline#extensions#tabline#enabled = 1
+  Plug 'vim-airline/vim-airline'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
@@ -473,6 +475,7 @@ if 1
   "Plug 'rhysd/clever-f.vim'
   Plug 'rhysd/vim-clang-format'
   Plug 'rking/ag.vim' " fzf.vim
+  "Plug 'w0rp/ale' TODO(toggle) https://github.com/w0rp/ale/issues/122
   Plug 'scrooloose/syntastic'
   Plug 'terryma/vim-expand-region'
   Plug 'terryma/vim-multiple-cursors'
@@ -528,6 +531,10 @@ if filereadable(glob('~/.opam'))
   execute "set rtp+=" . g:opamshare . "/merlin/vim"
   let g:syntastic_ocaml_checkers=['merlin']
 endif
+" ale {{{2
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter% %severity%] %s'
 " deoplete {{{2
 let g:deoplete#enable_at_startup = 1
 " EasyMotion {{{2
@@ -563,10 +570,9 @@ let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height=5
 let g:syntastic_stl_format="Err:%fe %e,%w"
-let g:syntastic_cpp_compiler = 'clang++'
+"let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_error_symbol = 'x'
-"let g:syntastic_cpp_compiler_options = '-std=c++11 -isystem/usr/lib/gcc/x86_64-unknown-linux-gnu/5.1.0/include -fopenmp'
-let g:syntastic_cpp_compiler_options = '-std=c++11 -fopenmp -Wno-shift-op-parentheses -Wno-bitwise-op-parentheses'
+"let g:syntastic_cpp_compiler_options = '-std=c++1z -fopenmp -Wno-shift-op-parentheses -Wno-bitwise-op-parentheses'
 " Tagbar {{{2
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
@@ -638,12 +644,19 @@ nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:botright copen<CR
 " Paste toggle
 set pastetoggle=<F7>
 
-"map /  <Plug>(incsearch-forward)
-"map ?  <Plug>(incsearch-backward)
-"map g/ <Plug>(incsearch-stay)
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
 map z/ <Plug>(incsearch-easymotion-/)
 map z? <Plug>(incsearch-easymotion-?)
-"map zg/ <Plug>(incsearch-easymotion-stay)
+map zg/ <Plug>(incsearch-easymotion-stay)
+
+map n <Plug>(incsearch-nohl-n)zzzv
+map N <Plug>(incsearch-nohl-N)zzzv
+map * <Plug>(incsearch-nohl-*)zzzv
+map # <Plug>(incsearch-nohl-#)zzzv
+map g* <Plug>(incsearch-nohl-g*)zzzv
+map g# <Plug>(incsearch-nohl-g#)zzzv
 
 au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |

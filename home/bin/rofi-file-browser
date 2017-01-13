@@ -1,0 +1,34 @@
+#!/bin/zsh
+f=$2
+prev=/tmp/.rofi-file-browser
+n=5000
+
+my_find() {
+  if [[ -n ${commands[bfs]} ]]; then
+    bfs -mindepth 1 | head -n $n | sed 's,\./,,'
+  else
+    find -mindepth 1 -printf '%P\n' | head -n $n
+  fi
+}
+
+if [[ -z $f ]]; then
+  rm -f $prev
+  cd $1
+  my_find
+else
+  if [[ -f $prev ]]; then
+    cd $(<$prev)
+  else
+    cd $1
+  fi
+  if [[ -d $f ]]; then
+    cd $f
+    print -r -- $PWD > $prev
+    echo ..
+    my_find
+  else
+    rm -f $prev
+    coproc xdg-open $f
+    disown
+  fi
+fi

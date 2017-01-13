@@ -115,6 +115,7 @@ bind pager l next-line
 bind pager H display-toggle-weed
 bind pager N search-opposite
 macro pager \cu "|urlscan\n"
+macro attach \cu "|w3m -T text/html\n"
 
 #macro generic \Cx_ "<enter-command>set sendmail" "Internal macro from the MSMTP module"
 #macro generic \Cx| "\Cx_ = \"/usr/bin/msmtp" "Internal macro from the MSMTP module"

@@ -408,11 +408,12 @@ myKeys =
     , ("M-p d", changeDir myXPConfig)
     --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
-    , ("M-p r", spawn "rofi -show run")
+    , ("M-p o", spawn "rofi -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
     , ("M-p p", spawn "pavucontrol")
+    , ("M-p r", spawn "rofi -show run")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
-    , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
-    , ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
+    --, ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
+    --, ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
     , ("M-p m", spawn "menu")
     , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
@@ -577,7 +578,7 @@ myTopics :: [TopicItem]
 myTopics =
     --[ TI "web" "" (spawn "chrome --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
     [ TI "web" "" (spawn "chrome") "chrome.xpm"
-    , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=/run/user/$UID/nvim nvim\"")) "gvim.xpm"
+    , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
