@@ -308,6 +308,9 @@ aug C
   au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
   au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
   au BufEnter *.h let b:fswitchdst = 'cpp,cc,c' | let b:fswitchlocs = '.'
+aug D
+  au!
+  au FileType d :call D_init()
 " GP {{{2
 aug GP
   au!
@@ -418,7 +421,7 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
-"let g:airline#extensions#tabline#enabled = 1
+  Plug 'kana/vim-arpeggio'
   Plug 'vim-airline/vim-airline'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
@@ -474,7 +477,8 @@ if 1
   Plug 'qstrahl/vim-matchmaker'
   "Plug 'rhysd/clever-f.vim'
   Plug 'rhysd/vim-clang-format'
-  Plug 'rking/ag.vim' " fzf.vim
+  Plug 'mileszs/ack.vim'
+  Plug 'mhinz/vim-grepper'
   "Plug 'w0rp/ale' TODO(toggle) https://github.com/w0rp/ale/issues/122
   Plug 'scrooloose/syntastic'
   Plug 'terryma/vim-expand-region'
@@ -489,6 +493,10 @@ if 1
   Plug 'AndrewRadev/linediff.vim'
 
   " Languages
+  " D
+  Plug 'idanarye/vim-dutyl'
+  Plug 'landaire/deoplete-d'
+
   Plug 'mattn/emmet-vim'
   Plug 'neovimhaskell/haskell-vim'
   Plug 'idris-hackers/idris-vim'
@@ -551,6 +559,9 @@ command! AV FSSplitRight
 " GitGutter {{{2
 let g:gitgutter_map_keys = 0
 let g:gitgutter_enabled = 0
+" grepper {{{2
+let g:grepper = {}
+"let g:ack_use_dispatch = 1
 " neoterm {{{2
 "let g:neoterm_position = 'vertical'
 let g:neoterm_position = 'horizontal'
@@ -664,10 +675,10 @@ au BufReadPost *
       \ endif
 
 " ; :
-nn ; :
+nn <silent> ; :if exists('#SneakPlugin#BufLeave')<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
 nn : ;
-vn ; :
-vn : ;
+xn <silent> ; :if exists('#SneakPlugin#BufLeave')<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
+xn : ;
 
 " clang-format
 let g:clang_format#style_options = {
@@ -715,6 +726,13 @@ endf
 
 fu! CSS_init()
   setl dictionary=~/.vim/dict/css
+endf
+
+fu! D_init()
+  setl cino+=g0,:0,j1,l1,N-s,t0,(0
+  nn <buffer> <C-j> :MarkPush<cr>:DUjump<cr>
+  nn <buffer> sd :DUddoc<cr>
+  nn <buffer> ss :MarkPush<cr>:DUsjump<cr>
 endf
 
 fu! Fortran_init()
@@ -913,7 +931,9 @@ nn <leader>2 :set cmdheight=2<cr>
 nn <leader>3 :set cmdheight=3<cr>
 nn <leader>4 :set cmdheight=4<cr>
 nn <leader>5 :set cmdheight=5<cr>
-nn <leader>sa :Ag<space>
+nn <leader>sa :Grepper -query<space>
+nn <leader>ss :Grepper -noprompt -cword<cr>
+nn <leader>st :vimgrep TODO\|FIXME<cr>
 nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
@@ -943,7 +963,7 @@ function! MarkPop()
   let mark = g:mark_stack[0]
   call remove(g:mark_stack, 0)
   if mark.path !=# expand('%:p')
-    silent exec 'e ' . mark.path
+    silent exec 'e ' . fnamescape(mark.path)
   endif
   call cursor(mark.line, mark.col)
 endfunction
@@ -991,7 +1011,8 @@ nn <M-j> <C-w>j
 nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap misc {{{3
-nn <silent> <C-l> :nohls<cr><C-l>
+nn <leader>! :bdelete<cr>
+nn <silent> <C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw!<cr>
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend

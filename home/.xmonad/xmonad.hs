@@ -408,9 +408,9 @@ myKeys =
     , ("M-p d", changeDir myXPConfig)
     --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
-    , ("M-p o", spawn "rofi -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-p o", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
     , ("M-p p", spawn "pavucontrol")
-    , ("M-p r", spawn "rofi -show run")
+    , ("M-p r", spawn "rofi -sort -matching fuzzy -show run")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
     --, ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     --, ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
@@ -520,7 +520,7 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
   where
     promptSearch (S.SearchEngine _ site)
       = inputPrompt myXPConfig "Search" ?+ \s ->
-      (S.search "chrome" site s >> viewWeb)
+      (S.search "chromium" site s >> viewWeb)
     viewWeb = windows (W.view "web")
 
     mk = S.searchEngine
@@ -577,7 +577,7 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     --[ TI "web" "" (spawn "chrome --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
-    [ TI "web" "" (spawn "chrome") "chrome.xpm"
+    [ TI "web" "" (spawn "chromium") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"

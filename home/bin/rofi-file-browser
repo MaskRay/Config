@@ -14,6 +14,7 @@ my_find() {
 if [[ -z $f ]]; then
   rm -f $prev
   cd $1
+  echo ..
   my_find
 else
   if [[ -f $prev ]]; then
