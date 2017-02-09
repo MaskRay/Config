@@ -455,19 +455,19 @@ if 1
   Plug 'Shougo/neomru.vim'
   Plug 'Shougo/neoyank.vim'
   Plug 'Shougo/unite.vim'
-  "Plug 'Shougo/denite.nvim' TODO unusable 2016-01-02
+  Plug 'Shougo/denite.nvim'
   Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerExplorer' }
   Plug 'Shougo/vimproc.vim', { 'do': 'make' }
   Plug 'Shougo/vimshell.vim'
   Plug 'mhinz/vim-signify'
-  Plug 'benekastah/neomake'
+  "Plug 'benekastah/neomake'
   Plug 'chrisbra/NrrwRgn'
   Plug 'dhruvasagar/vim-table-mode'
   Plug 'glts/vim-textobj-comment'
   Plug 'glts/vim-textobj-indblock'
   Plug 'haya14busa/incsearch-easymotion.vim'
   Plug 'haya14busa/incsearch.vim'
-  Plug 'hewes/unite-gtags'
+  "Plug 'hewes/unite-gtags'
   Plug 'janko-m/vim-test'
   Plug 'kana/vim-textobj-user'
   Plug 'KabbAmine/zeavim.vim'
@@ -480,7 +480,7 @@ if 1
   Plug 'mileszs/ack.vim'
   Plug 'mhinz/vim-grepper'
   "Plug 'w0rp/ale' TODO(toggle) https://github.com/w0rp/ale/issues/122
-  Plug 'scrooloose/syntastic'
+  "Plug 'scrooloose/syntastic'
   Plug 'terryma/vim-expand-region'
   Plug 'terryma/vim-multiple-cursors'
   Plug 'thinca/vim-quickrun'
@@ -489,7 +489,7 @@ if 1
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-surround'
-  Plug 'jpalardy/vim-slime'
+  "Plug 'jpalardy/vim-slime'
   Plug 'AndrewRadev/linediff.vim'
 
   " Languages
@@ -497,16 +497,19 @@ if 1
   Plug 'idanarye/vim-dutyl'
   Plug 'landaire/deoplete-d'
 
+  " Go
+  Plug 'fatih/vim-go'
+
   Plug 'mattn/emmet-vim'
   Plug 'neovimhaskell/haskell-vim'
   Plug 'idris-hackers/idris-vim'
   "Plug 'pytest.vim'
-  Plug 'klen/python-mode', { 'branch': 'develop' }
+  "Plug 'klen/python-mode', { 'branch': 'develop' }
   Plug 'LaTeX-Box-Team/LaTeX-Box'
   "Plug 'Valloric/YouCompleteMe' use archlinuxcn/vim-youcompleteme-git
   "Plug 'davidhalter/jedi-vim'
   Plug 'derekwyatt/vim-fswitch'
-  Plug 'tpope/vim-rails', { 'for': 'ruby' }
+  "Plug 'tpope/vim-rails', { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
   Plug 'vim-llvm' " ln -s ~/Dev/llvm/utils/vim ~/.vim/bundle/vim-llvm
   Plug 'wting/rust.vim', { 'for': 'rust' }
@@ -521,7 +524,7 @@ if 1
   Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
   "Plug 'gorodinskiy/vim-coloresque'
   Plug 'nvie/vim-flake8', { 'for': 'python' }
-  Plug 'sheerun/vim-polyglot'
+  "Plug 'sheerun/vim-polyglot'
   Plug 'ledger/vim-ledger', { 'for': 'ledger' }
   Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
 
@@ -675,9 +678,10 @@ au BufReadPost *
       \ endif
 
 " ; :
-nn <silent> ; :if exists('#SneakPlugin#BufLeave')<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
+nn <silent> ; :if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
 nn : ;
-xn <silent> ; :if exists('#SneakPlugin#BufLeave')<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
+"nn <silent><expr> ; sneak#is_sneaking() ? ":call sneak#rpt('',0)<cr>" : ':'
+xn <silent> ; :<C-u>if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(":'<,'>", 'n')<Bar>endif<cr>
 xn : ;
 
 " clang-format
@@ -888,9 +892,11 @@ nn <silent> <leader>hb :Buffers<cr>
 nn <silent> <leader>hc :Commits<cr>
 nn <silent> <leader>hC :BCommits<cr>
 nn <silent> <leader>hf :Files<cr>
-nn <silent> <leader>hF :GFiles<cr>
-nn <silent> <leader>hR :UniteResume<cr>
-nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+"nn <silent> <leader>hF :Unite -buffer-name=file -start-insert file<cr>
+nn <silent> <leader>hF :Denite file_rec<cr>
+"nn <silent> <leader>hR :UniteResume<cr>
+"nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
+nn <silent> <leader>hy :Denite neoyank<cr>
 
 nn <silent> <leader>hh :History<cr>
 nn <silent> <leader>hl :Lines<cr>
@@ -942,8 +948,12 @@ nn <leader>ig :IndentGuidesToggle<cr>:se list!<cr>
 nn <leader>aj :JunkFile<cr>
 "nn <leader>z zMzzzv
 nn <leader>S V:execute @@<cr>
+nn <leader>w :update<cr>
 " nmap g {{{3
 nmap ga <Plug>(EasyAlign)
+nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
+nmap gs <Plug>(GrepperOperator)
+xmap gs <Plug>(GrepperOperator)
 " nmap mark stack {{{3
 function! MarkPush()
   if !exists('g:mark_stack')
@@ -963,7 +973,7 @@ function! MarkPop()
   let mark = g:mark_stack[0]
   call remove(g:mark_stack, 0)
   if mark.path !=# expand('%:p')
-    silent exec 'e ' . fnamescape(mark.path)
+    silent exec 'e ' . fnameescape(mark.path)
   endif
   call cursor(mark.line, mark.col)
 endfunction
@@ -981,6 +991,7 @@ map t <Plug>Sneak_t
 map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
+nmap S <Plug>(easymotion-overwin-f2)
 " nmap Y (global) {{{3
 nn Ys :Gtags <C-r><C-w><cr>
 nn Yr :Gtags -r <C-r><C-w><cr>
@@ -1011,12 +1022,15 @@ nn <M-j> <C-w>j
 nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap misc {{{3
+nn <silent><Tab> :wincmd w<cr>
+nn <silent><S-Tab> :wincmd p<cr>
 nn <leader>! :bdelete<cr>
-nn <silent> <C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw!<cr>
+nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw!<cr>
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
-nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
+"nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
+nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz

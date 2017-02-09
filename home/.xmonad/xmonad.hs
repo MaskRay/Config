@@ -394,6 +394,7 @@ myKeys =
     , ("C-' s", namedScratchpadAction scratchpads "ydcv")
     , ("C-' t", namedScratchpadAction scratchpads "htop")
     , ("C-' u", namedScratchpadAction scratchpads "R")
+    , ("C-' w", namedScratchpadAction scratchpads "writefull")
     , ("C-' z", namedScratchpadAction scratchpads "zeal")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
@@ -409,6 +410,7 @@ myKeys =
     --, ("M-p f", fadePrompt myXPConfig)
     --, ("M-p m", manPrompt myXPConfig)
     , ("M-p o", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-p t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
     , ("M-p p", spawn "pavucontrol")
     , ("M-p r", spawn "rofi -sort -matching fuzzy -show run")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
@@ -429,10 +431,9 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
+  map f ["alsamixer", "cmus", "erl", "ghci", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
   [ NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
-  , NS "ghci" "termite -t ghci -e 'ghci'" (title =? "ghci") doSPFloat
-  --, NS "zeal" "zeal" (className =? "Zeal") doSPFloat
+  , NS "writefull" "~/.local/opt/writefull/Writefull_3beta" (title =? "Writefull") doSPFloat
   ]
   where
     f cmd = NS name (termite cmd) (fmap (name `isPrefixOf`) title) doSPFloat
