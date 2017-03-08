@@ -1,0 +1,7 @@
+#!/bin/zsh
+d=/tmp/rootfs
+mkdir -p $d
+mkdir -p /tmp/overlay/{home,root}/{up,work}
+mountpoint -q /tmp/rootfs || sudo mount -t overlay -o lowerdir=/,upperdir=/tmp/overlay/root/up,workdir=/tmp/overlay/root/work overlayfs $d
+mountpoint -q /tmp/rootfs/home || sudo mount -t overlay -o lowerdir=/home,upperdir=/tmp/overlay/home/up,workdir=/tmp/overlay/home/work overlayfs $d/home
+sudo systemd-nspawn -M exp -D /tmp/rootfs --setenv DISPLAY=:0 --link-journal=no su ray

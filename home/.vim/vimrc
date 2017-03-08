@@ -436,6 +436,7 @@ if 1
   Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
   Plug 'metakirby5/codi.vim'
+  Plug 'romainl/vim-qf'
 
   " Window
   "Plug 'bling/vim-airline'
@@ -459,6 +460,7 @@ if 1
   Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerExplorer' }
   Plug 'Shougo/vimproc.vim', { 'do': 'make' }
   Plug 'Shougo/vimshell.vim'
+  Plug 'mhinz/vim-randomtag'
   Plug 'mhinz/vim-signify'
   "Plug 'benekastah/neomake'
   Plug 'chrisbra/NrrwRgn'
@@ -929,8 +931,10 @@ function! VimuxSlime()
 endfunction
 vn <leader>vs "vy :call VimuxSlime()<cr>
 " nmap <leader>w (window) {{{4
-nn <leader>w- :sp<cr>
-nn <leader>w/ :vsp<cr>
+nn <leader>w :update<cr>
+"nn <leader>w- :sp<cr>
+"nn <leader>w/ :vsp<cr>
+nn <leader>x :xit<cr>
 " nmap <leader> misc {{{4
 nn <leader>1 :set cmdheight=1<cr>
 nn <leader>2 :set cmdheight=2<cr>
@@ -1029,6 +1033,7 @@ nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
+nn <C-q> :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
 " imap {{{2
