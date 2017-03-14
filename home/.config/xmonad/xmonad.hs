@@ -36,7 +36,6 @@ import XMonad.Util.WorkspaceCompare
 import XMonad.Prompt
 import XMonad.Prompt.Input
 import XMonad.Prompt.Man
-import XMonad.Prompt.RunOrRaise
 import XMonad.Prompt.Shell
 import XMonad.Prompt.Window
 import XMonad.Prompt.Workspace
@@ -106,7 +105,7 @@ import XMonad.Layout.WindowSwitcherDecoration
  -}
 
 myTabTheme =
-    defaultTheme
+    def
     { activeColor         = "black"
     , inactiveColor       = "black"
     , urgentColor         = "yellow"
@@ -126,10 +125,6 @@ instance Transformer TABBED Window where
 {-
  - Navigation2D
  -}
-
-myNavigation2DConfig = defaultNavigation2DConfig { layoutNavigation   = [("Full", centerNavigation)]
-                                                 , unmappedWindowRect = [("Full", singleWindowRect)]
-                                                 }
 
 myLayout = avoidStruts $
     configurableNavigation (navigateColor "#333333") $
@@ -155,17 +150,6 @@ myLayout = avoidStruts $
         gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
 
         --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
-        myTab = defaultTheme
-                { activeColor         = "black"
-                , inactiveColor       = "black"
-                , urgentColor         = "yellow"
-                , activeBorderColor   = "orange"
-                , inactiveBorderColor = "#333333"
-                , urgentBorderColor   = "black"
-                , activeTextColor     = "orange"
-                , inactiveTextColor   = "#666666"
-                , decoHeight          = 18
-                }
 
 doSPFloat = customFloating $ W.RationalRect (1/7) (1/7) (5/7) (5/7)
 myManageHook = composeAll $
@@ -212,34 +196,13 @@ myManageHook = composeAll $
             ]
         ]
 
-{-
-myDynamicLog h = dynamicLogWithPP $ defaultPP
-  { ppCurrent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
-  , ppVisible = ap clickable (wrap "^i(/home/ray/.xmonad/icons/default/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
-  , ppHidden = ap clickable (wrap "^i(/home/ray/.xmonad/icons/gray/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
-  , ppUrgent = ap clickable (wrap "^i(/home/ray/.xmonad/icons/highlight/" ")" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons)
-  , ppSep = dzenColor "#0033FF" "" " | "
-  , ppWsSep = ""
-  , ppTitle  = dzenColor "green" "" . shorten 45
-  , ppLayout = id
-  , ppOrder  = \(ws:l:t:exs) -> [t,l,ws]++exs
-  , ppSort   = fmap (namedScratchpadFilterOutWorkspace.) (ppSort byorgeyPP)
-  , ppExtras = [ dzenColorL "violet" "" $ date "%R %a %y-%m-%d"
-               , dzenColorL "orange" "" battery
-               ]
-  , ppOutput = hPutStrLn h
-  }
-  where
-    clickable w = wrap ("^ca(1,wmctrl -s `wmctrl -d | grep "++w++" | cut -d' ' -f1`)") "^ca()"
--}
-
 myDynamicLog h = dynamicLogWithPP $ xmobarPP
   { ppOutput  = hPutStrLn h
   , ppCurrent = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
   , ppVisible = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
   , ppHidden = wrap "<icon=gray/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
   , ppUrgent = wrap "<icon=highlight/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
-  , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort defaultPP
+  , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort def
   , ppTitle   = (" " ++) . xmobarColor "#ee9a00" ""
   }
   where
@@ -284,9 +247,8 @@ myKeys =
 
     , ("<Print>", spawn "import -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
-    , ("S-<Print>", spawn "import /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected defaultGSConfig ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
+    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
@@ -361,15 +323,15 @@ myKeys =
     , ("M-C-S-r", killAll >> removeWorkspace)
 
     -- backlight
-    , ("M-<F1>", spawnSelected defaultGSConfig [ "xbacklight =30"
-                                               , "xbacklight =40"
-                                               , "xbacklight =20"
-                                               , "xbacklight =10"
-                                               , "xbacklight =15"
-                                               , "xbacklight =50"
-                                               , "xbacklight =60"
-                                               , "xbacklight =5"
-                                               ])
+    , ("M-<F1>", spawnSelected def [ "xbacklight =30"
+                                   , "xbacklight =40"
+                                   , "xbacklight =20"
+                                   , "xbacklight =10"
+                                   , "xbacklight =15"
+                                   , "xbacklight =50"
+                                   , "xbacklight =60"
+                                   , "xbacklight =5"
+                                   ])
 
     -- Volume
     , ("C-; 9", spawn "change_volume down")
@@ -406,18 +368,15 @@ myKeys =
 
     -- prompts
     , ("M-p c", mainCommandPrompt myXPConfig)
-    , ("M-p d", changeDir myXPConfig)
-    --, ("M-p f", fadePrompt myXPConfig)
-    --, ("M-p m", manPrompt myXPConfig)
-    , ("M-p o", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
-    , ("M-p t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
-    , ("M-p p", spawn "pavucontrol")
+    , ("M-p d", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-p p", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
     , ("M-p r", spawn "rofi -sort -matching fuzzy -show run")
+    , ("M-p t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
+    , ("M-p v", spawn "pavucontrol")
     , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
-    --, ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
+    , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
     --, ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
     , ("M-p m", spawn "menu")
-    , ("M-p M-p", runOrRaisePrompt myXPConfig)
     ] ++
     searchBindings
 
@@ -447,8 +406,7 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
-{-myConfig dzen = withNavigation2DConfig myNavigation2DConfig $ withUrgencyHook NoUrgencyHook $ defaultConfig-}
-myConfig xmobar = ewmh $ withUrgencyHook NoUrgencyHook $ defaultConfig
+myConfig xmobar = docks . ewmh $ withUrgencyHook NoUrgencyHook $ def
     { terminal           = "termite"
     , focusFollowsMouse  = False -- see: focusFollow
     , borderWidth        = 1
@@ -480,7 +438,7 @@ myPromptKeymap = M.union defaultXPKeymap $ M.fromList
                  , ((mod1Mask, xK_f), moveWord Next)
                  ]
 
-myXPConfig = defaultXPConfig
+myXPConfig = def
     { font = "xft:DejaVu Sans Mono:pixelsize=16"
     , bgColor           = "#0c1021"
     , fgColor           = "#f8f8f8"
@@ -592,8 +550,7 @@ myTopics =
 
 
 myCommands =
-    [ ("getmail", namedScratchpadAction scratchpads "getmail")
-    , ("wallpaper", safeSpawn "change-wallpaper" [])
+    [ ("wallpaper", safeSpawn "change-wallpaper" [])
     --, ("fade", fadePrompt myXPConfig)
     ]
 

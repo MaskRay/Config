@@ -15,6 +15,7 @@ if [[ -z $f ]]; then
   rm -f $prev
   cd $1
   echo ..
+  [[ $PWD != /tmp* ]] && echo /tmp
   my_find
 else
   if [[ -f $prev ]]; then
@@ -26,6 +27,7 @@ else
     cd $f
     print -r -- $PWD > $prev
     echo ..
+    [[ $PWD != /tmp* ]] && echo /tmp
     my_find
   else
     rm -f $prev

@@ -435,6 +435,7 @@ if 1
   Plug 'tpope/vim-unimpaired'
   Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
+  Plug 'machakann/vim-highlightedyank'
   Plug 'metakirby5/codi.vim'
   Plug 'romainl/vim-qf'
 
@@ -877,7 +878,7 @@ hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
 "nn <silent> <leader>hb :Unite -quick-match buffer<cr>
 "nn <silent> <leader>hc :Unite -buffer-name=change change<cr>
 "nn <silent> <leader>hd :Unite -buffer-name=file -start-insert directory_mru<cr>
-"nn <silent> <leader>hf :Unite -buffer-name=file -start-insert file<cr>
+nn <silent> <leader>hf :Unite -buffer-name=file -start-insert file<cr>
 "nn <silent> <leader>hF :UniteWithBufferDir -buffer-name=file -start-insert file<cr>
 "nn <silent> <leader>hg :Unite -buffer-name=grep grep<cr>
 "nn <silent> <leader>hG :UniteResume grep<cr>
@@ -893,14 +894,13 @@ hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
 nn <silent> <leader>hb :Buffers<cr>
 nn <silent> <leader>hc :Commits<cr>
 nn <silent> <leader>hC :BCommits<cr>
-nn <silent> <leader>hf :Files<cr>
-"nn <silent> <leader>hF :Unite -buffer-name=file -start-insert file<cr>
-nn <silent> <leader>hF :Denite file_rec<cr>
+nn <silent> <leader>hF :Files<cr>
 "nn <silent> <leader>hR :UniteResume<cr>
 "nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
 nn <silent> <leader>hy :Denite neoyank<cr>
 
-nn <silent> <leader>hh :History<cr>
+"nn <silent> <leader>hh :History<cr>
+nn <silent> <leader>hh :Denite file_mru<cr>
 nn <silent> <leader>hl :Lines<cr>
 nn <silent> <leader>hL :BLines<cr>
 nn <silent> <leader>hM :Maps<cr>

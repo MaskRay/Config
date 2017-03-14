@@ -1,0 +1,2 @@
+xmonad 0.13
+If `$XDG_DATA_HOME/xmonad` does not exist, `.xmonad` will be created.

@@ -337,7 +337,10 @@ if [[ -s /usr/share/fzf/completion.zsh ]] then
 fi
 export FZF_CTRL_T_OPTS="--select-1 --exit-0 --preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 export FZF_CTRL_R_OPTS=--sort
-[[ -n ${commands[bfs]} ]] && export FZF_ALT_C_COMMAND='bfs -mindepth 1 2>/dev/null | cut -b3-'
+if [[ -n ${commands[bfs]} ]]; then
+  export FZF_ALT_C_COMMAND='bfs -mindepth 1 2>/dev/null | cut -b3-'
+  export FZF_DEFAULT_COMMAND='bfs -L . -mindepth 1 \( -path "*/\.*" \) -prune -o -type f -print -o -type l -print 2> /dev/null | cut -b3-'
+fi
 
 [[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
 
