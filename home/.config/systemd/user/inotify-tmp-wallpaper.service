@@ -1,0 +1,4 @@
+[Service]
+Description=Set /tmp/wallpaper.jpg as wallpaper
+Type=oneshot
+ExecStart=/usr/bin/feh --bg-scale /tmp/wallpaper.jpg

@@ -1,3 +1,7 @@
+* {
+ -GtkWidget-cursor-aspect-ratio: 0.2;
+}
+
 /* Add binding set to disable F10 context menu */
 @binding-set NoF10 {unbind "F10"}
 

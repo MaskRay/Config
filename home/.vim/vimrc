@@ -11,12 +11,17 @@ set diffopt=filler,context:3
 set display=lastline
 set hidden
 set hlsearch
+if has('nvim')
+  set inccommand=nosplit
+endif
 set incsearch
 set nrformats=hex
 set ruler
 set showcmd
 set isfname-==
 set shortmess+=s
+set nostartofline
+set synmaxcol=1000
 set tags=./tags,tags,./../tags,./../../tags,./../../../tags
 set title
 set whichwrap=b,s,[,]
@@ -421,12 +426,14 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
+  Plug 'ludovicchabant/vim-gutentags'
+  Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
   Plug 'vim-airline/vim-airline'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
-  Plug 'SirVer/ultisnips'
+  Plug 'SirVer/ultisnips' "Invalid channel 5
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-easy-align'
@@ -435,7 +442,7 @@ if 1
   Plug 'tpope/vim-unimpaired'
   Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
-  Plug 'machakann/vim-highlightedyank'
+  "Plug 'machakann/vim-highlightedyank'
   Plug 'metakirby5/codi.vim'
   Plug 'romainl/vim-qf'
 
@@ -480,7 +487,6 @@ if 1
   Plug 'qstrahl/vim-matchmaker'
   "Plug 'rhysd/clever-f.vim'
   Plug 'rhysd/vim-clang-format'
-  Plug 'mileszs/ack.vim'
   Plug 'mhinz/vim-grepper'
   "Plug 'w0rp/ale' TODO(toggle) https://github.com/w0rp/ale/issues/122
   "Plug 'scrooloose/syntastic'
@@ -497,14 +503,18 @@ if 1
 
   " Languages
   " D
-  Plug 'idanarye/vim-dutyl'
-  Plug 'landaire/deoplete-d'
+  if executable('dcd-server')
+    Plug 'idanarye/vim-dutyl'
+    Plug 'landaire/deoplete-d'
+  endif
 
   " Go
-  Plug 'fatih/vim-go'
+  Plug 'fatih/vim-go', { 'for': 'go' }
+
+  Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 
   Plug 'mattn/emmet-vim'
-  Plug 'neovimhaskell/haskell-vim'
+  Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
   Plug 'idris-hackers/idris-vim'
   "Plug 'pytest.vim'
   "Plug 'klen/python-mode', { 'branch': 'develop' }
@@ -847,8 +857,6 @@ nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
-" nmap <leader>c (ctags) {{{4
-nn <leader>ta :!gtags && ctags -R<cr>
 " nmap <leader>d (diff) {{{4
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
@@ -911,10 +919,12 @@ nn <silent> <leader>hx :Commands<cr>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 " nmap <leader>t (toggle) {{{4
+nn <leader>ta :!gtags && ctags -R<cr>
 nn <leader>thc :set cursorcolumn!<cr>
 nn <leader>tb :set breakindent!<cr>
 nn <leader>ti :IndentGuidesToggle<cr>
 nn <leader>tl :set wrap!<cr>
+nn <leader>tm :MatchmakerToggle<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
 nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
 nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
@@ -1026,6 +1036,7 @@ nn <M-j> <C-w>j
 nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap misc {{{3
+nn / ms/
 nn <silent><Tab> :wincmd w<cr>
 nn <silent><S-Tab> :wincmd p<cr>
 nn <leader>! :bdelete<cr>
@@ -1096,6 +1107,4 @@ if exists(':tnoremap')
 endif
 
 " local vimrc if exists -------------------------- {{{1
-if filereadable(glob("~/.vimrc.local"))
-  source ~/.vimrc.local
-endif
+sil! source ~/.vimrc.local

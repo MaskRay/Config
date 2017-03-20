@@ -245,8 +245,8 @@ myKeys =
     , ("M-S-c", kill)
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
-    , ("<Print>", spawn "import -quality 100 /tmp/screen.jpg")
-    , ("C-<Print>", spawn "import -window root /tmp/screen.jpg")
+    , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
+    , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
@@ -392,7 +392,7 @@ termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (p
 scratchpads =
   map f ["alsamixer", "cmus", "erl", "ghci", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
   [ NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
-  , NS "writefull" "~/.local/opt/writefull/Writefull_3beta" (title =? "Writefull") doSPFloat
+  , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat
   ]
   where
     f cmd = NS name (termite cmd) (fmap (name `isPrefixOf`) title) doSPFloat

@@ -1,0 +1,5 @@
+[Path]
+PathModified=/tmp/wallpaper.jpg
+
+[Install]
+WantedBy=graphical.target
