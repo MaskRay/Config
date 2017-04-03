@@ -3,6 +3,10 @@ shopt -s checkwinsize cmdhist extglob globstar histappend
 PS1='\e[1;36m\u \e[m@ \e[1;35mhacking \e[m>>= \e[1;32m\w\n\[\e[1;31m\]\$ \[\e[m\]'
 PS4='(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]} - [${SHLVL},${BASH_SUBSHELL}, $?]'
 
+prepend_path() {
+  [[ ":$PATH:" != *"$1"* ]] && PATH="$1:$PATH"
+}
+
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTTIMEFORMAT='%F %T '
@@ -18,7 +22,6 @@ alias ll='ls -l'
 
 . ~/.alias
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
-export NVM_DIR="/home/ray/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+prepend_path $HOME/.local/bin
+prepend_path $HOME/.rvm/bin
+#export PATH="$HOME/.local/bin:$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting

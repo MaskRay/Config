@@ -21,6 +21,7 @@ typeset -U path
 path=(~/bin ~/.local/bin "$path[@]")
 
 [[ $TERM = xterm-termite ]] && export TERM=xterm-256color
+[[ $TERM = xterm ]] && export TERM=xterm-256color
 
 # Look {{{1
 PROMPT=$'%F{blue}%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'

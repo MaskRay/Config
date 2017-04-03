@@ -723,10 +723,10 @@ fu! C_init()
   syn keyword cppType ulong i8 i16 i32 i64 u8 u16 u32 u64 real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
-  noremap <buffer> [[ ?{<cr>w99[{
-  noremap <buffer> ][ /}<cr>b99]}
-  map <buffer> ]] j0[[%/{<cr>
-  map <buffer> [] k$][%?}<cr>
+  nn <buffer> [[ [m
+  nn <buffer> [] [M
+  nn <buffer> ]] ]m
+  nn <buffer> ][ ]M
 
   ia <buffer> re return
   ia <buffer> return a<bs>
