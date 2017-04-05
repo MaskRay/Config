@@ -1,0 +1,2 @@
+ExecUpPost="systemctl start network-online.target"
+ExecDownPre="systemctl stop network-online.target"

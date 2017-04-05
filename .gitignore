@@ -12,6 +12,8 @@
 /home/.config/newsbeuter/profile
 /home/.config/newsbeuter/urls
 /home/.config/gtk-3.0/bookmarks
+/home/.config/xmonad/xmonad.hi
+/home/.config/xmonad/xmonad.o
 /home/.emacs.d/abbrev_defs
 /home/.emacs.d/bookmarks
 /home/.emacs.d/elpa

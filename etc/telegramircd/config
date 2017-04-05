@@ -1,0 +1,51 @@
+# See https://pypi.python.org/pypi/ConfigArgParse for syntax
+
+# HTTP/WebSocket related options
+# Use HTTPS to server links if at least one of http-cert or http-key is specified
+#http-cert: /etc/telegramircd/cert.pem
+#http-key: /etc/telegramircd/key.pem
+http-listen: [127.0.0.1, ::1]
+http-port: 9003
+# Display document links as http://127.1:9003/document/$id
+http-url: @@SECRET
+
+#ignore: [channel_name_regex0, channel_name_regex1]
+# uncomment the next line if you do not want to receive private messages with bots
+#ignore-bot
+#ignore-topic: [group_name_regex0]
+
+# IRC related options
+# Use IRC over TLS if at least one of irc-cert or irc-key is specified
+#irc-cert: /etc/telegramircd/irc-cert.pem
+#irc-key: /etc/telegramircd/irc-key.pem
+irc-listen: [127.0.0.1, ::1]
+# reserved nicks for clients
+#irc-nicks: [ray]
+# IRC connection password
+#irc-password:
+irc-port: 6669
+
+# join mode
+join: new
+
+# logger
+#logger-ignore:
+#logger-mask: /tmp/telegramircd/$channel/%Y-%m-%d.log
+#logger-time-format: %H:%M
+
+# when to mark_read private messages from users, choices: always, reply, never
+#mark-read: reply
+
+# SASL PLAIN password (as an alternative to --irc-password)
+#sasl-password:
+
+# telegram-cli
+#telegram-cli-command: telegram-cli
+#telegram-cli-port: 1235
+#telegram-cli-timeout: 10
+# telegram-cli cannot receive messages in some channels https://github.com/vysheng/tg/issues/1135 , specify their `peer_id` to poll messages with the `history` command
+telegram-cli-poll-channels: @@SECRET
+# history channel#{peer_id} {telegram_cli_poll_limit}
+#telegram-cli-poll-limit: 10
+# interval in seconds, default: 10
+#telegram-cli-poll-interval: 10

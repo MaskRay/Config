@@ -1,0 +1,2 @@
+ExecUpPost="(systemctl restart tinc@manifold; systemctl restart tinc@azure)||:"
+ExecDownPre="(systemctl stop tinc@manifold; systemctl stop tinc@azure)||:"

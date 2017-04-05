@@ -65,7 +65,6 @@ el
   set formatprg=fmt
 en
 set formatoptions+=nj " support formatting of numbered lists
-set guiheadroom=20
 
 " tabs and spaces
 set listchars+=tab:▸\ ,trail:⋅,nbsp:⋅
@@ -80,6 +79,7 @@ if has('mouse')
 endif
 
 if has("gui_running")
+  set guiheadroom=20
   " Ctrl-F12 Toggle Menubar and Toolbar
   nnoremap <silent> <C-F12> :
     \ if &guioptions =~# 'T' <Bar>
@@ -429,7 +429,7 @@ if 1
   Plug 'ludovicchabant/vim-gutentags'
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
-  Plug 'vim-airline/vim-airline'
+  "Plug 'vim-airline/vim-airline'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
@@ -941,9 +941,9 @@ function! VimuxSlime()
 endfunction
 vn <leader>vs "vy :call VimuxSlime()<cr>
 " nmap <leader>w (window) {{{4
-nn <leader>w :update<cr>
-"nn <leader>w- :sp<cr>
-"nn <leader>w/ :vsp<cr>
+nn <leader>ww :update<cr>
+nn <leader>w- :sp<cr>
+nn <leader>w/ :vsp<cr>
 nn <leader>x :xit<cr>
 " nmap <leader> misc {{{4
 nn <leader>1 :set cmdheight=1<cr>
