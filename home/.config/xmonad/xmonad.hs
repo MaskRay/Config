@@ -18,7 +18,6 @@ import System.Process
 import System.Posix.Process (executeFile)
 import System.Posix.Types (ProcessID)
 import Text.Printf
---import Text.Regex
 
 import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
@@ -373,9 +372,6 @@ myKeys =
     , ("M-p r", spawn "rofi -sort -matching fuzzy -show run")
     , ("M-p t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
     , ("M-p v", spawn "pavucontrol")
-    , ("M-p e", launchApp myXPConfig "evince" ["pdf","ps"])
-    , ("M-p F", launchApp myXPConfig "feh" ["png","jpg","gif"])
-    --, ("M-p l", launchApp myXPConfig "llpp" ["pdf","ps"])
     , ("M-p m", spawn "menu")
     ] ++
     searchBindings
@@ -390,8 +386,9 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "ghci", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
-  [ NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
+  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
+  [ NS "ghci" "termite -t ghci -e 'zsh -c \"stack ghci || ghci\"'" (title =? "ghci") doSPFloat
+  , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
   , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat
   ]
   where
@@ -463,10 +460,7 @@ main = do
     let barWidth = 160 --h `div` 12
     let barHeight = h `div` 35
     let fontSize = h `div` 54
-    {-dzen <- spawnPipe $ "killall dzen2; dzen2 -x " ++ (show $ barWidth*6) ++ " -h " ++ show barHeight ++ " -ta right -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "'"-}
     xmobar <- spawnPipe "killall xmobar; xmobar"
-    -- remind <http://www.roaringpenguin.com/products/remind>
-    -- dzenRem <- spawnBash $ "rem | tail -n +3 | grep . | { read a; while read t; do b[${#b[@]}]=$t; echo $t; done; { echo $a; for a in \"${b[@]}\"; do echo $a; done; } | dzen2 -p -x " ++ show barWidth ++ " -w " ++ (show $ barWidth*4) ++ " -h " ++ show barHeight ++ " -ta l -fg '#a8a3f7' -fn 'WenQuanYi Micro Hei-" ++ show fontSize ++ "' -l ${#b[@]}; }"
     spawn $ "killall trayer; trayer --align left --edge top --expand false --width " ++ show barWidth ++ " --transparent true --tint 0x000000 --widthtype pixel --SetPartialStrut true --SetDockType true --height 32"
     xmonad $ myConfig xmobar
 
@@ -535,7 +529,6 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 
 myTopics :: [TopicItem]
 myTopics =
-    --[ TI "web" "" (spawn "chrome --new-window https://wx.qq.com http://w.qq.com https://web.telegram.org" >> spawn "chrome") "chrome.xpm"
     [ TI "web" "" (spawn "chromium") "chrome.xpm"
     , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
     , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"

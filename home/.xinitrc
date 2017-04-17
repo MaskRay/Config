@@ -10,6 +10,7 @@ export BROWSER=chromium
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+export XMONAD_CACHE_DIR=~/.local/share/xmonad
 #systemctl --user start fcitx
 #systemctl --user start graphical.target
 systemctl --user start graphical.target

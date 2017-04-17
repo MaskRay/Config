@@ -857,6 +857,8 @@ nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
+nn <leader>bw :set readonly!<cr>
+nn <leader>by :%y+<cr>
 " nmap <leader>d (diff) {{{4
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
@@ -868,6 +870,10 @@ nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " nmap <leader>f (file) {{{4
 nn <leader>fed :e ~/.vim/vimrc<cr>
 nn <leader>feR :so ~/.vim/vimrc<cr>
+nn <silent> <leader>fr :Denite file_mru<cr>
+nn <leader>fJ :JunkFile<cr>
+nn <leader>fs :update<cr>
+nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
 " nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<CR>
 nn <leader>gc :Gcd<CR>
@@ -908,8 +914,6 @@ nn <silent> <leader>hF :Files<cr>
 nn <silent> <leader>hy :Denite neoyank<cr>
 
 "nn <silent> <leader>hh :History<cr>
-nn <silent> <leader>hh :Denite file_mru<cr>
-nn <silent> <leader>hl :Lines<cr>
 nn <silent> <leader>hL :BLines<cr>
 nn <silent> <leader>hM :Maps<cr>
 nn <silent> <leader>ht :Tags<cr>
@@ -918,6 +922,10 @@ nn <silent> <leader>hx :Commands<cr>
 " nmap <leader>s (SplitJoin) {{{4
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
+nn <leader>sa :Grepper -query<space>
+nn <leader>sP :Grepper -noprompt -cword<cr>
+nn <leader>st :vimgrep TODO\|FIXME<cr>
+nn <leader>ss :Lines<cr>
 " nmap <leader>t (toggle) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
 nn <leader>thc :set cursorcolumn!<cr>
@@ -925,6 +933,7 @@ nn <leader>tb :set breakindent!<cr>
 nn <leader>ti :IndentGuidesToggle<cr>
 nn <leader>tl :set wrap!<cr>
 nn <leader>tm :MatchmakerToggle<cr>
+nn <leader>tn :set nu!<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
 nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
 nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
@@ -941,7 +950,6 @@ function! VimuxSlime()
 endfunction
 vn <leader>vs "vy :call VimuxSlime()<cr>
 " nmap <leader>w (window) {{{4
-nn <leader>ww :update<cr>
 nn <leader>w- :sp<cr>
 nn <leader>w/ :vsp<cr>
 nn <leader>x :xit<cr>
@@ -951,15 +959,11 @@ nn <leader>2 :set cmdheight=2<cr>
 nn <leader>3 :set cmdheight=3<cr>
 nn <leader>4 :set cmdheight=4<cr>
 nn <leader>5 :set cmdheight=5<cr>
-nn <leader>sa :Grepper -query<space>
-nn <leader>ss :Grepper -noprompt -cword<cr>
-nn <leader>st :vimgrep TODO\|FIXME<cr>
 nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nn <leader>ig :IndentGuidesToggle<cr>:se list!<cr>
-nn <leader>aj :JunkFile<cr>
 "nn <leader>z zMzzzv
 nn <leader>S V:execute @@<cr>
 nn <leader>w :update<cr>
@@ -999,30 +1003,27 @@ nn 'm :MarkPop<cr>
 " nmap easymotion sneak {{{3
 "nmap t <Plug>(easymotion-w)
 "nmap T <Plug>(easymotion-b)
-map L <Plug>Sneak_s
-map H <Plug>Sneak_S
 map t <Plug>Sneak_t
 map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
-nmap S <Plug>(easymotion-overwin-f2)
+"nmap S <Plug>(easymotion-overwin-f2)
 " nmap Y (global) {{{3
-nn Ys :Gtags <C-r><C-w><cr>
-nn Yr :Gtags -r <C-r><C-w><cr>
-nn Yp :Gtags -P <C-r><C-w><cr>
-nn Yg :Gtags -g <C-r><C-w><cr>
-nn Y<space> :Gtags
-" nmap s (youcompleteme) {{{3
-nn sc :MarkPush<cr>:YcmCompleter GoToDeclaration<cr>
-nn sd :YcmCompleter GetDoc<cr>
-nn sx :YcmCompleter FixIt<cr>
-nn sf :MarkPush<cr>:YcmCompleter GoToDefinition<cr>
-nn si :MarkPush<cr>:YcmCompleter GoToInclude<cr>
-nn sp :YcmCompleter GetParent<cr>
-nn sr :YcmCompleter GoToReferences<cr>
-nn ss :MarkPush<cr>:YcmCompleter GoTo<cr>
-nn st :YcmCompleter GetType<cr>
-nn <C-j> :MarkPush<cr>:YcmCompleter GoToDeclaration<cr>
+"nn Ys :Gtags <C-r><C-w><cr>
+"nn Yr :Gtags -r <C-r><C-w><cr>
+"nn Yp :Gtags -P <C-r><C-w><cr>
+"nn Yg :Gtags -g <C-r><C-w><cr>
+"nn Y<space> :Gtags
+" nmap Y (youcompleteme) {{{3
+nn Yc :MarkPush<cr>:YcmCompleter GoToDeclaration<cr>
+nn Yd :YcmCompleter GetDoc<cr>
+nn Yf :MarkPush<cr>:YcmCompleter GoToDefinition<cr>
+nn Yi :MarkPush<cr>:YcmCompleter GoToInclude<cr>
+nn Yp :YcmCompleter GetParent<cr>
+nn Yr :YcmCompleter GoToReferences<cr>
+nn Yx :YcmCompleter FixIt<cr>
+nn Yt :YcmCompleter GetType<cr>
+nn <C-j> :MarkPush<cr>:YcmCompleter GoTo<cr>
 " nmap Alt {{{3
 map <M-;> <Plug>Sneak_;
 nn <silent> <M-,> :Gtags <C-r><C-w><cr>
@@ -1039,7 +1040,6 @@ nn <M-l> <C-w>l
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
 nn <silent><S-Tab> :wincmd p<cr>
-nn <leader>! :bdelete<cr>
 nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw!<cr>
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
