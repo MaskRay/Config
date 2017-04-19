@@ -1,10 +1,32 @@
 #!/bin/zsh
-d=/tmp/rootfs
+d=/tmp/exp-rootfs
 bind=(/dev /tmp)
 env=(DISPLAY=$DISPLAY LANG=$LANG)
 
-mkdir -p $d
-mkdir -p /tmp/overlay/{home,root}/{up,work}
-mountpoint -q /tmp/rootfs || sudo mount -t overlay -o lowerdir=/,upperdir=/tmp/overlay/root/up,workdir=/tmp/overlay/root/work overlayfs $d
-mountpoint -q /tmp/rootfs/home || sudo mount -t overlay -o lowerdir=/home,upperdir=/tmp/overlay/home/up,workdir=/tmp/overlay/home/work overlayfs $d/home
-sudo systemd-nspawn -M exp -D /tmp/rootfs --bind=$^bind --setenv=$^env --link-journal=no su ray
+while getopts d opt; do
+  case $opt in
+    d)
+      read -r "delete?umount -R $d? (y/n) "
+      if [[ $delete == y ]]; then
+        sudo umount -R $d
+        rmdir $d
+        echo Deleted
+      fi
+      ;;
+    \?)
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -n $1 ]]; then
+else
+  mkdir -p $d
+  mkdir -p /tmp/overlay/{home,root}/{up,work}
+  mountpoint -q $d || sudo mount -t overlay -o lowerdir=/,upperdir=/tmp/overlay/root/up,workdir=/tmp/overlay/root/work overlayfs $d
+  mountpoint -q $d/home || sudo mount -t overlay -o lowerdir=/home,upperdir=/tmp/overlay/home/up,workdir=/tmp/overlay/home/work overlayfs $d/home
+  if [[ -n $TMUX && ( -d "$d$PWD" || $PWD =~ /tmp/* ) ]]; then
+    (sleep 0.2; tmux send "cd ${(q)PWD}" Enter) &
+  fi
+  sudo systemd-nspawn -M exp -D $d --bind=$^bind --setenv=$^env --link-journal=no su ray
+fi

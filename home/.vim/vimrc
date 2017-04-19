@@ -445,6 +445,7 @@ if 1
   "Plug 'machakann/vim-highlightedyank'
   Plug 'metakirby5/codi.vim'
   Plug 'romainl/vim-qf'
+  Plug 'hecal3/vim-leader-guide'
 
   " Window
   "Plug 'bling/vim-airline'

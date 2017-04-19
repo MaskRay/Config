@@ -16,6 +16,7 @@ LOCAL=$HOME/.local
 # core {{{1
 alias L=less
 alias d='dirs -v'
+alias e=emacsclient
 alias eg='egrep --color=auto -I'
 alias g='grep --color=auto -I'
 alias l="ls -l"
