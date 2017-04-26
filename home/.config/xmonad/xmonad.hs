@@ -348,6 +348,7 @@ myKeys =
     , ("C-' h", namedScratchpadAction scratchpads "ghci")
     , ("C-' i", namedScratchpadAction scratchpads "idris")
     , ("C-' j", namedScratchpadAction scratchpads "j8")
+    , ("C-' m", namedScratchpadAction scratchpads "sage")
     , ("C-' n", namedScratchpadAction scratchpads "node")
     , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
@@ -386,7 +387,7 @@ urxvt prog = ("urxvt -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "utop", "xosview", "ydcv"] ++
+  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "sage", "utop", "xosview", "ydcv"] ++
   [ NS "ghci" "termite -t ghci -e 'zsh -c \"stack ghci || ghci\"'" (title =? "ghci") doSPFloat
   , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
   , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat

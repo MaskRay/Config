@@ -2,6 +2,7 @@
 *~
 *.log
 *.pyc
+tags
 /home/.ncmpcpp/artists
 /home/.mutt/cache
 /home/.mutt/profile
