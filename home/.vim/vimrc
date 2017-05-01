@@ -67,7 +67,7 @@ en
 set formatoptions+=nj " support formatting of numbered lists
 
 " tabs and spaces
-set listchars+=tab:▸\ ,trail:⋅,nbsp:⋅
+set listchars+=tab:▸\ ,trail:⋅,nbsp:␣
 " eols and others
 set listchars+=eol:¬,extends:»,precedes:«
 
@@ -433,7 +433,7 @@ if 1
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
-  Plug 'SirVer/ultisnips' "Invalid channel 5
+  "Plug 'SirVer/ultisnips' "Invalid channel 5
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-easy-align'
@@ -838,13 +838,12 @@ cnoreab lcdh lcd %:p:h
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap -------- {{{2
 " nmap <leader> {{{3
-map <leader>j <Plug>(easymotion-j)
-map <leader>k <Plug>(easymotion-k)
 nn <leader>ec :SyntasticClear<cr>
 nn <leader>ev :SyntasticInfo<cr>
 nn <leader>fc :cd %:p:h<cr>
 nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
 nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
+nn <leader>/ :Grepper -query<space>
 " nmap <leader><leader> (easymotion) TODO {{{3
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
 "nn <leader><leader>h <Plug>(easymotion-linebackward)
@@ -920,7 +919,9 @@ nn <silent> <leader>hM :Maps<cr>
 nn <silent> <leader>ht :Tags<cr>
 nn <silent> <leader>hT :BTags<cr>
 nn <silent> <leader>hx :Commands<cr>
-" nmap <leader>s (SplitJoin) {{{4
+" nmap <leader>j (jump) {{{4
+nmap <leader>jl <Plug>(easymotion-bd-jk)
+" nmap <leader>s (search) {{{4
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sa :Grepper -query<space>

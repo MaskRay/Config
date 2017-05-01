@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: FOR
-# key: FOR
-# --
-#define FOR(i, a, b) for (int i = (a); i < (b); i++)

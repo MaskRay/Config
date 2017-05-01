@@ -3,15 +3,16 @@ require 'set'
 
 body = []
 
-while l = gets
+while l = STDIN.gets
   case l.strip
   when ''
-  when /^#/
+  when /^#define/
+  when /^#include </
   when /^using /
   when /^typedef /
   when 'int ri()', 'double rd()', 'long rl()'
-    nil while (l = gets) and l.strip != '}'
-    redo if (l = gets).strip.empty?
+    nil while (l = STDIN.gets) and l.strip != '}'
+    redo if (l = STDIN.gets).strip.empty?
     break
   else
     body << l.chomp
@@ -38,44 +39,59 @@ defines = {
   'smax' => '#define smax(x,y) ((x) = max(x, y))',
   'smin' => '#define smin(x,y) ((x) = min(x, y))',
 }
+defines['long'] = '#define long long long' if ARGV.size > 0
 defines_use = Set.new
 
 typedefs = {
-  'll' => 'typedef int64_t ll;',
+  'cd' => 'typedef complex<double> cd;',
   'vi' => 'typedef vector<int> vi;',
+  'pdd' => 'typedef pair<double, double> pdd;',
   'pii' => 'typedef pair<int, int> pii;',
   'pil' => 'typedef pair<int, long> pil;',
   'pli' => 'typedef pair<long, int> pli;',
   'pll' => 'typedef pair<long, long> pll;',
   'tiii' => 'typedef tuple<int, int, int> tiii;',
+  'tlll' => 'typedef tuple<long, long, long> tlll;',
+  'ulong' => 'typedef unsigned long ulong;',
   'vpii' => 'typedef vector<pair<int, int> > vpii;',
 }
 typedefs_use = Set.new
 
 headers = {
-  'algorithm' => ['find','iota','swap','max','min','sort','unique','lower_bound','max_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','reverse','transform'],
+  'algorithm' => ['count','find','iota','max','min','sort','unique','lower_bound','max_element','min_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','random_shuffle','reverse','transform'],
   'bitset' => ['bitset'],
+  'cassert' => ['assert'],
   'cfloat' => ['DBL_MAX'],
+  'chrono' => ['chrono'],
   'climits' => ['INT_MAX', 'INT_MIN', 'LONG_MAX', 'LONG_MIN', 'LLONG_MAX', 'LLONG_MIN'],
-  'cmath' => ['atan2','exp','hypot','sin','sqrt'],
+  'cmath' => ['asin','atan2','ceil','exp','fabs','floor','hypot','pow','round','sin','sqrt'],
+  'complex' => ['complex'],
+  'cstdint' => ['int64_t','uint64_t'],
   'cstdio' => ['printf','puts','scanf','gets'],
   'cctype' => ['isdigit','isalpha','isalnum'],
   'cstdlib' => ['abs','atoi','atof','rand'],
-  'cstring' => ['strlen','strstr', 'strcpy', 'memcpy', 'memcmp', 'memset', 'strcmp'],
+  'cstring' => ['strchr', 'strlen','strstr', 'strcpy', 'memcpy', 'memcmp', 'memset', 'strcmp'],
+  'ctime' => ['time'],
   'deque' => ['deque'],
-  'functional' => ['bind','bit_xor','hash','less','greater'],
+  'functional' => ['bind','bit_xor','hash','less','negate','greater'],
   'iostream' => ['cout','cin'],
+  'iomanip' => ['setfill','setprecision','setw'],
+  'iterator' => ['back_inserter','front_inserter','inserter'],
   'list' => ['list'],
   'map' => ['map','multimap'],
-  'numeric' => ['accumulate','partial_sum'],
+  'numeric' => ['accumulate','iota','partial_sum'],
+  'pthread.h' => ['pthread_create'],
   'queue' => ['queue', 'priority_queue'],
   'set' => ['set','multiset'],
+  'sstream' => ['stringstream'],
   'stack' => ['stack'],
   'string' => ['string'],
+  'random' => ['minstd_rand', 'random_device'],
+  'thread' => ['thread'],
   'unordered_map' => ['unordered_map','unordered_multimap'],
   'unordered_set' => ['unordered_set','unordered_multiset'],
-  'utility' => ['pair','tuple','fi','se','first','pii','pll'],
-  'tuple' => ['tuple','tiii','tie'],
+  'utility' => ['pair','fi','se','first','pii','pll','swap'],
+  'tuple' => ['tuple','tiii','tlll','tie'],
   'type_traits' => ['remove_cv','remove_reference'],
   'vector' => ['vector'],
 }
@@ -91,8 +107,8 @@ headers_use = Set.new
 
 out = []
 
-body << l.chomp while l = gets
-words = body.map {|l| l.scan /\w+/ }.flatten.to_set
+body << l.chomp while l = STDIN.gets
+words = body.map {|l| l.scan /[\w\.]+/ }.flatten.to_set
 loop do
   size = idents_use.size + typedefs_use.size + defines_use.size + headers_use.size
   idents_use |= words & idents
@@ -131,11 +147,11 @@ end
 
 # typedefs & defines
 out << '' if ! out.empty? and (! defines_use.empty? or ! typedefs_use.empty?)
-for x in typedefs_use.to_a.sort
-  out << typedefs[x]
-end
 for x in defines_use.to_a.sort
   out << defines[x]
+end
+for x in typedefs_use.to_a.sort
+  out << typedefs[x]
 end
 
 # functions
@@ -155,7 +171,7 @@ if idents_use.member? 'rl'
   out.push << %{long rl()
 {
   long x;
-  scanf(#{idents_use.member?('PRId64') ? '"%" SCNd64' : '"%lld"'}, &x);
+  scanf(#{idents_use.member?('PRId64') ? '"%" SCNd64' : ARGV.empty? ? '"%ld"' : '"%lld"'}, &x);
   return x;
 }
 }

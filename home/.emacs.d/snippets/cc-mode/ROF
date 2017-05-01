@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: ROF
-# key: ROF
-# --
-#define ROF(i, a, b) for (int i = (b); --i >= (a); )

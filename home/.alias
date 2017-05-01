@@ -108,15 +108,17 @@ alias sv='sudo vi'
 alias sd='sudo sysdig'
 
 # dev {{{1
-alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
 alias gdb='gdb -q'
+alias agdb='gdb -ix ~/.gdb/gdbinit.algo'
+alias ggdb='gdb -ix ~/.gdb/gdbinit.gef'
+alias pgdb='gdb -ix ~/.gdb/gdbinit.pwndbg'
+
 alias cl=clang++
 alias db=lldb
 alias jc=/usr/lib/j8/bin/jconsole
 alias jqt=/usr/lib/j8/bin/jqt
 alias lid.sys='lid-idutils -f ~/Util/idutils/usr-include.ID'
 alias mkid.sys='mkid -f ~/Util/idutils/usr-include.ID /usr/include'
-alias rgdb='gdb -ix ~/.gdb/gdbinit.asm'
 alias segf='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'
 devflag() { set -x; export CFLAGS="-g3 -fsanitize=address,undefined"; export CXXFLAGS="$CFLAGS -std=c++1y"; set +x; }
 optflag() { set -x; export CFLAGS="-g3 -O3 -fkeep-inline-functions"; export CXXFLAGS=$CFLAGS; set +x; }

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: #i
-# key: #i
-# --
-#include <$1>

@@ -1,0 +1,7 @@
+#!/bin/zsh -e
+cd /tmp/Downloads || cd /tmp
+7z x -aoa writefull_*.deb(on[-1]) data.tar
+rm -rf writefull
+mkdir writefull
+tar xf data.tar -Cwritefull
+rsync -a --delete writefull/usr/local/writefull/ ~/.local/opt/writefull/

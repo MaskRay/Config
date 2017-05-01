@@ -393,7 +393,7 @@ scratchpads =
   , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat
   ]
   where
-    f cmd = NS name (termite cmd) (fmap (name `isPrefixOf`) title) doSPFloat
+    f cmd = NS name (termite cmd) (fmap (name ==) title) doSPFloat
       where
         name = head $ words cmd
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)

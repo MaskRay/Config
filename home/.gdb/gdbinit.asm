@@ -3,4 +3,5 @@
 #source ~/.gdb/peda/peda.py
 #source ~/.gdb/libheap/libheap.py
 
-source ~/Dev/Bin/gef/gef.py
+#source ~/Dev/Bin/gef/gef.py
+source ~/Dev/Bin/pwndbg/gdbinit.py

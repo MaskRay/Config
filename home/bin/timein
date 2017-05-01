@@ -8,14 +8,15 @@
 d=/usr/share/zoneinfo
 
 if [[ $# -eq 0 ]]; then
-  tz=Asia/Shanghai
+  [[ $(realpath /etc/localtime) =~ [^/]+/[^/]+$ ]] || exit 1
+  tz=$MATCH
 elif [[ $1 = l || $1 = list ]]; then
   cd $d
   find . -type f -print | cut -c3-
   exit 0
 fi
 
-matches=($(find $d -name right -prune -or -iname \*$1\* -type f -print))
+matches=($(find $d -name right -prune -or -ipath \*$1\* -type f -print))
 cnt=${#matches}
 if ((cnt>0)); then
   if ((cnt<=10)); then

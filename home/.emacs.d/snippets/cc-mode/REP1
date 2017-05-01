@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: REP1
-# key: REP1
-# --
-#define REP1(i, n) for (int i = 1; i <= (n); i++)

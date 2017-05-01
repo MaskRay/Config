@@ -1,0 +1,43 @@
+#!/bin/zsh -e
+d=/tmp/roroot
+bind=(/dev /proc /tmp ~/.history ~/.local/share)
+
+CYAN='\e[1;36m'
+RST='\e[0m'
+
+cyan() {
+  echo "$CYAN$*$RST"
+}
+
+hostname=read-only-rootfs-with-shares
+
+while getopts d opt; do
+  case $opt in
+    d)
+      read -r "delete?umount -R $d? (y/n) "
+      if [[ $delete == y ]]; then
+        sudo umount -R $d
+        rmdir $d
+        echo Unmounted
+      fi
+      exit
+      ;;
+    \?)
+      exit 1
+      ;;
+  esac
+done
+
+if ! mountpoint -q $d; then
+  mkdir -p $d
+  bindfs -r / $d
+  cyan "/ bind read-only to $d"
+  for i in "${bind[@]}"; do
+    sudo mount --rbind $i $d/$i
+  done
+fi
+#sudo HOST=$hostname HOME=/home/$user chroot --userspec $user: "$d" /bin/zsh -c 'export HOST=read-only; zsh #cd /tmp && tmux -L roroot a -t roroot || tmux -L roroot new -s roroot'
+if [[ -n $TMUX && ( -d "$d$PWD" || $PWD =~ /tmp/* ) ]]; then
+  (sleep 0.2; tmux send "cd ${(q)PWD}" Enter) &
+fi
+sudo HOST=$hostname HOME=$HOME chroot --userspec $USER: $d /bin/zsh -i

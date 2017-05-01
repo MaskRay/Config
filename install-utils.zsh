@@ -10,9 +10,6 @@ ubuntu_pkg[uuid]=uuid-dev
 
 # versions
 
-RUBY_VERSION=2.2.0
-NODE_VERSION=0.10
-
 # prepare
 
 DOWNLOAD=/tmp
@@ -46,6 +43,19 @@ bin() {
 # prepend PATH
 
 [[ $PATH =~ ~/.local/bin ]] && PATH=~/.local/bin:$PATH
+
+# download
+
+clone() {
+    [[ -d $2 ]] || git clone $1 $2
+}
+
+clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+
+mkdir -p ~/Dev/Bin
+clone https://github.com/hugsy/gef ~/Dev/Bin/gef
+clone https://github.com/zachriggle/pwndbg ~/Dev/Bin/pwndbg
+clone https://github.com/Gallopsled/pwntools ~/Dev/Bin/pwntools
 
 # install
 
@@ -143,29 +153,6 @@ e
   cp -a build/llpp ~/.local/bin/
 }
 
-install_urxvt_perls() {
-  [[ -d $SRC/urxvt_perls ]] && return
-  git clone https://github.com/muennich/urxvt-perls
-  info change path URxvt.perl-lib:
-  sed -i "/^URxvt.perl-lib/s/ray/$USER/" ~/.Xresources
-}
-
-install_rvm() {
-  bin rvm && return
-  curl -sSL https://get.rvm.io | bash -s -- --autolibs=read-fail --ignore-dotfiles
-  . ~/.rvm/scripts/rvm
-  rvm install $RUBY_VERSION
-  rvm use --default $RUBY_VERSION
-}
-
-install_nvm() {
-  [[ -e ~/.nvm/nvm.sh ]] && return
-  curl -sSL https://raw.github.com/creationix/nvm/master/install.sh | bash
-  . ~/.nvm/nvm.sh
-  nvm install $NODE_VERSION
-  nvm alias default $NODE_VERSION
-}
-
 install_lnav() {
   bin lnav && return
   git clone https://github.com/tstack/lnav
@@ -185,13 +172,10 @@ preexec() {
   echo "\e[1;33m== $2\e[m"
 }
 
-install_system_pkgs
-install_xstow
-install_task
-install_xmobar
-install_llpp
-install_urxvt_perls
-install_rvm
-install_nvm
-install_lnav
-install_jq
+#install_system_pkgs
+#install_xstow
+#install_task
+#install_xmobar
+#install_llpp
+#install_lnav
+#install_jq
