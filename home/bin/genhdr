@@ -58,7 +58,7 @@ typedefs = {
 typedefs_use = Set.new
 
 headers = {
-  'algorithm' => ['count','find','iota','max','min','sort','unique','lower_bound','max_element','min_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','random_shuffle','reverse','transform'],
+  'algorithm' => ['count','count_if','find','iota','max','min','sort','unique','lower_bound','max_element','min_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','random_shuffle','reverse','transform'],
   'bitset' => ['bitset'],
   'cassert' => ['assert'],
   'cfloat' => ['DBL_MAX'],
@@ -69,7 +69,7 @@ headers = {
   'cstdint' => ['int64_t','uint64_t'],
   'cstdio' => ['printf','puts','scanf','gets'],
   'cctype' => ['isdigit','isalpha','isalnum'],
-  'cstdlib' => ['abs','atoi','atof','rand'],
+  'cstdlib' => ['abs','atoi','atof','malloc','rand'],
   'cstring' => ['strchr', 'strlen','strstr', 'strcpy', 'memcpy', 'memcmp', 'memset', 'strcmp'],
   'ctime' => ['time'],
   'deque' => ['deque'],
@@ -138,6 +138,7 @@ for x in headers_use.to_a.sort
   out << "#include <#{x}>"
 end
 out << 'using namespace std;' unless headers_use.empty?
+out << 'using namespace std::placeholders;' if idents_use.member? '_1'
 
 if idents_use.member? 'rb_tree_tag'
   out << '#include <ext/pb_ds/assoc_container.hpp>'

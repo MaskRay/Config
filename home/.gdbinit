@@ -8,6 +8,7 @@ set verbose off
 set history save on
 set history size 100000
 set history filename ~/.history/gdb
+set history expansion on
 set disassembly-flavor intel
 #set output-radix 16
 
@@ -15,6 +16,11 @@ set disassembly-flavor intel
 set height 0
 # prevent line wrap
 set width 0
+
+handle SIGALRM nostop print nopass
+handle SIGBUS stop print nopass
+handle SIGPIPE nostop print nopass
+handle SIGSEGV stop print nopass
 
 set python print-stack full
 

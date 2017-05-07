@@ -433,7 +433,7 @@ if 1
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
-  "Plug 'SirVer/ultisnips' "Invalid channel 5
+  Plug 'SirVer/ultisnips' "Invalid channel 5
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-easy-align'
@@ -471,7 +471,7 @@ if 1
   Plug 'Shougo/vimshell.vim'
   Plug 'mhinz/vim-randomtag'
   Plug 'mhinz/vim-signify'
-  "Plug 'benekastah/neomake'
+  Plug 'benekastah/neomake'
   Plug 'chrisbra/NrrwRgn'
   Plug 'dhruvasagar/vim-table-mode'
   Plug 'glts/vim-textobj-comment'
@@ -858,7 +858,10 @@ nn <leader>aG :%!genhdr windows<cr>
 nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
 nn <leader>bw :set readonly!<cr>
-nn <leader>by :%y+<cr>
+nn <leader>bY :%y+<cr>
+" nmap <leader>c (compile) {{{4
+nn <leader>cC :let b:neomake_target=input('make ')<Bar>exe 'NeomakeSh make ' . b:neomake_target<cr>
+nn <leader>cr :exe 'NeomakeSh make ' . b:neomake_target<cr>
 " nmap <leader>d (diff) {{{4
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
@@ -873,6 +876,7 @@ nn <leader>feR :so ~/.vim/vimrc<cr>
 nn <silent> <leader>fr :Denite file_mru<cr>
 nn <leader>fJ :JunkFile<cr>
 nn <leader>fs :update<cr>
+nn <leader>fS :bufdo update<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
 " nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<CR>

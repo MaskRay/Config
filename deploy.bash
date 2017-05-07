@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-files=($(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee'))
+files=($(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee|weechat'))
 target=~
 
 info() {
@@ -28,7 +28,7 @@ do_ssh() {
 do_mkdir() {
   mkdir -p ~/{.history,tmp}
   mkdir -p ~/.vimtmp/{backup,swap,undo}
-  mkdir -p ~/Wallpapers
+  mkdir -p ~/Wallpapers ~/.local/opt
 }
 
 do_git() {
