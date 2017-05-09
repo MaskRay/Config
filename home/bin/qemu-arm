@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/bin/qemu-arm -L /usr/arm-pc-linux-gnueabi "$@"

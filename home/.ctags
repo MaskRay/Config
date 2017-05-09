@@ -2,7 +2,7 @@
 --tag-relative=yes
 --totals=yes
 --fields=+l
---extra=+f
+--extras=+f
 --exclude=.bundle
 --exclude=.hg
 --exclude=.git

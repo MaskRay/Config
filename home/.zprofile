@@ -5,7 +5,6 @@ export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines
 export PYTHONSTARTUP=$HOME/.pythonstartup
 export NVIM_TUI_ENABLE_TRUE_COLOR=1 # neovim true color
-export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 export QT_QPA_PLATFORMTHEME=qt5ct
 
 #export LESS_TERMCAP_mb=$'\E[01;31m'

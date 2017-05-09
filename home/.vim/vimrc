@@ -42,6 +42,7 @@ set ttimeoutlen=0
 set matchpairs=(:),[:],{:},<:>,':',":"
 set laststatus=2
 set cursorline
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 
 set backup
 set backupdir=~/.vimtmp/backup//
@@ -433,7 +434,7 @@ if 1
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
   "Plug 'Rykka/colorv.vim'
-  Plug 'SirVer/ultisnips' "Invalid channel 5
+  "Plug 'SirVer/ultisnips' "Invalid channel 5
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-easy-align'

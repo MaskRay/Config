@@ -222,9 +222,26 @@ bindkey '^xh' _complete_help
 # General aliases & functions (partially shared with bash) {{{2
 [[ -f ~/.alias ]] && source ~/.alias
 
-s() {
+function s() {
   re=$1
   find ${2:-.} -regextype posix-extended -iregex ".*$re.*"
+}
+
+# notify-send if the window loses focus or not on the same tmux pane
+function n() {
+  local window_id=$(xdotool getactivewindow)
+  local -a t
+  t=($(tmux display-message -p '#D #S #P'))
+  local pane_id=$t[1] session_name=$t[2] pane_index=$t[3]
+  "$@"
+  local retcode=$? cur_window_id=$(xdotool getactivewindow) cur_pane_id=$(tmux display-message -p '#D')
+  if [[ $window_id != $cur_window_id || $pane_id != $cur_pane_id ]]; then
+    if [[ $retcode != 0 ]]; then
+      notify-send -u critical -a "$session_name:$pane_index \$?=$retcode" "$*"
+    else
+      notify-send -a "$session_name:$pane_index" "$*"
+    fi
+  fi
 }
 
 # terminfo {{{1
@@ -365,6 +382,8 @@ if [[ -s '/etc/zsh_command_not_found' ]]; then
 elif [[ -s '/usr/share/doc/pkgfile/command-not-found.zsh' ]]; then
   source '/usr/share/doc/pkgfile/command-not-found.zsh'
 fi
+
+(($+VTE_VERSION)) && source /etc/profile.d/vte.sh
 
 # Environment Modules {{{1
 if [[ -f ~/bin/modulecmd.tcl ]]; then

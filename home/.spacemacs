@@ -39,7 +39,6 @@ values."
      dash
      emacs-lisp
      emoji
-     evil-cleverparens
      evil-commentary
      (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
      html
@@ -82,7 +81,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(info+)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -365,6 +364,9 @@ you should place your code here."
   (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
   (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
 
+  ;; Override spacemacs-base/init-bookmark: do not automatically save bookmark list each time it is modified
+  (setq bookmark-save-flag t)
+
   (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
   (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
   (define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
@@ -408,7 +410,20 @@ you should place your code here."
     "YY" 'ycmd-goto
     )
 
+  (define-key evil-normal-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
+  (define-key evil-normal-state-map (kbd "C-]") 'helm-gtags-find-tag-from-here)
   (define-key evil-normal-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
+  (define-key evil-normal-state-map (kbd "C-t") 'helm-gtags-pop-stack)
+  (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
+  (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
+  ;; Take priority over ycmd-goto prepended by c-c++
+  (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
+  (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
+
+  (defun spacemacs/enable-smooth-scrolling ()
+    "Enable smooth scrolling."
+    (interactive)
+    (setq scroll-conservatively 30))
 
   (spacemacs/set-leader-keys
     "aa" (lambda ()

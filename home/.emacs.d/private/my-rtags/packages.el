@@ -12,15 +12,12 @@
     ;; (require 'rtags-helm)
     (push '(company-rtags)
           company-backends-c-mode-common)
-    (rtags-enable-standard-keybindings)
+    (rtags-enable-standard-keybindings) ;; C-c r key prefix
     (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running))
   (use-package flycheck-rtags
     :ensure rtags))
 
 (defun my-rtags/post-init-rtags ()
-  (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
-  (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
-
   (spacemacs/set-leader-keys
     "jl" (lambda ()
            (interactive)

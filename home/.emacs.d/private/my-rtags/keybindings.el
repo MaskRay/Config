@@ -1,14 +1,14 @@
-(defconst my-rtags-overrides
-  '(("C-j" 'rtags-find-symbol-at-point)
-    ("C-," 'rtags-find-references-at-point)))
+;; (defconst my-rtags-overrides
+;;   '(("C-j" 'rtags-find-symbol-at-point)
+;;     ("C-," 'rtags-find-references-at-point)))
+;; 
+;; (defun my-rtags-set-evil-keys ()
+;;   (dolist (override my-rtags-overrides)
+;;     (evil-local-set-key 'normal (car override) (cdr override))))
+;; 
+;; (add-hook 'c-mode-common-hook 'my-rtags-set-evil-keys)
 
-(defun my-rtags-set-evil-keys ()
-  (dolist (override my-rtags-overrides)
-    (evil-local-set-key 'normal (car override) (cdr override))))
-
-(add-hook 'c-mode-common-hook 'my-rtags-set-evil-keys)
-
-(evil-define-key 'normal c++-mode-map (kbd "C-j") 'rtags-find-symbol-at-point)
+;; (evil-define-key 'normal c++-mode-map (kbd "C-j") 'rtags-find-symbol-at-point)
 
 (dolist (mode '(c-mode c++-mode))
   (evil-leader/set-key-for-mode mode
