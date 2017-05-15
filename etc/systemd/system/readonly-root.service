@@ -1,0 +1,12 @@
+[Unit]
+Description=Make a readonly root with some writable exceptions
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sleep infinity
+
+PrivateTmp=false
+ReadOnlyPaths=/
+ReadWritePaths=/tmp
+ReadWritePaths=/home/ray/.history
+ReadWritePaths=/home/ray/.local/share

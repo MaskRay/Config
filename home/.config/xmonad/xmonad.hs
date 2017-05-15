@@ -246,7 +246,7 @@ myKeys =
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "tilix" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-i", spawn "pkill compton; compton &")
@@ -385,7 +385,6 @@ toggleSkip skips = do
 
 mlterm prog = ("mlterm -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
-tilix prog = ("tilix -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
   map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "sage", "utop", "xosview", "ydcv"] ++
@@ -532,8 +531,8 @@ myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
 myTopics :: [TopicItem]
 myTopics =
     [ TI "web" "" (spawn "chromium") "chrome.xpm"
-    , TI "nvim" "" (spawn (tilix "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
-    , TI "term" "" (spawn $ tilix "tmux attach -t default") "xterm.xpm"
+    , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
+    , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
     , TI "doc" "Documents/" (return ()) "evince.xpm"
     , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
     , TI "im" "" (spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'") "weechat.xpm"
