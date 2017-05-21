@@ -41,12 +41,15 @@ values."
      emoji
      evil-commentary
      (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
-     html
-     ibuffer
      git
      gtags
+     go
+     html
+     ibuffer
+     javascript
      haskell
      helm
+     html
      markdown
      my-code
      my-rtags
@@ -57,6 +60,8 @@ values."
      spell-checking
      syntax-checking
      version-control
+     vimscript
+     yaml
      ycmd
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -77,18 +82,18 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(llvm-mode shm)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(info+)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
-   ;; `used-only' installs only explicitly used packages and uninstall any
-   ;; unused packages as well as their unused dependencies.
-   ;; `used-but-keep-unused' installs only the used packages but won't uninstall
-   ;; them if they become unused. `all' installs *all* packages supported by
-   ;; Spacemacs and never uninstall them. (default is `used-only')
+   ;; `used-only' installs only explicitly used packages and deletes any unused
+   ;; packages as well as their unused dependencies. `used-but-keep-unused'
+   ;; installs only the used packages but won't delete unused ones. `all'
+   ;; installs *all* packages supported by Spacemacs and never uninstalls them.
+   ;; (default is `used-only')
    dotspacemacs-install-packages 'used-only))
 
 (defun dotspacemacs/init ()
@@ -202,6 +207,9 @@ values."
    ;; If non-nil then the last auto saved layouts are resumed automatically upon
    ;; start. (default nil)
    dotspacemacs-auto-resume-layouts nil
+   ;; If non-nil, auto-generate layout name when creating new layouts. Only has
+   ;; effect when using the "jump to layout by number" commands.
+   dotspacemacs-auto-generate-layout-names nil
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
@@ -340,6 +348,9 @@ values."
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
+   ;; Either nil or a number of seconds. If non-nil zone out after the specified
+   ;; number of seconds. (default nil)
+   dotspacemacs-zone-out-when-idle nil
    ))
 
 (defun dotspacemacs/user-init ()
@@ -363,6 +374,15 @@ you should place your code here."
   (add-hook 'c++-mode-hook (lambda () (setq flycheck-checker 'ycmd)))
   (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
   (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
+
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
+  (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+  (intero-global-mode 1)
+
+  (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
+  (setq dumb-jump-default-project nil) ; Do not search ~ (default)
+
+  (setq projectile-switch-project-action 'projectile-dired)
 
   ;; Override spacemacs-base/init-bookmark: do not automatically save bookmark list each time it is modified
   (setq bookmark-save-flag t)
@@ -418,8 +438,38 @@ you should place your code here."
     "YY" 'ycmd-goto
     )
 
+  (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
+    (cond
+     ((and (not (cdr xrefs)) (not always-show-list))
+      (xref-push-marker-stack)
+      (xref--pop-to-location (car xrefs) display-action))
+     (t
+      (xref-push-marker-stack)
+
+      ;; PATCH Jump to the first candidate
+      (when xrefs
+        (xref--pop-to-location (car xrefs) display-action))
+
+      (funcall xref-show-xrefs-function xrefs
+               `((window . ,(selected-window)))))))
+  (defun my-xref--show-xref-buffer (orig-fun &rest args)
+    (message "called with args %S" (current-buffer))
+    (save-selected-window
+      (apply orig-fun args))
+    (message "end with args %S" (current-buffer))
+    )
+  (advice-add 'xref--show-xref-buffer :around #'my-xref--show-xref-buffer)
+
+  (defun my-find-tag ()
+    (interactive)
+    (let ((old-buffer (current-buffer))
+          (old-point (point)))
+      (helm-gtags-find-tag-from-here)
+      (if (and (equal old-buffer (current-buffer)) (equal old-point (point)))
+          (evil-jump-to-tag))))
+
   (define-key evil-normal-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
-  (define-key evil-normal-state-map (kbd "C-]") 'helm-gtags-find-tag-from-here)
+  (define-key evil-normal-state-map (kbd "C-]") 'my-find-tag)
   (define-key evil-normal-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
   (define-key evil-normal-state-map (kbd "C-t") 'helm-gtags-pop-stack)
 
@@ -430,11 +480,13 @@ you should place your code here."
   (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
   (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
   (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
+  (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
 
   (defun spacemacs/enable-smooth-scrolling ()
     "Enable smooth scrolling."
     (interactive)
     (setq scroll-conservatively 30))
+  (spacemacs/enable-smooth-scrolling)
 
   (spacemacs/set-leader-keys
     "aa" (lambda ()
@@ -454,7 +506,7 @@ you should place your code here."
 
   (setq browse-url-browser-function 'browse-url-generic
         engine/browser-function 'browse-url-generic
-        browse-url-generic-program "chrome")
+        browse-url-generic-program (or (getenv "BROWSER") "chrome"))
 
   (setq org-directory "~/org"
         org-default-notes-file "~/org/refile.org"
@@ -498,20 +550,6 @@ you should place your code here."
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (d-mode company-dcd ivy flycheck-dmd-dub evil-snipe evil-commentary disaster company-c-headers cmake-mode clang-format orgit magit-gitflow evil-magit engine-mode smeargle helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter magit magit-popup git-commit with-editor diff-hl helm-gtags ggtags web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data mmm-mode markdown-toc markdown-mode gh-md flycheck-ycmd company-ycmd ycmd request-deferred deferred yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic unfill mwim org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-company helm-c-yasnippet gnuplot fuzzy flycheck-pos-tip pos-tip flycheck-haskell company-statistics company-cabal auto-yasnippet ac-ispell auto-complete intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc company haskell-mode cmm-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
 This is an auto-generated function, do not modify its content directly, use
@@ -523,10 +561,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
+ '(haskell-completing-read-function (quote helm--completing-read-default))
  '(ispell-program-name "/usr/bin/hunspell")
  '(package-selected-packages
    (quote
-    (realgud test-simple loc-changes load-relative rtags d-mode company-dcd ivy flycheck-dmd-dub evil-snipe evil-commentary disaster company-c-headers cmake-mode clang-format orgit magit-gitflow evil-magit engine-mode smeargle helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter magit magit-popup git-commit with-editor diff-hl helm-gtags ggtags web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data mmm-mode markdown-toc markdown-mode gh-md flycheck-ycmd company-ycmd ycmd request-deferred deferred yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic unfill mwim org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-company helm-c-yasnippet gnuplot fuzzy flycheck-pos-tip pos-tip flycheck-haskell company-statistics company-cabal auto-yasnippet ac-ispell auto-complete intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc company haskell-mode cmm-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (dante godoctor go-rename go-guru go-eldoc company-go go-mode d-mode company-dcd ivy flycheck-dmd-dub evil-snipe evil-commentary disaster company-c-headers cmake-mode clang-format orgit magit-gitflow evil-magit engine-mode smeargle helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter magit magit-popup git-commit with-editor diff-hl helm-gtags ggtags web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data mmm-mode markdown-toc markdown-mode gh-md flycheck-ycmd company-ycmd ycmd request-deferred deferred yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic unfill mwim org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-company helm-c-yasnippet gnuplot fuzzy flycheck-pos-tip pos-tip flycheck-haskell company-statistics company-cabal auto-yasnippet ac-ispell auto-complete intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc company haskell-mode cmm-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -222,6 +222,15 @@ bindkey '^xh' _complete_help
 # General aliases & functions (partially shared with bash) {{{2
 [[ -f ~/.alias ]] && source ~/.alias
 
+for i in gb gf gh gr gt; do
+  zle -N $i
+done
+bindkey '\C-g\C-b' gb
+bindkey '\C-g\C-f' gf
+bindkey '\C-g\C-h' gh
+bindkey '\C-g\C-r' gr
+bindkey '\C-g\C-t' gt
+
 function s() {
   re=$1
   find ${2:-.} -regextype posix-extended -iregex ".*$re.*"
@@ -353,20 +362,18 @@ if [[ -s /usr/share/fzf/completion.zsh ]] then
   #  [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
   #}
 fi
+
+# https://github.com/junegunn/dotfiles/blob/master/bashrc
 export FZF_CTRL_T_OPTS="--select-1 --exit-0 --preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
-export FZF_CTRL_R_OPTS=--sort
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview' --bind 'ctrl-y:execute-silent(echo -n {2..} | xclip -i)+abort' --header '?:preview C-y:primary'"
 if [[ -n ${commands[bfs]} ]]; then
-  export FZF_ALT_C_COMMAND='bfs -mindepth 1 2>/dev/null | cut -b3-'
-  export FZF_DEFAULT_COMMAND='bfs -L . -mindepth 1 \( -path "*/\.*" \) -prune -o -type f -print -o -type l -print 2> /dev/null | cut -b3-'
+  # /usr/share/fzf/key-bindings.zsh find -> bfs
+  export FZF_ALT_C_COMMAND="command bfs -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune -o -type d -print 2> /dev/null | cut -b3-"
+  export FZF_CTRL_T_COMMAND="command bfs -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune -o -type f -print -o -type d -print -type l -print 2> /dev/null | cut -b3-"
+  export FZF_DEFAULT_COMMAND=$FZF_CTRL_T_COMMAND
 fi
 
 [[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
-
-# Ruby
-[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
-
-# Node
-[[ -s ~/.nvm/nvm.sh ]] && source ~/.nvm/nvm.sh
 
 # OCaml
 [[ -s ~/.opam/opam-init/init.zsh ]] && source ~/.opam/opam-init/init.zsh

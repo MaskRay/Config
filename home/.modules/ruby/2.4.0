@@ -1,0 +1,2 @@
+#%Module
+prepend-path PATH $env(HOME)/.gem/ruby/2.4.0/bin

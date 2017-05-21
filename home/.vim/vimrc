@@ -146,7 +146,8 @@ if has("gui_running")
 else
   set t_Co=256
   "colorscheme bocau
-  colorscheme hybrid
+  "colorscheme hybrid
+  colorscheme seoul256
 endif
 
 " Functions --------------------- {{{1
@@ -437,7 +438,9 @@ if 1
   "Plug 'SirVer/ultisnips' "Invalid channel 5
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
+  Plug 'junegunn/rainbow_parentheses.vim'
   Plug 'junegunn/vim-easy-align'
+  Plug 'junegunn/vim-peekaboo'
   Plug 'tpope/vim-endwise'
   Plug 'tpope/vim-eunuch'
   Plug 'tpope/vim-unimpaired'
@@ -526,7 +529,6 @@ if 1
   Plug 'derekwyatt/vim-fswitch'
   "Plug 'tpope/vim-rails', { 'for': 'ruby' }
   Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-  Plug 'vim-llvm' " ln -s ~/Dev/llvm/utils/vim ~/.vim/bundle/vim-llvm
   Plug 'wting/rust.vim', { 'for': 'rust' }
   Plug 'zah/nim.vim', { 'for': 'nim' }
   Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
@@ -542,6 +544,9 @@ if 1
   "Plug 'sheerun/vim-polyglot'
   Plug 'ledger/vim-ledger', { 'for': 'ledger' }
   Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
+
+  "Colors
+  Plug 'junegunn/seoul256.vim'
 
   call plug#end()
 endif
@@ -935,6 +940,7 @@ nn <leader>st :vimgrep TODO\|FIXME<cr>
 nn <leader>ss :Lines<cr>
 " nmap <leader>t (toggle) {{{4
 nn <leader>ta :!gtags && ctags -R<cr>
+nn <leader>tCd :RainbowParentheses!!<cr>
 nn <leader>thc :set cursorcolumn!<cr>
 nn <leader>tb :set breakindent!<cr>
 nn <leader>ti :IndentGuidesToggle<cr>
@@ -942,6 +948,7 @@ nn <leader>tl :set wrap!<cr>
 nn <leader>tm :MatchmakerToggle<cr>
 nn <leader>tn :set nu!<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
+nn <leader>tS :set spell!<cr>
 nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
 nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
 nn <leader>td :let b:deoplete_disable_auto_complete = exists('b:deoplete_disable_auto_complete') ? ! b:deoplete_disable_auto_complete : 1<cr>:echo ! b:deoplete_disable_auto_complete<cr>
@@ -970,7 +977,6 @@ nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
-nn <leader>ig :IndentGuidesToggle<cr>:se list!<cr>
 "nn <leader>z zMzzzv
 nn <leader>S V:execute @@<cr>
 nn <leader>w :update<cr>
