@@ -51,13 +51,12 @@ values."
      helm
      html
      markdown
-     my-code
-     my-rtags
+     my  ; ~/.emacs.d/layers/+my/my/
      org
      python
      search-engine
      shell
-     spell-checking
+     ;; spell-checking
      syntax-checking
      version-control
      vimscript
@@ -150,7 +149,7 @@ values."
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'text-mode
+   dotspacemacs-scratch-mode 'emacs-lisp-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -370,74 +369,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq-default standard-indent 2 sh-indentation 2)
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-checker 'ycmd)))
-  (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
-  (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
 
-  (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
-  (add-hook 'haskell-mode-hook 'structured-haskell-mode)
-  (intero-global-mode 1)
-
-  (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
-  (setq dumb-jump-default-project nil) ; Do not search ~ (default)
-
-  (setq projectile-switch-project-action 'projectile-dired)
-
-  ;; Override spacemacs-base/init-bookmark: do not automatically save bookmark list each time it is modified
-  (setq bookmark-save-flag t)
-
-  (defun my-ffap ()
-    (interactive)
-    (let ((filename (ffap-guess-file-name-at-point)))
-      (when (not filename)
-        (user-error "No file at point"))
-      (ffap filename)))
-  (define-key evil-normal-state-map (kbd "g f") 'my-ffap)
-
-  (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
-  (define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
-  (define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
-  (define-key smartparens-mode-map (kbd "C-S-f") 'sp-forward-symbol)
-  (define-key smartparens-mode-map (kbd "C-S-b") 'sp-backward-symbol)
-  (define-key smartparens-mode-map (kbd "M-k") 'sp-backward-kill-sexp)
-  (define-key smartparens-mode-map (kbd "M-]") 'sp-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "M-[") 'sp-backward-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
-  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
-  (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
-  (define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-backward-barf-sexp)
-  (define-key smartparens-mode-map (kbd "C-c \"") (lambda () (interactive) (sp-wrap-with-pair "\"")))
-  (define-key smartparens-mode-map (kbd "C-c '") (lambda () (interactive) (sp-wrap-with-pair "'")))
-  (define-key smartparens-mode-map (kbd "C-c (") (lambda () (interactive) (sp-wrap-with-pair "(")))
-  (define-key smartparens-mode-map (kbd "C-c [") (lambda () (interactive) (sp-wrap-with-pair "[")))
-  (define-key smartparens-mode-map (kbd "C-c {") (lambda () (interactive) (sp-wrap-with-pair "{")))
-
-  (setq ycmd-server-command '("python" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
-  (setq ycmd-global-config (file-truename "~/.config/ycmd/.ycm_extra_conf.py"))
-  (setq ycmd-extra-conf-whitelist '("~/Dev/*" "~/CC/*"))
-  ;; (define-key evil-normal-state-map (kbd "C-j") 'ycmd-goto)
-  (define-key evil-normal-state-map (kbd "Y") nil)
-  (spacemacs/set-leader-keys
-    "Yc" 'ycmd-goto-declaration
-    "Yf" 'ycmd-goto-definition
-    "Yr" 'ycmd-goto-references
-    "Yt" 'ycmd-get-type
-    "YY" 'ycmd-goto
-    )
-
+  ;; Weird, in packages.el, my-code/init-my-code with-eval-after-load does not work
   (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
     (cond
      ((and (not (cdr xrefs)) (not always-show-list))
@@ -452,97 +385,12 @@ you should place your code here."
 
       (funcall xref-show-xrefs-function xrefs
                `((window . ,(selected-window)))))))
+
   (defun my-xref--show-xref-buffer (orig-fun &rest args)
-    (message "called with args %S" (current-buffer))
     (save-selected-window
       (apply orig-fun args))
-    (message "end with args %S" (current-buffer))
     )
   (advice-add 'xref--show-xref-buffer :around #'my-xref--show-xref-buffer)
-
-  (defun my-find-tag ()
-    (interactive)
-    (let ((old-buffer (current-buffer))
-          (old-point (point)))
-      (helm-gtags-find-tag-from-here)
-      (if (and (equal old-buffer (current-buffer)) (equal old-point (point)))
-          (evil-jump-to-tag))))
-
-  (define-key evil-normal-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
-  (define-key evil-normal-state-map (kbd "C-]") 'my-find-tag)
-  (define-key evil-normal-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
-  (define-key evil-normal-state-map (kbd "C-t") 'helm-gtags-pop-stack)
-
-  (spacemacs|define-jump-handlers d-mode)
-  (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
-  (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
-  ;; Take priority over ycmd-goto prepended by c-c++
-  (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
-  (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
-  (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-  (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
-
-  (defun spacemacs/enable-smooth-scrolling ()
-    "Enable smooth scrolling."
-    (interactive)
-    (setq scroll-conservatively 30))
-  (spacemacs/enable-smooth-scrolling)
-
-  (spacemacs/set-leader-keys
-    "aa" (lambda ()
-           (interactive)
-           (let ((f (file-name-base (buffer-file-name))))
-             (set-buffer "*ansi-term-1*")
-             (term-send-raw-string (format "\C-umake %s && ./%s \C-m" f f))))
-    "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
-    "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
-    )
-
-  ;; (with-eval-after-load 'company
-  ;;   (define-key company-active-map (kbd "M-n") nil)
-  ;;   (define-key company-active-map (kbd "M-p") nil)
-  ;;   (define-key company-active-map (kbd "C-n") #'company-select-next)
-  ;;   (define-key company-active-map (kbd "C-p") #'company-select-previous))
-
-  (setq browse-url-browser-function 'browse-url-generic
-        engine/browser-function 'browse-url-generic
-        browse-url-generic-program (or (getenv "BROWSER") "chrome"))
-
-  (setq org-directory "~/org"
-        org-default-notes-file "~/org/refile.org"
-        org-agenda-files '("~/org/refile.org" "~/org/gtd.org" "~/org/notes.org")
-        org-startup-indented t                           ; org-indent-mode
-        org-treat-S-cursor-todo-selection-as-state-change nil
-        org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-          (sequence "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))
-        org-todo-keyword-faces
-        '(("TODO" :foreground "#cc9393" :weight bold)
-          ("NEXT" :foreground "#8cd0d3" :weight bold)
-          ("DONE" :foreground "#afd8af" :weight bold)
-          ("HOLD" :foreground "#dc8cc3" :weight bold)
-          ("CANCELLED" :foreground "#bfebbf" :weight bold))
-        org-todo-state-tags-triggers
-        '(("CANCELLED" ("CANCELLED" . t))
-                ("HOLD" ("HOLD" . t))
-                (done ("HOLD"))
-                ("TODO" ("CANCELLED") ("HOLD"))
-                ("NEXT" ("CANCELLED") ("HOLD"))
-                ("DONE" ("CANCELLED") ("HOLD")))
-        org-capture-templates
-        '(("t" "Tasks" entry (file "~/org/refile.org")
-           "* TODO %?\n  SCHEDULED: %^t")
-          ("d" "Diary" entry (file+datetree "~/org/diary.org")
-           "* %?")
-          ("n" "Notes" entry (file "~/org/notes.org")
-           "* %? :NOTE:")
-          ("m" "Meeting" entry (file "~/org/refile.org")
-           "* MEETING with %? :MEETING:\n%U")
-          ("p" "Phone call" entry (file "~/org/refile.org")
-           "* PHONE %? :PHONE:\n%U")
-          ))
-
-  (setq open-junk-file-format "/tmp/.junk/%Y/%m/%d-%H%M%S.")
 
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
@@ -565,7 +413,7 @@ This function is called at the very end of Spacemacs initialization."
  '(ispell-program-name "/usr/bin/hunspell")
  '(package-selected-packages
    (quote
-    (dante godoctor go-rename go-guru go-eldoc company-go go-mode d-mode company-dcd ivy flycheck-dmd-dub evil-snipe evil-commentary disaster company-c-headers cmake-mode clang-format orgit magit-gitflow evil-magit engine-mode smeargle helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter magit magit-popup git-commit with-editor diff-hl helm-gtags ggtags web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data mmm-mode markdown-toc markdown-mode gh-md flycheck-ycmd company-ycmd ycmd request-deferred deferred yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic unfill mwim org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-company helm-c-yasnippet gnuplot fuzzy flycheck-pos-tip pos-tip flycheck-haskell company-statistics company-cabal auto-yasnippet ac-ispell auto-complete intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc company haskell-mode cmm-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (zeal-at-point yaml-mode web-beautify vimrc-mode realgud test-simple loc-changes load-relative rainbow-mode rainbow-identifiers livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc ibuffer-projectile helm-dash emojify ht emoji-cheat-sheet-plus dactyl-mode company-tern dash-functional tern company-emoji color-identifiers-mode coffee-mode browse-at-remote rtags dante godoctor go-rename go-guru go-eldoc company-go go-mode d-mode company-dcd ivy flycheck-dmd-dub evil-snipe evil-commentary disaster company-c-headers cmake-mode clang-format orgit magit-gitflow evil-magit engine-mode smeargle helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter magit magit-popup git-commit with-editor diff-hl helm-gtags ggtags web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data mmm-mode markdown-toc markdown-mode gh-md flycheck-ycmd company-ycmd ycmd request-deferred deferred yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic unfill mwim org-projectile org-present org-pomodoro alert log4e gntp org-download htmlize helm-company helm-c-yasnippet gnuplot fuzzy flycheck-pos-tip pos-tip flycheck-haskell company-statistics company-cabal auto-yasnippet ac-ispell auto-complete intero flycheck hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc company haskell-mode cmm-mode ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

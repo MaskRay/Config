@@ -135,20 +135,6 @@ if has('nvim')
   "Guifont Fantasque Sans Mono:h18
 endif
 
-" Colorschemes ---------------------------------------- {{{1
-set background=dark
-if has("gui_running")
-  "colorscheme badwolf
-  "colorscheme harlequin
-  "colorscheme molokai
-  "colorscheme hemisu
-  colorscheme hybrid
-else
-  set t_Co=256
-  "colorscheme bocau
-  "colorscheme hybrid
-  colorscheme seoul256
-endif
 
 " Functions --------------------- {{{1
 fu! Inc(...)
@@ -652,6 +638,20 @@ let g:ycm_filetype_specific_completion_to_disable = {
       \ 'gitcommit': 1,
       \ 'make': 1
       \}
+" Colorschemes ---------------------------------------- {{{1
+set background=dark
+if has("gui_running")
+  "colorscheme badwolf
+  "colorscheme harlequin
+  "colorscheme molokai
+  "colorscheme hemisu
+  colorscheme hybrid
+else
+  set t_Co=256
+  "colorscheme bocau
+  "colorscheme hybrid
+  colorscheme seoul256
+endif
 " Misc --------------------- {{{1
 " vim hacks #181
 " Open junk file."{{{

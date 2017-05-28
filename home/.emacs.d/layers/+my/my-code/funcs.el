@@ -1,8 +1,17 @@
-(defvar spacemacs-default-reference-handlers '(helm-gtags-find-rtag)
-  "List of reference handlers available in every mode.")
+(defun my-ffap ()
+  (interactive)
+  (let ((filename (ffap-guess-file-name-at-point)))
+    (when (not filename)
+      (user-error "No file at point"))
+    (ffap filename)))
 
-(defvar-local spacemacs-reference-handlers '()
-  "List of reference handlers local to this buffer.")
+(defun my-find-tag ()
+  (interactive)
+  (let ((old-buffer (current-buffer))
+        (old-point (point)))
+    (helm-gtags-find-tag-from-here)
+    (if (and (equal old-buffer (current-buffer)) (equal old-point (point)))
+        (evil-jump-to-tag))))
 
 (defmacro spacemacs|define-reference-handlers (mode &rest handlers)
   "Defines reference handlers for the given MODE.
@@ -26,9 +35,6 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
        (with-eval-after-load 'bind-map
          (spacemacs/set-leader-keys-for-major-mode ',mode
            "gr" 'spacemacs/jump-to-reference)))))
-
-(spacemacs|define-reference-handlers c++-mode)
-(spacemacs|define-reference-handlers c-mode)
 
 (defun spacemacs/jump-to-reference ()
   "Jump to definition around point using the best tool for this action."
