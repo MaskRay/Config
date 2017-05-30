@@ -1,30 +1,28 @@
 # software
-apt-get install tmux build-essential autoconf libtool zsh rxvt-unicode-256color mutt-patched offlineimap cloc urlview elfutils vim-gtk vim
+apt-get install tmux build-essential autoconf libtool zsh urlview elfutils vim
 ## mail
-apt-get install recutils mutt-patched offlineimap msmtp
+## TODO neomutt
+apt-get install mutt-patched offlineimap msmtp
 ## dev
-apt-get install cgdb global cscope git subversion mercurial ctags strace ltrace gdb valgrind
-## cluster
-apt-get install clustershell
+## TODO universal-ctags
+apt-get install cgdb global cscope git subversion mercurial strace ltrace gdb valgrind
 ## doc
-apt-get install mupdf pdfgrep
+#apt-get install mupdf pdfgrep
 ## net
-apt-get install lftp weechat
+#apt-get install lftp weechat
 ## file
 apt-get install ranger p7zip-full renameutils sshfs unzip aria2 inotify-tools
 ## misc
-apt-get install rlwrap xstow ncdu nvidia-319 graphviz lnav dstat sysstat
+apt-get install rlwrap xstow ncdu graphviz lnav dstat sysstat
 ## x11
-apt-get install feh geeqie trayer dmenu xmobar xmonad xdotool xsel unclutter wmctrl xscreensaver
+apt-get install feh geeqie trayer xmobar xmonad xclip xdotool xsel xterm unclutter wmctrl xscreensaver
 ## graphics
 apt-get install imagemagick
-# gfw
-apt-get install proxychains tsocks
-
-apt-get install libcurl4-openssl-dev
+# proxy
+apt-get install proxychains
 
 # perf
-# linux-tools kernel module
+# linux-tools
 
 # gcc
 #add-apt-repository ppa:ubuntu-toolchain-r/test

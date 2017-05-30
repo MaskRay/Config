@@ -1,8 +1,9 @@
 -- https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/ghci-commands.html
 
 :m Control.Applicative Control.Monad
-:set prompt "\x256d\x2500%s\n\x2570\x2500"
-:seti -XFlexibleInstances -XMagicHash -XTupleSections -XNoMonomorphismRestriction -XScopedTypeVariables
+:set prompt "\ESC[1;36m\x256d\x2500\ESC[0;37m%s\n\ESC[1;36m\x2570\x2500\ESC[m"
+:set prompt2 ".."
+:seti -XFlexibleContents -XFlexibleInstances -XMagicHash -XTupleSections -XScopedTypeVariables
 
 :set +t
 :set stop :list
@@ -11,5 +12,5 @@ let ghciEscapeShellArg arg = "'" ++ concatMap (\x -> if x == '\'' then "'\"'\"'"
 :def! hoogle    return . (":! hoogle --color --count=20 " ++) . ghciEscapeShellArg
 :def! hoogleAll return . (":! hoogle --color " ++) . ghciEscapeShellArg
 :def! doc       return . (":! hoogle --info " ++) . ghciEscapeShellArg
-:def! hlint     return . (":! hlint " ++) . ghciEscapeShellArg
+:def! hlint     return . const (":! hlint .")
 :def! pf        return . (":! pointfree " ++) . ghciEscapeShellArg
