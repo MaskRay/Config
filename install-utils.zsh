@@ -70,6 +70,10 @@ install_haskell() {
 
   # structred-haskell-mode
   stack install structured-haskell-mode
+
+  # intero
+  # git clone https://github.com/commercialhaskell/intero
+  # cd intero && stack build && stack install
 }
 
 preexec() {

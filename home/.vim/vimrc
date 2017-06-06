@@ -571,6 +571,9 @@ let g:gitgutter_enabled = 0
 " grepper {{{2
 let g:grepper = {}
 "let g:ack_use_dispatch = 1
+" leader-guide {{{2
+let g:lmap = {}
+call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
 " neoterm {{{2
 "let g:neoterm_position = 'vertical'
 let g:neoterm_position = 'horizontal'
@@ -844,16 +847,15 @@ cnoreab lcdh lcd %:p:h
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " nmap -------- {{{2
 " nmap <leader> {{{3
-nn <leader>ec :SyntasticClear<cr>
-nn <leader>ev :SyntasticInfo<cr>
-nn <leader>fc :cd %:p:h<cr>
-nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
-nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
-nn <leader>/ :Grepper -query<space>
+if filereadable(expand('~/.vim/bundle/vim-indent-guides/README.markdown'))
+  nn <leader> :<C-u>LeaderGuide '<Space>'<cr>
+  vn <leader> :<C-u>LeaderGuideVisual '<Space>'<cr>
+endif
 " nmap <leader><leader> (easymotion) TODO {{{3
 "nn <leader><leader>l <Plug>(easymotion-lineforward)
 "nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
+let g:lmap.a = {'name': '+applications'}
 nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
 nn <leader>at :TagbarToggle<cr>
 nn <leader>as :Ttoggle<cr>
@@ -861,6 +863,8 @@ nn <leader>au :MundoToggle<cr>
 nn <leader>ag :%!genhdr<cr>
 nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
+let g:lmap.b = {'name': '+buffers'}
+nn <leader>bb :Buffers<cr>
 nn <leader>bd :bp\|bd #<cr>
 nn <leader>bR :e<cr>
 nn <leader>bw :set readonly!<cr>
@@ -872,17 +876,25 @@ nn <leader>cr :exe 'NeomakeSh make ' . b:neomake_target<cr>
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
 " nmap <leader>e (edit) {{{4
+nn <leader>ec :SyntasticClear<cr>
+nn <leader>ev :SyntasticInfo<cr>
 nn <leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>es :sp <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " nmap <leader>f (file) {{{4
+let g:lmap.f = {'name': '+files'}
+nn <leader>fc :cd %:p:h<cr>
 nn <leader>fed :e ~/.vim/vimrc<cr>
 nn <leader>feR :so ~/.vim/vimrc<cr>
+nn <leader>ff :Unite -buffer-name=file -start-insert file<cr>
+nn <leader>fF :Files<cr>
 nn <silent> <leader>fr :Denite file_mru<cr>
 nn <leader>fJ :JunkFile<cr>
 nn <leader>fs :update<cr>
 nn <leader>fS :bufdo update<cr>
+nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
+nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
 " nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<CR>
@@ -915,23 +927,27 @@ nn <silent> <leader>hf :Unite -buffer-name=file -start-insert file<cr>
 "  nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/async<cr>
 "endif
 
-nn <silent> <leader>hb :Buffers<cr>
 nn <silent> <leader>hc :Commits<cr>
 nn <silent> <leader>hC :BCommits<cr>
-nn <silent> <leader>hF :Files<cr>
 "nn <silent> <leader>hR :UniteResume<cr>
 "nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
 nn <silent> <leader>hy :Denite neoyank<cr>
 
 "nn <silent> <leader>hh :History<cr>
+nn <silent> <leader>hi :DeniteCursorWord help<cr>
 nn <silent> <leader>hL :BLines<cr>
-nn <silent> <leader>hM :Maps<cr>
+nn <leader>hm :Man<Space>
 nn <silent> <leader>ht :Tags<cr>
 nn <silent> <leader>hT :BTags<cr>
 nn <silent> <leader>hx :Commands<cr>
 " nmap <leader>j (jump) {{{4
+let g:lmap.j = {'name': '+jump'}
 nmap <leader>jl <Plug>(easymotion-bd-jk)
+" nmap <leader>q (quit) {{{4
+let g:lmap.q = {'name': '+quit'}
+nn <leader>qq :quit<cr>
 " nmap <leader>s (search) {{{4
+let g:lmap.s = {'name': '+search'}
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sa :Grepper -query<space>
@@ -939,6 +955,7 @@ nn <leader>sP :Grepper -noprompt -cword<cr>
 nn <leader>st :vimgrep TODO\|FIXME<cr>
 nn <leader>ss :Lines<cr>
 " nmap <leader>t (toggle) {{{4
+let g:lmap.t = {'name': '+toggles'}
 nn <leader>ta :!gtags && ctags -R<cr>
 nn <leader>tCd :RainbowParentheses!!<cr>
 nn <leader>thc :set cursorcolumn!<cr>
@@ -953,6 +970,7 @@ nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
 nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
 nn <leader>td :let b:deoplete_disable_auto_complete = exists('b:deoplete_disable_auto_complete') ? ! b:deoplete_disable_auto_complete : 1<cr>:echo ! b:deoplete_disable_auto_complete<cr>
 " nmap <leader>v (vimux) {{{4
+let g:lmap.v = {'name': '+vimux'}
 nn <leader>vc :VimuxInterruptRunner<cr>
 nn <leader>vi :VimuxInspectRunner<cr>
 nn <leader>vp :VimuxPromptCommand<cr>
@@ -964,10 +982,14 @@ function! VimuxSlime()
 endfunction
 vn <leader>vs "vy :call VimuxSlime()<cr>
 " nmap <leader>w (window) {{{4
+let g:lmap.w = {'name': '+windows'}
 nn <leader>w- :sp<cr>
 nn <leader>w/ :vsp<cr>
+" nmap <leader>x TODO {{{4
 nn <leader>x :xit<cr>
 " nmap <leader> misc {{{4
+nn <leader>/ :Grepper -query<space>
+nn <leader>? :Maps<cr>
 nn <leader>1 :set cmdheight=1<cr>
 nn <leader>2 :set cmdheight=2<cr>
 nn <leader>3 :set cmdheight=3<cr>
@@ -979,8 +1001,8 @@ nn <Leader>cp :!xsel -ib < %<cr><cr>
 nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 "nn <leader>z zMzzzv
 nn <leader>S V:execute @@<cr>
-nn <leader>w :update<cr>
 " nmap g {{{3
+let g:lmap.g = {'name': '+git'}
 nmap ga <Plug>(EasyAlign)
 nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
 nmap gs <Plug>(GrepperOperator)
@@ -1028,6 +1050,7 @@ map F <Plug>Sneak_F
 "nn Yg :Gtags -g <C-r><C-w><cr>
 "nn Y<space> :Gtags
 " nmap Y (youcompleteme) {{{3
+let g:lmap.Y = {'name': '+YCM'}
 nn Yc :MarkPush<cr>:YcmCompleter GoToDeclaration<cr>
 nn Yd :YcmCompleter GetDoc<cr>
 nn Yf :MarkPush<cr>:YcmCompleter GoToDefinition<cr>
