@@ -3,7 +3,7 @@
 :m Control.Applicative Control.Monad
 :set prompt "\ESC[1;36m\x256d\x2500\ESC[0;37m%s\n\ESC[1;36m\x2570\x2500\ESC[m"
 :set prompt2 ".."
-:seti -XDataKinds -XGADTs -XFlexibleContexts -XFlexibleInstances -XMagicHash -XTupleSections -XScopedTypeVariables
+:seti -XDataKinds -XGADTs -XFlexibleContexts -XFlexibleInstances -XMagicHash -XOverloadedLabels -XTupleSections -XTypeOperators -XScopedTypeVariables
 
 :set +t
 :set stop :list

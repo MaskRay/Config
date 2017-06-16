@@ -94,7 +94,9 @@
 [github]
   user = MaskRay
 [merge]
-  tool = vimdiff
+  tool = vimdiffnice
+[mergetool "vimdiffnice"]
+  cmd = vimdiff -c \"wincmd J\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [push]
   default = simple
 [url "git://github.com/"]

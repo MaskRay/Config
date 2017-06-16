@@ -314,7 +314,6 @@ bindkey '^x^s' prepend-sudo
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-
 # jump-target {{{2
 # https://github.com/scfrazer/zsh-jump-target
 if [[ -n $TMUX ]]; then # prevent :T command in neovim from triggering
@@ -347,6 +346,7 @@ unfunction zsh-word-movement
 bindkey '^[^b' zsh-backward-word
 bindkey '^[^f' zsh-forward-word
 bindkey '^[^w' zsh-backward-kill-word
+bindkey '^u' backward-kill-line  # was kill-whole-line
 
    # Imports {{{1
 
