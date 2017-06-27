@@ -396,5 +396,5 @@ fi
 if [[ -f ~/bin/modulecmd.tcl ]]; then
   module() { eval `~/bin/modulecmd.tcl zsh $*`; }
   module use ~/.modules
-  module load ghc go nodejs perl ruby/2.3.0 texlive/2015 #nim wps mpi/impi
+  module load ghc go nodejs perl ruby/2.4.0 texlive/2015 #nim wps mpi/impi
 fi

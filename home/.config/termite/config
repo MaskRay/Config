@@ -1,4 +1,5 @@
 [options]
+fullscreen = false
 resize_grip = true
 scroll_on_output = false
 scroll_on_keystroke = true

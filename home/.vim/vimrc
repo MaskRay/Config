@@ -622,7 +622,7 @@ let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
-let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
+let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/.ycm_extra_conf.py"
 let g:ycm_extra_conf_globlist = ['~/Dev/*', '~/Work/*']
 let g:ycm_key_invoke_completion = '<C-u>'
 let g:ycm_key_detailed_diagnostics = "<leader>yd"
