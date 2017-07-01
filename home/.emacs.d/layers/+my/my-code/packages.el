@@ -38,6 +38,7 @@
     (add-hook 'haskell-mode-hook 'intero-mode)
     (add-hook 'haskell-mode-hook 'helm-kythe-mode)
     (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition))
+  (load "~/Dev/Emacs/emacs-helm-kythe/helm-kythe.el" t)  ;; TODO
   )
 
 (defun my-code/post-init-evil ()

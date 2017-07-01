@@ -1,4 +1,5 @@
 #!/bin/zsh
+setopt null_glob
 wallpapers=(~/Wallpapers/*)
 if (( $#wallpapers )); then
   feh --bg-scale ${wallpapers[$((RANDOM%${#wallpapers[@]}+1))]}
