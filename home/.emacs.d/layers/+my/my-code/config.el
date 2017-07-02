@@ -7,6 +7,7 @@
 (spacemacs|define-reference-handlers c++-mode)
 (spacemacs|define-reference-handlers c-mode)
 (spacemacs|define-reference-handlers d-mode)
+(spacemacs|define-reference-handlers haskell-mode)
 
 (setq dumb-jump-default-project nil) ; Do not search ~ (default)
 (setq projectile-switch-project-action 'projectile-dired)
