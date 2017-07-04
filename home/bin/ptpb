@@ -1,0 +1,30 @@
+#!/bin/zsh
+
+if (($# != 1)); then
+  exit 1
+fi
+url=
+curl -sSF c=@- https://ptpb.pw/ < $1 | while read line; do
+  print -u 2 -- $line
+  a=($=line)
+  if [[ $a[1] == url: ]]; then
+    url=$a[2]
+    if [[ $1 =~ '\w+\.(\w+)' ]]; then
+      suffix=$match[1]
+      declare -A a
+      a[c]=/c
+      a[cc]=/cpp
+      a[el]=/elisp
+      a[hs]=/haskell
+      a[py]=/python
+      a[rb]=/ruby
+      a[sh]=/zsh
+      a[gif]=.gif
+      a[jpg]=.jpg
+      a[png]=.png
+      ((${+a[$suffix]})) && url=$url$a[$suffix]
+    fi
+  fi
+done
+print -- $url
+xclip -i <<< $url

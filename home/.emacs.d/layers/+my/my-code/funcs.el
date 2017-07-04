@@ -18,6 +18,29 @@
              (not (locate-dominating-file default-directory "GTAGS")))
         (evil-jump-to-tag))))
 
+(defun my-realtime-elisp-doc-function ()
+  (let ((w (selected-window)))
+    (when-let (s (intern-soft (current-word)))
+      (cond
+       ((fboundp s) (describe-function s))
+       ((boundp s) (describe-variable s))
+       )
+      (select-window w)
+      nil)))
+
+(defun my-realtime-elisp-doc ()
+  (interactive)
+  (when (eq major-mode 'emacs-lisp-mode)
+    (if (advice-function-member-p #'my-realtime-elisp-doc-function eldoc-documentation-function)
+        (remove-function (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function)
+      (add-function :after-while (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function))))
+
+(defun my-xref-jump-backward ()
+  (interactive)
+  (if (eq major-mode 'haskell-mode)
+      (helm-kythe-jump-backward)
+      (helm-gtags-pop-stack)))
+
 (defmacro spacemacs|define-reference-handlers (mode &rest handlers)
   "Defines reference handlers for the given MODE.
 This defines a variable `spacemacs-reference-handlers-MODE' to which

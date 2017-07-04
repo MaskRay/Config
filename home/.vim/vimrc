@@ -28,7 +28,7 @@ set whichwrap=b,s,[,]
 set wildcharm=<tab>
 set wildmenu
 set wildmode=list:longest,list:full
-set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe,*.cm?,*.zi,*.zo
+set wildignore=*.o,*.bak,*.byte,*.native,*~,*.sw?,*.aux,*.toc,*.hg,*.git,*.svn,*.hi,*.so,*.a,*.pyc,*.aux,*.toc,*.exe
 "set autochdir
 set winaltkeys=no
 set scrolloff=3 scrolljump=5
@@ -574,6 +574,8 @@ let g:grepper = {}
 " leader-guide {{{2
 let g:lmap = {}
 call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
+" markdown {{{2
+let g:vim_markdown_folding_disabled = 1
 " neoterm {{{2
 "let g:neoterm_position = 'vertical'
 let g:neoterm_position = 'horizontal'

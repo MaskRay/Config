@@ -12,11 +12,7 @@
   ;; (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
   ;; (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
 
-  (defun spacemacs/enable-smooth-scrolling ()
-    "Enable smooth scrolling."
-    (interactive)
-    (setq scroll-conservatively 30))
-  (spacemacs/enable-smooth-scrolling)
+  (helm-autoresize-mode 1)
   )
 
 (defun my-code/post-init-cc-mode ()
@@ -35,22 +31,23 @@
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
     (add-hook 'haskell-mode-hook 'structured-haskell-mode)
     ;; (intero-global-mode 1)
-    (add-hook 'haskell-mode-hook 'intero-mode)
     (add-hook 'haskell-mode-hook 'helm-kythe-mode)
+    ;; (add-hook 'haskell-mode-hook 'intero-mode)
     (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
     (add-to-list 'spacemacs-jump-handlers-haskell-mode 'helm-kythe-find-definitions)
     (add-to-list 'spacemacs-reference-handlers-haskell-mode 'helm-kythe-find-references))
   (load "~/Dev/Emacs/emacs-helm-kythe/helm-kythe.el" t)  ;; TODO
+  (spacemacs/set-leader-keys-for-major-mode 'haskell-mode "k" helm-kythe-map)
   )
 
 (defun my-code/post-init-evil ()
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
   (define-key evil-normal-state-map "gf" 'my-ffap)
+  (define-key evil-normal-state-map (kbd "C-t") 'my-xref-jump-backward)
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my-find-tag)
   (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
-  (define-key evil-motion-state-map (kbd "C-t") 'helm-gtags-pop-stack)
 
   (spacemacs/set-leader-keys
     "aa" (lambda ()
@@ -60,6 +57,7 @@
              (term-send-raw-string (format "\C-umake %s && ./%s \C-m" f f))))
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+    "TD" #'my-realtime-elisp-doc
     )
   )
 
@@ -71,7 +69,7 @@
     (define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
     (define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
     (define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
+    (define-key smartparens-mode-map (kbd "M-t") 'sp-transpose-sexp)
     (define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
     (define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
     (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
