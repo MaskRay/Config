@@ -481,8 +481,7 @@ myKeys =
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-C-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
-    , ("M-C-S-i", spawn "pkill compton; compton &")
+    , ("M-C-i", spawn "toggle-invert")
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
     --, ("M-m h", withFocused hideWindow)
