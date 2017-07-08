@@ -6,116 +6,104 @@
 
 import Control.Monad
 import Codec.Binary.UTF8.String (encodeString)
-import Data.Char
 import Data.List
 import qualified Data.Map as M
-import Data.Maybe (isNothing, isJust, catMaybes, fromMaybe)
 import Data.Function
-import Data.Monoid
 import System.Exit
 import System.IO
-import System.Process
 import System.Posix.Process (executeFile)
 import System.Posix.Types (ProcessID)
-import Text.Printf
 
 import XMonad hiding ((|||))
 import qualified XMonad.StackSet as W
-import XMonad.Util.ExtensibleState as XS hiding (gets)
 import XMonad.Util.EZConfig
-import XMonad.Util.Loggers
 import XMonad.Util.NamedWindows (getName)
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Paste
 import XMonad.Util.Run
-import qualified XMonad.Util.Themes as Theme
-import XMonad.Util.Timer
 import XMonad.Util.WorkspaceCompare
 
 import XMonad.Prompt
 import XMonad.Prompt.Input
-import XMonad.Prompt.Man
 import XMonad.Prompt.Shell
 import XMonad.Prompt.Window
-import XMonad.Prompt.Workspace
 
 import qualified XMonad.Actions.FlexibleManipulate as Flex
 import XMonad.Actions.Commands
-import XMonad.Actions.CycleRecentWS
+import XMonad.Actions.CopyWindow (copyToAll, killAllOtherCopies, wsContainingCopies)
 import XMonad.Actions.CycleWS
+import XMonad.Actions.DynamicProjects (Project(..), dynamicProjects, shiftToProjectPrompt, switchProjectPrompt)
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
 import XMonad.Actions.GroupNavigation
+import XMonad.Actions.MessageFeedback (tryMessage_)
 import XMonad.Actions.Navigation2D
+import XMonad.Actions.Promote (promote)
 import qualified XMonad.Actions.Search as S
-import XMonad.Actions.Submap
-import XMonad.Actions.SpawnOn
-import XMonad.Actions.TopicSpace
-import XMonad.Actions.UpdatePointer
+import XMonad.Actions.SpawnOn (spawnOn)
+--import XMonad.Actions.TopicSpace
 import XMonad.Actions.Warp
-import XMonad.Actions.WindowBringer
-import XMonad.Actions.WindowGo
-import XMonad.Actions.WindowMenu
 import XMonad.Actions.WithAll (sinkAll, killAll)
 
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.DynamicProperty (dynamicTitle)  -- 0.12 broken; works with github version
 --import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.EwmhDesktops hiding (fullscreenEventHook)
+import XMonad.Hooks.FadeWindows
 {-import EwmhDesktops hiding (fullscreenEventHook)-}
+import XMonad.Hooks.InsertPosition
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.SetWMName
 
-import XMonad.Layout.PositionStoreFloat
 import XMonad.Layout.NoFrillsDecoration
 import XMonad.Layout.Accordion
+import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.Drawer
-import XMonad.Layout.Combo
 import XMonad.Layout.Fullscreen
-import XMonad.Layout.Grid
+import XMonad.Layout.Gaps
+import XMonad.Layout.Hidden
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.Master
-import XMonad.Layout.Maximize
 import XMonad.Layout.Minimize
-import XMonad.Layout.MouseResizableTile
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.IM
+import XMonad.Layout.PerScreen
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Reflect
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
+import XMonad.Layout.ShowWName (SWNConfig(..), showWName')
 import XMonad.Layout.Simplest (Simplest(Simplest))
+import XMonad.Layout.SimplestFloat (simplestFloat)
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.Tabbed
-import XMonad.Layout.TrackFloating
+import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WindowNavigation
-import XMonad.Layout.WorkspaceDir
-import XMonad.Layout.WindowSwitcherDecoration
 
 {-
  - TABBED
  -}
 
-myTabTheme =
-    def
-    { activeColor         = "black"
-    , inactiveColor       = "black"
-    , urgentColor         = "yellow"
-    , activeBorderColor   = "orange"
-    , inactiveBorderColor = "#333333"
-    , urgentBorderColor   = "black"
-    , activeTextColor     = "orange"
-    , inactiveTextColor   = "#666666"
-    , decoHeight          = 24
-    , fontName = "xft:Dejavu Sans Mono:size=14"
-    }
+-- myTabTheme =
+--     def
+--     { activeColor         = "black"
+--     , inactiveColor       = "black"
+--     , urgentColor         = "yellow"
+--     , activeBorderColor   = "orange"
+--     , inactiveBorderColor = "#333333"
+--     , urgentBorderColor   = "black"
+--     , activeTextColor     = "orange"
+--     , inactiveTextColor   = "#666666"
+--     , decoHeight          = 24
+--     , fontName = "xft:Dejavu Sans Mono:size=14"
+--     }
 
 data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
 instance Transformer TABBED Window where
@@ -125,7 +113,7 @@ instance Transformer TABBED Window where
  - Navigation2D
  -}
 
-myLayout = avoidStruts $
+myLayout2 = avoidStruts $
     configurableNavigation (navigateColor "#333333") $
     mkToggle1 TABBED $
     mkToggle1 NBFULL $
@@ -150,34 +138,212 @@ myLayout = avoidStruts $
 
         --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
 
+myFocusFollowsMouse  = False
+myClickJustFocuses   = True
+
+base03  = "#002b36"
+base02  = "#073642"
+base01  = "#586e75"
+base00  = "#657b83"
+base0   = "#839496"
+base1   = "#93a1a1"
+base2   = "#eee8d5"
+base3   = "#fdf6e3"
+yellow  = "#b58900"
+orange  = "#cb4b16"
+red     = "#dc322f"
+magenta = "#d33682"
+violet  = "#6c71c4"
+blue    = "#268bd2"
+cyan    = "#2aa198"
+green       = "#859900"
+
+-- sizes
+gap         = 10
+topbar      = 10
+border      = 0
+status      = 20
+
+myNormalBorderColor     = "#000000"
+myFocusedBorderColor    = active
+
+active      = blue
+activeWarn  = red
+inactive    = base02
+focusColor  = blue
+unfocusColor = base02
+
+myFont      = "-*-terminus-medium-*-*-*-*-160-*-*-*-*-*-*"
+myBigFont   = "-*-terminus-medium-*-*-*-*-240-*-*-*-*-*-*"
+myWideFont  = "xft:Eurostar Black Extended:"
+            ++ "style=Regular:pixelsize=180:hinting=true"
+
+-- this is a "fake title" used as a highlight bar in lieu of full borders
+-- (I find this a cleaner and less visually intrusive solution)
+topBarTheme = def
+    { fontName              = myFont
+    , inactiveBorderColor   = base03
+    , inactiveColor         = base03
+    , inactiveTextColor     = base03
+    , activeBorderColor     = active
+    , activeColor           = active
+    , activeTextColor       = active
+    , urgentBorderColor     = red
+    , urgentTextColor       = yellow
+    , decoHeight            = topbar
+    }
+
+myTabTheme = def
+    { fontName              = myFont
+    , activeColor           = active
+    , inactiveColor         = base02
+    , activeBorderColor     = active
+    , inactiveBorderColor   = base02
+    , activeTextColor       = base03
+    , inactiveTextColor     = base00
+    }
+
+myPromptTheme = def
+    { font                  = myFont
+    , bgColor               = base03
+    , fgColor               = active
+    , fgHLight              = base03
+    , bgHLight              = active
+    , borderColor           = base03
+    , promptBorderWidth     = 0
+    , height                = 20
+    , position              = Top
+    }
+
+warmPromptTheme = myPromptTheme
+    { bgColor               = yellow
+    , fgColor               = base03
+    , position              = Top
+    }
+
+hotPromptTheme = myPromptTheme
+    { bgColor               = red
+    , fgColor               = base3
+    , position              = Top
+    }
+
+myShowWNameTheme = def
+    { swn_font              = myWideFont
+    , swn_fade              = 0.5
+    , swn_bgcolor           = "#000000"
+    , swn_color             = "#FFFFFF"
+    }
+
+myLayout = showWorkspaceName
+             $ onWorkspace "float" floatWorkSpace
+             $ fullscreenFloat -- fixes floating windows going full screen, while retaining "bounded" fullscreen
+             $ fullScreenToggle
+             $ mirrorToggle
+             $ reflectToggle
+             $ flex ||| tabs
+  where
+
+--    testTall = Tall 1 (1/50) (2/3)
+--    myTall = subLayout [] Simplest $ trackFloating (Tall 1 (1/20) (1/2))
+
+    floatWorkSpace      = simplestFloat
+    fullScreenToggle    = mkToggle (single FULL)
+    mirrorToggle        = mkToggle (single MIRROR)
+    reflectToggle       = mkToggle (single REFLECTX)
+    smallMonResWidth    = 1920
+    showWorkspaceName   = showWName' myShowWNameTheme
+
+    named n             = renamed [(XMonad.Layout.Renamed.Replace n)]
+    trimNamed w n       = renamed [(XMonad.Layout.Renamed.CutWordsLeft w),
+                                   (XMonad.Layout.Renamed.PrependWords n)]
+    suffixed n          = renamed [(XMonad.Layout.Renamed.AppendWords n)]
+    trimSuffixed w n    = renamed [(XMonad.Layout.Renamed.CutWordsRight w),
+                                   (XMonad.Layout.Renamed.AppendWords n)]
+
+    addTopBar           = noFrillsDeco shrinkText topBarTheme
+
+    sGap                = quot gap 2
+    myGaps              = gaps [(U, gap),(D, gap),(L, gap),(R, gap)]
+    mySmallGaps         = gaps [(U, sGap),(D, sGap),(L, sGap),(R, sGap)]
+    myBigGaps           = gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
+
+    --------------------------------------------------------------------------
+    -- Tabs Layout                                                          --
+    --------------------------------------------------------------------------
+
+    threeCol = named "Unflexed"
+         $ avoidStruts
+         $ addTopBar
+         $ ThreeColMid 1 (1/10) (1/2)
+
+    tabs = named "Tabs"
+         $ avoidStruts
+         $ addTopBar
+         $ addTabs shrinkText myTabTheme
+         $ Simplest
+
+
+    flex = trimNamed 5 "Flex"
+              $ avoidStruts
+              -- don't forget: even though we are using X.A.Navigation2D
+              -- we need windowNavigation for merging to sublayouts
+              $ windowNavigation
+              $ addTopBar
+              $ addTabs shrinkText myTabTheme
+              -- $ subLayout [] (Simplest ||| (mySpacing $ Accordion))
+              $ subLayout [] (Simplest ||| Accordion)
+              $ ifWider smallMonResWidth wideLayouts standardLayouts
+              where
+                  wideLayouts =
+                        (suffixed "Wide 3Col" $ ThreeColMid 1 (1/20) (1/2))
+                    ||| (trimSuffixed 1 "Wide BSP" $ hiddenWindows emptyBSP)
+                  --  ||| fullTabs
+                  standardLayouts =
+                        (suffixed "Std 2/3" $ ResizableTall 1 (1/20) (2/3) [])
+                    ||| (suffixed "Std 1/2" $ ResizableTall 1 (1/20) (1/2) [])
+
+
+myBrowserClass      = "Chromium"
+hangoutsResource    = "crx_nckgahadagoaajjgafhacjanaoiihapd"
+isHangoutsFor s     = (className =? myBrowserClass
+                      <&&> fmap (isPrefixOf "Google Hangouts") title
+                      <&&> fmap (isInfixOf s) title)
+
+-- from https://pbrisbin.com/posts/using_notify_osd_for_xmonad_notifications/
+data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
+
+instance UrgencyHook LibNotifyUrgencyHook where
+    urgencyHook LibNotifyUrgencyHook w = do
+        name     <- getName w
+        Just idx <- fmap (W.findTag w) $ gets windowset
+
+        safeSpawn "notify-send" [show name, "workspace " ++ idx]
+
 doSPFloat = customFloating $ W.RationalRect (1/7) (1/7) (5/7) (5/7)
 myManageHook = composeAll $
+    [ isDialog <&&> className =? myBrowserClass--> forceCenterFloat ] ++
     [ className =? c --> viewShift "web" | c <- ["Firefox"] ] ++
     [ className =? c <&&> role =? "browser" --> viewShift "web" | c <- ["Google-chrome", "Chrome", "Chromium"] ] ++
-    [ className =? c --> viewShift "nvim" | c <- ["Gvim"] ] ++
-    [ className =? c --> viewShift "doc" | c <- ["Okular", "MuPDF", "llpp", "Recoll", "Evince", "Zathura" ] ] ++
-    [ appName =? c --> viewShift "doc" | c <- ["calibre-ebook-viewer", "calibre-edit-book"] ] ++
-    [ appName =? c --> viewShift "office" | c <- ["idaq.exe", "idaq64.exe"] ] ++
-    [ className =? c --> viewShift "office" | c <- ["Wireshark", "Idaq", "Inkscape", "Geeqie", "Wps", "Wpp", "mpv"] ] ++
-    [ role =? r --> doFloat | r <- ["pop-up", "app"]] ++ -- chrome has pop-up windows
-    {-[ className =? "Google-chrome-stable" <&&> role =? r --> doShift "im" | r <- ["pop-up", "app"]] ++ -- viewShift doesn't work-}
+    [ resource =? hangoutsResource --> insertPosition End Newer ] ++
+    -- [ role =? r --> doFloat | r <- ["pop-up", "app"]] ++ -- chrome has pop-up windows
     [ title =? "weechat" --> viewShift "im"] ++
     [ title =? "mutt" --> viewShift "mail"] ++
     [ className =? c --> viewShift "gimp" | c <- ["Gimp"] ] ++
     [ prefixTitle "emacs" --> doShift "emacs" ] ++
-    [ className =? c --> doShift "misc" | c <- ["Wpa_gui"] ] ++
-    [ prefixTitle "libreoffice" <||> prefixTitle "LibreOffice" --> doShift "office" ] ++
     [ className =? "Synapse" --> doIgnore ] ++
     [ manageDocks , namedScratchpadManageHook scratchpads ] ++
     [ className =? c --> ask >>= \w -> liftX (hide w) >> idHook | c <- ["XClipboard"] ] ++
-    [ myCenterFloats --> doCenterFloat ]
+    [ myCenterFloats --> doCenterFloat ] ++
+    [ pure True --> tileBelow]
   where
+    --isBrowserDialog = 
     role = stringProperty "WM_WINDOW_ROLE"
     prefixTitle prefix = fmap (prefix `isPrefixOf`) title
     viewShift = doF . liftM2 (.) W.greedyView W.shift
     myCenterFloats = foldr1 (<||>)
         [ className =? "feh"
         , className =? "Display"
+        , isDialog
         ]
     mySPFloats = foldr1 (<||>)
         [ className =? "Firefox" <&&> fmap (/="Navigator") appName
@@ -194,18 +360,34 @@ myManageHook = composeAll $
             , "Floating"
             ]
         ]
+    tileBelow = insertPosition Below Newer
 
-myDynamicLog h = dynamicLogWithPP $ xmobarPP
-  { ppOutput  = hPutStrLn h
-  , ppCurrent = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
-  , ppVisible = wrap "<icon=default/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
-  , ppHidden = wrap "<icon=gray/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
-  , ppUrgent = wrap "<icon=highlight/" "/>" . fromMaybe "application-default-icon.xpm" . flip M.lookup myIcons
-  , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort def
-  , ppTitle   = (" " ++) . xmobarColor "#ee9a00" ""
-  }
+myHandleEventHook = docksEventHook
+                <+> fadeWindowsEventHook
+                <+> dynamicTitle myDynHook
+                <+> handleEventHook def
+                <+> XMonad.Layout.Fullscreen.fullscreenEventHook
   where
-    clickable w = wrap ("^ca(1,wmctrl -s `wmctrl -d | grep "++w++" | cut -d' ' -f1`)") "^ca()"
+    myDynHook = composeAll
+        [ isHangoutsFor "emacsray@" --> forceCenterFloat
+        , isHangoutsFor "maskray@" --> insertPosition End Newer
+        ]
+
+myDynamicLog h = do
+  copies <- wsContainingCopies
+  let check ws | ws `elem` copies =
+                 pad . xmobarColor yellow red . wrap "*" " "  $ ws
+               | otherwise = pad ws
+  ewmhDesktopsLogHook
+  dynamicLogWithPP $ xmobarPP
+    { ppOutput  = hPutStrLn h
+    , ppCurrent = xmobarColor active "" . wrap "[" "]"
+    , ppVisible = xmobarColor base0  "" . wrap "(" ")"
+    , ppHidden = check
+    , ppUrgent = xmobarColor red    "" . wrap " " " "
+    , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort def
+    , ppTitle   = xmobarColor active "" . shorten 50
+    }
 
 {-
  - Bindings
@@ -217,19 +399,46 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, button3), (\w -> focus w >> Flex.mouseWindow Flex.resize w))
     ]
 
+-- hidden, non-empty workspaces less scratchpad
+nextNonEmptyWS = findWorkspace getSortByIndexNoSP Next HiddenNonEmptyWS 1
+        >>= \t -> (windows . W.view $ t)
+prevNonEmptyWS = findWorkspace getSortByIndexNoSP Prev HiddenNonEmptyWS 1
+        >>= \t -> (windows . W.view $ t)
+getSortByIndexNoSP =
+        fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex
+
+myNav2DConf = def { defaultTiledNavigation = centerNavigation
+                  , layoutNavigation = [("Full", centerNavigation)]
+                  , unmappedWindowRect = [("Full", singleWindowRect)] }
+
 myKeys =
+    let
+      toggleFloat w = windows (\s -> if M.member w (W.floating s)
+                                     then W.sink w s
+                                     else (W.float w (W.RationalRect (1/3) (1/4) (1/2) (4/5)) s))
+      toggleCopyToAll = wsContainingCopies >>= \ws -> case ws of
+         [] -> windows copyToAll
+         _ -> killAllOtherCopies
+      tryMsgR x y = sequence_ [(tryMessage_ x y), refresh]
+    in
     [ ("M-" ++ m ++ [k], f i)
-        | (i, k) <- zip myTopicNames "1234567890"
-        , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
+        | (i, k) <- zip myWorkspaces "1234567890"
+        , (f, m) <- [ (windows . W.greedyView, "")
                     , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
     ]
     ++
-    [ ("C-; " ++ m ++ [k], f i)
-        | (i, k) <- zip myTopicNames "asdfghjkl;"
-        , (f, m) <- [ (nongreedySwitchTopic myTopicConfig, "")
-                    , (switchTopic myTopicConfig, "S-")
+    [ ("M-" ++ m ++ [k], f i)
+        | (i, k) <- zip myWorkspaces "uiop"
+        , (f, m) <- [ (windows . W.greedyView, "")
+                    , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
+    ]
+    ++
+    [ -- ("M-y", switchProjectPrompt warmPromptTheme)
+      ("M-S-y", shiftToProjectPrompt warmPromptTheme)
+    , ("M-`", nextNonEmptyWS)
+    , ("M-S-`", prevNonEmptyWS)
     ]
     ++
     [("M-" ++ m ++ k, screenWorkspace sc >>= flip whenJust (windows . f))
@@ -237,21 +446,20 @@ myKeys =
         , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
     ]
     ++
-    [ ("M-l", switchTopic myTopicConfig "web")
-    , ("M-;", switchTopic myTopicConfig "nvim")
-    , ("M-'", switchTopic myTopicConfig "term")
-    , ("M-S-q", io exitFailure)
-    , ("M-S-c", kill)
+    [ -- ("M-l", switchTopic myTopicConfig "web")
+    --, ("M-;", switchTopic myTopicConfig "nvim")
+    --, ("M-'", switchTopic myTopicConfig "term")
+      ("M-S-q", io exitFailure)
+    , ("M-<Backspace>", kill)
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
-    , ("M-S-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
-    , ("M-C-i", spawn "pkill compton; compton &")
+    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg", "xkill"])
+    , ("M-C-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
+    , ("M-C-S-i", spawn "pkill compton; compton &")
     , ("M-S-l", spawn "xscreensaver-command -lock")
-    , ("M-S-k", spawn "xkill")
     , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
     , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
     , ("<XF86AudioNext>", spawn "cmus-remote -n")
@@ -269,24 +477,45 @@ myKeys =
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
     -- window management
-    , ("M-u", swapNextScreen)
-    , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
-    , ("M-a", toggleSkip ["NSP"])
+    , ("M-h", windowGo L True)
+    , ("M-j", windowGo D True)
+    , ("M-k", windowGo U True)
+    , ("M-l", windowGo R True)
+
+    , ("M-b", promote)
+    , ("M-d", toggleCopyToAll)
+    , ("M-S-j", swapNextScreen)
+    , ("M-S-k", swapNextScreen)
+    -- , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
+    , ("M-a", toggleWS' ["NSP"])
     , ("M-N", doTo Prev EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
     , ("M-n", doTo Next EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
-    , ("M-<Space>", sendMessage NextLayout)
-    , ("M-i", sendMessage Shrink)
-    , ("M-o", sendMessage Expand)
-    , ("M-t", withFocused $ windows . W.sink)
+    , ("M-<Tab>", sendMessage NextLayout)
+    , ("M-C-<Tab>", toSubl NextLayout)
+    --, ("M-S-<Tab>", setLayout myLayout)
+    , ("M-[", tryMsgR (ExpandTowards L) Shrink)
+    , ("M-]", tryMsgR (ExpandTowards R) Expand)
+    , ("M-S-[", tryMsgR (ExpandTowards U) MirrorShrink)
+    , ("M-S-]", tryMsgR (ExpandTowards D) MirrorExpand)
+    --, ("M-]", sendMessage Expand)
+    , ("M-t", withFocused toggleFloat)
+    , ("M-S-t", sinkAll)
     , ("M-,", sendMessage (IncMasterN 1))
     , ("M-.", sendMessage (IncMasterN (-1)))
-    , ("M-b", windowPromptBring myXPConfig)
+    --, ("M-b", windowPromptBring myXPConfig)
     , ("M-S-b", banishScreen LowerRight)
-    , ("M-s", windows W.swapMaster)
-    , ("M-<Backspace>", focusUrgent)
-    , ("M-y", nextMatch History (return True))
+    , ("M-s", switchProjectPrompt warmPromptTheme)
+    , ("M-S-s", shiftToProjectPrompt warmPromptTheme)
+    --, ("M-<Backspace>", focusUrgent)
+    --, ("M-y", nextMatch History (return True))
     , ("M-m", withFocused minimizeWindow)
     , ("M-S-m", sendMessage RestoreNextMinimizedWin)
+    , ("M-'", bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
+    , ("M-;", bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
+    , ("M-\"", windows W.swapDown)
+    , ("M-:", windows W.swapUp)
+    , ("M-z m", windows W.focusMaster)
+    , ("M-z u", focusUrgent)
 
     -- XMonad.Layout.SubLayouts {{{
     , ("M-C-h", sendMessage $ pullGroup L)
@@ -297,8 +526,8 @@ myKeys =
     , ("M-C-u", withFocused (sendMessage . UnMerge))
     -- }}}
 
-    , ("M-j", windows W.focusDown)
-    , ("M-k", windows W.focusUp)
+    --, ("M-j", windows W.focusDown)
+    --, ("M-k", windows W.focusUp)
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
     , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
     , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
@@ -311,10 +540,10 @@ myKeys =
     , ("M-<R>", withFocused (keysMoveWindow (30,0)))
     , ("M-<U>", withFocused (keysMoveWindow (0,-30)))
     , ("M-<D>", withFocused (keysMoveWindow (0,30)))
-    , ("C-; <L>", withFocused $ snapMove L Nothing)
-    , ("C-; <R>", withFocused $ snapMove R Nothing)
-    , ("C-; <U>", withFocused $ snapMove U Nothing)
-    , ("C-; <D>", withFocused $ snapMove D Nothing)
+    --, ("C-; <L>", withFocused $ snapMove L Nothing)
+    --, ("C-; <R>", withFocused $ snapMove R Nothing)
+    --, ("C-; <U>", withFocused $ snapMove U Nothing)
+    --, ("C-; <D>", withFocused $ snapMove D Nothing)
 
     -- dynamic workspace
     , ("M-C-n", addWorkspacePrompt myXPConfig)
@@ -367,21 +596,17 @@ myKeys =
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
-    , ("M-p c", mainCommandPrompt myXPConfig)
-    , ("M-p d", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
-    , ("M-p p", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
-    , ("M-p r", spawn "rofi -sort -matching fuzzy -show run")
-    , ("M-p t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
-    , ("M-p v", spawn "pavucontrol")
-    , ("M-p m", spawn "menu")
+    , ("M-y b", windowPromptBring myXPConfig)
+    , ("M-y c", mainCommandPrompt myXPConfig)
+    , ("M-y d", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-y p", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
+    , ("M-y r", spawn "rofi -sort -matching fuzzy -show run")
+    , ("M-<Space>", spawn "rofi -sort -matching fuzzy -show run")
+    , ("M-y t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
+    , ("M-y v", spawn "pavucontrol")
+    , ("M-y m", spawn "menu")
     ] ++
     searchBindings
-
--- Toggle workspaces but ignore some
-toggleSkip :: [WorkspaceId] -> X ()
-toggleSkip skips = do
-    hs <- XMonad.gets (flip skipTags skips . W.hidden . windowset)
-    unless (null hs) (windows . W.view . W.tag $ head hs)
 
 mlterm prog = ("mlterm -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
@@ -404,20 +629,20 @@ scratchpads =
     doLeftFloat = customFloating $ W.RationalRect 0 0 (1/3) 1
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
-myConfig xmobar = docks . ewmh $ withUrgencyHook NoUrgencyHook $ def
+myConfig xmobar = docks . dynamicProjects myProjects . withNavigation2DConfig myNav2DConf . ewmh $ withUrgencyHook LibNotifyUrgencyHook $ def
     { terminal           = "termite"
     , focusFollowsMouse  = False -- see: focusFollow
     , borderWidth        = 1
     , modMask            = mod4Mask
-    , workspaces         = myTopicNames
+    , workspaces         = myWorkspaces
     , normalBorderColor  = "#000000"
     , focusedBorderColor = "#3939ff"
     , mouseBindings      = myMouseBindings
     , layoutHook         = myLayout
     , manageHook         = myManageHook
-    , handleEventHook    = fullscreenEventHook -- <+> focusFollow -- >> clockEventHook
+    , handleEventHook    = myHandleEventHook -- <+> focusFollow -- >> clockEventHook
     , logHook            = historyHook >> myDynamicLog xmobar
-    , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D" >> clockStartupHook
+    , startupHook        = checkKeymap (myConfig xmobar) myKeys >> spawn "~/bin/start-tiling" >> setWMName "LG3D"
 } `additionalKeysP` myKeys
 
 myPromptKeymap = M.union defaultXPKeymap $ M.fromList
@@ -454,7 +679,6 @@ spawnBash :: MonadIO m => String -> m ProcessID
 spawnBash x = xfork $ executeFile "/bin/bash" False ["-c", encodeString x] Nothing
 
 main = do
-    checkTopicConfig myTopicNames myTopicConfig
     d <- openDisplay ""
     let w = fromIntegral $ displayWidth d 0 :: Int
         h = fromIntegral $ displayHeight d 0 :: Int
@@ -504,55 +728,32 @@ searchBindings = [ ("M-S-/", S.promptSearch myXPConfig multi) ] ++
       ]
     multi = S.namedEngine "multi" $ foldr1 (S.!>) engines
 
-{-
- - Topic
- -}
+wsWeb = "web"
+wsGen = "gen"
+wsIM = "im"
+wsEmacs = "emacs"
 
-data TopicItem = TI { topicName :: Topic
-                    , topicDir  :: Dir
-                    , topicAction :: X ()
-                    , topicIcon :: FilePath
-                    }
+wsFloat = "float"
+wsGimp = "gimp"
+wsMail = "mail"
 
-myTopicNames :: [Topic]
-myTopicNames = map topicName myTopics
+myProjects :: [Project]
+myProjects =
+  [ Project wsWeb "~" . Just $ spawn "chromium"
+  , Project wsGen "~" . Just $ spawn "tmux attach -t default"
+  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'"
+  , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-myTopicConfig :: TopicConfig
-myTopicConfig = TopicConfig
-    { topicDirs = M.fromList $ map (\(TI n d _ _) -> (n,d)) myTopics
-    , defaultTopicAction = const (return ())
-    , defaultTopic = "web"
-    , maxTopicHistory = 10
-    , topicActions = M.fromList $ map (\(TI n _ a _) -> (n,a)) myTopics
-    }
+  , Project wsMail "/tmp" . Just $ spawn (termite "mutt")
+  , Project wsGimp "/tmp" . Just $ spawn (termite "gimp")
+  ]
 
-myIcons = M.fromList $ map (\(TI n _ _ i) -> (n,i)) myTopics
-
-myTopics :: [TopicItem]
-myTopics =
-    [ TI "web" "" (spawn "chromium") "chrome.xpm"
-    , TI "nvim" "" (spawn (termite "sh -c \"NVIM_LISTEN_ADDRESS=$XDG_RUNTIME_DIR/nvim nvim\"")) "gvim.xpm"
-    , TI "term" "" (spawn $ termite "tmux attach -t default") "xterm.xpm"
-    , TI "doc" "Documents/" (return ()) "evince.xpm"
-    , TI "office" "Documents/" (return ()) "libreoffice34-base.xpm"
-    , TI "im" "" (spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'") "weechat.xpm"
-    , TI "misc" "" (return ()) "gtk-network.xpm"
-    , TI "mail" "" (spawn (termite "mutt") >> spawn "killall -WINCH mutt") "mutt.xpm"
-    , TI "gimp" "" (return ()) "gimp.xpm"
-    , TI "emacs" "" (spawn "LC_CTYPE=zh_CN.UTF-8 emacs") "emacs.xpm"
-    ]
-
+myWorkspaces = map projectName myProjects
 
 myCommands =
     [ ("wallpaper", safeSpawn "change-wallpaper" [])
     --, ("fade", fadePrompt myXPConfig)
     ]
-
-nongreedySwitchTopic :: TopicConfig -> Topic -> X ()
-nongreedySwitchTopic tg topic = do
-  windows $ W.view topic
-  wins <- gets (W.integrate' . W.stack . W.workspace . W.current . windowset)
-  when (null wins) $ XMonad.Actions.TopicSpace.topicAction tg topic
 
 data TitledPrompt = TitledPrompt String
 
@@ -584,18 +785,44 @@ launchApp config app exts = mkXPrompt (TitledPrompt app) config (getFilesWithExt
     launch :: MonadIO m => String -> String -> m ()
     launch app params = spawn $ app ++ " " ++ completionToCommand (undefined :: Shell) params
 
+-- from:
+-- https://github.com/pjones/xmonadrc/blob/master/src/XMonad/Local/Action.hs
+--
+-- Useful when a floating window requests stupid dimensions.  There
+-- was a bug in Handbrake that would pop up the file dialog with
+-- almost no height due to one of my rotated monitors.
 
-data TidState = TID TimerId deriving Typeable
+forceCenterFloat :: ManageHook
+forceCenterFloat = doFloatDep move
+  where
+    move :: W.RationalRect -> W.RationalRect
+    move _ = W.RationalRect x y w h
 
-instance ExtensionClass TidState where
-  initialValue = TID 0
+    w, h, x, y :: Rational
+    w = 3/5
+    h = 3/5
+    x = (1-w)/2
+    y = (1-h)/2
 
-clockStartupHook = startTimer 1 >>= XS.put . TID
+--- XMonad.Actions.ConditionalKeys
 
-clockEventHook e = do
-  (TID t) <- XS.get
-  handleTimer t e $ do
-    startTimer 1 >>= XS.put . TID
-    ask >>= logHook.config
-    return Nothing
-  return $ All True
+data XCond = WS | LD
+
+-- | Choose an action based on the current workspace id (WS) or
+-- layout description (LD).
+chooseAction :: XCond -> (String->X()) -> X()
+chooseAction WS f = withWindowSet (f . W.currentTag)
+chooseAction LD f = withWindowSet (f . description . W.layout . W.workspace . W.current)
+
+
+-- | If current workspace or layout string is listed, run the associated
+-- action (only the first match counts!) If it isn't listed, then run the default
+-- action (marked with empty string, \"\"), or do nothing if default isn't supplied.
+bindOn :: XCond -> [(String, X())] -> X()
+bindOn xc bindings = chooseAction xc $ chooser where
+    chooser xc = case find ((xc==).fst) bindings of
+        Just (_, action) -> action
+        Nothing -> case find ((""==).fst) bindings of
+            Just (_, action) -> action
+            Nothing -> return ()
+

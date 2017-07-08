@@ -32,7 +32,7 @@
     (add-hook 'haskell-mode-hook 'structured-haskell-mode)
     ;; (intero-global-mode 1)
     (add-hook 'haskell-mode-hook 'helm-kythe-mode)
-    ;; (add-hook 'haskell-mode-hook 'intero-mode)
+    (add-hook 'haskell-mode-hook 'intero-mode)
     (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
     (add-to-list 'spacemacs-jump-handlers-haskell-mode 'helm-kythe-find-definitions)
     (add-to-list 'spacemacs-reference-handlers-haskell-mode 'helm-kythe-find-references))

@@ -43,6 +43,7 @@ unsetopt flowcontrol
 setopt hist_ignore_all_dups     # when runing a command several times, only store one
 setopt hist_reduce_blanks       # reduce whitespace in history
 setopt hist_ignore_space        # do not remember commands starting with space
+setopt histfcntllock            # use F_SETLCKW
 setopt share_history            # share history among sessions
 setopt extended_history         # timestamp for each history entry
 setopt hist_verify              # reload full command when runing from history

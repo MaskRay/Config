@@ -1,10 +1,11 @@
 [Unit]
 Description=Combine Ctrl+Escape
 Documentation=man:xcape(1) https://github.com/alols/xcape
+After=graphical.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/xcape
+ExecStart=/usr/bin/xcape -e "Hyper_L=Tab;Hyper_R=backslash"
 
 [Install]
 WantedBy=graphical.target
