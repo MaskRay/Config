@@ -16,7 +16,7 @@ Config {
                  , Run StdinReader
                  , Run Wireless "wlp3s0" [ "-t", "<essid>" ] 60
                  ]
-    , iconRoot = "/home/ray/.xmonad/icons"
+    --, iconRoot = "/home/ray/.xmonad/icons"
 
     -- layout
     , sepChar = "%"

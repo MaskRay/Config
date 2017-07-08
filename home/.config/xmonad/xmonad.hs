@@ -24,13 +24,14 @@ import XMonad.Util.Run
 import XMonad.Util.WorkspaceCompare
 
 import XMonad.Prompt
+import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Input
 import XMonad.Prompt.Shell
 import XMonad.Prompt.Window
 
 import qualified XMonad.Actions.FlexibleManipulate as Flex
 import XMonad.Actions.Commands
-import XMonad.Actions.CopyWindow (copyToAll, killAllOtherCopies, wsContainingCopies)
+import XMonad.Actions.CopyWindow (copy, copyToAll, killAllOtherCopies, wsContainingCopies)
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicProjects (Project(..), dynamicProjects, shiftToProjectPrompt, switchProjectPrompt)
 import XMonad.Actions.DynamicWorkspaces
@@ -108,38 +109,6 @@ import XMonad.Layout.WindowNavigation
 data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
 instance Transformer TABBED Window where
      transform _ x k = k (renamed [Replace "TABBED"] (tabbedAlways shrinkText myTabTheme)) (const x)
-
-{-
- - Navigation2D
- -}
-
-myLayout2 = avoidStruts $
-    configurableNavigation (navigateColor "#333333") $
-    mkToggle1 TABBED $
-    mkToggle1 NBFULL $
-    mkToggle1 REFLECTX $
-    mkToggle1 REFLECTY $
-    mkToggle1 MIRROR $
-    mkToggle1 NOBORDERS $
-    lessBorders Screen $
-    onWorkspace "web" (full ||| tiled) $
-    onWorkspace "im" im $
-    onWorkspace "gimp" gimpLayout $
-    --fullscreenFull Full ||| termDrawer ||| float ||| tall ||| named "Full|Acc" (Accordion)
-    tiled ||| tab ||| full
-    where
-        tiled = named "Tiled" $ minimize $ addTabs shrinkText myTabTheme $ subLayout [] Simplest $ ResizableTall 1 0.03 0.5 []
-        full = named "Full" $ minimize $ fullscreenFull Full
-        tab = named "Tab" $ minimize $ tabbedBottom shrinkText myTabTheme *||* tiled
-        --im = named "IM" $ minimize $ withIM (360/1920) (Title "QQ Lite") $ reflectHoriz $ withIM (300/1920) (Title "Hangouts") tiled
-        im = named "IM" $ minimize $ gridIM (360/1920) (Title "QQ Lite")
-        {-gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ reflectHoriz $ withIM (0.2) (Role "gimp-dock") (trackFloating simpleTabbed)-}
-        gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
-
-        --float = noFrillsDeco shrinkText defaultTheme positionStoreFloat
-
-myFocusFollowsMouse  = False
-myClickJustFocuses   = True
 
 base03  = "#002b36"
 base02  = "#073642"
@@ -234,6 +203,8 @@ myShowWNameTheme = def
     , swn_color             = "#FFFFFF"
     }
 
+
+-- gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
 myLayout = showWorkspaceName
              $ onWorkspace "float" floatWorkSpace
              $ fullscreenFloat -- fixes floating windows going full screen, while retaining "bounded" fullscreen
@@ -411,6 +382,8 @@ myNav2DConf = def { defaultTiledNavigation = centerNavigation
                   , layoutNavigation = [("Full", centerNavigation)]
                   , unmappedWindowRect = [("Full", singleWindowRect)] }
 
+myTerminal = "termite"
+
 myKeys =
     let
       toggleFloat w = windows (\s -> if M.member w (W.floating s)
@@ -420,14 +393,23 @@ myKeys =
          [] -> windows copyToAll
          _ -> killAllOtherCopies
       tryMsgR x y = sequence_ [(tryMessage_ x y), refresh]
+      zipKey0 m ks as f = zipWith (\k d -> (m ++ k, f d)) ks as
+      zipKey1 m ks as f b = zipWith (\k d -> (m ++ k, f d b)) ks as
+      arrowKeys = map (wrap "<" ">" . show) dirs
+      dirKeys = ["h","j","k","l"]
+      dirs = [L,D,U,R]
+      wsKeys = map show $ [1..9] ++ [0]
     in
-    [ ("M-" ++ m ++ [k], f i)
-        | (i, k) <- zip myWorkspaces "1234567890"
-        , (f, m) <- [ (windows . W.greedyView, "")
-                    , (windows . liftM2 (.) W.view W.shift, "S-")
-                    ]
-    ]
-    ++
+    ----- Workspace / Screen
+    zipKey0 "M-" wsKeys [0..] (withNthWorkspace W.greedyView) ++
+    zipKey0 "M-S-" wsKeys [0..] (withNthWorkspace W.shift) ++
+    zipKey0 "M-C-" wsKeys [0..] (withNthWorkspace copy) ++
+    zipKey1 "M-" dirKeys dirs windowGo True ++
+    zipKey1 "M-S-" dirKeys dirs windowSwap True ++
+    zipKey0 "M-C-" dirKeys dirs (sendMessage . pullGroup) ++
+    zipKey1 "M-" arrowKeys dirs screenGo True ++
+    zipKey1 "M-S-" arrowKeys dirs windowToScreen True ++
+    zipKey1 "M-C-" arrowKeys dirs screenSwap True ++
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myWorkspaces "uiop"
         , (f, m) <- [ (windows . W.greedyView, "")
@@ -435,6 +417,8 @@ myKeys =
                     ]
     ]
     ++
+    [ ("M-n", nextScreen)] ++
+    [ ("M-S-n", swapNextScreen)] ++
     [ -- ("M-y", switchProjectPrompt warmPromptTheme)
       ("M-S-y", shiftToProjectPrompt warmPromptTheme)
     , ("M-`", nextNonEmptyWS)
@@ -446,20 +430,75 @@ myKeys =
         , (f, m) <- [(W.view, ""), (liftM2 (.) W.view W.shift, "S-")]
     ]
     ++
-    [ -- ("M-l", switchTopic myTopicConfig "web")
-    --, ("M-;", switchTopic myTopicConfig "nvim")
-    --, ("M-'", switchTopic myTopicConfig "term")
-      ("M-S-q", io exitFailure)
-    , ("M-<Backspace>", kill)
+
+    ----- Exit / Recompile
+
+    [ ("M-S-q", io exitFailure)
     , ("M-q", spawn "ghc -e ':m +XMonad Control.Monad System.Exit' -e 'flip unless exitFailure =<< recompile False' && xmonad --restart")
+
+    ----- Workspace / Project
+
+    , ("M-a", toggleWS' ["NSP"])
+    , ("M-s", switchProjectPrompt warmPromptTheme)
+    , ("M-S-s", shiftToProjectPrompt warmPromptTheme)
+
+    ----- Layout
+
+    , ("M-<Tab>", sendMessage NextLayout)
+    , ("M-C-<Tab>", toSubl NextLayout)
+    , ("M-t", withFocused toggleFloat)
+    , ("M-S-t", sinkAll)
+    , ("M-,", sendMessage (IncMasterN 1))
+    , ("M-.", sendMessage (IncMasterN (-1)))
+
+    ----- Resize
+
+    , ("M-[", tryMsgR (ExpandTowards L) Shrink)
+    , ("M-]", tryMsgR (ExpandTowards R) Expand)
+    , ("M-S-[", tryMsgR (ExpandTowards U) MirrorShrink)
+    , ("M-S-]", tryMsgR (ExpandTowards D) MirrorExpand)
+
+    ----- Window
+
+    , ("M-<Backspace>", kill)
+    , ("M-S-<Backspace>", confirmPrompt hotPromptTheme "kill all" $ killAll)
+    , ("M-'", bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
+    , ("M-;", bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
+    , ("M-\"", windows W.swapDown)
+    , ("M-:", windows W.swapUp)
+    , ("M-b", promote)
+    , ("M-d", toggleCopyToAll)
+    , ("M-S-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
+    , ("M-C-m", withFocused (sendMessage . MergeAll))
+    , ("M-C-u", withFocused (sendMessage . UnMerge))
+    , ("M-z m", windows W.focusMaster)
+    , ("M-z u", focusUrgent)
+    , ("M-S-b", banishScreen LowerRight)
+
+    ----- Utility
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "urxvtd -q -f -o", "tilda", "gimp", "inkscape", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg", "xkill"])
+    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-C-i", spawn "pkill compton; compton --glx-no-stencil --invert-color-include 'r:e:browser' --invert-color-include 'g:p:idaq.exe|idaq64.exe|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &")
     , ("M-C-S-i", spawn "pkill compton; compton &")
-    , ("M-S-l", spawn "xscreensaver-command -lock")
+    , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
+
+    --, ("M-m h", withFocused hideWindow)
+    --, ("M-m S-h", popOldestHiddenWindow)
+    , ("M-m b", spawnSelected def [ "xbacklight =30"
+                                  , "xbacklight =40"
+                                  , "xbacklight =20"
+                                  , "xbacklight =10"
+                                  , "xbacklight =15"
+                                  , "xbacklight =50"
+                                  , "xbacklight =60"
+                                  , "xbacklight =5"
+                                  ])
+    , ("M-m k", spawn "xkill")
+    , ("M-m l", spawn "xscreensaver-command -lock")
+
     , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
     , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
     , ("<XF86AudioNext>", spawn "cmus-remote -n")
@@ -467,107 +506,35 @@ myKeys =
     , ("<XF86AudioRaiseVolume>", spawn "change_volume up")
     , ("<XF86AudioLowerVolume>", spawn "change_volume down")
     , ("<XF86AudioMute>", spawn "change_volume toggle")
-    -- , ("<XF86AudioPlay>", spawn "cmus-remote -p")
-    -- , ("<XF86AudioPause>", spawn "cmus-remote -u")
-    , ("<XF86AudioPlay>", spawn "cmus-remote -u")
+    , ("<XF86AudioPlay>", spawn "cmus-remote -p")
     , ("<XF86AudioPause>", spawn "cmus-remote -u")
     , ("<XF86Display>", spawn "xset dpms force standby")
     , ("<XF86Eject>", spawn "eject")
-    , ("M-S-f", placeFocused $ withGaps (22, 0, 0, 0) $ smart (0.5,0.5))
-    , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
-    -- window management
-    , ("M-h", windowGo L True)
-    , ("M-j", windowGo D True)
-    , ("M-k", windowGo U True)
-    , ("M-l", windowGo R True)
-
-    , ("M-b", promote)
-    , ("M-d", toggleCopyToAll)
-    , ("M-S-j", swapNextScreen)
-    , ("M-S-k", swapNextScreen)
-    -- , ("M-<Tab>", cycleRecentWS [xK_Super_L] xK_Tab xK_Tab)
-    , ("M-a", toggleWS' ["NSP"])
-    , ("M-N", doTo Prev EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
-    , ("M-n", doTo Next EmptyWS getSortByIndex (windows . liftM2 (.) W.view W.shift))
-    , ("M-<Tab>", sendMessage NextLayout)
-    , ("M-C-<Tab>", toSubl NextLayout)
-    --, ("M-S-<Tab>", setLayout myLayout)
-    , ("M-[", tryMsgR (ExpandTowards L) Shrink)
-    , ("M-]", tryMsgR (ExpandTowards R) Expand)
-    , ("M-S-[", tryMsgR (ExpandTowards U) MirrorShrink)
-    , ("M-S-]", tryMsgR (ExpandTowards D) MirrorExpand)
-    --, ("M-]", sendMessage Expand)
-    , ("M-t", withFocused toggleFloat)
-    , ("M-S-t", sinkAll)
-    , ("M-,", sendMessage (IncMasterN 1))
-    , ("M-.", sendMessage (IncMasterN (-1)))
-    --, ("M-b", windowPromptBring myXPConfig)
-    , ("M-S-b", banishScreen LowerRight)
-    , ("M-s", switchProjectPrompt warmPromptTheme)
-    , ("M-S-s", shiftToProjectPrompt warmPromptTheme)
-    --, ("M-<Backspace>", focusUrgent)
-    --, ("M-y", nextMatch History (return True))
-    , ("M-m", withFocused minimizeWindow)
-    , ("M-S-m", sendMessage RestoreNextMinimizedWin)
-    , ("M-'", bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
-    , ("M-;", bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
-    , ("M-\"", windows W.swapDown)
-    , ("M-:", windows W.swapUp)
-    , ("M-z m", windows W.focusMaster)
-    , ("M-z u", focusUrgent)
-
-    -- XMonad.Layout.SubLayouts {{{
-    , ("M-C-h", sendMessage $ pullGroup L)
-    , ("M-C-j", sendMessage $ pullGroup D)
-    , ("M-C-k", sendMessage $ pullGroup U)
-    , ("M-C-l", sendMessage $ pullGroup R)
-    , ("M-C-m", withFocused (sendMessage . MergeAll))
-    , ("M-C-u", withFocused (sendMessage . UnMerge))
-    -- }}}
-
-    --, ("M-j", windows W.focusDown)
-    --, ("M-k", windows W.focusUp)
-    , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
-    , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
-    , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
-    , ("M-S-<U>", withFocused (keysResizeWindow (0,-30) (0,0))) --shrink float at bottom
-    , ("M-C-<L>", withFocused (keysResizeWindow (30,0) (1,0))) --expand float at left
-    , ("M-C-<R>", withFocused (keysResizeWindow (-30,0) (1,0))) --shrink float at left
-    , ("M-C-<U>", withFocused (keysResizeWindow (0,30) (0,1))) --expand float at top
-    , ("M-C-<D>", withFocused (keysResizeWindow (0,-30) (0,1))) --shrink float at top
-    , ("M-<L>", withFocused (keysMoveWindow (-30,0)))
-    , ("M-<R>", withFocused (keysMoveWindow (30,0)))
-    , ("M-<U>", withFocused (keysMoveWindow (0,-30)))
-    , ("M-<D>", withFocused (keysMoveWindow (0,30)))
+    --, ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
+    --, ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
+    --, ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
+    --, ("M-S-<U>", withFocused (keysResizeWindow (0,-30) (0,0))) --shrink float at bottom
+    --, ("M-C-<L>", withFocused (keysResizeWindow (30,0) (1,0))) --expand float at left
+    --, ("M-C-<R>", withFocused (keysResizeWindow (-30,0) (1,0))) --shrink float at left
+    --, ("M-C-<U>", withFocused (keysResizeWindow (0,30) (0,1))) --expand float at top
+    --, ("M-C-<D>", withFocused (keysResizeWindow (0,-30) (0,1))) --shrink float at top
+    -- , ("M-<L>", withFocused (keysMoveWindow (-30,0)))
+    -- , ("M-<R>", withFocused (keysMoveWindow (30,0)))
+    -- , ("M-<U>", withFocused (keysMoveWindow (0,-30)))
+    -- , ("M-<D>", withFocused (keysMoveWindow (0,30)))
     --, ("C-; <L>", withFocused $ snapMove L Nothing)
     --, ("C-; <R>", withFocused $ snapMove R Nothing)
     --, ("C-; <U>", withFocused $ snapMove U Nothing)
     --, ("C-; <D>", withFocused $ snapMove D Nothing)
 
-    -- dynamic workspace
-    , ("M-C-n", addWorkspacePrompt myXPConfig)
-    , ("M-C-r", removeWorkspace)
-    , ("M-C-S-r", killAll >> removeWorkspace)
-
-    -- backlight
-    , ("M-<F1>", spawnSelected def [ "xbacklight =30"
-                                   , "xbacklight =40"
-                                   , "xbacklight =20"
-                                   , "xbacklight =10"
-                                   , "xbacklight =15"
-                                   , "xbacklight =50"
-                                   , "xbacklight =60"
-                                   , "xbacklight =5"
-                                   ])
-
     -- Volume
-    , ("C-; 9", spawn "change_volume down")
-    , ("C-; 0", spawn "change_volume up")
-    , ("C-; m", spawn "change_volume toggle")
+    --, ("C-; 9", spawn "change_volume down")
+    --, ("C-; 0", spawn "change_volume up")
+    --, ("C-; m", spawn "change_volume toggle")
 
     -- preferred cui programs
-    , ("C-; C-;", pasteChar controlMask ';')
+    -- , ("C-; C-;", pasteChar controlMask ';')
     , ("C-' C-'", pasteChar controlMask '\'')
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
@@ -630,8 +597,8 @@ scratchpads =
     orgFloat = customFloating $ W.RationalRect (1/2) (1/2) (1/2) (1/2)
 
 myConfig xmobar = docks . dynamicProjects myProjects . withNavigation2DConfig myNav2DConf . ewmh $ withUrgencyHook LibNotifyUrgencyHook $ def
-    { terminal           = "termite"
-    , focusFollowsMouse  = False -- see: focusFollow
+    { terminal           = myTerminal
+    , focusFollowsMouse  = False
     , borderWidth        = 1
     , modMask            = mod4Mask
     , workspaces         = myWorkspaces
@@ -735,17 +702,23 @@ wsEmacs = "emacs"
 
 wsFloat = "float"
 wsGimp = "gimp"
+wsIda = "ida"
+wsIda64 = "i64"
+wsInkscape = "inkscape"
 wsMail = "mail"
 
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn "tmux attach -t default"
+  , Project wsGen "~" . Just $ spawn (termite "tmux attach -t default") >> spawn myTerminal
   , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'"
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
+  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux attach -t ida")
+  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (termite "tmux attach -t ida")
   , Project wsMail "/tmp" . Just $ spawn (termite "mutt")
-  , Project wsGimp "/tmp" . Just $ spawn (termite "gimp")
+  , Project wsGimp "/tmp" . Just $ spawn "gimp"
+  , Project wsInkscape "/tmp" . Just $ spawn "inkscape"
   ]
 
 myWorkspaces = map projectName myProjects
