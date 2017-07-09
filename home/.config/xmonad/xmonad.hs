@@ -475,12 +475,13 @@ myKeys =
     , ("M-z u", focusUrgent)
     , ("M-S-b", banishScreen LowerRight)
 
+    , ("M-g", windows W.focusDown)
+
     ----- Utility
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
     , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-g", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-C-i", spawn "toggle-invert")
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
@@ -495,6 +496,7 @@ myKeys =
                                   , "xbacklight =60"
                                   , "xbacklight =5"
                                   ])
+    , ("M-m m", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
     , ("M-m k", spawn "xkill")
     , ("M-m l", spawn "xscreensaver-command -lock")
 

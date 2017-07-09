@@ -11,14 +11,12 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export XMONAD_CACHE_DIR=~/.local/share/xmonad
-#systemctl --user start fcitx
-#systemctl --user start graphical.target
-systemctl --user start graphical.target
 
 xset s off dpms 600 600 600
 #xset r rate 200 50
 xset m 8 3
-#setxkbmap -option ctrl:nocaps
+
+systemctl --user start graphical.target
 
 # tap once: click
 # two twice: right click
@@ -30,8 +28,5 @@ synclient MinSpeed=1.5 MaxSpeed=3.5 AccelFactor=0.1
 
 # scrolling using two fingers
 synclient VertTwoFingerScroll=1 HorizTwoFingerScroll=1
-
-# vim merlin
-echo 'PKG core' > /tmp/.merlin
 
 exec xmonad

@@ -5,7 +5,8 @@ After=graphical.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/xcape -e "Hyper_L=Tab;Hyper_R=backslash"
+ExecStart=/usr/bin/xcape -e "Control_L=Escape;Hyper_L=Tab;Hyper_R=backslash"
+Restart=always
 
 [Install]
 WantedBy=graphical.target

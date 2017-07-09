@@ -53,7 +53,6 @@ This function should only modify configuration layer settings."
      markdown
      my  ; ~/.emacs.d/layers/+my/my/
      org
-     package-lint
      python
      restclient
      search-engine
@@ -83,7 +82,7 @@ This function should only modify configuration layer settings."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(llvm-mode shm)
+   dotspacemacs-additional-packages '(llvm-mode package-lint shm)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -403,9 +402,10 @@ you should place your code here."
   (spacemacs/enable-smooth-scrolling)
 
   ;; Remove (yes-or-no-p "File GTAGS not found. Run 'gtags'? ")
-  (defun helm-gtags--find-tag-simple ()
-    (or (getenv "GTAGSROOT")
-        (locate-dominating-file default-directory "GTAGS")))
+  (with-eval-after-load "helm-gtags"
+    (defun helm-gtags--find-tag-simple ()
+     (or (getenv "GTAGSROOT")
+         (locate-dominating-file default-directory "GTAGS"))))
 
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
