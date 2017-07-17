@@ -6,8 +6,6 @@ if (( $#wallpapers )); then
 fi
 
 xrandr | egrep -q '(HDMI-1|VGA-1) connected' && di l
-TERM=screen-256color tmux new -d -s default \; new-window
-TERM=screen-256color tmux new -d -s ida \; new-window
 dunst &
 xrdb ~/.Xresources
 syndaemon -t -k &

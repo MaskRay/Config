@@ -407,9 +407,6 @@ myKeys =
     zipKey1 "M-" dirKeys dirs windowGo True ++
     zipKey1 "M-S-" dirKeys dirs windowSwap True ++
     zipKey0 "M-C-" dirKeys dirs (sendMessage . pullGroup) ++
-    zipKey1 "M-" arrowKeys dirs screenGo True ++
-    zipKey1 "M-S-" arrowKeys dirs windowToScreen True ++
-    zipKey1 "M-C-" arrowKeys dirs screenSwap True ++
     [ ("M-" ++ m ++ [k], f i)
         | (i, k) <- zip myWorkspaces "uiop"
         , (f, m) <- [ (windows . W.greedyView, "")
@@ -457,6 +454,19 @@ myKeys =
     , ("M-]", tryMsgR (ExpandTowards R) Expand)
     , ("M-S-[", tryMsgR (ExpandTowards U) MirrorShrink)
     , ("M-S-]", tryMsgR (ExpandTowards D) MirrorExpand)
+
+    , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
+    , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
+    , ("M-S-<D>", withFocused (keysResizeWindow (0,30) (0,0))) --expand float at bottom
+    , ("M-S-<U>", withFocused (keysResizeWindow (0,-30) (0,0))) --shrink float at bottom
+    , ("M-C-<L>", withFocused (keysResizeWindow (30,0) (1,0))) --expand float at left
+    , ("M-C-<R>", withFocused (keysResizeWindow (-30,0) (1,0))) --shrink float at left
+    , ("M-C-<U>", withFocused (keysResizeWindow (0,30) (0,1))) --expand float at top
+    , ("M-C-<D>", withFocused (keysResizeWindow (0,-30) (0,1))) --shrink float at top
+    , ("M-<L>", withFocused (keysMoveWindow (-30,0)))
+    , ("M-<R>", withFocused (keysMoveWindow (30,0)))
+    , ("M-<U>", withFocused (keysMoveWindow (0,-30)))
+    , ("M-<D>", withFocused (keysMoveWindow (0,30)))
 
     ----- Window
 
@@ -711,12 +721,12 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn (termite "tmux attach -t default") >> spawn myTerminal
-  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux a -t weechat\"'"
+  , Project wsGen "~" . Just $ spawn (termite "tmux new -As default")
+  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux new -As weechat\"'"
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux attach -t ida")
-  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (termite "tmux attach -t ida")
+  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux new -As ida")
+  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (termite "tmux new -As ida")
   , Project wsMail "/tmp" . Just $ spawn (termite "mutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"

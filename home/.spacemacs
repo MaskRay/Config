@@ -407,6 +407,10 @@ you should place your code here."
      (or (getenv "GTAGSROOT")
          (locate-dominating-file default-directory "GTAGS"))))
 
+  ;; +lang/c-c++
+  (remove-hook 'c-mode-hook 'ycmd-mode)
+  (remove-hook 'c++-mode-hook 'ycmd-mode)
+
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
   )

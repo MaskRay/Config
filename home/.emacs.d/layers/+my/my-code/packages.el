@@ -110,7 +110,7 @@
     "Yt" 'ycmd-get-type
     "YY" 'ycmd-goto
     )
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-checker 'ycmd)))
+  ;; (add-hook 'c++-mode-hook (lambda () (setq flycheck-checker 'ycmd)))
   )
 
 ;;; packages.el ends here

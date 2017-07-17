@@ -25,13 +25,13 @@ def main():
     [tracer, '-o', '/proc/self/fd/%s' % fd] + sys.argv[2:],
     pass_fds=(fd,),
   )
-  try:
-    tracerp.wait()
-  except KeyboardInterrupt:
-    # wait for it to exit on SIGINT
-    tracerp.wait()
-  finally:
+  while True:
+    try:
+      x = tracerp.wait()
+    except KeyboardInterrupt:
+      continue
     vim.stdin.close()
+    break
 
   # ignore SIGTTOU so that we can fg ourself
   signal.signal(signal.SIGTTOU, signal.SIG_IGN)
