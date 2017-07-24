@@ -252,6 +252,7 @@ function n() {
       notify-send -a "$session_name:$pane_index" "$*"
     fi
   fi
+  return retcode
 }
 
 # terminfo {{{1
