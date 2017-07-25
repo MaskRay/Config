@@ -7,6 +7,7 @@
     (setq rtags-autostart-diagnostics t
           rtags-completions-enabled t
           rtags-display-result-backend 'helm
+          rtags-use-bookmarks nil
           rtags-use-helm t)
                                         ; See https://github.com/Andersbakken/rtags/issues/832
     ;; (require 'rtags-helm)

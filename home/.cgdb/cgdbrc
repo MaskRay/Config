@@ -1,8 +1,9 @@
 set arrowstyle = highlight
+set hlsearch
 set ignorecase
 set showtgdbcommands
 set tabstop=2
-set winsplit=top_big
+set winsplit=src_big
 imap ; <ESC>
 
 # t : temp Breakpoint
@@ -15,7 +16,7 @@ map a iinfo<Space>args<CR><ESC>
 map r :run<CR>
 # s : step
 map s :step<CR>
-# d : next
+# n : next
 map n :next<CR>
 # S : backtrace Stack
 map bt ibt<CR><ESC>
