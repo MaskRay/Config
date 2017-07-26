@@ -1,5 +1,5 @@
 (defconst my-rtags-packages
-  '(cmake-ide rtags))
+  '(helm-rtags rtags))
 
 (defun my-rtags/init-rtags ()
   (use-package rtags
@@ -9,8 +9,6 @@
           rtags-display-result-backend 'helm
           rtags-use-bookmarks nil
           rtags-use-helm t)
-                                        ; See https://github.com/Andersbakken/rtags/issues/832
-    ;; (require 'rtags-helm)
     (push '(company-rtags)
           company-backends-c-mode-common)
     (rtags-enable-standard-keybindings) ;; C-c r key prefix

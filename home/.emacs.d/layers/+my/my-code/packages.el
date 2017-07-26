@@ -44,6 +44,7 @@
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
   (define-key evil-normal-state-map "gf" 'my-ffap)
+  (define-key evil-normal-state-map (kbd "C-p") 'my-xref-jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'my-xref-jump-backward)
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my-find-tag)

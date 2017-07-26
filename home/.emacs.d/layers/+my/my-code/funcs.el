@@ -37,9 +37,21 @@
 
 (defun my-xref-jump-backward ()
   (interactive)
-  (if (eq major-mode 'haskell-mode)
-      (helm-kythe-jump-backward)
-      (helm-gtags-pop-stack)))
+  (pcase major-mode
+    ('c-mode (rtags-location-stack-back))
+    ('c++-mode (rtags-location-stack-back))
+    ('haskell-mode (helm-kythe-jump-backward))
+    (_ (helm-gtags-pop-stack))
+    ))
+
+(defun my-xref-jump-forward ()
+  (interactive)
+  (pcase major-mode
+    ('c-mode (rtags-location-stack-forward))
+    ('c++-mode (rtags-location-stack-forward))
+    ('haskell-mode (helm-kythe-jump-forward))
+    (_ (evil-jump-forward))
+    ))
 
 (defmacro spacemacs|define-reference-handlers (mode &rest handlers)
   "Defines reference handlers for the given MODE.

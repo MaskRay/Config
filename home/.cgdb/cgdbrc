@@ -1,10 +1,11 @@
 set arrowstyle = highlight
 set hlsearch
 set ignorecase
-set showtgdbcommands
+#set showdebugcommands
 set tabstop=2
 set winsplit=src_big
 imap ; <ESC>
+#set cgdbmodekey=;
 
 # t : temp Breakpoint
 # f : finish

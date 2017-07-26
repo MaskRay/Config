@@ -1,1 +1,3 @@
-e cfg.comphint=1
+e cfg.newtab = 1
+e scr.truecolor = true
+e scr.utf8 = true
