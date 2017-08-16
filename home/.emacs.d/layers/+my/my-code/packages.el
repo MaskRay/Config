@@ -13,6 +13,7 @@
   ;; (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
 
   (helm-autoresize-mode 1)
+  (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
   )
 
 (defun my-code/post-init-cc-mode ()

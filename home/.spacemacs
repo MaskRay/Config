@@ -394,6 +394,13 @@ you should place your code here."
     )
   (advice-add 'xref--show-xref-buffer :around #'my-xref--show-xref-buffer)
 
+  (eval-after-load 'smartparens
+    '(progn
+       (sp-pair "(" nil :actions :rem)
+       (sp-pair "[" nil :actions :rem)
+       (sp-pair "'" nil :actions :rem)
+       (sp-pair "\"" nil :actions :rem)))
+
   ;; 101 -> 30
   (defun spacemacs/enable-smooth-scrolling ()
     "Enable smooth scrolling."

@@ -24,7 +24,13 @@ mkdir -p $d
 mkdir -p /tmp/overlay/{home,root}/{up,work}
 mountpoint -q $d || sudo mount -t overlay -o lowerdir=/,upperdir=/tmp/overlay/root/up,workdir=/tmp/overlay/root/work overlayfs $d
 mountpoint -q $d/home || sudo mount -t overlay -o lowerdir=/home,upperdir=/tmp/overlay/home/up,workdir=/tmp/overlay/home/work overlayfs $d/home
-if [[ -n $TMUX && ( -d "$d$PWD" || $PWD =~ /tmp/* ) ]]; then
-  (sleep 0.2; tmux send "cd ${(q)PWD}" Enter) &
+if [[ -n $TMUX ]]; then
+  # workaround of https://www.zsh.org/mla/users/2015/msg00149.html
+  (sleep 0.2
+  if [[ -d "$d$PWD" || $PWD =~ /tmp/* ]]; then
+    tmux send "cd ${(q)PWD}; "
+  fi
+  tmux send 'exec zsh' Enter
+  ) &
 fi
-sudo systemd-nspawn -M exp -D $d --bind=$^bind --setenv=$^env --link-journal=no -u $USER zsh
+sudo systemd-nspawn -M exp -D $d --bind=$^bind --setenv=$^env --link-journal=no -u $USER

@@ -101,7 +101,6 @@ alias iw='sudo iw'
 alias mount='sudo mount'
 alias netstat='sudo netstat'
 alias nmap='sudo nmap'
-alias perf='sudo perf'
 alias ss='sudo ss'
 alias tc='sudo tc'
 alias umount='sudo umount'
@@ -116,7 +115,7 @@ alias pgdb='gdb -ix ~/.gdb/gdbinit.pwndbg'
 
 alias cl=clang++
 alias db=lldb
-alias jc=/usr/lib/j8/bin/jconsole
+alias j8=/usr/lib/j8/bin/jconsole
 alias jqt=/usr/lib/j8/bin/jqt
 alias lid.sys='lid-idutils -f ~/Util/idutils/usr-include.ID'
 alias mkid.sys='mkid -f ~/Util/idutils/usr-include.ID /usr/include'
