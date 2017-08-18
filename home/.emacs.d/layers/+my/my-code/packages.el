@@ -11,9 +11,7 @@
   ;; (message "+++ my-code/init-my-code")
   ;; (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
   ;; (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
-
-  (helm-autoresize-mode 1)
-  (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
+  ;; does not work
   )
 
 (defun my-code/post-init-cc-mode ()
@@ -25,6 +23,8 @@
     (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
     (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
     )
+  (helm-autoresize-mode 1)
+  (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
   )
 
 (defun my-code/post-init-haskell-mode ()
