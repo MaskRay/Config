@@ -1082,7 +1082,8 @@ nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
-nn <C-q> :qa<cr>
+"nn <C-q> :qa<cr>
+nn Q :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
 " imap {{{2

@@ -85,7 +85,7 @@
   frag = magenta bold
 [diff]
   mnemonicprefix = true
-  tool = gvimdiff
+  tool = vimdiff
   algorithm = patience
 [diff "lisp"]
   xfuncname="^(\\((def|test).*)$"

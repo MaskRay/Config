@@ -417,6 +417,8 @@ you should place your code here."
   ;; +lang/c-c++
   (remove-hook 'c-mode-hook 'ycmd-mode)
   (remove-hook 'c++-mode-hook 'ycmd-mode)
+  (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
+  (helm-autoresize-mode 1)
 
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
