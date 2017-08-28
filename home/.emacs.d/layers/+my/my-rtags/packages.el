@@ -1,5 +1,5 @@
 (defconst my-rtags-packages
-  '(helm-rtags rtags))
+  '(flycheck-rtags helm-rtags rtags))
 
 (defun my-rtags/init-rtags ()
   (use-package rtags
@@ -15,6 +15,12 @@
     (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running))
   (use-package flycheck-rtags
     :ensure rtags))
+
+(defun my-rtags/init-flycheck-rtags ()
+  (use-package flycheck-rtags))
+
+(defun my-rtags/init-helm-rtags ()
+  (use-package helm-rtags))
 
 (defun my-rtags/post-init-rtags ()
   (spacemacs/set-leader-keys
