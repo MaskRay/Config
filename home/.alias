@@ -183,6 +183,7 @@ alias ga='git add'
 alias gau='git add -u'
 alias gcam='git commit -am'
 alias pgcl='px git clone'
+alias gb='git branch'
 alias gcl='git clone'
 alias gcm='git commit -m'
 alias gco='git checkout'
@@ -453,7 +454,7 @@ gf() {
   cut -c4- | sed 's/.* -> //'
 }
 
-gb() {
+gbl() {
   is_in_git_repo || return
   git branch -a --color=always | grep -v '/HEAD\s' | sort |
   fzf-down --ansi --multi --tac --preview-window right:70% \
