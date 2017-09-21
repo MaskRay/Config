@@ -8,11 +8,11 @@ command unalias t
 command regex t 's/^([0-9]+)[[:space:]]*$/thread select %1/' 's/(.*)/thread %1/'
 
 # 'r' was an abbreviation for 'process launch -c /bin/sh --'
-command alias r process launch
+#command alias r process launch
 
 # 'd'
-command alias d breakpoint delete
-command alias delete breakpoint delete
+#command alias d breakpoint delete
+#command alias delete breakpoint delete
 
 # 'dis'
 command alias dis breakpoint disable
@@ -27,6 +27,7 @@ command alias enable breakpoint enable
 command alias ignore breakpoint modify -i %2 %1
 
 # 'u'
+command alias u _regexp-up
+
 # 'until'
-command alias u thread until
 command alias until thread until
