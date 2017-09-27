@@ -23,6 +23,8 @@ alias g='grep --color=auto -I'
 alias l="ls -l"
 alias la='l -A'
 alias lh='l -lh'
+alias mk=make
+alias ni=ninja
 alias o=xdg-open
 alias pa=parallel
 alias pg='pgrep --full --list-full'
