@@ -10,9 +10,9 @@ image/gif=geeqie.desktop
 image/png=geeqie.desktop
 
 ; text
-inode/x-empty=gvim.desktop
-text/c=nvr.desktop
-text/plain=nvr.desktop
+; inode/x-empty=gvim.desktop
+; text/c=nvr.desktop
+; text/plain=nvr.desktop
 
 ; html
 text/html=chromium.desktop
