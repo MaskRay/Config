@@ -3,6 +3,7 @@
     cc-mode
     evil
     haskell-mode
+    helm-xref
     smartparens
     ycmd
     ))
@@ -48,6 +49,8 @@
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my-find-tag)
   (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
+  (define-key evil-motion-state-map (kbd "M-n") 'next-error)
+  (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
 
   (spacemacs/set-leader-keys
     "aa" (lambda ()
@@ -58,6 +61,17 @@
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
     "TD" #'my-realtime-elisp-doc
+    )
+  )
+
+(defun my-code/init-helm-xref ()
+  (use-package helm-xref
+    :config
+    ;; This is required to make xref-find-references work in helm-mode.
+    ;; In helm-mode, it gives a prompt and asks the identifier (which has no text property) and then passes it to lsp-mode, which requires the text property at point to locate the references.
+    (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
+
+    (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
     )
   )
 
