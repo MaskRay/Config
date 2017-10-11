@@ -35,6 +35,16 @@
         (remove-function (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function)
       (add-function :after-while (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function))))
 
+(defun my-xref-find-definitions ()
+  (interactive)
+  (when (eq xref-backend-functions 'lsp--xref-backend)
+    (call-interactively 'xref-find-definitions)))
+
+(defun my-xref-find-references ()
+  (interactive)
+  (when (eq xref-backend-functions 'lsp--xref-backend)
+    (call-interactively 'xref-find-references)))
+
 (defun my-xref-jump-backward ()
   (interactive)
   (pcase major-mode

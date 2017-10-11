@@ -4,6 +4,9 @@
     evil
     haskell-mode
     helm-xref
+    lsp-mode
+    lsp-haskell
+    lsp-rust
     smartparens
     ycmd
     ))
@@ -30,14 +33,16 @@
   (with-eval-after-load 'haskell-mode
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
     (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+    (add-hook 'haskell-mode-hook 'lsp-mode)
     ;; (intero-global-mode 1)
-    (add-hook 'haskell-mode-hook 'helm-kythe-mode)
-    (add-hook 'haskell-mode-hook 'intero-mode)
-    (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
-    (add-to-list 'spacemacs-jump-handlers-haskell-mode 'helm-kythe-find-definitions)
-    (add-to-list 'spacemacs-reference-handlers-haskell-mode 'helm-kythe-find-references))
-  (load "~/Dev/Emacs/emacs-helm-kythe/helm-kythe.el" t)  ;; TODO
-  (spacemacs/set-leader-keys-for-major-mode 'haskell-mode "k" helm-kythe-map)
+    ;; (add-hook 'haskell-mode-hook 'helm-kythe-mode)
+    ;; (add-hook 'haskell-mode-hook 'intero-mode)
+    ;; (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
+    ;; (add-to-list 'spacemacs-jump-handlers-haskell-mode 'helm-kythe-find-definitions)
+    ;; (add-to-list 'spacemacs-reference-handlers-haskell-mode 'helm-kythe-find-references)
+    )
+  ;; (load "~/Dev/Emacs/emacs-helm-kythe/helm-kythe.el" t)  ;; TODO
+  ;; (spacemacs/set-leader-keys-for-major-mode 'haskell-mode "k" helm-kythe-map)
   )
 
 (defun my-code/post-init-evil ()
@@ -72,6 +77,31 @@
     (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
 
     (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
+    )
+  )
+
+(defun my-code/init-lsp-mode ()
+  (use-package lsp-mode
+    :config
+    (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
+      (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
+        (add-to-list handler 'my-xref-find-definitions))
+      (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
+        (add-to-list handler 'my-xref-find-references))
+      )))
+
+(defun my-code/init-lsp-haskell ()
+  (use-package lsp-haskell
+    :mode ("\\.hs\\'" . haskell-mode)
+    :after lsp-mode
+    :config
+    )
+  )
+
+(defun my-code/init-lsp-rust ()
+  (use-package lsp-rust
+    :mode ("\\.rs\\'" . rust-mode)
+    :after lsp-mode
     )
   )
 
