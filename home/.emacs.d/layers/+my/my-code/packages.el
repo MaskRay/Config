@@ -18,17 +18,6 @@
   ;; does not work
   )
 
-(defun my-code/post-init-cc-mode ()
-  ;; Take priority over ycmd
-  (with-eval-after-load 'ycmd
-    (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
-    (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
-    (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-    (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
-    (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
-    )
-  )
-
 (defun my-code/post-init-haskell-mode ()
   (with-eval-after-load 'haskell-mode
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
@@ -83,6 +72,12 @@
 (defun my-code/init-lsp-mode ()
   (use-package lsp-mode
     :config
+    (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
+    (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
+    (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
+    (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
+    (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
+
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
       (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
         (add-to-list handler 'my-xref-find-definitions))
