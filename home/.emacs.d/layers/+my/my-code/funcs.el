@@ -48,9 +48,10 @@
 (defun my-xref-jump-backward ()
   (interactive)
   (pcase major-mode
-    ('c-mode (rtags-location-stack-back))
-    ('c++-mode (rtags-location-stack-back))
-    ('haskell-mode (helm-kythe-jump-backward))
+    ((or 'c-mode 'c++-mode)
+     (if lsp-mode
+         (xref-pop-marker-stack)
+         (rtags-location-stack-back)))
     (_ (helm-gtags-pop-stack))
     ))
 
@@ -59,7 +60,6 @@
   (pcase major-mode
     ('c-mode (rtags-location-stack-forward))
     ('c++-mode (rtags-location-stack-forward))
-    ('haskell-mode (helm-kythe-jump-forward))
     (_ (evil-jump-forward))
     ))
 
