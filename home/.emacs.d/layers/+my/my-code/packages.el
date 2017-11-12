@@ -41,6 +41,8 @@
   (define-key evil-normal-state-map (kbd "C-p") 'my-xref-jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'my-xref-jump-backward)
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
+  ;; C-, is unavailable in terminal
+  (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my-find-tag)
   (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
