@@ -414,6 +414,7 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
+  "Plug 'autozimu/LanguageClient-neovim'
   Plug 'ludovicchabant/vim-gutentags'
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'

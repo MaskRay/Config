@@ -1,3 +1,0 @@
-#%Module
-prepend-path PATH $env(HOME)/.cabal/bin
-#prepend-path PATH $env(HOME)/.local/opt/ghc-8.0.0.20160411/bin

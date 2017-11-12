@@ -22,7 +22,7 @@
   (with-eval-after-load 'haskell-mode
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
     (add-hook 'haskell-mode-hook 'structured-haskell-mode)
-    (add-hook 'haskell-mode-hook 'lsp-mode)
+    ;; (add-hook 'haskell-mode-hook 'lsp-mode)
     ;; (intero-global-mode 1)
     ;; (add-hook 'haskell-mode-hook 'helm-kythe-mode)
     ;; (add-hook 'haskell-mode-hook 'intero-mode)
@@ -58,6 +58,8 @@
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
     "TD" #'my-realtime-elisp-doc
     )
+
+  (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
   )
 
 (defun my-code/init-helm-xref ()

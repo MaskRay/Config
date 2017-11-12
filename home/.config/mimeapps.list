@@ -27,7 +27,7 @@ application/x-asp=chromium.desktop
 ; application/x-asp=firefox.desktop
 
 ; .pdf .ps
-application/pdf=llpp.desktop
+application/pdf=zathura.desktop
 application/postscript=zathura.desktop
 
 ; .doc .docx
