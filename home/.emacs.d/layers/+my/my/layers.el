@@ -1,1 +1,1 @@
-(configuration-layer/declare-layers '(my-code my-rtags))
+(configuration-layer/declare-layers '(my-code my-cquery))

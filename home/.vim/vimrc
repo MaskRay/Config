@@ -559,6 +559,10 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter% %severity%] %s'
 " deoplete {{{2
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#omni_patterns = {}
+let g:deoplete#omni_patterns.cpp = '[^. *\t]\.\w*|[^. *\t]\::\w*|[^. *\t]\->\w*|#include\s*[<"][^>"]*'
+let g:deoplete#omni#functions={}
+let g:deoplete#omni#functions.cpp = ['LanguageClient#complete']
 " EasyMotion {{{2
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
@@ -579,6 +583,18 @@ let g:gitgutter_enabled = 0
 " grepper {{{2
 let g:grepper = {}
 "let g:ack_use_dispatch = 1
+" LanguageClient-neovim {{{2
+let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
+let g:LanguageClient_serverCommands = {
+      \ 'cpp': ['cquery', '--language-server'],
+      \ }
+let g:LanguageClient_loadSettings = 1
+
+augroup LanguageClient_config
+  au!
+  au User LanguageClientStarted setl signcolumn=yes
+  au User LanguageClientStopped setl signcolumn=auto
+augroup END
 " leader-guide {{{2
 let g:lmap = {}
 call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
@@ -958,7 +974,8 @@ nn <silent> <leader>hx :Commands<cr>
 " nmap <leader>j (jump) {{{4
 let g:lmap.j = {'name': '+jump'}
 nmap <leader>jb <C-o>
-nn <leader>ji :Denite outline<cr>
+nn <leader>ji :Denite documentSymbol<cr>
+nn <leader>jI :Denite workspaceSymbol<cr>
 nmap <leader>jj <Plug>(easymotion-prefix)s
 nmap <leader>jJ <Plug>(easymotion-s2)
 nmap <leader>jk j==
@@ -1085,10 +1102,12 @@ nn Yp :YcmCompleter GetParent<cr>
 nn Yr :YcmCompleter GoToReferences<cr>
 nn Yx :YcmCompleter FixIt<cr>
 nn Yt :YcmCompleter GetType<cr>
-nn <C-j> :MarkPush<cr>:YcmCompleter GoTo<cr>
+nn <C-j> :MarkPush<cr>:call LanguageClient_textDocument_definition()<cr>
+nn K :call LanguageClient_textDocument_hover()<cr>
+nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3
-map <M-;> <Plug>Sneak_;
-nn <silent> <M-,> :Gtags <C-r><C-w><cr>
+"nn <silent> <M-,> :Gtags <C-r><C-w><cr>
+nn <M-,> :Denite references<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
 nn <M-down> :lnext<cr>zvzz
 nn <M-up> :lprevious<cr>zvzz
@@ -1098,6 +1117,10 @@ nn <M-h> <C-w>h
 nn <M-j> <C-w>j
 nn <M-k> <C-w>k
 nn <M-l> <C-w>l
+" nmap , {{{3
+nn ,al :LanguageClientStart<cr>
+nn ,gs :Denite tag<cr>
+nn ,gR :Denite tag -resume<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
@@ -1106,8 +1129,6 @@ nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
-nn ,gs :Denite tag<cr>
-nn ,gR :Denite tag -resume<cr>
 "nn <C-q> :qa<cr>
 nn Q :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
