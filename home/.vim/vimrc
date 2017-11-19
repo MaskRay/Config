@@ -143,9 +143,6 @@ fu! Inc(...)
   return result
 endf
 
-" denite
-call denite#custom#var('file_rec', 'command',
-      \ ['rg', '--files', '--glob', '!.git', ''])
 " DiffOrig {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -568,6 +565,9 @@ let g:EasyMotion_startofline = 0
 let g:EasyMotion_leader_key = "<leader><leader>"
 " eclim {{{2
 let g:EclimCompletionMethod = 'omnifunc'
+" denite {{{2
+call denite#custom#var('file_rec', 'command',
+      \ ['rg', '--files', '--glob', '!.git', ''])
 " emmet {{{2
 let g:user_emmet_leader_key = '<C-z>'
 " FSwitch {{{2

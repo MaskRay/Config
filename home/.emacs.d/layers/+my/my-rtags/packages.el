@@ -26,10 +26,9 @@
   (use-package helm-rtags))
 
 (defun my-rtags/post-init-rtags ()
-  (spacemacs/set-leader-keys
-    "jl" (lambda ()
-           (interactive)
-           (if (rtags-is-indexed) (rtags-imenu) (call-interactively 'spacemacs/helm-jump-in-buffer)))
-
-    )
+  ;; (spacemacs/set-leader-keys
+  ;;   "jl" (lambda ()
+  ;;          (interactive)
+  ;;          (if (rtags-is-indexed) (rtags-imenu) (call-interactively 'spacemacs/helm-jump-in-buffer)))
+  ;;   )
   )
