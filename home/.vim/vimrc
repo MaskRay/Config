@@ -143,6 +143,9 @@ fu! Inc(...)
   return result
 endf
 
+" denite
+call denite#custom#var('file_rec', 'command',
+      \ ['rg', '--files', '--glob', '!.git', ''])
 " DiffOrig {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -414,7 +417,7 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
-  "Plug 'autozimu/LanguageClient-neovim'
+  Plug 'dbgx/lldb.nvim'
   Plug 'ludovicchabant/vim-gutentags'
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
@@ -427,14 +430,13 @@ if 1
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/rainbow_parentheses.vim'
   Plug 'junegunn/vim-easy-align'
-  Plug 'junegunn/vim-peekaboo'
   Plug 'tpope/vim-endwise'
   Plug 'tpope/vim-eunuch'
   Plug 'tpope/vim-unimpaired'
   Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
   "Plug 'machakann/vim-highlightedyank'
-  Plug 'metakirby5/codi.vim'
+  "Plug 'metakirby5/codi.vim'
   Plug 'romainl/vim-qf'
   Plug 'hecal3/vim-leader-guide'
 
@@ -447,12 +449,17 @@ if 1
   " Tools
   "Plug 'Shougo/neocomplete.vim'
   if has('nvim')
+    Plug 'autozimu/LanguageClient-neovim'
     Plug 'kassio/neoterm'
+  else
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
   endif
   Plug 'justinmk/vim-sneak'
   Plug 'justinmk/vim-dirvish'
   Plug 'Lokaltog/vim-easymotion'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neomru.vim'
   Plug 'Shougo/neoyank.vim'
   Plug 'Shougo/unite.vim'
@@ -625,7 +632,7 @@ let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
 " YouCompleteMe {{{2
 let g:rust_recommended_style = 0
-let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/.ycm_extra_conf.py"
+"let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
 let g:ycm_extra_conf_globlist = ['~/Dev/*', '~/Work/*']
 let g:ycm_key_invoke_completion = '<C-u>'
 let g:ycm_key_detailed_diagnostics = "<leader>yd"
@@ -867,8 +874,15 @@ nn <leader>ag :%!genhdr<cr>
 nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 let g:lmap.b = {'name': '+buffers'}
-nn <leader>bb :Buffers<cr>
+nn <leader>bb :Denite buffer<cr>
 nn <leader>bd :bp\|bd #<cr>
+nn <leader>bn :bn<cr>
+nn <leader>bNh :topleft vertical new<cr>
+nn <leader>bNj :rightbelow new<cr>
+nn <leader>bNk :new<cr>
+nn <leader>bNl :enew<cr>
+nn <leader>bp :bp<cr>
+nn <leader>bP :norm! ggdG"+P<cr>
 nn <leader>bR :e<cr>
 nn <leader>bw :set readonly!<cr>
 nn <leader>bY :%y+<cr>
@@ -940,32 +954,41 @@ nn <silent> <leader>hy :Denite neoyank<cr>
 nn <silent> <leader>hi :DeniteCursorWord help<cr>
 nn <silent> <leader>hL :BLines<cr>
 nn <leader>hm :Man<Space>
-nn <silent> <leader>ht :Tags<cr>
-nn <silent> <leader>hT :BTags<cr>
 nn <silent> <leader>hx :Commands<cr>
 " nmap <leader>j (jump) {{{4
 let g:lmap.j = {'name': '+jump'}
+nmap <leader>jb <C-o>
+nn <leader>ji :Denite outline<cr>
+nmap <leader>jj <Plug>(easymotion-prefix)s
+nmap <leader>jJ <Plug>(easymotion-s2)
+nmap <leader>jk j==
 nmap <leader>jl <Plug>(easymotion-bd-jk)
+nmap <leader>jo i<cr><esc>
+nmap <leader>jw <Plug>(easymotion-bd-w)
 " nmap <leader>q (quit) {{{4
 let g:lmap.q = {'name': '+quit'}
 nn <leader>qq :quit<cr>
+" nmap <leader>r (register) {{{4
+nn <leader>rl :Denite -resume<cr>
+nn <leader>rr :Denite register<cr>
 " nmap <leader>s (search) {{{4
 let g:lmap.s = {'name': '+search'}
+nn <leader>sa :Grepper -query<space>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
-nn <leader>sa :Grepper -query<space>
 nn <leader>sP :Grepper -noprompt -cword<cr>
+nn <leader>ss :Denite line<cr>
 nn <leader>st :vimgrep TODO\|FIXME<cr>
-nn <leader>ss :Lines<cr>
 " nmap <leader>t (toggle) {{{4
 let g:lmap.t = {'name': '+toggles'}
-nn <leader>ta :!gtags && ctags -R<cr>
+"nn <leader>ta :!gtags && ctags -R<cr>
+nn <silent> <leader>ta :call deoplete#toggle()<Bar>echo 'deoplete '.(deoplete#is_enabled()?"enabled":"disabled")<cr>
 nn <leader>tCd :RainbowParentheses!!<cr>
 nn <leader>thc :set cursorcolumn!<cr>
 nn <leader>tb :set breakindent!<cr>
 nn <leader>ti :IndentGuidesToggle<cr>
 nn <leader>tl :set wrap!<cr>
-nn <leader>tm :MatchmakerToggle<cr>
+nn <leader>tha :MatchmakerToggle<cr>
 nn <leader>tn :set nu!<cr>
 nn <leader>ts :SyntasticToggleMode<cr>
 nn <leader>tS :set spell!<cr>
@@ -1083,6 +1106,8 @@ nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
+nn ,gs :Denite tag<cr>
+nn ,gR :Denite tag -resume<cr>
 "nn <C-q> :qa<cr>
 nn Q :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
@@ -1100,7 +1125,6 @@ ino <M-k> <C-o><C-w>k
 ino <M-l> <C-o><C-w>l
 " xmap {{{2
 xn ga <Plug>(EasyAlign)
-xmap <C-c><C-c> <Plug>SlimeRegionSend
 " visual shifting (does not exit Visual mode)
 vn < <gv
 vn > >gv
