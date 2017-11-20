@@ -572,6 +572,8 @@ let g:EclimCompletionMethod = 'omnifunc'
 " denite {{{2
 call denite#custom#var('file_rec', 'command',
       \ ['rg', '--files', '--glob', '!.git', ''])
+call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
+call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 " emmet {{{2
 let g:user_emmet_leader_key = '<C-z>'
 " FSwitch {{{2
@@ -587,6 +589,7 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'cpp': ['cquery', '--language-server'],
+      \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_loadSettings = 1
 
@@ -1102,7 +1105,7 @@ nn Yp :YcmCompleter GetParent<cr>
 nn Yr :YcmCompleter GoToReferences<cr>
 nn Yx :YcmCompleter FixIt<cr>
 nn Yt :YcmCompleter GetType<cr>
-nn <C-j> :MarkPush<cr>:call LanguageClient_textDocument_definition()<cr>
+nn <silent> <C-j> :MarkPush<cr>:call LanguageClient_textDocument_definition()<cr>
 nn K :call LanguageClient_textDocument_hover()<cr>
 nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3

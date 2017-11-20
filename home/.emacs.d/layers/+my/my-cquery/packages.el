@@ -1,7 +1,7 @@
 (defconst my-cquery-packages '(lsp-mode))
 
 (defun my-cquery/post-init-lsp-mode ()
-  (add-to-load-path (expand-file-name "~/.emacs.d/private/local"))
+  (add-to-load-path (expand-file-name "~/Dev/Util/cquery/emacs"))
   (use-package lsp-cquery
     :after lsp-mode
     :config
