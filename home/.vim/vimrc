@@ -499,10 +499,10 @@ if 1
 
   " Languages
   " D
-  if executable('dcd-server')
-    Plug 'idanarye/vim-dutyl'
-    Plug 'landaire/deoplete-d'
-  endif
+  "if executable('dcd-server')
+  "  Plug 'idanarye/vim-dutyl'
+  "  Plug 'landaire/deoplete-d'
+  "endif
 
   " Go
   Plug 'fatih/vim-go', { 'for': 'go' }
@@ -1124,6 +1124,9 @@ nn <M-l> <C-w>l
 nn ,al :LanguageClientStart<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
+nn ,la :call LanguageClient_textDocument_codeAction()<cr>
+nn ,lf :call LanguageClient_textDocument_formatting()<cr>
+nn ,lr :call LanguageClient_textDocument_rename()<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
