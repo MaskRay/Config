@@ -18,6 +18,41 @@
              (not (locate-dominating-file default-directory "GTAGS")))
         (evil-jump-to-tag))))
 
+;;;;; realgud
+
+(defun my/realgud-eval-nth-name-forward (n)
+  (interactive "p")
+  (save-excursion
+    (let (name)
+      (while (and (> n 0) (< (point) (point-max)))
+        (let ((p (point)))
+          (if (not (c-forward-name))
+              (progn
+                (c-forward-token-2)
+                (when (= (point) p) (forward-char 1)))
+            (setq name (buffer-substring-no-properties p (point)))
+            (cl-decf n 1))))
+      (when name
+        (realgud:cmd-eval name)
+        ))))
+
+(defun my/realgud-eval-nth-name-backward (n)
+  (interactive "p")
+  (save-excursion
+    (let (name)
+      (while (and (> n 0) (> (point) (point-min)))
+        (let ((p (point)))
+          (c-backward-token-2)
+          (when (= (point) p) (backward-char 1))
+          (setq p (point))
+          (when (c-forward-name)
+            (setq name (buffer-substring-no-properties p (point)))
+            (goto-char p)
+            (cl-decf n 1))))
+      (when name
+        (realgud:cmd-eval name)
+        ))))
+
 (defun my/realgud-eval-region-or-word-at-point ()
   (interactive)
   (when-let
