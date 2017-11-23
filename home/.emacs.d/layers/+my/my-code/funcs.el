@@ -18,6 +18,24 @@
              (not (locate-dominating-file default-directory "GTAGS")))
         (evil-jump-to-tag))))
 
+(defun my/realgud-eval-region-or-word-at-point ()
+  (interactive)
+  (when-let
+      ((cmdbuf (realgud-get-cmdbuf))
+       (process (get-buffer-process cmdbuf))
+       (expr
+        (if (evil-visual-state-p)
+            (let ((range (evil-visual-range)))
+              (buffer-substring-no-properties (evil-range-beginning range)
+                                              (evil-range-end range)))
+          (word-at-point)
+          )))
+    (with-current-buffer cmdbuf
+	    (setq realgud:process-filter-save (process-filter process))
+	    (set-process-filter process 'realgud:eval-process-output))
+    (realgud:cmd-eval expr)
+    ))
+
 (defun my-realtime-elisp-doc-function ()
   (let ((w (selected-window)))
     (when-let (s (intern-soft (current-word)))

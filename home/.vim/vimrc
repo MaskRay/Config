@@ -2,6 +2,7 @@
 
 " Basic Settings -------------------------------------- {{{1
 syntax on
+set termguicolors
 set nocompatible
 filetype plugin indent on
 let g:mapleader = " "
@@ -595,8 +596,12 @@ let g:LanguageClient_loadSettings = 1
 
 augroup LanguageClient_config
   au!
+  au BufEnter * let b:Plugin_LanguageClient_started = 0
   au User LanguageClientStarted setl signcolumn=yes
+  au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
+  au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
+  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient_textDocument_signatureHelp() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -923,8 +928,7 @@ let g:lmap.f = {'name': '+files'}
 nn <leader>fc :cd %:p:h<cr>
 nn <leader>fed :e ~/.vim/vimrc<cr>
 nn <leader>feR :so ~/.vim/vimrc<cr>
-nn <leader>ff :Unite -buffer-name=file -start-insert file<cr>
-nn <leader>fF :Files<cr>
+nn <leader>ff :Denite file_rec<cr>
 nn <silent> <leader>fr :Denite file_mru<cr>
 nn <leader>fJ :JunkFile<cr>
 nn <leader>fs :update<cr>

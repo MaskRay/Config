@@ -7,6 +7,7 @@
     lsp-mode
     lsp-haskell
     lsp-rust
+    realgud
     smartparens
     ycmd
     ))
@@ -103,6 +104,13 @@
     :after lsp-mode
     )
   )
+
+(defun my-code/post-init-realgud ()
+  (with-eval-after-load 'realgud
+    ;; It was bound to [mouse-2], but [mouse-1] is more convenient.
+    (define-key realgud:shortkey-mode-map [mouse-1] #'realgud:tooltip-eval)
+    (define-key realgud:shortkey-mode-map (kbd "p") #'my/realgud-eval-region-or-word-at-point)
+    ))
 
 (defun my-code/post-init-smartparens ()
   (with-eval-after-load 'smartparens
