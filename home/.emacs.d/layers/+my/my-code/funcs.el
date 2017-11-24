@@ -1,24 +1,22 @@
-(defun my-ffap ()
+(defun my/ffap ()
   (interactive)
   (let ((filename (ffap-guess-file-name-at-point)))
     (when (not filename)
       (user-error "No file at point"))
     (ffap filename)))
 
-(defun my-find-tag ()
+(defun my/find-tag ()
   (interactive)
   (let ((old-buffer (current-buffer))
         (old-point (point)))
-    (if (and (boundp 'helm-kythe-mode)
-             helm-kythe-mode)
-        (helm-kythe-find-definitions)
-      (helm-gtags-find-tag-from-here))
+    (helm-gtags-find-tag-from-here)
     (if (and (equal old-buffer (current-buffer))
              (equal old-point (point))
              (not (locate-dominating-file default-directory "GTAGS")))
         (evil-jump-to-tag))))
 
-;;;;; realgud
+
+;;; realgud
 
 (defun my/realgud-eval-nth-name-forward (n)
   (interactive "p")
@@ -71,7 +69,10 @@
     (realgud:cmd-eval expr)
     ))
 
-(defun my-realtime-elisp-doc-function ()
+
+;;; elisp
+
+(defun my/realtime-elisp-doc-function ()
   (let ((w (selected-window)))
     (when-let (s (intern-soft (current-word)))
       (cond
@@ -81,40 +82,85 @@
       (select-window w)
       nil)))
 
-(defun my-realtime-elisp-doc ()
+(defun my/realtime-elisp-doc ()
   (interactive)
   (when (eq major-mode 'emacs-lisp-mode)
-    (if (advice-function-member-p #'my-realtime-elisp-doc-function eldoc-documentation-function)
-        (remove-function (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function)
-      (add-function :after-while (local 'eldoc-documentation-function) #'my-realtime-elisp-doc-function))))
+    (if (advice-function-member-p #'my/realtime-elisp-doc-function eldoc-documentation-function)
+        (remove-function (local 'eldoc-documentation-function) #'my/realtime-elisp-doc-function)
+      (add-function :after-while (local 'eldoc-documentation-function) #'my/realtime-elisp-doc-function))))
 
-(defun my-xref-find-definitions ()
+
+;;; xref
+
+(defvar my-xref--jumps (make-hash-table)
+  "Hashtable which stores all jumps on a per window basis.")
+
+(defmacro my-xref//with-evil-jumps (&rest body)
+  "Make `evil-jumps.el' commands work on `my-xref--jumps'."
+  (declare (indent 1))
+  `(let ((evil--jumps-window-jumps ,my-xref--jumps))
+     ,@body
+     ))
+
+(with-eval-after-load 'evil-jumps
+  (evil-define-motion my-xref/evil-jump-backward (count)
+    (my-xref//with-evil-jumps
+    (evil--jump-backward count)
+    (run-hooks 'xref-after-return-hook)
+    ))
+
+  (evil-define-motion my-xref/evil-jump-forward (count)
+    (my-xref//with-evil-jumps
+    (evil--jump-forward count)
+    (run-hooks 'xref-after-return-hook)
+    )))
+
+(defun my-xref/find-definitions ()
   (interactive)
   (when (eq xref-backend-functions 'lsp--xref-backend)
     (call-interactively 'xref-find-definitions)))
 
-(defun my-xref-find-references ()
+(defun my-xref/find-references ()
   (interactive)
   (when (eq xref-backend-functions 'lsp--xref-backend)
     (call-interactively 'xref-find-references)))
 
-(defun my-xref-jump-backward ()
+(defun my-xref/jump-backward ()
   (interactive)
   (pcase major-mode
     ((or 'c-mode 'c++-mode)
      (if lsp-mode
-         (xref-pop-marker-stack)
-         (rtags-location-stack-back)))
+         (my-xref/evil-jump-backward)
+         (helm-gtags-pop-stack)))
     (_ (helm-gtags-pop-stack))
     ))
 
-(defun my-xref-jump-forward ()
+(defun my-xref/jump-forward ()
   (interactive)
   (pcase major-mode
-    ('c-mode (rtags-location-stack-forward))
-    ('c++-mode (rtags-location-stack-forward))
+    ((or c-mode c++-mode)
+     (if lsp-mode
+         (my-xref/evil-jump-forward)
+         (evil-jump-forward)))
     (_ (evil-jump-forward))
     ))
+
+;;; Override
+;; This function is transitively called by xref-find-definitions and xref-find-references
+(require 'xref)
+(defun xref--show-xrefs (xrefs display-action &optional always-show-list)
+  (cond
+   ((and (not (cdr xrefs)) (not always-show-list))
+    (my-xref//with-evil-jumps (evil-set-jump))
+    (xref-push-marker-stack)
+    (xref--pop-to-location (car xrefs) display-action))
+   (t
+    (my-xref//with-evil-jumps (evil-set-jump))
+    (funcall xref-show-xrefs-function xrefs
+             `((window . ,(selected-window)))))))
+
+
+;; https://github.com/syl20bnr/spacemacs/pull/9911
 
 (defmacro spacemacs|define-reference-handlers (mode &rest handlers)
   "Defines reference handlers for the given MODE.
@@ -140,7 +186,7 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
            "gr" 'spacemacs/jump-to-reference)))))
 
 (defun spacemacs/jump-to-reference ()
-  "Jump to definition around point using the best tool for this action."
+  "Jump to reference around point using the best tool for this action."
   (interactive)
   (catch 'done
     (let ((old-buffer (current-buffer))
@@ -157,3 +203,13 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
                     (not (equal old-buffer (current-buffer))))
             (throw 'done t)))))
     (message "No reference handler was able to find this symbol.")))
+
+(defun spacemacs/jump-to-reference-other-window ()
+  "Jump to reference around point in other window."
+  (interactive)
+  (let ((pos (point)))
+    ;; since `spacemacs/jump-to-reference' can be asynchronous we cannot use
+    ;; `save-excursion' here, so we have to bear with the jumpy behavior.
+    (switch-to-buffer-other-window (current-buffer))
+    (goto-char pos)
+    (spacemacs/jump-to-reference)))

@@ -9,7 +9,6 @@
     lsp-rust
     realgud
     smartparens
-    ycmd
     ))
 
 (defun my-code/init-my-code ()
@@ -38,13 +37,13 @@
 (defun my-code/post-init-evil ()
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
-  (define-key evil-normal-state-map "gf" 'my-ffap)
-  (define-key evil-normal-state-map (kbd "C-p") 'my-xref-jump-forward)
-  (define-key evil-normal-state-map (kbd "C-t") 'my-xref-jump-backward)
+  (define-key evil-normal-state-map "gf" 'my/ffap)
+  (define-key evil-normal-state-map (kbd "C-p") 'my-xref/jump-forward)
+  (define-key evil-normal-state-map (kbd "C-t") 'my-xref/jump-backward)
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   ;; C-, is unavailable in terminal
   (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
-  (define-key evil-motion-state-map (kbd "C-]") 'my-find-tag)
+  (define-key evil-motion-state-map (kbd "C-]") 'my/find-tag)
   (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
   (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
@@ -57,7 +56,7 @@
              (term-send-raw-string (format "\C-umake %s && ./%s \C-m" f f))))
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
-    "TD" #'my-realtime-elisp-doc
+    "TD" #'my/realtime-elisp-doc
     )
 
   (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
@@ -85,9 +84,9 @@
 
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
       (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
-        (add-to-list handler 'my-xref-find-definitions))
+        (add-to-list handler 'my-xref/find-definitions))
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
-        (add-to-list handler 'my-xref-find-references))
+        (add-to-list handler 'my-xref/find-references))
       )))
 
 (defun my-code/init-lsp-haskell ()
@@ -113,8 +112,6 @@
     (define-key realgud:shortkey-mode-map (kbd "C-o") #'evil-execute-in-normal-state)
     (define-key realgud:shortkey-mode-map (kbd "w") #'evil-forward-word-begin)
     (define-key realgud:shortkey-mode-map (kbd "W") #'evil-forward-WORD-begin)
-
-    (define-key realgud:shortkey-mode-map (kbd "M-1") #'realgud-goto-arrow1)
 
     ;; Rebind 1 .. 9 to M-1 .. M-9
     ;; (define-key realgud:shortkey-mode-map (kbd "M-1") #'realgud-goto-arrow1)
@@ -180,24 +177,6 @@
     (define-key smartparens-mode-map (kbd "C-c [") (lambda () (interactive) (sp-wrap-with-pair "[")))
     (define-key smartparens-mode-map (kbd "C-c {") (lambda () (interactive) (sp-wrap-with-pair "{")))
     )
-  )
-
-(defun my-code/pre-init-ycmd ()
-  (setq ycmd-server-command '("python" "/usr/share/vim/vimfiles/third_party/ycmd/ycmd"))
-  (setq ycmd-global-config (file-truename "~/.config/ycmd/.ycm_extra_conf.py"))
-  (setq ycmd-extra-conf-whitelist '("~/Dev/*" "~/CC/*"))
-  )
-
-(defun my-code/post-init-ycmd ()
-  (define-key evil-normal-state-map (kbd "Y") nil)
-  (spacemacs/set-leader-keys
-    "Yc" 'ycmd-goto-declaration
-    "Yf" 'ycmd-goto-definition
-    "Yr" 'ycmd-goto-references
-    "Yt" 'ycmd-get-type
-    "YY" 'ycmd-goto
-    )
-  ;; (add-hook 'c++-mode-hook (lambda () (setq flycheck-checker 'ycmd)))
   )
 
 ;;; packages.el ends here
