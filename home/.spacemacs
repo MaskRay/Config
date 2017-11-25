@@ -383,35 +383,6 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  ;; Weird, in packages.el, my-code/init-my-code with-eval-after-load does not work
-  (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
-    (cond
-     ((and (not (cdr xrefs)) (not always-show-list))
-      (xref-push-marker-stack)
-      (xref--pop-to-location (car xrefs) display-action))
-     (t
-      (xref-push-marker-stack)
-
-      ;; PATCH Jump to the first candidate
-      (when xrefs
-        (xref--pop-to-location (car xrefs) display-action))
-
-      (funcall xref-show-xrefs-function xrefs
-               `((window . ,(selected-window)))))))
-
-  (defun my-xref--show-xref-buffer (orig-fun &rest args)
-    (save-selected-window
-      (apply orig-fun args))
-    )
-  (advice-add 'xref--show-xref-buffer :around #'my-xref--show-xref-buffer)
-
-  ;; (eval-after-load 'smartparens
-  ;;   '(progn
-  ;;      (sp-pair "(" nil :actions :rem)
-  ;;      (sp-pair "[" nil :actions :rem)
-  ;;      (sp-pair "'" nil :actions :rem)
-  ;;      (sp-pair "\"" nil :actions :rem)))
-
   ;; 101 -> 30
   (defun spacemacs/enable-smooth-scrolling ()
     "Enable smooth scrolling."

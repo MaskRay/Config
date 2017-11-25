@@ -151,13 +151,62 @@
 (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
   (cond
    ((and (not (cdr xrefs)) (not always-show-list))
+    ;; PATCH
     (my-xref//with-evil-jumps (evil-set-jump))
-    (xref-push-marker-stack)
+
     (xref--pop-to-location (car xrefs) display-action))
    (t
+    ;; PATCH
     (my-xref//with-evil-jumps (evil-set-jump))
+
+    ;; PATCH Jump to the first candidate
+    (when xrefs
+      (xref--pop-to-location (car xrefs) display-action))
+
     (funcall xref-show-xrefs-function xrefs
              `((window . ,(selected-window)))))))
+
+(defun my-advice/xref--show-xref-buffer (orig-fun &rest args)
+  (save-selected-window
+    (apply orig-fun args))
+  )
+(advice-add 'xref--show-xref-buffer :around #'my-advice/xref--show-xref-buffer)
+
+
+
+;;; lsp-mode
+
+(with-eval-after-load 'lsp-mode
+  (defun lsp--location-to-xref (location &optional read)
+    "Convert Location object LOCATION to an ‘xref-item’.
+interface Location {
+    uri: string;
+    range: Range;
+}"
+    (lsp--send-changes lsp--cur-workspace)
+    (let*
+        ((orig-uri (gethash "uri" location))
+         (uri (string-remove-prefix "file://" orig-uri))
+         (ref-pos (gethash "start" (gethash "range" location)))
+         (line (1+ (gethash "line" ref-pos)))
+         (column (gethash "character" ref-pos))
+         (summary (if (string-prefix-p "file://" orig-uri)
+                      (let ((s (if-let ((buf (find-buffer-visiting uri)))
+                                   (with-current-buffer buf
+                                     (save-excursion
+                                       (goto-char (point-min))
+                                       (forward-line (1- line))
+                                       (buffer-substring (line-beginning-position) (line-end-position))))
+                                 (with-temp-buffer
+                                   (insert-file-contents uri nil)
+                                   (goto-char (point-min))
+                                   (forward-line (1- line))
+                                   (buffer-substring (line-beginning-position) (line-end-position))))))
+                        (add-face-text-property column (+ column (length (word-at-point))) 'highlight t s)
+                        s
+                        )
+                    uri)))
+      (xref-make summary (xref-make-file-location uri line column)))))
 
 
 ;; https://github.com/syl20bnr/spacemacs/pull/9911
@@ -189,7 +238,8 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
   "Jump to reference around point using the best tool for this action."
   (interactive)
   (catch 'done
-    (let ((old-buffer (current-buffer))
+    (let ((old-window (selected-window))
+          (old-buffer (current-buffer))
           (old-point (point)))
       (dolist (-handler spacemacs-reference-handlers)
         (let ((handler (if (listp -handler) (car -handler) -handler))
@@ -200,7 +250,7 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
           (when (or (eq async t)
                     (and (fboundp async) (funcall async))
                     (not (eq old-point (point)))
-                    (not (equal old-buffer (current-buffer))))
+                    (not (equal old-buffer (window-buffer old-window))))
             (throw 'done t)))))
     (message "No reference handler was able to find this symbol.")))
 
