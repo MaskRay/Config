@@ -105,14 +105,14 @@
 (with-eval-after-load 'evil-jumps
   (evil-define-motion my-xref/evil-jump-backward (count)
     (my-xref//with-evil-jumps
-    (evil--jump-backward count)
-    (run-hooks 'xref-after-return-hook)
+        (evil--jump-backward count)
+      (run-hooks 'xref-after-return-hook)
     ))
 
   (evil-define-motion my-xref/evil-jump-forward (count)
     (my-xref//with-evil-jumps
-    (evil--jump-forward count)
-    (run-hooks 'xref-after-return-hook)
+        (evil--jump-forward count)
+      (run-hooks 'xref-after-return-hook)
     )))
 
 (defun my-xref/find-definitions ()
@@ -128,7 +128,7 @@
 (defun my-xref/jump-backward ()
   (interactive)
   (pcase major-mode
-    ((or 'c-mode 'c++-mode)
+    ((or c-mode c++-mode)
      (if lsp-mode
          (my-xref/evil-jump-backward)
          (helm-gtags-pop-stack)))
