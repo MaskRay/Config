@@ -7,6 +7,7 @@
     lsp-mode
     lsp-haskell
     lsp-rust
+    lsp-ui
     realgud
     smartparens
     ))
@@ -87,7 +88,22 @@
         (add-to-list handler 'my-xref/find-definitions))
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
         (add-to-list handler 'my-xref/find-references))
-      )))
+      ))
+  )
+
+(defun my-code/init-lsp-ui ()
+  (use-package lsp-line
+    :after lsp-mode
+    :config
+    (set-face-attribute 'lsp-line-symbol nil :foreground "grey30" :box nil)
+    (set-face-attribute 'lsp-line-current-symbol nil :foreground "grey38" :box nil)
+    (set-face-attribute 'lsp-line-contents nil :foreground "grey35")
+    (set-face-attribute 'lsp-line-current-contents nil :foreground "grey43")
+    )
+  (use-package lsp-flycheck
+    :after lsp-mode
+    )
+  )
 
 (defun my-code/init-lsp-haskell ()
   (use-package lsp-haskell
@@ -101,6 +117,8 @@
   (use-package lsp-rust
     :mode ("\\.rs\\'" . rust-mode)
     :after lsp-mode
+    :config
+    (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
     )
   )
 
