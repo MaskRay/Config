@@ -117,12 +117,14 @@
 
 (defun my-xref/find-definitions ()
   (interactive)
-  (when (eq xref-backend-functions 'lsp--xref-backend)
+  (when (or (eq xref-backend-functions 'lsp--xref-backend)
+            (memq 'lsp--xref-backend xref-backend-functions))
     (call-interactively 'xref-find-definitions)))
 
 (defun my-xref/find-references ()
   (interactive)
-  (when (eq xref-backend-functions 'lsp--xref-backend)
+  (when (or (eq xref-backend-functions 'lsp--xref-backend)
+            (memq 'lsp--xref-backend xref-backend-functions))
     (call-interactively 'xref-find-references)))
 
 (defun my-xref/jump-backward ()
