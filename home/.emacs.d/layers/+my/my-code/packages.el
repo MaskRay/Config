@@ -92,18 +92,20 @@
   )
 
 (defun my-code/init-lsp-ui ()
-  (use-package lsp-line
+  ;; (use-package lsp-line
+  ;;   :after lsp-mode
+  ;;   :config
+  ;;   )
+  (use-package lsp-ui
     :after lsp-mode
     :config
     (set-face-attribute 'lsp-line-symbol nil :foreground "grey30" :box nil)
     (set-face-attribute 'lsp-line-current-symbol nil :foreground "grey38" :box nil)
-    (set-face-attribute 'lsp-line-contents nil :foreground "grey35")
-    (set-face-attribute 'lsp-line-current-contents nil :foreground "grey43")
-    )
-  (use-package lsp-flycheck
-    :after lsp-mode
-    )
-  )
+    (when (internal-lisp-face-p 'lsp-line-contents)
+      (set-face-attribute 'lsp-line-contents nil :foreground "grey35")
+      (set-face-attribute 'lsp-line-current-contents nil :foreground "grey43"))
+    (define-key evil-normal-state-map (kbd ",ll") #'lsp-line-mode)
+    ))
 
 (defun my-code/init-lsp-haskell ()
   (use-package lsp-haskell
