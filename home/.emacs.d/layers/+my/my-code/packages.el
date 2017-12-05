@@ -86,6 +86,9 @@
     (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
     (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
 
+    ;;; Override
+    (spacemacs/set-leader-keys "jj" #'my-xref/find-apropos)
+
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
       (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
         (add-to-list handler 'my-xref/find-definitions))

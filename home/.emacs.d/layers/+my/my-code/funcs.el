@@ -162,8 +162,8 @@
     (my-xref//with-evil-jumps (evil-set-jump))
 
     ;; PATCH Jump to the first candidate
-    (when xrefs
-      (xref--pop-to-location (car xrefs) display-action))
+    ;; (when xrefs
+      ;; (xref--pop-to-location (car xrefs) display-action))
 
     (funcall xref-show-xrefs-function xrefs
              `((window . ,(selected-window)))))))

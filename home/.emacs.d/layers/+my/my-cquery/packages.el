@@ -9,10 +9,30 @@
     :config
     (setq cquery-resource-dir (expand-file-name "~/Dev/Util/cquery/clang_resource_dir/"))
     (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json))
-  (spacemacs/set-leader-keys
-    "jl" (lambda ()
-           (interactive)
-           (let ((imenu--index-alist nil)
-                 (imenu-create-index-function #'my/lsp--imenu-create-index))
-             (call-interactively #'imenu)))
-    ))
+
+  (with-eval-after-load 'helm-imenu
+    ;;; Override
+    ;; Revert removing *Rescan*
+    (defun helm-imenu-candidates (&optional buffer)
+     (with-current-buffer (or buffer helm-current-buffer)
+       (let ((tick (buffer-modified-tick)))
+         (if (eq helm-cached-imenu-tick tick)
+             helm-cached-imenu-candidates
+           (setq imenu--index-alist nil)
+           (prog1 (setq helm-cached-imenu-candidates
+                        (let ((index (imenu--make-index-alist t)))
+                          (helm-imenu--candidates-1 index)))
+             (setq helm-cached-imenu-tick tick))))))
+
+    ;;; Override
+    ;; No (user-error "No word list given") if pattern is empty
+    (defun xref-find-apropos (pattern)
+      "Find all meaningful symbols that match PATTERN.
+The argument has the same meaning as in `apropos'."
+      (interactive (list (read-string
+                          "Search for pattern (word list or regexp): "
+                          nil 'xref--read-pattern-history)))
+      (require 'apropos)
+      (xref--find-xrefs pattern 'apropos pattern nil))
+    )
+  )
