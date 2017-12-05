@@ -12,6 +12,9 @@
     smartparens
     ))
 
+(defun my-code/post-init-cc-mode ()
+  )
+
 (defun my-code/init-my-code ()
   ;; (message "+++ my-code/init-my-code")
   ;; (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
