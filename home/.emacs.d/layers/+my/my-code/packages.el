@@ -1,6 +1,7 @@
 (defconst my-code-packages
   '(
     cc-mode
+    company-lsp
     dumb-jump
     evil
     haskell-mode
@@ -27,9 +28,13 @@
   ;; does not work
   )
 
+(defun my-code/init-company-lsp ()
+  (use-package company-lsp
+    :config
+    (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)))
+
 (defun my-code/post-init-dumb-jump ()
-  (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go)
-  )
+  (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go))
 
 (defun my-code/post-init-haskell-mode ()
   (with-eval-after-load 'haskell-mode
@@ -91,11 +96,7 @@
 (defun my-code/init-lsp-mode ()
   (use-package lsp-mode
     :config
-    (add-to-list 'spacemacs-jump-handlers-c++-mode 'rtags-find-symbol-at-point)
-    (add-to-list 'spacemacs-jump-handlers-c-mode 'rtags-find-symbol-at-point)
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-    (add-to-list 'spacemacs-reference-handlers-c++-mode 'rtags-find-references-at-point)
-    (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
 
     ;;; Override
 

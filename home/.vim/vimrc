@@ -655,27 +655,6 @@ endif
 " VimFiler {{{2
 let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
-" YouCompleteMe {{{2
-let g:rust_recommended_style = 0
-"let g:ycm_global_ycm_extra_conf = $HOME . "/.config/ycmd/ycm_extra_conf.py"
-let g:ycm_extra_conf_globlist = ['~/Dev/*', '~/Work/*']
-let g:ycm_key_invoke_completion = '<C-u>'
-let g:ycm_key_detailed_diagnostics = "<leader>yd"
-let g:ycm_complete_in_comments = 1
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_key_list_select_completion = ['<c-n>', '<down>']
-let g:ycm_key_list_previous_completion = ['<c-p>', '<up>']
-let g:ycm_confirm_extra_conf = 1
-let g:ycm_cache_omnifunc = 1
-let g:ycm_filetype_whitelist = {'c': 1, 'cpp': 1, 'javascript': 1, 'python': 1}
-let g:ycm_auto_trigger = 1
-let g:ycm_filetype_specific_completion_to_disable = {
-      \ 'gitcommit': 1,
-      \ 'make': 1
-      \}
 " Colorschemes ---------------------------------------- {{{1
 set background=dark
 if has("gui_running")
@@ -1050,8 +1029,6 @@ nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
-"nn <leader>z zMzzzv
-nn <leader>S V:execute @@<cr>
 " nmap g {{{3
 let g:lmap.g = {'name': '+git'}
 nmap ga <Plug>(EasyAlign)
@@ -1059,33 +1036,28 @@ nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
 nmap gs <Plug>(GrepperOperator)
 xmap gs <Plug>(GrepperOperator)
 " nmap mark stack {{{3
+let g:mark_ring = [{},{},{},{},{},{},{},{},{},{}]
+let g:mark_ring_i = 0
+
 function! MarkPush()
-  if !exists('g:mark_stack')
-    let g:mark_stack = []
-  endif
-  if len(g:mark_stack) >= 10
-    call remove(g:mark_stack, 0, len(g:mark_stack)-10)
-  endif
-  call insert(g:mark_stack, {'path': expand('%:p'), 'line': line('.'), 'col': col('.')})
+  let g:mark_ring[g:mark_ring_i] = {'path': expand('%:p'), 'line': line('.'), 'col': col('.')}
+  let g:mark_ring_i = (g:mark_ring_i + 1) % len(g:mark_ring)
 endfunction
 
-function! MarkPop()
-  if !exists('g:mark_stack') || len(g:mark_stack) == 0
-    echo 'empty g:mark_stack'
+function! MarkPop(d)
+  let g:mark_ring[g:mark_ring_i] = {'path': expand('%:p'), 'line': line('.'), 'col': col('.')}
+  let g:mark_ring_i = (g:mark_ring_i + a:d + len(g:mark_ring)) %  len(g:mark_ring)
+  let mark = g:mark_ring[g:mark_ring_i]
+  if !has_key(mark, 'path')
+    echo 'empty g:mark_ping'
     return
   endif
-  let mark = g:mark_stack[0]
-  call remove(g:mark_stack, 0)
   if mark.path !=# expand('%:p')
     silent exec 'e ' . fnameescape(mark.path)
   endif
   call cursor(mark.line, mark.col)
 endfunction
 
-command! MarkPush :call MarkPush()
-command! MarkPop :call MarkPop()
-nn mm :MarkPush<cr>
-nn 'm :MarkPop<cr>
 " nmap easymotion sneak {{{3
 "nmap t <Plug>(easymotion-w)
 "nmap T <Plug>(easymotion-b)
@@ -1102,15 +1074,7 @@ map F <Plug>Sneak_F
 "nn Y<space> :Gtags
 " nmap Y (youcompleteme) {{{3
 let g:lmap.Y = {'name': '+YCM'}
-nn Yc :MarkPush<cr>:YcmCompleter GoToDeclaration<cr>
-nn Yd :YcmCompleter GetDoc<cr>
-nn Yf :MarkPush<cr>:YcmCompleter GoToDefinition<cr>
-nn Yi :MarkPush<cr>:YcmCompleter GoToInclude<cr>
-nn Yp :YcmCompleter GetParent<cr>
-nn Yr :YcmCompleter GoToReferences<cr>
-nn Yx :YcmCompleter FixIt<cr>
-nn Yt :YcmCompleter GetType<cr>
-nn <silent> <C-j> :MarkPush<cr>:call LanguageClient_textDocument_definition()<cr>
+nn <silent> <C-j> :call MarkPush()<cr>:call LanguageClient_textDocument_definition()<cr>
 nn K :call LanguageClient_textDocument_hover()<cr>
 nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3
@@ -1144,6 +1108,10 @@ nmap <C-c><C-c> <Plug>SlimeParagraphSend
 nn Q :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
+nn mm :call MarkPush(0)<cr>
+nn 'm <C-t>
+nn <C-p> :call MarkPop(1)<cr>
+nn <C-t> :call MarkPop(-1)<cr>
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz
