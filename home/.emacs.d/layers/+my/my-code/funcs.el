@@ -115,18 +115,6 @@
       (run-hooks 'xref-after-return-hook)
     )))
 
-(defun my-xref/find-definitions ()
-  (interactive)
-  (when (or (eq xref-backend-functions 'lsp--xref-backend)
-            (memq 'lsp--xref-backend xref-backend-functions))
-    (call-interactively 'xref-find-definitions)))
-
-(defun my-xref/find-references ()
-  (interactive)
-  (when (or (eq xref-backend-functions 'lsp--xref-backend)
-            (memq 'lsp--xref-backend xref-backend-functions))
-    (call-interactively 'xref-find-references)))
-
 (defun my-xref/jump-backward ()
   (interactive)
   (pcase major-mode
@@ -148,10 +136,13 @@
     ))
 
 ;;; Override
-;; This function is transitively called by xref-find-definitions and xref-find-references
+;; This function is transitively called by xref-find-{definitions,references,apropos}
 (require 'xref)
 (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
   (cond
+   ((cl-some (lambda (x) (string-match-p x buffer-file-name))
+             my-xref-blacklist)
+    nil)
    ((and (not (cdr xrefs)) (not always-show-list))
     ;; PATCH
     (my-xref//with-evil-jumps (evil-set-jump))
@@ -167,12 +158,6 @@
 
     (funcall xref-show-xrefs-function xrefs
              `((window . ,(selected-window)))))))
-
-(defun my-advice/xref--show-xref-buffer (orig-fun &rest args)
-  (save-selected-window
-    (apply orig-fun args))
-  )
-(advice-add 'xref--show-xref-buffer :around #'my-advice/xref--show-xref-buffer)
 
 
 ;; https://github.com/syl20bnr/spacemacs/pull/9911
@@ -229,3 +214,13 @@ sets `spacemacs-reference-handlers' in buffers of that mode."
     (switch-to-buffer-other-window (current-buffer))
     (goto-char pos)
     (spacemacs/jump-to-reference)))
+
+
+;; dumb-jump
+
+(defun my-advice/dumb-jump-go (orig-fun &rest args)
+  (unless (or lsp-mode
+              (cl-some
+               (lambda (x) (string-match-p x buffer-file-name))
+               my-xref-blacklist))
+    (apply orig-fun args)))

@@ -26,3 +26,6 @@
 (setq projectile-switch-project-action 'projectile-dired)
 
 (setq-default standard-indent 2 sh-indentation 2)
+
+(defvar my-xref-blacklist nil
+  "List of paths that should not enable xref-find-* or dumb-jump-go")

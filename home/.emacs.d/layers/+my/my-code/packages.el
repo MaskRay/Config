@@ -1,6 +1,7 @@
 (defconst my-code-packages
   '(
     cc-mode
+    dumb-jump
     evil
     haskell-mode
     helm-xref
@@ -13,6 +14,10 @@
     ))
 
 (defun my-code/post-init-cc-mode ()
+  (dolist (mode c-c++-modes)
+    (spacemacs/declare-prefix-for-mode mode "mx" "format")
+    (spacemacs/set-leader-keys-for-major-mode mode
+      "xf" 'clang-format-region))
   )
 
 (defun my-code/init-my-code ()
@@ -22,10 +27,14 @@
   ;; does not work
   )
 
+(defun my-code/post-init-dumb-jump ()
+  (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go)
+  )
+
 (defun my-code/post-init-haskell-mode ()
   (with-eval-after-load 'haskell-mode
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
-    (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+    ;; (add-hook 'haskell-mode-hook 'structured-haskell-mode)
     ;; (add-hook 'haskell-mode-hook 'lsp-mode)
     ;; (intero-global-mode 1)
     ;; (add-hook 'haskell-mode-hook 'helm-kythe-mode)
@@ -60,6 +69,7 @@
              (term-send-raw-string (format "\C-umake %s && ./%s \C-m" f f))))
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+    "jj" #'xref-find-apropos  ; Override
     "TD" #'my/realtime-elisp-doc
     )
 
@@ -71,6 +81,7 @@
     :config
     ;; This is required to make xref-find-references work in helm-mode.
     ;; In helm-mode, it gives a prompt and asks the identifier (which has no text property) and then passes it to lsp-mode, which requires the text property at point to locate the references.
+    ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=29619
     (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
 
     (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
@@ -87,24 +98,19 @@
     (add-to-list 'spacemacs-reference-handlers-c-mode 'rtags-find-references-at-point)
 
     ;;; Override
-    (spacemacs/set-leader-keys "jj" #'my-xref/find-apropos)
 
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
       (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
-        (add-to-list handler 'my-xref/find-definitions))
+        (add-to-list handler 'xref-find-definitions))
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
-        (add-to-list handler 'my-xref/find-references))
-      ))
+        (add-to-list handler 'xref-find-references))))
   )
 
 (defun my-code/init-lsp-ui ()
-  ;; (use-package lsp-line
-  ;;   :after lsp-mode
-  ;;   :config
-  ;;   )
   (use-package lsp-ui
     :after lsp-mode
     :config
+    (setq lsp-line-ignore-duplicate t)
     (set-face-attribute 'lsp-line-symbol nil :foreground "grey30" :box nil)
     (set-face-attribute 'lsp-line-current-symbol nil :foreground "grey38" :box nil)
     (when (internal-lisp-face-p 'lsp-line-contents)
