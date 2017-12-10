@@ -74,7 +74,6 @@
              (term-send-raw-string (format "\C-umake %s && ./%s \C-m" f f))))
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
-    "jj" #'xref-find-apropos  ; Override
     "TD" #'my/realtime-elisp-doc
     )
 
@@ -117,7 +116,24 @@
     (when (internal-lisp-face-p 'lsp-line-contents)
       (set-face-attribute 'lsp-line-contents nil :foreground "grey35")
       (set-face-attribute 'lsp-line-current-contents nil :foreground "grey43"))
-    (define-key evil-normal-state-map (kbd ",ll") #'lsp-line-mode)
+
+    (dolist (mode c-c++-modes)
+      (spacemacs/set-leader-keys-for-major-mode mode
+        "la" 'xref-find-apropos
+        "lb" (defun my-cquery/base ()
+               (interactive)
+               (cquery-xref-find-locations-with-position "$cquery/base"))
+        "lc" (defun my-cquery/callers ()
+               (interactive)
+               (cquery-xref-find-locations-with-position "$cquery/callers"))
+        "ld" (defun my-cquery/derived ()
+               (interactive)
+               (cquery-xref-find-locations-with-position "$cquery/derived"))
+        "ll" #'lsp-line-mode
+        "lv" (defun my-cquery/vars ()
+               (interactive)
+               (cquery-xref-find-locations-with-position "$cquery/vars"))
+       ))
     ))
 
 (defun my-code/init-lsp-haskell ()

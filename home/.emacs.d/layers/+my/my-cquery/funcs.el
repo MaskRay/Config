@@ -42,3 +42,10 @@
                 (xref-make-file-location (string-remove-prefix "file://" uri)
                                          (1+ (gethash "line" start))
                                          (gethash "character" start))))))
+
+(defun cquery-vars ()
+  (interactive)
+  (xref--show-xrefs
+   (lsp--locations-to-xref-items
+    (lsp--send-request (lsp--make-request "$cquery/vars"
+                                          (lsp--make-reference-params)))) nil))
