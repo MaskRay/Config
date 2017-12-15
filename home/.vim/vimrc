@@ -459,6 +459,8 @@ if 1
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neomru.vim'
+  Plug 'Shougo/neosnippet.vim'
+  Plug 'Shougo/neosnippet-snippets'
   Plug 'Shougo/neoyank.vim'
   Plug 'Shougo/unite.vim'
   Plug 'Shougo/denite.nvim'
@@ -1112,6 +1114,9 @@ nn mm :call MarkPush(0)<cr>
 nn 'm <C-t>
 nn <C-p> :call MarkPop(1)<cr>
 nn <C-t> :call MarkPop(-1)<cr>
+imap <C-k> <Plug>(neosnippet_expand_or_jump)
+smap <C-k> <Plug>(neosnippet_expand_or_jump)
+xmap <C-k> <Plug>(neosnippet_expand_target)
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz

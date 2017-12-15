@@ -7,7 +7,6 @@
   (use-package cquery
     :after lsp-mode
     :config
-    (setq cquery-resource-dir (expand-file-name "~/Dev/Util/cquery/clang_resource_dir/"))
     (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json))
 
   (with-eval-after-load 'helm-imenu
