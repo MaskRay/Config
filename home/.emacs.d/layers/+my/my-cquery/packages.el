@@ -7,6 +7,11 @@
   (use-package cquery
     :after lsp-mode
     :config
+    ;; overlay is slow
+    ;; WAIT https://lists.gnu.org/archive/html/emacs-devel/2017-05/msg00084.html
+    (setq cquery-sem-highlight-method 'font-lock)
+    ;; cquery.cl cquery--publich-semantic-highlighting is very slow
+    (setq cquery-enable-sem-highlight nil)
     (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json))
 
   (with-eval-after-load 'helm-imenu

@@ -8,6 +8,7 @@
        (root (projectile-project-root))
        (_ (or (file-exists-p (concat root "compile_commands.json"))
               (file-exists-p (concat root ".cquery")))))
+    (setq eldoc-idle-delay 0.2)
     (lsp-cquery-enable)
     (lsp-enable-imenu)))
 

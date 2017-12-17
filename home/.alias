@@ -12,6 +12,7 @@ md() {
 }
 
 LOCAL=$HOME/.local
+UNAME=$(uname)
 
 # core {{{1
 alias sudo='sudo ' # zsh: next word is elligible for alias expansion
@@ -36,7 +37,11 @@ alias which='which -a'
 ## with common options
 alias cp='cp -iv'
 alias df='df -Th'
-alias rm='rm -v --one-file-system' # -d since coreutils-8.19, `rm -rf` is evil
+if [[ $UNAME == Linux ]]; then
+  alias rm='rm -v --one-file-system' # -d since coreutils-8.19, `rm -rf` is evil
+else
+  alias rm='rm -v'
+fi
 alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
 alias free='free -m'

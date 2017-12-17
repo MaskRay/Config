@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 files=($(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee|weechat'))
 target=~
