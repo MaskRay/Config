@@ -130,10 +130,15 @@
                (interactive)
                (cquery-xref-find-locations-with-position "$cquery/derived"))
         "ll" #'lsp-line-mode
+        "ln" #'my-xref/next-reference
+        "lp" #'my-xref/previous-reference
         "lv" (defun my-cquery/vars ()
                (interactive)
                (cquery-xref-find-locations-with-position "$cquery/vars"))
        ))
+
+    (define-key evil-motion-state-map (kbd "M-<down>") 'my-xref/next-reference)
+    (define-key evil-motion-state-map (kbd "M-<up>") 'my-xref/previous-reference)
     ))
 
 (defun my-code/init-lsp-haskell ()
