@@ -2,12 +2,13 @@
 (require 'subr-x)
 
 (defun my//enable-cquery-if-compile-commands-json ()
-  (when-let
-      ((_ (not (and (boundp 'lsp-mode) lsp-mode)))
-       (_ (cl-notany (lambda (x) (string-match-p x buffer-file-name)) my-cquery-blacklist))
-       (root (projectile-project-root))
-       (_ (or (file-exists-p (concat root "compile_commands.json"))
-              (file-exists-p (concat root ".cquery")))))
+  (when
+      (and (not (and (boundp 'lsp-mode) lsp-mode))
+           (or
+            (cl-some (lambda (x) (string-match-p x buffer-file-name)) my-cquery-whitelist)
+            (cl-notany (lambda (x) (string-match-p x buffer-file-name)) my-cquery-blacklist))
+           (or (locate-dominating-file default-directory "compile_commands.json")
+               (locate-dominating-file default-directory ".cquery")))
     (setq eldoc-idle-delay 0.2)
     (lsp-cquery-enable)
     (lsp-enable-imenu)))
