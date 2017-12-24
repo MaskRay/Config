@@ -21,13 +21,6 @@
       "xf" 'clang-format-region))
   )
 
-(defun my-code/init-my-code ()
-  ;; (message "+++ my-code/init-my-code")
-  ;; (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
-  ;; (add-hook 'c-mode-local-vars-hook #'spacemacs/ggtags-mode-enable)
-  ;; does not work
-  )
-
 (defun my-code/init-company-lsp ()
   (use-package company-lsp
     :config
@@ -111,11 +104,14 @@
     :after lsp-mode
     :config
     (setq lsp-line-ignore-duplicate t)
-    (set-face-attribute 'lsp-line-symbol nil :foreground "grey30" :box nil)
-    (set-face-attribute 'lsp-line-current-symbol nil :foreground "grey38" :box nil)
-    (when (internal-lisp-face-p 'lsp-line-contents)
-      (set-face-attribute 'lsp-line-contents nil :foreground "grey35")
-      (set-face-attribute 'lsp-line-current-contents nil :foreground "grey43"))
+    (setq lsp-flycheck-enable nil) ;; too slow
+    (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
+    (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
+    (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
+    (set-face-attribute 'lsp-ui-sideline-current-symbol nil :foreground "grey38" :box nil)
+    ;; (when (internal-lisp-face-p 'lsp-ui-sideline-contents)
+    ;;   (set-face-attribute 'lsp-ui-sideline-contents nil :foreground "grey35")
+    ;;   (set-face-attribute 'lsp-ui-sideline-current-contents nil :foreground "grey43"))
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
@@ -129,7 +125,8 @@
         "ld" (defun my-cquery/derived ()
                (interactive)
                (cquery-xref-find-locations-with-position "$cquery/derived"))
-        "ll" #'lsp-line-mode
+        "ll" #'lsp-ui-sideline-mode
+        "lD" #'lsp-ui-doc-mode
         "ln" #'my-xref/next-reference
         "lp" #'my-xref/previous-reference
         "lv" (defun my-cquery/vars ()
@@ -151,12 +148,16 @@
 
 (defun my-code/init-lsp-rust ()
   (use-package lsp-rust
-    :mode ("\\.rs\\'" . rust-mode)
     :after lsp-mode
     :config
     (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
-    )
-  )
+    (add-hook 'rust-mode-hook
+              (defun my/rust-mode-hook ()
+                (lsp-rust-enable)
+                (when (>= emacs-major-version 26)
+                  (setq lsp-enable-eldoc nil)
+                  (lsp-ui-doc-mode 1))))
+    ))
 
 (defun my-code/post-init-realgud ()
   (with-eval-after-load 'realgud

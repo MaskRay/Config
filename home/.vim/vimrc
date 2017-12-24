@@ -592,6 +592,7 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
+      \ 'objc': ['cquery', '--language-server'],
       \ 'cpp': ['cquery', '--language-server'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
@@ -1077,7 +1078,7 @@ map F <Plug>Sneak_F
 " nmap Y (youcompleteme) {{{3
 let g:lmap.Y = {'name': '+YCM'}
 nn <silent> <C-j> :call MarkPush()<cr>:call LanguageClient_textDocument_definition()<cr>
-nn K :call LanguageClient_textDocument_hover()<cr>
+nn <silent> K :call LanguageClient_textDocument_hover()<cr>
 nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3
 "nn <silent> <M-,> :Gtags <C-r><C-w><cr>
@@ -1095,7 +1096,8 @@ nn <M-l> <C-w>l
 nn ,al :LanguageClientStart<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
-nn ,la :call LanguageClient_textDocument_codeAction()<cr>
+nn ,la :call LanguageClient_workspace_symbol({'query':input('workspace/symbol ')})<cr>
+nn ,lc :call LanguageClient_textDocument_codeAction()<cr>
 nn ,lf :call LanguageClient_textDocument_formatting()<cr>
 nn ,lr :call LanguageClient_textDocument_rename()<cr>
 " nmap misc {{{3

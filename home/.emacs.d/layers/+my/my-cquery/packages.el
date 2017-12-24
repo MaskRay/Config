@@ -12,6 +12,7 @@
     (setq cquery-sem-highlight-method 'font-lock)
     ;; cquery.cl cquery--publich-semantic-highlighting is very slow
     (setq cquery-enable-sem-highlight nil)
+    (setq cquery-additional-arguments '("--enable-comments"))
     (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json))
 
   (with-eval-after-load 'helm-imenu
@@ -27,16 +28,4 @@
                         (let ((index (imenu--make-index-alist t)))
                           (helm-imenu--candidates-1 index)))
              (setq helm-cached-imenu-tick tick))))))
-
-    ;;; Override
-    ;; No (user-error "No word list given") if pattern is empty
-    (defun xref-find-apropos (pattern)
-      "Find all meaningful symbols that match PATTERN.
-The argument has the same meaning as in `apropos'."
-      (interactive (list (read-string
-                          "Search for pattern (word list or regexp): "
-                          nil 'xref--read-pattern-history)))
-      (require 'apropos)
-      (xref--find-xrefs pattern 'apropos pattern nil))
-    )
-  )
+    ))
