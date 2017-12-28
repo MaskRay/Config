@@ -215,15 +215,6 @@
     (funcall xref-show-xrefs-function xrefs
              `((window . ,(selected-window)))))))
 
-(defun xref-find-apropos (pattern)
-  "Find all meaningful symbols that match PATTERN.
-The argument has the same meaning as in `apropos'."
-  (interactive (list (read-string
-                      "Search for pattern (word list or regexp): "
-                      nil 'xref--read-pattern-history)))
-  (require 'apropos)
-  (xref--find-xrefs pattern 'apropos pattern nil))
-
 
 ;; https://github.com/syl20bnr/spacemacs/pull/9911
 

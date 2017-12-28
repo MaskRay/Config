@@ -18,7 +18,13 @@
   (dolist (mode c-c++-modes)
     (spacemacs/declare-prefix-for-mode mode "mx" "format")
     (spacemacs/set-leader-keys-for-major-mode mode
-      "xf" 'clang-format-region))
+      "xf" 'clang-format-region
+      "db" (lambda ()
+             (interactive)
+             (evil-open-above 1)
+             (insert "volatile static int z=0;while(!z)asm(\"pause\");")
+             (evil-normal-state)
+             )))
   )
 
 (defun my-code/init-company-lsp ()
@@ -104,7 +110,7 @@
     :after lsp-mode
     :config
     (setq lsp-line-ignore-duplicate t)
-    (setq lsp-flycheck-enable nil) ;; too slow
+    (setq lsp-enable-flycheck nil) ;; too slow
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
     (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
     (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
@@ -115,7 +121,7 @@
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
-        "la" 'xref-find-apropos
+        "la" 'lsp-ui-workspace-symbol
         "lb" (defun my-cquery/base ()
                (interactive)
                (cquery-xref-find-locations-with-position "$cquery/base"))
