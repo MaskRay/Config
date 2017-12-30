@@ -191,6 +191,10 @@
       (forward-char (caddr res))
       nil)))
 
+(defun my-advice/xref-set-jump (orig-fun &rest args)
+  (my-xref//with-evil-jumps (evil-set-jump))
+  (apply orig-fun args))
+
 ;;; Override
 ;; This function is transitively called by xref-find-{definitions,references,apropos}
 (require 'xref)

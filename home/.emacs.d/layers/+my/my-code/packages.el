@@ -57,8 +57,9 @@
   (define-key evil-normal-state-map "gf" 'my/ffap)
   (define-key evil-normal-state-map (kbd "C-p") 'my-xref/jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'my-xref/jump-backward)
-  (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
+  (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
   ;; C-, is unavailable in terminal
+  (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my/find-tag)
   (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
@@ -95,24 +96,37 @@
   (use-package lsp-mode
     :config
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
+    (setq lsp-enable-flycheck nil) ;; disable lsp-flycheck.el
+    ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
+
 
     ;;; Override
-
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
       (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
-        (add-to-list handler 'xref-find-definitions))
+        (add-to-list handler 'lsp-ui-peek-find-definitions))
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
-        (add-to-list handler 'xref-find-references))))
+        (add-to-list handler 'lsp-ui-peek-find-references))))
   )
 
 (defun my-code/init-lsp-ui ()
   (use-package lsp-ui
     :after lsp-mode
     :config
-    (setq lsp-line-ignore-duplicate t)
-    (setq lsp-enable-flycheck nil) ;; too slow
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
+
+    (with-eval-after-load 'lsp-mode
+      (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+
+    (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
+    (advice-add 'lsp-ui-peek--goto-xref :around #'my-advice/xref-set-jump)
+    (evil-make-overriding-map lsp-ui-peek-mode-map 'normal)
+    (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
+    (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
+    (define-key lsp-ui-peek-mode-map (kbd "j") 'lsp-ui-peek--select-next)
+    (define-key lsp-ui-peek-mode-map (kbd "k") 'lsp-ui-peek--select-prev)
+
     (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
+    (setq lsp-ui-sideline-ignore-duplicate t)
     (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
     (set-face-attribute 'lsp-ui-sideline-current-symbol nil :foreground "grey38" :box nil)
     ;; (when (internal-lisp-face-p 'lsp-ui-sideline-contents)
@@ -121,23 +135,30 @@
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
-        "la" 'lsp-ui-workspace-symbol
+        "la" #'lsp-ui-find-workspace-symbol
+        "lA" #'lsp-ui-peek-find-workspace-symbol
         "lb" (defun my-cquery/base ()
                (interactive)
-               (cquery-xref-find-locations-with-position "$cquery/base"))
+               ;; (cquery-xref-find-locations-with-position "$cquery/base")
+               (lsp-ui-peek-find-custom nil "$cquery/base"))
         "lc" (defun my-cquery/callers ()
                (interactive)
-               (cquery-xref-find-locations-with-position "$cquery/callers"))
+               ;; (cquery-xref-find-locations-with-position "$cquery/callers")
+               (lsp-ui-peek-find-custom nil "$cquery/callers"))
         "ld" (defun my-cquery/derived ()
                (interactive)
-               (cquery-xref-find-locations-with-position "$cquery/derived"))
+               ;; (cquery-xref-find-locations-with-position "$cquery/derived")
+               (lsp-ui-peek-find-custom nil "$cquery/derived"))
+        "lf" #'lsp-format-buffer
         "ll" #'lsp-ui-sideline-mode
         "lD" #'lsp-ui-doc-mode
         "ln" #'my-xref/next-reference
         "lp" #'my-xref/previous-reference
+        "lr" #'lsp-rename
         "lv" (defun my-cquery/vars ()
                (interactive)
-               (cquery-xref-find-locations-with-position "$cquery/vars"))
+               ;; (cquery-xref-find-locations-with-position "$cquery/vars")
+               (lsp-ui-peek-find-custom nil "$cquery/vars"))
        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'my-xref/next-reference)

@@ -592,8 +592,8 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
-      \ 'objc': ['cquery', '--language-server'],
       \ 'cpp': ['cquery', '--language-server'],
+      \ 'objc': ['cquery', '--language-server'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_loadSettings = 1
