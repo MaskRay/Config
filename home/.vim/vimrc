@@ -1094,6 +1094,7 @@ nn <M-k> <C-w>k
 nn <M-l> <C-w>l
 " nmap , {{{3
 nn ,al :LanguageClientStart<cr>
+nn ,db :call append(line('.')-1, 'volatile static int z=0;while(!z)asm("pause");')<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
 nn ,la :call LanguageClient_workspace_symbol({'query':input('workspace/symbol ')})<cr>

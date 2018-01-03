@@ -3,7 +3,8 @@
 
 (defun my//enable-cquery-if-compile-commands-json ()
   (when
-      (and (not (and (boundp 'lsp-mode) lsp-mode))
+      (and buffer-file-name
+           (not (and (boundp 'lsp-mode) lsp-mode))
            (or
             (cl-some (lambda (x) (string-match-p x buffer-file-name)) my-cquery-whitelist)
             (cl-notany (lambda (x) (string-match-p x buffer-file-name)) my-cquery-blacklist))
