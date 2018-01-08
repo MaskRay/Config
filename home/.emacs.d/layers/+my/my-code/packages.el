@@ -62,7 +62,10 @@
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
   (define-key evil-motion-state-map (kbd "C-]") 'my/find-tag)
-  (define-key evil-motion-state-map (kbd "C-j") 'spacemacs/jump-to-definition)
+  (define-key evil-motion-state-map (kbd "C-j")
+    (lambda ()
+      (interactive)
+      (if lsp-mode (lsp-ui-peek-find-definitions) (spacemacs/jump-to-definition))))
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
   (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
 

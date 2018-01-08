@@ -12,6 +12,7 @@
     (setq cquery-sem-highlight-method 'font-lock)
     ;; cquery.cl cquery--publich-semantic-highlighting is very slow
     (setq cquery-enable-sem-highlight nil)
+    (setq cquery-extra-init-params '(:cacheFormat 1))
     (setq cquery-additional-arguments '("--enable-comments"))
     (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json))
 

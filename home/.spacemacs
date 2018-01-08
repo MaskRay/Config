@@ -40,7 +40,7 @@ This function should only modify configuration layer settings."
      evil-commentary
      (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
      git
-     gtags
+     ;; gtags
      go
      html
      ibuffer
