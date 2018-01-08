@@ -198,6 +198,22 @@
     (define-key realgud:shortkey-mode-map (kbd "w") #'evil-forward-word-begin)
     (define-key realgud:shortkey-mode-map (kbd "W") #'evil-forward-WORD-begin)
 
+    ;; Don't use default bindings in c-c++/packages.el
+    (evilified-state-evilify-map realgud:shortkey-mode-map
+      :eval-after-load realgud
+      :mode realgud-short-key-mode
+      :bindings
+      "n" 'realgud:cmd-next
+      "s" 'realgud:cmd-step
+      "b" 'realgud:cmd-break
+      "B" 'realgud:cmd-clear
+      "f" 'realgud:cmd-finish
+      "c" 'realgud:cmd-continue
+      "e" 'realgud:cmd-eval
+      "r" 'realgud:cmd-restart
+      "q" 'realgud:cmd-quit
+      "S" 'realgud-window-cmd-undisturb-src)
+
     ;; Rebind 1 .. 9 to M-1 .. M-9
     ;; (define-key realgud:shortkey-mode-map (kbd "M-1") #'realgud-goto-arrow1)
     ;; (define-key realgud:shortkey-mode-map (kbd "M-2") #'realgud-goto-arrow2)

@@ -32,7 +32,7 @@
             (cl-decf n 1))))
       (when name
         (realgud:cmd-eval name)
-        ))))
+        nil))))
 
 (defun my/realgud-eval-nth-name-backward (n)
   (interactive "p")
@@ -49,7 +49,7 @@
             (cl-decf n 1))))
       (when name
         (realgud:cmd-eval name)
-        ))))
+        nil))))
 
 (defun my/realgud-eval-region-or-word-at-point ()
   (interactive)
