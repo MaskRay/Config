@@ -203,6 +203,10 @@
       :eval-after-load realgud
       :mode realgud-short-key-mode
       :bindings
+      "C-j" 'lsp-ui-peek-find-definitions
+      "C-," 'lsp-ui-peek-find-references
+      "C-t" 'my-xref/jump-backward
+      "C-p" 'my-xref/jump-forward
       "n" 'realgud:cmd-next
       "s" 'realgud:cmd-step
       "b" 'realgud:cmd-break

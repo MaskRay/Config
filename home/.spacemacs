@@ -383,6 +383,10 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  ;; Default additional-segments causes trouble.
+  ;; Without this, the active window does not show buffer-id, weird.
+  (spaceline-spacemacs-theme nil)
+
   ;; 101 -> 30
   (defun spacemacs/enable-smooth-scrolling ()
     "Enable smooth scrolling."
