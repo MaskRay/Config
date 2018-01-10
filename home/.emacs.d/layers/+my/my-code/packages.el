@@ -118,7 +118,11 @@
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
 
     (with-eval-after-load 'lsp-mode
-      (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+      (add-hook 'lsp-after-open-hook
+                (lambda ()
+                  (when (>= emacs-major-version 26)
+                    (lsp-ui-doc-mode 1))
+                  (lsp-ui-flycheck-enable 1))))
 
     (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
     (advice-add 'lsp-ui-peek--goto-xref :around #'my-advice/xref-set-jump)

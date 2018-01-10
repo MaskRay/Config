@@ -12,9 +12,7 @@
                (locate-dominating-file default-directory ".cquery")))
     (setq eldoc-idle-delay 0.2)
     (lsp-cquery-enable)
-    (lsp-enable-imenu)
-    (when (>= emacs-major-version 26)
-      (lsp-ui-doc-mode 1))))
+    (lsp-enable-imenu)))
 
 
 ;; xref-find-apropos (workspace/symbol)
