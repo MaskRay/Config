@@ -33,6 +33,7 @@
     (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)))
 
 (defun my-code/post-init-dumb-jump ()
+  ;; Don't use dumb-jump-go in large code base.
   (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go))
 
 (defun my-code/post-init-haskell-mode ()
@@ -41,14 +42,9 @@
     ;; (add-hook 'haskell-mode-hook 'structured-haskell-mode)
     ;; (add-hook 'haskell-mode-hook 'lsp-mode)
     ;; (intero-global-mode 1)
-    ;; (add-hook 'haskell-mode-hook 'helm-kythe-mode)
     ;; (add-hook 'haskell-mode-hook 'intero-mode)
     ;; (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
-    ;; (add-to-list 'spacemacs-jump-handlers-haskell-mode 'helm-kythe-find-definitions)
-    ;; (add-to-list 'spacemacs-reference-handlers-haskell-mode 'helm-kythe-find-references)
     )
-  ;; (load "~/Dev/Emacs/emacs-helm-kythe/helm-kythe.el" t)  ;; TODO
-  ;; (spacemacs/set-leader-keys-for-major-mode 'haskell-mode "k" helm-kythe-map)
   )
 
 (defun my-code/post-init-evil ()
@@ -58,12 +54,11 @@
   (define-key evil-normal-state-map (kbd "C-p") 'my-xref/jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'my-xref/jump-backward)
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
-  ;; C-, is unavailable in terminal
   (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
+  ;; Also define M-, because C-, is unavailable in the terminal
   (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
-  (define-key evil-motion-state-map (kbd "C-]") 'my/find-tag)
   (define-key evil-motion-state-map (kbd "C-j")
-    (lambda ()
+    (defun my-xref/find-definitions ()
       (interactive)
       (if lsp-mode (lsp-ui-peek-find-definitions) (spacemacs/jump-to-definition))))
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
@@ -91,6 +86,7 @@
     ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=29619
     (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
 
+    ;; Use helm-xref to display xref.el results.
     (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
     )
   )
@@ -99,9 +95,8 @@
   (use-package lsp-mode
     :config
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-    (setq lsp-enable-flycheck nil) ;; disable lsp-flycheck.el
+    (setq lsp-enable-flycheck nil) ;; disable lsp-flycheck.el in favor of lsp-ui-flycheck.el
     ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
-
 
     ;;; Override
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
@@ -146,16 +141,17 @@
         "lA" #'lsp-ui-peek-find-workspace-symbol
         "lb" (defun my-cquery/base ()
                (interactive)
-               ;; (cquery-xref-find-locations-with-position "$cquery/base")
-               (lsp-ui-peek-find-custom nil "$cquery/base"))
+               ;; (cquery-xref-find-custom "$cquery/base")
+               (lsp-ui-peek-find-custom 'base "$cquery/base"))
         "lc" (defun my-cquery/callers ()
                (interactive)
-               ;; (cquery-xref-find-locations-with-position "$cquery/callers")
-               (lsp-ui-peek-find-custom nil "$cquery/callers"))
+               ;; (cquery-xref-find-custom "$cquery/callers")
+               (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
         "ld" (defun my-cquery/derived ()
                (interactive)
-               ;; (cquery-xref-find-locations-with-position "$cquery/derived")
-               (lsp-ui-peek-find-custom nil "$cquery/derived"))
+               ;; (cquery-xref-find-custom "$cquery/derived")
+               (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
+        ;; https://github.com/jacobdufault/cquery/wiki/Formatting
         "lf" #'lsp-format-buffer
         "ll" #'lsp-ui-sideline-mode
         "lD" #'lsp-ui-doc-mode
@@ -165,7 +161,7 @@
         "lv" (defun my-cquery/vars ()
                (interactive)
                ;; (cquery-xref-find-locations-with-position "$cquery/vars")
-               (lsp-ui-peek-find-custom nil "$cquery/vars"))
+               (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'my-xref/next-reference)

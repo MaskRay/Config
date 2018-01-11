@@ -5,16 +5,6 @@
       (user-error "No file at point"))
     (ffap filename)))
 
-(defun my/find-tag ()
-  (interactive)
-  (let ((old-buffer (current-buffer))
-        (old-point (point)))
-    (helm-gtags-find-tag-from-here)
-    (if (and (equal old-buffer (current-buffer))
-             (equal old-point (point))
-             (not (locate-dominating-file default-directory "GTAGS")))
-        (evil-jump-to-tag))))
-
 
 ;;; realgud
 
