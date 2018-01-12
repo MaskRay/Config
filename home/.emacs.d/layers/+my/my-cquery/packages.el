@@ -3,7 +3,7 @@
 ;; See also https://github.com/jacobdufault/cquery/wiki/Emacs
 ;; TODO Rename to my-cquery/init-cquery after cquery.el is integrated into MELPA
 (defun my-cquery/post-init-lsp-mode ()
-  (add-to-load-path (expand-file-name "~/Dev/Util/cquery/emacs"))
+  (add-to-load-path (expand-file-name "~/Dev/Emacs/emacs-cquery"))
   (require 'lsp-imenu)
   (use-package cquery
     :after lsp-mode

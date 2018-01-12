@@ -82,49 +82,6 @@
 
 ;;; xref
 
-(defvar my-xref--jumps (make-hash-table)
-  "Hashtable which stores all jumps on a per window basis.")
-
-(defmacro my-xref//with-evil-jumps (&rest body)
-  "Make `evil-jumps.el' commands work on `my-xref--jumps'."
-  (declare (indent 1))
-  `(let ((evil--jumps-window-jumps ,my-xref--jumps))
-     ,@body
-     ))
-
-(with-eval-after-load 'evil-jumps
-  (evil-define-motion my-xref/evil-jump-backward (count)
-    (my-xref//with-evil-jumps
-        (evil--jump-backward count)
-      (run-hooks 'xref-after-return-hook)
-    ))
-
-  (evil-define-motion my-xref/evil-jump-forward (count)
-    (my-xref//with-evil-jumps
-        (evil--jump-forward count)
-      (run-hooks 'xref-after-return-hook)
-    )))
-
-(defun my-xref/jump-backward ()
-  (interactive)
-  (pcase major-mode
-    ((or c-mode c++-mode)
-     (if lsp-mode
-         (my-xref/evil-jump-backward)
-         (helm-gtags-pop-stack)))
-    (_ (helm-gtags-pop-stack))
-    ))
-
-(defun my-xref/jump-forward ()
-  (interactive)
-  (pcase major-mode
-    ((or c-mode c++-mode)
-     (if lsp-mode
-         (my-xref/evil-jump-forward)
-         (evil-jump-forward)))
-    (_ (evil-jump-forward))
-    ))
-
 (defun my-xref//references-in-pair ()
   (let ((refs (lsp--send-request (lsp--make-request
                                   "textDocument/references"
@@ -181,10 +138,6 @@
       (forward-char (caddr res))
       nil)))
 
-(defun my-advice/xref-set-jump (orig-fun &rest args)
-  (my-xref//with-evil-jumps (evil-set-jump))
-  (apply orig-fun args))
-
 ;;; Override
 ;; This function is transitively called by xref-find-{definitions,references,apropos}
 (require 'xref)
@@ -195,12 +148,12 @@
     nil)
    ((and (not (cdr xrefs)) (not always-show-list))
     ;; PATCH
-    (my-xref//with-evil-jumps (evil-set-jump))
+    (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
     (xref--pop-to-location (car xrefs) display-action))
    (t
     ;; PATCH
-    (my-xref//with-evil-jumps (evil-set-jump))
+    (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
     ;; PATCH Jump to the first candidate
     ;; (when xrefs

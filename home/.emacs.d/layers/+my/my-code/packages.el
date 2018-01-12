@@ -51,12 +51,15 @@
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
   (define-key evil-normal-state-map "gf" 'my/ffap)
-  (define-key evil-normal-state-map (kbd "C-p") 'my-xref/jump-forward)
-  (define-key evil-normal-state-map (kbd "C-t") 'my-xref/jump-backward)
+  (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
+  (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
-  (define-key evil-motion-state-map (kbd "C-,") 'spacemacs/jump-to-reference)
+  (define-key evil-motion-state-map (kbd "C-,")
+    (defun my-xref/find-references ()
+      (interactive)
+      (if lsp-mode (lsp-ui-peek-find-references) (spacemacs/jump-to-definition))))
   ;; Also define M-, because C-, is unavailable in the terminal
-  (define-key evil-motion-state-map (kbd "M-,") 'spacemacs/jump-to-reference)
+  (define-key evil-motion-state-map (kbd "M-,") #'my-xref/find-reference)
   (define-key evil-motion-state-map (kbd "C-j")
     (defun my-xref/find-definitions ()
       (interactive)
@@ -120,7 +123,6 @@
                   (lsp-ui-flycheck-enable 1))))
 
     (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
-    (advice-add 'lsp-ui-peek--goto-xref :around #'my-advice/xref-set-jump)
     (evil-make-overriding-map lsp-ui-peek-mode-map 'normal)
     (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
     (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
@@ -135,22 +137,19 @@
     ;;   (set-face-attribute 'lsp-ui-sideline-contents nil :foreground "grey35")
     ;;   (set-face-attribute 'lsp-ui-sideline-current-contents nil :foreground "grey43"))
 
+    (defun my-cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
+    (defun my-cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
+    (defun my-cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
+    (defun my-cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
+
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
         "la" #'lsp-ui-find-workspace-symbol
         "lA" #'lsp-ui-peek-find-workspace-symbol
-        "lb" (defun my-cquery/base ()
-               (interactive)
-               ;; (cquery-xref-find-custom "$cquery/base")
-               (lsp-ui-peek-find-custom 'base "$cquery/base"))
-        "lc" (defun my-cquery/callers ()
-               (interactive)
-               ;; (cquery-xref-find-custom "$cquery/callers")
-               (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
-        "ld" (defun my-cquery/derived ()
-               (interactive)
-               ;; (cquery-xref-find-custom "$cquery/derived")
-               (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
+        "lb" #'my-cquery/base
+        "lc" #'my-cquery/callers
+        "ld" #'my-cquery/derived
+        ;; Formatting requires waf configure --use-clang-cxx
         ;; https://github.com/jacobdufault/cquery/wiki/Formatting
         "lf" #'lsp-format-buffer
         "ll" #'lsp-ui-sideline-mode
@@ -158,10 +157,7 @@
         "ln" #'my-xref/next-reference
         "lp" #'my-xref/previous-reference
         "lr" #'lsp-rename
-        "lv" (defun my-cquery/vars ()
-               (interactive)
-               ;; (cquery-xref-find-locations-with-position "$cquery/vars")
-               (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
+        "lv" #'my-cquery/vars
        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'my-xref/next-reference)
@@ -205,8 +201,8 @@
       :bindings
       "C-j" 'lsp-ui-peek-find-definitions
       "C-," 'lsp-ui-peek-find-references
-      "C-t" 'my-xref/jump-backward
-      "C-p" 'my-xref/jump-forward
+      "C-t" 'lsp-ui-peek-jump-backward
+      "C-p" 'lsp-ui-peek-jump-forward
       "n" 'realgud:cmd-next
       "s" 'realgud:cmd-step
       "b" 'realgud:cmd-break

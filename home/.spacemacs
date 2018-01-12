@@ -35,7 +35,7 @@ This function should only modify configuration layer settings."
      colors
      d
      dash
-     emacs-lisp
+     (emacs-lisp :variables emacs-lisp-hide-namespace-prefix nil)
      emoji
      evil-commentary
      (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
@@ -373,6 +373,7 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  (setq c-c++-excluded-packages '(company-ycmd ycmd))
   )
 
 (defun dotspacemacs/user-config ()
