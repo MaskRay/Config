@@ -1,7 +1,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-(defun my//enable-cquery-if-compile-commands-json ()
+(defun my-cquery//enable ()
   (when
       (and buffer-file-name
            (not (and (boundp 'lsp-mode) lsp-mode))
@@ -11,8 +11,7 @@
            (or (locate-dominating-file default-directory "compile_commands.json")
                (locate-dominating-file default-directory ".cquery")))
     (setq eldoc-idle-delay 0.2)
-    (lsp-cquery-enable)
-    (lsp-enable-imenu)))
+    (lsp-cquery-enable)))
 
 
 ;; xref-find-apropos (workspace/symbol)

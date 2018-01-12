@@ -82,6 +82,14 @@
 
 ;;; xref
 
+(defun my-xref/find-definitions ()
+  (interactive)
+  (if lsp-mode (lsp-ui-peek-find-definitions) (spacemacs/jump-to-definition)))
+
+(defun my-xref/find-references ()
+  (interactive)
+  (if lsp-mode (lsp-ui-peek-find-references) (spacemacs/jump-to-definition)))
+
 (defun my-xref//references-in-pair ()
   (let ((refs (lsp--send-request (lsp--make-request
                                   "textDocument/references"

@@ -4,6 +4,7 @@
     company-lsp
     dumb-jump
     evil
+    flycheck
     haskell-mode
     helm-xref
     (lsp-mode :location local)
@@ -30,11 +31,16 @@
 (defun my-code/init-company-lsp ()
   (use-package company-lsp
     :config
+    (setq company-lsp-async t
+          company-lsp-cache-candidates nil)
     (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)))
 
 (defun my-code/post-init-dumb-jump ()
   ;; Don't use dumb-jump-go in large code base.
   (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go))
+
+(defun my-code/post-init-flycheck ()
+  (setq flycheck-check-syntax-automatically '(mode-enabled save)))
 
 (defun my-code/post-init-haskell-mode ()
   (with-eval-after-load 'haskell-mode
@@ -51,19 +57,14 @@
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
   (define-key evil-normal-state-map "gf" 'my/ffap)
+  (define-key evil-normal-state-map (kbd "<backspace>") 'spacemacs/evil-search-clear-highlight)
   (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
-  (define-key evil-motion-state-map (kbd "C-,")
-    (defun my-xref/find-references ()
-      (interactive)
-      (if lsp-mode (lsp-ui-peek-find-references) (spacemacs/jump-to-definition))))
+  (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
   ;; Also define M-, because C-, is unavailable in the terminal
-  (define-key evil-motion-state-map (kbd "M-,") #'my-xref/find-reference)
-  (define-key evil-motion-state-map (kbd "C-j")
-    (defun my-xref/find-definitions ()
-      (interactive)
-      (if lsp-mode (lsp-ui-peek-find-definitions) (spacemacs/jump-to-definition))))
+  (define-key evil-motion-state-map (kbd "M-,") #'my-xref/find-references)
+  (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
   (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
 
@@ -76,6 +77,9 @@
     "ag" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr" t t))
     "aG" (lambda () (interactive) (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
     "TD" #'my/realtime-elisp-doc
+    ;; previous/next modified hunk in git
+    "gp" (lambda () (interactive) (git-gutter+-next-hunk -1))
+    "gn" (lambda () (interactive) (git-gutter+-next-hunk 1))
     )
 
   (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
@@ -97,16 +101,11 @@
 (defun my-code/init-lsp-mode ()
   (use-package lsp-mode
     :config
+    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
     (setq lsp-enable-flycheck nil) ;; disable lsp-flycheck.el in favor of lsp-ui-flycheck.el
     ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
-
-    ;;; Override
-    (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
-      (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
-        (add-to-list handler 'lsp-ui-peek-find-definitions))
-      (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
-        (add-to-list handler 'lsp-ui-peek-find-references))))
+    )
   )
 
 (defun my-code/init-lsp-ui ()
@@ -115,12 +114,18 @@
     :config
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
 
-    (with-eval-after-load 'lsp-mode
-      (add-hook 'lsp-after-open-hook
-                (lambda ()
-                  (when (>= emacs-major-version 26)
-                    (lsp-ui-doc-mode 1))
-                  (lsp-ui-flycheck-enable 1))))
+    (add-hook 'lsp-after-open-hook
+              (lambda ()
+                (when (>= emacs-major-version 26)
+                  (lsp-ui-doc-mode 1))
+                (lsp-ui-flycheck-enable 1)))
+
+    ;;; Override
+    (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
+      (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
+        (add-to-list handler 'lsp-ui-peek-find-definitions))
+      (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
+        (add-to-list handler 'lsp-ui-peek-find-references)))
 
     (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
     (evil-make-overriding-map lsp-ui-peek-mode-map 'normal)
@@ -174,16 +179,11 @@
 
 (defun my-code/init-lsp-rust ()
   (use-package lsp-rust
+    :defer t
     :after lsp-mode
     :config
     (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
-    (add-hook 'rust-mode-hook
-              (defun my/rust-mode-hook ()
-                (lsp-rust-enable)
-                (when (>= emacs-major-version 26)
-                  (setq lsp-enable-eldoc nil)
-                  (lsp-ui-doc-mode 1))))
-    ))
+    (add-hook 'rust-mode-hook #'lsp-rust-enable)))
 
 (defun my-code/post-init-realgud ()
   (with-eval-after-load 'realgud

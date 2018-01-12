@@ -1,9 +1,7 @@
-(defconst my-cquery-packages '(lsp-mode))
+(defconst my-cquery-packages '((cquery :location local)))
 
 ;; See also https://github.com/jacobdufault/cquery/wiki/Emacs
-;; TODO Rename to my-cquery/init-cquery after cquery.el is integrated into MELPA
-(defun my-cquery/post-init-lsp-mode ()
-  (add-to-load-path (expand-file-name "~/Dev/Emacs/emacs-cquery"))
+(defun my-cquery/init-cquery ()
   (require 'lsp-imenu)
   (use-package cquery
     :after lsp-mode
@@ -14,4 +12,4 @@
     ;; cquery.cl cquery--publich-semantic-highlighting is very slow
     (setq cquery-enable-sem-highlight t)
     (setq cquery-extra-init-params '(:enableComments 2 :cacheFormat "msgpack"))
-    (add-hook 'c-mode-common-hook #'my//enable-cquery-if-compile-commands-json)))
+    (add-hook 'c-mode-common-hook #'my-cquery//enable)))
