@@ -6,10 +6,10 @@
     evil
     haskell-mode
     helm-xref
-    lsp-mode
+    (lsp-mode :location local)
     lsp-haskell
     lsp-rust
-    lsp-ui
+    (lsp-ui :location local)
     realgud
     smartparens
     ))
