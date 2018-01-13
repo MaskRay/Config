@@ -2,7 +2,6 @@
 
 ;; See also https://github.com/jacobdufault/cquery/wiki/Emacs
 (defun my-cquery/init-cquery ()
-  (require 'lsp-imenu)
   (use-package cquery
     :after lsp-mode
     :config

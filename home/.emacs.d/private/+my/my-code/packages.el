@@ -11,6 +11,7 @@
     lsp-haskell
     lsp-rust
     (lsp-ui :location local)
+    markdown-mode
     realgud
     smartparens
     ))
@@ -30,10 +31,12 @@
 
 (defun my-code/init-company-lsp ()
   (use-package company-lsp
-    :config
+    :after company
+    :init
     (setq company-lsp-async t
           company-lsp-cache-candidates nil)
-    (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)))
+    (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)
+    ))
 
 (defun my-code/post-init-dumb-jump ()
   ;; Don't use dumb-jump-go in large code base.
@@ -67,6 +70,9 @@
   (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
   (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
+  (define-key evil-normal-state-map (kbd "C-c P s") 'profiler-start)
+  (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
+  (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
 
   (spacemacs/set-leader-keys
     "aa" (lambda ()
@@ -85,6 +91,9 @@
   (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
   )
 
+(defun my-code/init-markdown-mode ()
+  (use-package markdown-mode))
+
 (defun my-code/init-helm-xref ()
   (use-package helm-xref
     :config
@@ -99,6 +108,7 @@
   )
 
 (defun my-code/init-lsp-mode ()
+  (require 'lsp-imenu)
   (use-package lsp-mode
     :config
     (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
@@ -111,14 +121,16 @@
 (defun my-code/init-lsp-ui ()
   (use-package lsp-ui
     :after lsp-mode
+    :after markdown-mode
     :config
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
 
-    (add-hook 'lsp-after-open-hook
-              (lambda ()
-                (when (>= emacs-major-version 26)
-                  (lsp-ui-doc-mode 1))
-                (lsp-ui-flycheck-enable 1)))
+    ;; TODO slow https://github.com/emacs-lsp/lsp-ui/issues/45
+    ;; (lsp-ui-flycheck-enable 1)
+    (setq lsp-ui-flycheck-enable nil)
+    (setq lsp-ui-sideline-enable nil)
+
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
     ;;; Override
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
