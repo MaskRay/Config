@@ -435,11 +435,25 @@ This function is called at the very end of Spacemacs initialization."
  '(realgud-safe-mode nil)
  '(sp-autodelete-pair nil)
  '(sp-autoinsert-pair nil)
- '(sp-autoskip-closing-pair nil))
+ '(sp-autoskip-closing-pair nil)
+
+ '(cquery-sem-free-var-faces [cquery-sem-free-var-face-0 cquery-sem-free-var-face-1 cquery-sem-free-var-face-2 cquery-sem-free-var-face-3 cquery-sem-free-var-face-4 cquery-sem-free-var-face-5 cquery-sem-free-var-face-6 cquery-sem-free-var-face-7 cquery-sem-free-var-face-8 cquery-sem-free-var-face-9])
+ '(cquery-sem-member-var-faces [cquery-sem-member-var-face-0 cquery-sem-member-var-face-1 cquery-sem-member-var-face-2 cquery-sem-member-var-face-3 cquery-sem-member-var-face-4 cquery-sem-member-var-face-5 cquery-sem-member-var-face-6 cquery-sem-member-var-face-7 cquery-sem-member-var-face-8 cquery-sem-member-var-face-9])
+ '(cquery-sem-free-func-faces [cquery-sem-free-func-face-0 cquery-sem-free-func-face-1 cquery-sem-free-func-face-2 cquery-sem-free-func-face-3 cquery-sem-free-func-face-4 cquery-sem-free-func-face-5 cquery-sem-free-func-face-6 cquery-sem-free-func-face-7 cquery-sem-free-func-face-8 cquery-sem-free-func-face-9])
+ '(cquery-sem-member-func-faces [cquery-sem-member-func-face-0 cquery-sem-member-func-face-1 cquery-sem-member-func-face-2 cquery-sem-member-func-face-3 cquery-sem-member-func-face-4 cquery-sem-member-func-face-5 cquery-sem-member-func-face-6 cquery-sem-member-func-face-7 cquery-sem-member-func-face-8 cquery-sem-member-func-face-9])
+ '(cquery-sem-type-faces [cquery-sem-type-face-0 cquery-sem-type-face-1 cquery-sem-type-face-2 cquery-sem-type-face-3 cquery-sem-type-face-4 cquery-sem-type-face-5 cquery-sem-type-face-6 cquery-sem-type-face-7 cquery-sem-type-face-8 cquery-sem-type-face-9])
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(lsp-face-highlight-textual ((t (:background "gray25")))))
+ '(lsp-face-highlight-textual ((t (:background "gray25"))))
+ '(cquery-sem-free-var-face ((t :inherit font-lock-variable-name-face)))
+
+ '(cquery-sem-member-var-face ((t :slant italic :inherit font-lock-variable-name-face :foreground "#91b2b2")))
+ ;; '(cquery-sem-member-func-face ((t :foreground "#d67c17")))
+ '(cquery-sem-member-func-face ((t :slant italic :inherit font-lock-function-name-face)))
+ '(cquery-sem-type-face ((t :foreground "#e0438a")))
+ )
 )
