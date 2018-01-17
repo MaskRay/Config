@@ -6,12 +6,13 @@
     evil
     flycheck
     haskell-mode
-    helm-xref
+    ivy-xref
     (lsp-mode :location local)
     lsp-haskell
     lsp-rust
     (lsp-ui :location local)
     markdown-mode
+    modern-cpp-font-lock
     realgud
     smartparens
     ))
@@ -33,7 +34,8 @@
   (use-package company-lsp
     :after company
     :init
-    (setq company-lsp-async t
+    (setq company-transformers nil
+          company-lsp-async t
           company-lsp-cache-candidates nil)
     (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)
     ))
@@ -94,16 +96,16 @@
 (defun my-code/init-markdown-mode ()
   (use-package markdown-mode))
 
-(defun my-code/init-helm-xref ()
-  (use-package helm-xref
+(defun my-code/init-ivy-xref ()
+  (use-package ivy-xref
     :config
     ;; This is required to make xref-find-references work in helm-mode.
     ;; In helm-mode, it gives a prompt and asks the identifier (which has no text property) and then passes it to lsp-mode, which requires the text property at point to locate the references.
     ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=29619
     (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
 
-    ;; Use helm-xref to display xref.el results.
-    (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
+    ;; Use ivy-xref to display xref.el results.
+    (setq xref-show-xrefs-function 'ivy-xref-show-xrefs)
     )
   )
 
@@ -196,6 +198,15 @@
     :config
     (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
     (add-hook 'rust-mode-hook #'lsp-rust-enable)))
+
+(defun my-code/init-modern-cpp-font-lock ()
+  (use-package modern-cpp-font-lock
+    :defer t
+    :init
+    (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+    :config
+    (spacemacs|diminish modern-c++-font-lock-mode)
+    ))
 
 (defun my-code/post-init-realgud ()
   (with-eval-after-load 'realgud

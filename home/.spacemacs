@@ -47,8 +47,8 @@ This function should only modify configuration layer settings."
      idris
      javascript
      haskell
-     helm
      html
+     ivy
      latex
      markdown
      my  ; ~/.emacs.d/layers/+my/my/
@@ -405,7 +405,6 @@ you should place your code here."
   (remove-hook 'c-mode-hook 'ycmd-mode)
   (remove-hook 'c++-mode-hook 'ycmd-mode)
   (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
-  (helm-autoresize-mode 1)
 
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
@@ -436,12 +435,6 @@ This function is called at the very end of Spacemacs initialization."
  '(sp-autodelete-pair nil)
  '(sp-autoinsert-pair nil)
  '(sp-autoskip-closing-pair nil)
-
- '(cquery-sem-free-var-faces [cquery-sem-free-var-face-0 cquery-sem-free-var-face-1 cquery-sem-free-var-face-2 cquery-sem-free-var-face-3 cquery-sem-free-var-face-4 cquery-sem-free-var-face-5 cquery-sem-free-var-face-6 cquery-sem-free-var-face-7 cquery-sem-free-var-face-8 cquery-sem-free-var-face-9])
- '(cquery-sem-member-var-faces [cquery-sem-member-var-face-0 cquery-sem-member-var-face-1 cquery-sem-member-var-face-2 cquery-sem-member-var-face-3 cquery-sem-member-var-face-4 cquery-sem-member-var-face-5 cquery-sem-member-var-face-6 cquery-sem-member-var-face-7 cquery-sem-member-var-face-8 cquery-sem-member-var-face-9])
- '(cquery-sem-free-func-faces [cquery-sem-free-func-face-0 cquery-sem-free-func-face-1 cquery-sem-free-func-face-2 cquery-sem-free-func-face-3 cquery-sem-free-func-face-4 cquery-sem-free-func-face-5 cquery-sem-free-func-face-6 cquery-sem-free-func-face-7 cquery-sem-free-func-face-8 cquery-sem-free-func-face-9])
- '(cquery-sem-member-func-faces [cquery-sem-member-func-face-0 cquery-sem-member-func-face-1 cquery-sem-member-func-face-2 cquery-sem-member-func-face-3 cquery-sem-member-func-face-4 cquery-sem-member-func-face-5 cquery-sem-member-func-face-6 cquery-sem-member-func-face-7 cquery-sem-member-func-face-8 cquery-sem-member-func-face-9])
- '(cquery-sem-type-faces [cquery-sem-type-face-0 cquery-sem-type-face-1 cquery-sem-type-face-2 cquery-sem-type-face-3 cquery-sem-type-face-4 cquery-sem-type-face-5 cquery-sem-type-face-6 cquery-sem-type-face-7 cquery-sem-type-face-8 cquery-sem-type-face-9])
  )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
