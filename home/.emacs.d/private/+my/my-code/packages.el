@@ -76,6 +76,21 @@
   (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
   (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
 
+  (evil-define-motion evil-end-of-line (count)
+    "Move the cursor to the end of the current line.
+If COUNT is given, move COUNT - 1 lines downward first."
+    :type inclusive
+    (move-end-of-line count)
+    (when evil-track-eol
+      (setq temporary-goal-column most-positive-fixnum
+            this-command 'next-line))
+    (unless (and (evil-visual-state-p) evil-v$-gets-eol)
+      (evil-adjust-cursor)
+      (when (eolp)
+        ;; prevent "c$" and "d$" from deleting blank lines
+        (setq evil-this-type 'exclusive))))
+  (setq evil-v$-gets-eol nil)
+
   (spacemacs/set-leader-keys
     "aa" (lambda ()
            (interactive)
@@ -236,6 +251,7 @@
       "r" 'realgud:cmd-restart
       "q" 'realgud:cmd-quit
       "S" 'realgud-window-cmd-undisturb-src)
+    ;; (evil-define-key 'evilified org-agenda-mode-map (kbd "v") nil)
 
     ;; Rebind 1 .. 9 to M-1 .. M-9
     ;; (define-key realgud:shortkey-mode-map (kbd "M-1") #'realgud-goto-arrow1)
