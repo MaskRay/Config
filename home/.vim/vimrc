@@ -415,7 +415,6 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
-  Plug 'dbgx/lldb.nvim'
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
   "Plug 'vim-airline/vim-airline'
@@ -446,7 +445,9 @@ if 1
   " Tools
   "Plug 'Shougo/neocomplete.vim'
   if has('nvim')
-    Plug 'autozimu/LanguageClient-neovim'
+    Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ }
     Plug 'kassio/neoterm'
   else
     Plug 'roxma/nvim-yarp'
@@ -461,7 +462,6 @@ if 1
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
   Plug 'Shougo/neoyank.vim'
-  Plug 'Shougo/unite.vim'
   Plug 'Shougo/denite.nvim'
   Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerExplorer' }
   Plug 'Shougo/vimproc.vim', { 'do': 'make' }

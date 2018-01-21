@@ -1,17 +1,14 @@
 (defconst my-code-packages
   '(
     cc-mode
-    company-lsp
     dumb-jump
     evil
     flycheck
     haskell-mode
-    ivy-xref
-    (lsp-mode :location local)
     lsp-haskell
     lsp-rust
+    (lsp-mode :location local)
     (lsp-ui :location local)
-    markdown-mode
     modern-cpp-font-lock
     realgud
     smartparens
@@ -29,16 +26,6 @@
              (evil-normal-state)
              )))
   )
-
-(defun my-code/init-company-lsp ()
-  (use-package company-lsp
-    :after company
-    :init
-    (setq company-transformers nil
-          company-lsp-async t
-          company-lsp-cache-candidates nil)
-    (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)
-    ))
 
 (defun my-code/post-init-dumb-jump ()
   ;; Don't use dumb-jump-go in large code base.
@@ -108,9 +95,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
   (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
   )
 
-(defun my-code/init-markdown-mode ()
-  (use-package markdown-mode))
-
 (defun my-code/init-ivy-xref ()
   (use-package ivy-xref
     :config
@@ -124,18 +108,15 @@ If COUNT is given, move COUNT - 1 lines downward first."
     )
   )
 
-(defun my-code/init-lsp-mode ()
-  (require 'lsp-imenu)
+(defun my-code/post-init-lsp-mode ()
   (use-package lsp-mode
     :config
-    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-    (setq lsp-enable-flycheck nil) ;; disable lsp-flycheck.el in favor of lsp-ui-flycheck.el
     ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
     )
   )
 
-(defun my-code/init-lsp-ui ()
+(defun my-code/post-init-lsp-ui ()
   (use-package lsp-ui
     :after lsp-mode
     :after markdown-mode
@@ -157,7 +138,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
         (add-to-list handler 'lsp-ui-peek-find-references)))
 
     (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
-    (evil-make-overriding-map lsp-ui-peek-mode-map 'normal)
     (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
     (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
     (define-key lsp-ui-peek-mode-map (kbd "j") 'lsp-ui-peek--select-next)
@@ -188,14 +168,14 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "lf" #'lsp-format-buffer
         "ll" #'lsp-ui-sideline-mode
         "lD" #'lsp-ui-doc-mode
-        "ln" #'my-xref/next-reference
-        "lp" #'my-xref/previous-reference
+        "ln" #'lsp-ui-find-next-reference
+        "lp" #'lsp-ui-find-previous-reference
         "lr" #'lsp-rename
         "lv" #'my-cquery/vars
        ))
 
-    (define-key evil-motion-state-map (kbd "M-<down>") 'my-xref/next-reference)
-    (define-key evil-motion-state-map (kbd "M-<up>") 'my-xref/previous-reference)
+    (define-key evil-motion-state-map (kbd "M-<down>") 'lsp-ui-find-next-reference)
+    (define-key evil-motion-state-map (kbd "M-<up>") 'lsp-ui-find-previous-reference)
     ))
 
 (defun my-code/init-lsp-haskell ()

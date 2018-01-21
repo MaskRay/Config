@@ -12,5 +12,5 @@
     (setq cquery-enable-sem-highlight t)
     (cquery-use-default-rainbow-sem-highlight)
 
-    (setq cquery-extra-init-params '(:enableComments 2 :cacheFormat "msgpack"))
+    (setq cquery-extra-init-params '(:cacheFormat "msgpack" :index (:builtin_types t :comments 2)))
     (add-hook 'c-mode-common-hook #'my-cquery//enable)))

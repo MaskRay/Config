@@ -1,1 +1,1 @@
-(configuration-layer/declare-layers '(my-code my-cquery))
+(configuration-layer/declare-layers '(my-code my-cquery my-lsp))

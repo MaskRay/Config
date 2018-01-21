@@ -90,62 +90,6 @@
   (interactive)
   (if lsp-mode (lsp-ui-peek-find-references) (spacemacs/jump-to-definition)))
 
-(defun my-xref//references-in-pair ()
-  (let ((refs (lsp--send-request (lsp--make-request
-                                  "textDocument/references"
-                                  (lsp--make-reference-params)))))
-    (sort
-     (mapcar
-      (lambda (ref)
-        (let* ((filename (string-remove-prefix lsp--uri-file-prefix (gethash "uri" ref)))
-               (range (gethash "range" ref))
-               (start (gethash "start" range))
-               (line (gethash "line" start))
-               (column (gethash "character" start)))
-          (list filename line column))) refs)
-     (lambda (x y)
-       (if (not (string= (car x) (car y)))
-           (string< (car x) (car y))
-         (if (not (= (cadr x) (cadr y)))
-             (< (cadr x) (cadr y))
-           (< (caddr x) (caddr y))))))))
-
-(defun my-xref/next-reference ()
-  (interactive)
-  (let* ((line (lsp--cur-line))
-         (column (lsp--cur-column))
-         (refs (my-xref//references-in-pair))
-         (res (-first (lambda (x)
-                        (if (not (string= (car x) buffer-file-name))
-                            (string> (car x) buffer-file-name)
-                          (if (not (= (cadr x) line))
-                              (> (cadr x) line)
-                            (> (caddr x) column)))) refs)))
-    (when res
-      (find-file (car res))
-      (goto-char 1)
-      (forward-line (cadr res))
-      (forward-char (caddr res))
-      nil)))
-
-(defun my-xref/previous-reference ()
-  (interactive)
-  (let* ((line (lsp--cur-line))
-         (column (lsp--cur-column))
-         (refs (my-xref//references-in-pair))
-         (res (-last (lambda (x)
-                        (if (not (string= (car x) buffer-file-name))
-                            (string< (car x) buffer-file-name)
-                          (if (not (= (cadr x) line))
-                              (< (cadr x) line)
-                            (< (caddr x) column)))) refs)))
-    (when res
-      (find-file (car res))
-      (goto-char 1)
-      (forward-line (cadr res))
-      (forward-char (caddr res))
-      nil)))
-
 ;;; Override
 ;; This function is transitively called by xref-find-{definitions,references,apropos}
 (require 'xref)
