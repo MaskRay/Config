@@ -3,7 +3,6 @@
 ;; See also https://github.com/jacobdufault/cquery/wiki/Emacs
 (defun my-cquery/init-cquery ()
   (use-package cquery
-    :after lsp-mode
     :init
     (add-hook 'c-mode-common-hook #'cquery//enable)
     :config

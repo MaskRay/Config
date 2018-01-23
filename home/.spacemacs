@@ -29,7 +29,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(auto-completion
+   '((auto-completion :variables auto-completion-enable-help-tooltip t)
      better-defaults
      (c-c++ :variables c-c++-default-mode-for-headers 'c++-mode)
      colors

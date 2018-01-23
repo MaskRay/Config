@@ -5,13 +5,14 @@
     (ivy-xref :requires ivy)
     (lsp-mode :location local)
     (lsp-ui :location local)
-    markdown-mode  ;; depended by lsp-ui
+    lsp-python
     ))
 
 (defun my-lsp/init-company-lsp ()
   (use-package company-lsp
     :defer t
     :init
+    (setq company-quickhelp-delay 0)
     ;; Language servers have better idea filtering and sorting,
     ;; don't filter results on the client side.
     (setq company-transformers nil
@@ -63,5 +64,9 @@
     (add-hook 'spacemacs-post-theme-change-hook #'sync-peek-face)
     ))
 
-(defun my-lsp/init-markdown-mode ()
-  (use-package markdown-mode))
+(defun my-lsp/init-lsp-python ()
+  (use-package lsp-python
+    :init
+    (add-hook 'lsp-mode-hook #'lsp-python-enable)
+    :config
+    ))
