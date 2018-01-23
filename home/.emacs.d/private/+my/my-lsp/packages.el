@@ -10,7 +10,7 @@
 
 (defun my-lsp/init-company-lsp ()
   (use-package company-lsp
-    :after company
+    :defer t
     :init
     ;; Language servers have better idea filtering and sorting,
     ;; don't filter results on the client side.
@@ -58,6 +58,9 @@
     :after markdown-mode
     :config
     (add-hook 'lsp-mode-hook #'lsp-ui-mode)
+
+    (my-lsp//sync-peek-face)
+    (add-hook 'spacemacs-post-theme-change-hook #'sync-peek-face)
     ))
 
 (defun my-lsp/init-markdown-mode ()

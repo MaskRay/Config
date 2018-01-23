@@ -1,16 +1,16 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-(defun my-cquery//enable ()
+(defun cquery//enable ()
   (when
       (and buffer-file-name
-           (not (and (boundp 'lsp-mode) lsp-mode))
            (or
-            (cl-some (lambda (x) (string-match-p x buffer-file-name)) my-cquery-whitelist)
-            (cl-notany (lambda (x) (string-match-p x buffer-file-name)) my-cquery-blacklist))
+            (cl-some (lambda (x) (string-match-p x buffer-file-name))
+                     cquery-project-whitelist)
+            (cl-notany (lambda (x) (string-match-p x buffer-file-name))
+                       cquery-project-blacklist))
            (or (locate-dominating-file default-directory "compile_commands.json")
                (locate-dominating-file default-directory ".cquery")))
-    (setq eldoc-idle-delay 0.2)
     (lsp-cquery-enable)))
 
 
