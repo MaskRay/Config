@@ -113,20 +113,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
     :config
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
     ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
-    )
-  )
-
-(defun my-code/post-init-lsp-ui ()
-  (use-package lsp-ui
-    :after lsp-mode
-    :after markdown-mode
-    :config
-    (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
-
-    ;; TODO slow https://github.com/emacs-lsp/lsp-ui/issues/45
-    ;; (lsp-ui-flycheck-enable 1)
-    (setq lsp-ui-flycheck-enable nil)
-    (setq lsp-ui-sideline-enable nil)
 
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
@@ -137,32 +123,18 @@ If COUNT is given, move COUNT - 1 lines downward first."
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
         (add-to-list handler 'lsp-ui-peek-find-references)))
 
-    (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
-    (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
-    (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
-    (define-key lsp-ui-peek-mode-map (kbd "j") 'lsp-ui-peek--select-next)
-    (define-key lsp-ui-peek-mode-map (kbd "k") 'lsp-ui-peek--select-prev)
-
-    (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
-    (setq lsp-ui-sideline-ignore-duplicate t)
-    (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
-    (set-face-attribute 'lsp-ui-sideline-current-symbol nil :foreground "grey38" :box nil)
-    ;; (when (internal-lisp-face-p 'lsp-ui-sideline-contents)
-    ;;   (set-face-attribute 'lsp-ui-sideline-contents nil :foreground "grey35")
-    ;;   (set-face-attribute 'lsp-ui-sideline-current-contents nil :foreground "grey43"))
-
-    (defun my-cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
-    (defun my-cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
-    (defun my-cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
-    (defun my-cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
+    (defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
+    (defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
+    (defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
+    (defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
         "la" #'lsp-ui-find-workspace-symbol
         "lA" #'lsp-ui-peek-find-workspace-symbol
-        "lb" #'my-cquery/base
-        "lc" #'my-cquery/callers
-        "ld" #'my-cquery/derived
+        "lb" #'cquery/base
+        "lc" #'cquery/callers
+        "ld" #'cquery/derived
         ;; Formatting requires waf configure --use-clang-cxx
         ;; https://github.com/jacobdufault/cquery/wiki/Formatting
         "lf" #'lsp-format-buffer
@@ -171,11 +143,33 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "ln" #'lsp-ui-find-next-reference
         "lp" #'lsp-ui-find-previous-reference
         "lr" #'lsp-rename
-        "lv" #'my-cquery/vars
+        "lv" #'cquery/vars
        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'lsp-ui-find-next-reference)
     (define-key evil-motion-state-map (kbd "M-<up>") 'lsp-ui-find-previous-reference)
+    )
+  )
+
+(defun my-code/post-init-lsp-ui ()
+  (use-package lsp-ui
+    :config
+    (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
+
+    ;; TODO slow https://github.com/emacs-lsp/lsp-ui/issues/45
+    ;; (lsp-ui-flycheck-enable 1)
+    (setq lsp-ui-flycheck-enable nil)
+    (setq lsp-ui-sideline-enable nil)
+    (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
+    (set-face-attribute 'lsp-ui-sideline-current-symbol nil :foreground "grey38" :box nil)
+
+    (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
+    (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
+    (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
+    (define-key lsp-ui-peek-mode-map (kbd "j") 'lsp-ui-peek--select-next)
+    (define-key lsp-ui-peek-mode-map (kbd "k") 'lsp-ui-peek--select-prev)
     ))
 
 (defun my-code/init-lsp-haskell ()

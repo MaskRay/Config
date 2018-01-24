@@ -1,4 +1,4 @@
-(defun my-lsp//sync-peek-face ()
+(defun lsp//sync-peek-face ()
   (set-face-attribute 'lsp-ui-peek-list nil :background (face-attribute 'hl-line :background))
   (set-face-attribute 'lsp-ui-peek-peek nil :background (face-attribute 'hl-line :background))
   (set-face-attribute 'lsp-ui-peek-selection nil
