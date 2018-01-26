@@ -1,5 +1,5 @@
 # Options {{{1
-set debug-file-directory /tmp/debug
+set debug-file-directory /usr/lib/debug
 set $ASM = 0
 
 set confirm off

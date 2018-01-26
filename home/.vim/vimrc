@@ -591,11 +591,12 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
-      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--language-server', '--log-file=/tmp/cq.log'],
+      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--init={}', '--log-file=/tmp/cq.log'],
       \ 'objc': ['cquery', '--language-server'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_devel = 1
 
 augroup LanguageClient_config
   au!
@@ -604,7 +605,7 @@ augroup LanguageClient_config
   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient_textDocument_hover() | endif
+  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient_textDocument_signatureHelp() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -1081,7 +1082,8 @@ nn <silent> K :call LanguageClient_textDocument_hover()<cr>
 nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3
 "nn <silent> <M-,> :Gtags <C-r><C-w><cr>
-nn <M-,> :Denite references<cr>
+"nn <M-,> :Denite references<cr>
+nn <M-,> :sil call LanguageClient_textDocument_references({'includeDeclaration': v:false})<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
 nn <M-down> :lnext<cr>zvzz
 nn <M-up> :lprevious<cr>zvzz

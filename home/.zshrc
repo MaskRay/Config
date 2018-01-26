@@ -375,7 +375,11 @@ if [[ -n ${commands[bfs]} ]]; then
   export FZF_DEFAULT_COMMAND=$FZF_CTRL_T_COMMAND
 fi
 
-[[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
+if [[ -s /etc/profile.d/autojump.zsh ]]; then
+  source /etc/profile.d/autojump.zsh
+elif [[ -s /usr/share/autojump/autojump.zsh ]]; then
+  source /usr/share/autojump/autojump.zsh
+fi
 
 # OCaml
 [[ -s ~/.opam/opam-init/init.zsh ]] && source ~/.opam/opam-init/init.zsh

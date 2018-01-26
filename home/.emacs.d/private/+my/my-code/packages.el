@@ -112,7 +112,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
   (use-package lsp-mode
     :config
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
-    ;; (setq-default flycheck-disabled-checkers '(c/c++-clang)) ;; in flycheck.el
+    (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)) ;; in flycheck.el
 
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
@@ -143,6 +143,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "ln" #'lsp-ui-find-next-reference
         "lp" #'lsp-ui-find-previous-reference
         "lr" #'lsp-rename
+        "lR" #'cquery-freshen-index
         "lv" #'cquery/vars
        ))
 
