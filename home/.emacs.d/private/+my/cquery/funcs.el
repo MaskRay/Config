@@ -4,11 +4,6 @@
 (defun cquery//enable ()
   (when
       (and buffer-file-name
-           (or
-            (cl-some (lambda (x) (string-match-p x buffer-file-name))
-                     cquery-project-whitelist)
-            (cl-notany (lambda (x) (string-match-p x buffer-file-name))
-                       cquery-project-blacklist))
            (or (locate-dominating-file default-directory "compile_commands.json")
                (locate-dominating-file default-directory ".cquery")))
     (lsp-cquery-enable)))
