@@ -10,4 +10,5 @@
     ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
     (setq cquery-sem-highlight-method 'overlay)
     (cquery-use-default-rainbow-sem-highlight)
+    (setq cquery-extra-init-params '(:cacheFormat "msgpack" :completion (:detailedLabel t)))
     ))

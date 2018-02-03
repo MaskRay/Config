@@ -1,6 +1,6 @@
 (defconst lsp-packages
   '(
-    (company-lsp :requires company)
+    company-lsp
     (helm-xref :requires helm)
     (ivy-xref :requires ivy)
     (lsp-mode :location local)

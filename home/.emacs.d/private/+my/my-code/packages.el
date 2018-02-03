@@ -93,6 +93,9 @@ If COUNT is given, move COUNT - 1 lines downward first."
     )
 
   (add-hook 'TeX-mode-hook #'spacemacs/toggle-auto-fill-mode-off)
+
+  (with-eval-after-load 'smartparens
+    (assq-delete-all :unmatched-expression sp-message-alist))
   )
 
 (defun my-code/init-ivy-xref ()

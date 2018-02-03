@@ -7,4 +7,4 @@ initialized. This overrides `cquery-project-blacklist'.")
 initialized. `cquery-project-whitelist' is checked first, then this,
 if no pattern matches the project root, cquery will be initialized.")
 
-(defvar cquery-extra-init-params '(:cacheFormat "msgpack" :index (:builtinTypes t :comments 2)))
+(defvar cquery-extra-init-params '(:cacheFormat "msgpack"))

@@ -592,11 +592,13 @@ let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
       \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--init={}', '--log-file=/tmp/cq.log'],
+      \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'objc': ['cquery', '--language-server'],
+      \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_devel = 1
+"let g:LanguageClient_devel = 1
 
 augroup LanguageClient_config
   au!
@@ -1099,9 +1101,13 @@ nn ,db :call append(line('.')-1, 'volatile static int z=0;while(!z)asm("pause");
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
 nn ,la :call LanguageClient_workspace_symbol({'query':input('workspace/symbol ')})<cr>
-nn ,lc :call LanguageClient_textDocument_codeAction()<cr>
+nn ,lb :call LanguageClient_cquery_base()<cr>
+nn ,lc :call LanguageClient_cquery_callers()<cr>
+nn ,ld :call LanguageClient_cquery_derived()<cr>
+nn ,lC :call LanguageClient_textDocument_codeAction()<cr>
 nn ,lf :call LanguageClient_textDocument_formatting()<cr>
 nn ,lr :call LanguageClient_textDocument_rename()<cr>
+nn ,lv :call LanguageClient_cquery_vars()<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
