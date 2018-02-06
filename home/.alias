@@ -18,7 +18,7 @@ UNAME=$(uname)
 alias sudo='sudo ' # zsh: next word is elligible for alias expansion
 alias L=less
 alias d='dirs -v'
-alias e=emacsclient
+alias e='TERM=xterm-termite-24bits emacsclient'
 alias eg='egrep --color=auto -I'
 alias g='grep --color=auto -I'
 alias l="ls -l"

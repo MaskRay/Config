@@ -79,6 +79,12 @@
         (remove-function (local 'eldoc-documentation-function) #'my/realtime-elisp-doc-function)
       (add-function :after-while (local 'eldoc-documentation-function) #'my/realtime-elisp-doc-function))))
 
+(defun my/expand-line ()
+  (interactive)
+  (let ((hippie-expand-try-functions-list
+         '(try-expand-line)))
+    (call-interactively 'hippie-expand)))
+
 
 ;;; xref
 

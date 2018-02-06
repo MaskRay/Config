@@ -6,6 +6,7 @@ scroll_on_keystroke = true
 audible_bell = false
 visible_bell = true
 mouse_autohide = true
+
 allow_bold = true
 dynamic_title = true
 urgent_on_bell = true
@@ -14,54 +15,48 @@ clickable_url = true
 #font = Source Code Pro for Powerline 14
 #font = DejaVu Sans Mono 18
 font = Monospace 22
-scrollback_lines = 65536
 search_wrap = true
 #icon_name = terminal
-#geometry = 640x480
-# transparency = 0.2
+#mouse_autohide = false
+#scroll_on_output = false
+#scroll_on_keystroke = true
+# Length of the scrollback buffer, 0 disabled the scrollback buffer
+# and setting it to a negative value means "infinite scrollback"
+scrollback_lines = 65536
+#search_wrap = true
+#urgent_on_bell = true
+#hyperlinks = false
+
+# $BROWSER is used by default if set, with xdg-open as a fallback
+#browser = xdg-open
+
 # "system", "on" or "off"
 cursor_blink = system
 
 # "block", "underline" or "ibeam"
-cursor_shape = block
+#cursor_shape = block
 
-# $BROWSER is used by default
-# browser = chromium
-# browser = qutebrowser
+# Hide links that are no longer valid in url select overlay mode
+#filter_unmatched_urls = true
 
-# word characters used for word selection
-# (default if unset: all graphic non-punctuation/space characters)
-#word_chars = -A-Za-z0-9,./?%&#:_=+@~
+# Emit escape sequences for extra modified keys
+modify_other_keys = true
 
+# set size hints for the window
+#size_hints = false
 
-#default color theme
-#[colors]
+# "off", "left" or "right"
+#scrollbar = off
+
+[colors]
+# If both of these are unset, cursor falls back to the foreground color,
+# and cursor_foreground falls back to the background color.
+#cursor = #dcdccc
+#cursor_foreground = #dcdccc
+
 #foreground = #dcdccc
 #foreground_bold = #ffffff
-##foreground_dim = #888888
 #background = #3f3f3f
-##cursor = #dcdccc
-#
-## if unset, will reverse foreground and background
-#highlight = #2f2f2f
-#
-## colors from color0 to color254 can be set
-#color0 = #3f3f3f
-#color1 = #705050
-#color2 = #60b48a
-#color3 = #dfaf8f
-#color4 = #506070
-#color5 = #dc8cc3
-#color6 = #8cd0d3
-#color7 = #dcdccc
-#color8 = #709080
-#color9 = #dca3a3
-#color10 = #c3bf9f
-#color11 = #f0dfaf
-#color12 = #94bff3
-#color13 = #ec93d3
-#color14 = #93e0e3
-#color15 = #ffffff
 
 
 # Solarized-dark
@@ -153,11 +148,12 @@ color15= #c0c0c0
 #font = Monospace 12
 #foreground = #dcdccc
 #background = #3f3f3f
+#active_foreground = #e68080
+#active_background = #3f3f3f
 #padding = 2
 #border = #3f3f3f
 #border_width = 0.5
 #roundness = 2.0
 
-# vim: ft=dosini
 [terminal]
-term = screen-256color
+term = xterm-termite-24bits

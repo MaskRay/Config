@@ -43,17 +43,18 @@ alias dd=disassemble
 #source ~/.gdb/pygdb-fork.py
 
 define b_a
-  b __asan_report_load1
-  b __asan_report_load2
-  b __asan_report_load4
-  b __asan_report_load8
-  b __asan_report_load16
-  b __asan_report_store1
-  b __asan_report_store2
-  b __asan_report_store4
-  b __asan_report_store8
-  b __asan_report_store16
-  b __asan_report_error
+  #b __asan_report_load1
+  #b __asan_report_load2
+  #b __asan_report_load4
+  #b __asan_report_load8
+  #b __asan_report_load16
+  #b __asan_report_store1
+  #b __asan_report_store2
+  #b __asan_report_store4
+  #b __asan_report_store8
+  #b __asan_report_store16
+  #b __asan_report_error
+  b __asan::ReportGenericError
 end
 
 define b_u

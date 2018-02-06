@@ -38,7 +38,6 @@
   (with-eval-after-load 'haskell-mode
     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
     ;; (add-hook 'haskell-mode-hook 'structured-haskell-mode)
-    ;; (add-hook 'haskell-mode-hook 'lsp-mode)
     ;; (intero-global-mode 1)
     ;; (add-hook 'haskell-mode-hook 'intero-mode)
     ;; (add-to-list 'spacemacs-jump-handlers-haskell-mode 'intero-goto-definition)
@@ -54,14 +53,14 @@
   (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
   (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
-  ;; Also define M-, because C-, is unavailable in the terminal
-  (define-key evil-motion-state-map (kbd "M-,") #'my-xref/find-references)
   (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
   (define-key evil-motion-state-map (kbd "M-n") 'next-error)
   (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
   (define-key evil-normal-state-map (kbd "C-c P s") 'profiler-start)
   (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
   (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
+
+  (define-key evil-insert-state-map (kbd "C-x C-l") #'my/expand-line)
 
   (evil-define-motion evil-end-of-line (count)
     "Move the cursor to the end of the current line.
@@ -130,6 +129,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
     (defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
     (defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
+    (defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
@@ -148,6 +148,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "lr" #'lsp-rename
         "lR" #'cquery-freshen-index
         "lv" #'cquery/vars
+        "l SPC" #'cquery/random
        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'lsp-ui-find-next-reference)
@@ -219,13 +220,20 @@ If COUNT is given, move COUNT - 1 lines downward first."
       "C-," 'lsp-ui-peek-find-references
       "C-t" 'lsp-ui-peek-jump-backward
       "C-p" 'lsp-ui-peek-jump-forward
+
+      "J" 'realgud:cmd-jump
       "n" 'realgud:cmd-next
       "s" 'realgud:cmd-step
-      "b" 'realgud:cmd-break
-      "B" 'realgud:cmd-clear
+
+      "bb" 'realgud:cmd-break
+      "bc" 'realgud:cmd-clear
+      "bd" 'realgud:cmd-delete
+      "bs" 'realgud:cmd-disable
+      "be" 'realgud:cmd-enable
+
       "f" 'realgud:cmd-finish
       "c" 'realgud:cmd-continue
-      "e" 'realgud:cmd-eval
+      "e" 'realgud:cmd-eval-dwim
       "r" 'realgud:cmd-restart
       "q" 'realgud:cmd-quit
       "S" 'realgud-window-cmd-undisturb-src)
@@ -282,7 +290,9 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (define-key smartparens-mode-map (kbd "C-S-b") 'sp-backward-symbol)
     (define-key smartparens-mode-map (kbd "M-k") 'sp-backward-kill-sexp)
     (define-key smartparens-mode-map (kbd "M-]") 'sp-unwrap-sexp)
-    (define-key smartparens-mode-map (kbd "M-[") 'sp-backward-unwrap-sexp)
+    ;; For termite modify_other_keys or xterm modifyOtherKeys to work,
+    ;; we cannot bind M-[
+    ;; (define-key smartparens-mode-map (kbd "M-[") 'sp-backward-unwrap-sexp)
     (define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
     (define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
     (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
