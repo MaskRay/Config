@@ -485,6 +485,8 @@ you should place your code here."
   ;; +lang/c-c++
   (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
 
+  (setq magit-repository-directories '("~/Dev"))
+
   (if (file-exists-p "~/.spacemacs.local")
       (load "~/.spacemacs.local"))
   )
@@ -520,5 +522,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(lsp-face-highlight-textual ((t (:background "gray25")))))
+ '(lsp-face-highlight-textual ((t (:background "gray25"))))
+ '(lsp-face-highlight-read ((t (:background "#234011"))))
+ '(lsp-face-highlight-write ((t (:background "#402311"))))
+ )
 )
