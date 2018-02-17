@@ -465,9 +465,38 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  (spaceline-define-segment my-buffer-id
+    (let ((name buffer-file-name)
+          (f (lambda (s) (propertize s 'face 'mode-line-buffer-id))))
+      (if (and name (string-match-p "/llvm/" name))
+          (cond
+           ((string-match "/include/clang-c/\\(.*\\)" name)
+            (concat "clang-c/" (funcall f (match-string 1 name))))
+           ((and (string-match "/\\([a-z]*\\)/include/\\([a-z]*\\)/\\(.*\\)" name)
+                 (string= (match-string 1 name) (match-string 2 name)))
+            (concat (if (string= (match-string 1 name) "llvm")
+                        "L"
+                      (substring (match-string 1 name) 0 1)) "/" (funcall f (match-string 3 name))))
+           ((string-match "/\\([a-z]*\\)/lib/\\(.*\\)" name)
+            (concat (if (string= (match-string 1 name) "llvm")
+                        "L"
+                      (substring (match-string 1 name) 0 1))
+                    "/" (funcall f (match-string 2 name))))
+           (t (funcall f (buffer-name))))
+        (funcall f (buffer-name)))))
+
   ;; Default additional-segments causes trouble.
   ;; Without this, the active window does not show buffer-id, weird.
-  (spaceline-spacemacs-theme nil)
+  ;; (spaceline-spacemacs-theme nil)
+  (apply 'spaceline--theme
+         '((persp-name
+            workspace-number
+            window-number)
+           :fallback evil-state
+           :face highlight-face
+           :priority 0)
+         '((buffer-modified buffer-size my-buffer-id remote-host)
+           :priority 5))
 
   ;; 101 -> 30
   (defun spacemacs/enable-smooth-scrolling ()

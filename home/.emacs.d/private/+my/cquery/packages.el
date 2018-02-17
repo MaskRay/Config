@@ -11,4 +11,7 @@
     (setq cquery-sem-highlight-method 'overlay)
     (cquery-use-default-rainbow-sem-highlight)
     (setq cquery-extra-init-params '(:cacheFormat "msgpack" :completion (:detailedLabel t)))
+
+    (require 'projectile)
+    (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index")
     ))
