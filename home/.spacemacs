@@ -54,10 +54,11 @@ This function should only modify configuration layer settings."
      html
      ivy
      latex
+     lsp
      markdown
      my  ; ~/.emacs.d/private/+my/my/
      org
-     python
+     (python :variables python-backend 'lsp)
      restclient
      search-engine
      shell

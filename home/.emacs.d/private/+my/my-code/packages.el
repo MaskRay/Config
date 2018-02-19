@@ -7,8 +7,10 @@
     haskell-mode
     lsp-haskell
     lsp-rust
-    (lsp-mode :location local)
-    (lsp-ui :location local)
+    ;; (lsp-mode :location local)
+    lsp-mode
+    ;; (lsp-ui :location local)
+    lsp-ui
     modern-cpp-font-lock
     realgud
     smartparens
@@ -97,26 +99,16 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (assq-delete-all :unmatched-expression sp-message-alist))
   )
 
-(defun my-code/init-ivy-xref ()
-  (use-package ivy-xref
-    :config
-    ;; This is required to make xref-find-references work in helm-mode.
-    ;; In helm-mode, it gives a prompt and asks the identifier (which has no text property) and then passes it to lsp-mode, which requires the text property at point to locate the references.
-    ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=29619
-    (setq xref-prompt-for-identifier '(not xref-find-definitions xref-find-definitions-other-window xref-find-definitions-other-frame xref-find-references spacemacs/jump-to-definition spacemacs/jump-to-reference))
-
-    ;; Use ivy-xref to display xref.el results.
-    (setq xref-show-xrefs-function 'ivy-xref-show-xrefs)
-    )
-  )
-
 (defun my-code/post-init-lsp-mode ()
   (use-package lsp-mode
     :config
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
     (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)) ;; in flycheck.el
 
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (setq company-quickhelp-delay 0)
+
+    (require 'lsp-imenu)
+    (add-hook 'lsp-after-open-hook #'lsp-enable-imenu)
 
     ;;; Override
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
@@ -131,21 +123,22 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
     (defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
 
+    (spacemacs/set-leader-keys-for-minor-mode 'lsp-mode
+      "la" #'lsp-ui-find-workspace-symbol
+      "lA" #'lsp-ui-peek-find-workspace-symbol
+      "lf" #'lsp-format-buffer
+      "ll" #'lsp-ui-sideline-mode
+      "lD" #'lsp-ui-doc-mode
+      "ln" #'lsp-ui-find-next-reference
+      "lp" #'lsp-ui-find-previous-reference
+      "lr" #'lsp-rename
+      )
+
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
-        "la" #'lsp-ui-find-workspace-symbol
-        "lA" #'lsp-ui-peek-find-workspace-symbol
         "lb" #'cquery/base
         "lc" #'cquery/callers
         "ld" #'cquery/derived
-        ;; Formatting requires waf configure --use-clang-cxx
-        ;; https://github.com/jacobdufault/cquery/wiki/Formatting
-        "lf" #'lsp-format-buffer
-        "ll" #'lsp-ui-sideline-mode
-        "lD" #'lsp-ui-doc-mode
-        "ln" #'lsp-ui-find-next-reference
-        "lp" #'lsp-ui-find-previous-reference
-        "lr" #'lsp-rename
         "lR" #'cquery-freshen-index
         "lv" #'cquery/vars
         "l SPC" #'cquery/random

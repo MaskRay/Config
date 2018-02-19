@@ -3,9 +3,8 @@
 " Basic Settings -------------------------------------- {{{1
 syntax on
 set termguicolors
-set nocompatible
-filetype plugin indent on
-let g:mapleader = " "
+let mapleader = ' '
+let maplocalleader = ','
 
 set sw=2 sts=2 et nu sr
 set diffopt=filler,context:3
@@ -16,14 +15,14 @@ if has('nvim')
   set inccommand=nosplit
 endif
 set incsearch
-set nrformats=hex
+set nrformats+=alpha
 set ruler
 set showcmd
 set isfname-==
 set shortmess+=s
 set nostartofline
 set synmaxcol=1000
-set tags=./tags,tags,./../tags,./../../tags,./../../../tags
+"set tags=./tags,tags,./../tags,./../../tags,./../../../tags
 set title
 set whichwrap=b,s,[,]
 set wildcharm=<tab>
@@ -40,10 +39,9 @@ set switchbuf=useopen
 "set ignorecase smartcase
 set timeoutlen=600
 set ttimeoutlen=0
-set matchpairs=(:),[:],{:},<:>,':',":"
+set matchpairs+=<:>
 set laststatus=2
 set cursorline
-set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 
 set backup
 set backupdir=~/.vimtmp/backup//
@@ -51,21 +49,10 @@ set directory=~/.vimtmp/swap//
 set noswapfile
 if has('persistent_undo')
   set undofile
-  set undolevels=200
   set undodir=~/.vimtmp/undo
 end
-set viminfo='100,:10000,<50,s10,h,!
-
-" set backspace=indent,eol,start
-set history=1000
 
 set fileencodings=ucs-bom,utf8,cp936,gbk,big5,euc-jp,euc-kr,gb18130,latin1
-
-if executable('par')
-  set formatprg="par rTbgqR B=.,?_A_a Q=_s>|"
-el
-  set formatprg=fmt
-en
 set formatoptions+=nj " support formatting of numbered lists
 
 " tabs and spaces
@@ -138,12 +125,6 @@ endif
 
 
 " Functions --------------------- {{{1
-fu! Inc(...)
-  let result = g:i
-  let g:i += a:0 > 0 ? a:1 : 1
-  return result
-endf
-
 " DiffOrig {{{2
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -211,14 +192,6 @@ fu! ToggleUnwantedWhitespaces()
   endif
   call MatchUnwantedWhitespaces()
 endf
-" VSetSearch {{{2
-" makes * and # work on visual mode too.
-function! s:VSetSearch(cmdtype)
-  let temp = @s
-  norm! gv"sy
-  let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
-  let @s = temp
-endfunction
 " Autocommands ---------------------------------------- {{{1
 if has("autocmd")
   aug Fortran_support
@@ -233,9 +206,6 @@ if has("autocmd")
   aug Rust_support
     au!
     au FileType rust :call Rust_init()
-  aug Tex_support
-    au!
-    au FileType tex :call Tex_init()
   aug Vim_support
     au!
     au FileType vim :call Vim_init()
@@ -298,10 +268,6 @@ endif
 aug C
   au!
   au FileType c,cpp :call C_init()
-  au BufEnter *.cpp let b:fswitchdst = 'hpp,hh,h' | let b:fswitchlocs = './,../include'
-  au BufEnter *.cc let b:fswitchdst = 'hh,h' | let b:fswitchlocs = '.,../include'
-  au BufEnter *.hh let b:fswitchdst = 'cpp,cc' | let b:fswitchlocs = '.'
-  au BufEnter *.h let b:fswitchdst = 'cpp,cc,c' | let b:fswitchlocs = '.'
 aug D
   au!
   au FileType d :call D_init()
@@ -382,6 +348,8 @@ fu! Python_init()
   " tabs and spaces, I go as far as mark all tabs as error.
   autocmd Syntax python syn match ExtraWhitespace /\t/
   nn <buffer> <leader>aa :T ./<C-r>=expand('%')<cr> -f /tmp/a.cap<cr>
+  nn <buffer> <leader>= :0,$!yapf<CR>
+  nn <buffer> <localleader>i :!isort %<cr><cr>
 endf
 let g:pymode_folding = 0
 " failed to disable [Pymode] Init Rope project: $HOME, too slow, prefer YouCompleteMe
@@ -417,11 +385,9 @@ if 1
 
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
-  "Plug 'vim-airline/vim-airline'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
-  "Plug 'Rykka/colorv.vim'
-  "Plug 'SirVer/ultisnips' "Invalid channel 5
+  "Plug 'SirVer/ultisnips'
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/rainbow_parentheses.vim'
@@ -431,32 +397,25 @@ if 1
   Plug 'tpope/vim-unimpaired'
   Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
-  "Plug 'machakann/vim-highlightedyank'
-  "Plug 'metakirby5/codi.vim'
   Plug 'romainl/vim-qf'
   Plug 'hecal3/vim-leader-guide'
 
   " Window
-  "Plug 'bling/vim-airline'
   Plug 'majutsushi/tagbar'
-  "Plug 'vim-scripts/ZoomWin' neovim
   Plug 'simnalamburt/vim-mundo'
 
   " Tools
-  "Plug 'Shougo/neocomplete.vim'
+  Plug 'benmills/vimux'
   if has('nvim')
     Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ }
     Plug 'kassio/neoterm'
-  else
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   endif
   Plug 'justinmk/vim-sneak'
   Plug 'justinmk/vim-dirvish'
   Plug 'Lokaltog/vim-easymotion'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neomru.vim'
   Plug 'Shougo/neosnippet.vim'
@@ -466,99 +425,55 @@ if 1
   Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerExplorer' }
   Plug 'Shougo/vimproc.vim', { 'do': 'make' }
   Plug 'Shougo/vimshell.vim'
-  Plug 'mhinz/vim-randomtag'
+  Plug 'mhinz/vim-randomtag' " :Random
   Plug 'mhinz/vim-signify'
-  Plug 'benekastah/neomake'
-  Plug 'chrisbra/NrrwRgn'
   Plug 'dhruvasagar/vim-table-mode'
   Plug 'glts/vim-textobj-comment'
   Plug 'glts/vim-textobj-indblock'
   Plug 'haya14busa/incsearch-easymotion.vim'
   Plug 'haya14busa/incsearch.vim'
-  "Plug 'hewes/unite-gtags'
   Plug 'janko-m/vim-test'
   Plug 'kana/vim-textobj-user'
   Plug 'KabbAmine/zeavim.vim'
   Plug 'lucapette/vim-textobj-underscore'
-  "Plug 'neovim/node-host'
   Plug 'nathanaelkane/vim-indent-guides'
-  Plug 'qstrahl/vim-matchmaker'
-  "Plug 'rhysd/clever-f.vim'
-  Plug 'rhysd/vim-clang-format'
   Plug 'mhinz/vim-grepper'
-  "Plug 'w0rp/ale' TODO(toggle) https://github.com/w0rp/ale/issues/122
-  "Plug 'scrooloose/syntastic'
+  Plug 'w0rp/ale'
   Plug 'terryma/vim-expand-region'
   Plug 'terryma/vim-multiple-cursors'
   Plug 'thinca/vim-quickrun'
   Plug 'tommcdo/vim-exchange'
-  Plug 'tpope/vim-abolish'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-surround'
-  "Plug 'jpalardy/vim-slime'
   Plug 'AndrewRadev/linediff.vim'
 
   " Languages
-  " D
-  "if executable('dcd-server')
-  "  Plug 'idanarye/vim-dutyl'
-  "  Plug 'landaire/deoplete-d'
-  "endif
-
-  " Go
+  "" Go
   Plug 'fatih/vim-go', { 'for': 'go' }
-
   Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-
   Plug 'mattn/emmet-vim'
-  Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
-  Plug 'idris-hackers/idris-vim'
-  "Plug 'pytest.vim'
-  "Plug 'klen/python-mode', { 'branch': 'develop' }
   Plug 'LaTeX-Box-Team/LaTeX-Box'
-  "Plug 'Valloric/YouCompleteMe' use archlinuxcn/vim-youcompleteme-git
-  "Plug 'davidhalter/jedi-vim'
-  Plug 'derekwyatt/vim-fswitch'
-  "Plug 'tpope/vim-rails', { 'for': 'ruby' }
-  Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-  Plug 'wting/rust.vim', { 'for': 'rust' }
+  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
   Plug 'zah/nim.vim', { 'for': 'nim' }
-  Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
-  Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
-  Plug 'Twinside/vim-hoogle', { 'for': 'haskell' }
-  "Plug 'alx741/vim-hindent', { 'for': 'haskell' }
-  Plug 'bitc/vim-hdevtools', { 'for': 'haskell' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+  Plug 'python-mode/python-mode', { 'for': 'python' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
-  Plug 'def-lkb/ocp-indent-vim', { 'for': 'ocaml' }
-  "Plug 'gorodinskiy/vim-coloresque'
-  Plug 'nvie/vim-flake8', { 'for': 'python' }
-  "Plug 'sheerun/vim-polyglot'
   Plug 'ledger/vim-ledger', { 'for': 'ledger' }
-  Plug 'itchyny/vim-haskell-indent', { 'for': 'haskell' }
+  "" C/C++
+  Plug 'rhysd/vim-clang-format'
 
   "Colors
   Plug 'junegunn/seoul256.vim'
+  Plug 'liuchengxu/space-vim-dark'
 
   call plug#end()
 endif
 
-if filereadable('/usr/share/gtags/gtags.vim')
-  so /usr/share/gtags/gtags.vim
-endif
-ru macros/matchit.vim
-
-" TODO neovim
-if filereadable(glob('~/.opam'))
-  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-  execute "set rtp+=" . g:opamshare . "/merlin/vim"
-  let g:syntastic_ocaml_checkers=['merlin']
-endif
 " ale {{{2
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter% %severity%] %s'
+let g:ale_linters = {
+      \   'cpp': [],
+      \}
 " deoplete {{{2
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#omni_patterns = {}
@@ -578,9 +493,6 @@ call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap
 call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 " emmet {{{2
 let g:user_emmet_leader_key = '<C-z>'
-" FSwitch {{{2
-command! A FSHere
-command! AV FSSplitRight
 " GitGutter {{{2
 let g:gitgutter_map_keys = 0
 let g:gitgutter_enabled = 0
@@ -591,7 +503,7 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
-      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--init={}', '--log-file=/tmp/cq.log'],
+      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--init={}', '--log-file=/tmp/cq.log', '--record=/tmp/record'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'objc': ['cquery', '--language-server'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
@@ -617,25 +529,9 @@ let g:vim_markdown_folding_disabled = 1
 " neoterm {{{2
 "let g:neoterm_position = 'vertical'
 let g:neoterm_position = 'horizontal'
-" polyglot {{{2
-let g:polyglot_disabled = ['haskell']
-" slime {{{2
-let g:slime_no_mappings = 1
-let g:slime_target = 'tmux'
-let g:slime_default_config = {'socket_name': 'default', 'target_pane': '1'}
 " sneak {{{2
 let g:sneak#label = 1
 let g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
-" Syntastic {{{2
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height=5
-let g:syntastic_stl_format="Err:%fe %e,%w"
-"let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_error_symbol = 'x'
-"let g:syntastic_cpp_compiler_options = '-std=c++1z -fopenmp -Wno-shift-op-parentheses -Wno-bitwise-op-parentheses'
 " Tagbar {{{2
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
@@ -647,16 +543,6 @@ let g:UltiSnipsJumpBackwardTrigger = "<S-tab>"
 let g:UltiSnipsSnippetDirectories = ["UltiSnips"]
 " vsplit the snippets edit window
 let g:UltiSnipsEditSplit = 'vertical'
-" Unite {{{2
-if executable('ag')
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --smart-case'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command='ack'
-  let g:unite_source_grep_default_opts='--no-heading --no-color -C4'
-  let g:unite_source_grep_recursive_opt=''
-endif
 " VimFiler {{{2
 let g:vimfiler_as_default_explorer=1
 let g:vimfiler_ignore_pattern = '\.\%(byte\|cm.\|doc\|native\|o\|ppt\|pdf\)$'
@@ -672,7 +558,8 @@ else
   set t_Co=256
   "colorscheme bocau
   "colorscheme hybrid
-  colorscheme seoul256
+  "colorscheme seoul256
+  colorscheme space-vim-dark
 endif
 " Misc --------------------- {{{1
 " vim hacks #181
@@ -798,62 +685,6 @@ fu! Rust_init()
   nn <buffer> <leader>aa :T rustc <C-r>=expand('%')<cr> && <C-r>=expand('%:r')<cr><cr>
 endf
 
-func! Tex_init()
-    " pdf auto refresh preview
-
-    setl nocursorline                                " for performance
-    hi clear Conceal
-    setl sw=2 sts=2 expandtab
-    setl textwidth=0
-    setl errorformat=aaaaaaa                        " disable quickfix
-    setl fo-=q
-    setl cole=0
-
-    inoremap <buffer> $$ $<Space>$<Left>
-    inoremap <buffer> " ``''<Left><Left>
-    nmap <buffer> <Leader>" xi``<Esc>,f"axi''<Esc>
-    inoremap <buffer> ... \cdots<Space>
-
-    inoremap <buffer> \[ \[<Space>\]<Left><Left>
-    inoremap <buffer> \{ \{<Space>\}<Left><Left>
-    inoremap <buffer> \langle \langle<Space><Space>\rangle<Esc>7hi
-    inoremap <buffer> \verb \verb<Bar><Bar><Left>
-    inoremap <buffer> \beg \begin{}<Left>
-    inoremap <buffer> \bb <Esc>:call Tex_Block("")<Left><Left>
-    inoremap <buffer> \bbt <Esc>:call Tex_Block("t")<CR><Up><End>[H]<Down>\centering<CR>\caption{\label{tab:}}<Esc>k:call Tex_Block("tabular")<CR>
-    inoremap <buffer> \bbf <Esc>:call Tex_Block("f")<CR><Up><End>[H]<Down>\centering<CR>\includegraphics[width=\textwidth]{res/}<CR>\caption{\label{fig:}}<Esc>
-    inoremap <buffer> \bbm <Esc>:call Tex_Block("mp")<CR><Up><End>[b]{0.46\linewidth}<Down>\centering<CR>\includegraphics[width=\textwidth]{res/}<CR>\caption{\label{fig:}}<Esc>
-    inoremap <buffer> \bf \textbf{}<Left>
-    xmap <buffer> \bbe di\bbe<CR><Tab><Esc>pj
-    xmap <buffer> \bbd di\bbd<CR><Tab><Esc>pj
-    xmap <buffer> \bf s}i\textbf<Esc>
-    xmap <buffer> \em s}i\emph<Esc>
-    xmap <buffer> <Leader>tab :s/\s\+/ \&/g<CR>gv:s/$/\\\\/g<CR>gv<Space>tt
-
-    " Plugin: LaTeX-Box
-    let g:LatexBox_no_mappings = 1
-    inoremap <buffer> [[ \begin{}<Left>
-    imap <buffer> ]] <Plug>LatexCloseCurEnv
-    inoremap <buffer> <C-n> <Esc><Right>:call LatexBox_JumpToNextBraces(0)<CR>i
-    nmap <buffer> P l:call LatexBox_JumpToNextBraces(0)<CR>
-    nmap <buffer> Q :call LatexBox_JumpToNextBraces(1)<CR>
-
-    xmap <buffer> ie <Plug>LatexBox_SelectCurrentEnvInner
-    xmap <buffer> ae <Plug>LatexBox_SelectCurrentEnvOuter
-    omap <buffer> ie :normal vie<CR>
-    omap <buffer> ae :normal vae<CR>
-    xmap <buffer> im <Plug>LatexBox_SelectInlineMathInner
-    xmap <buffer> am <Plug>LatexBox_SelectInlineMathOuter
-    omap <buffer> im :normal vim<CR>
-    omap <buffer> am :normal vam<CR>
-
-    nmap <buffer> <Leader>ce <Plug>LatexChangeEnv
-    xmap <buffer> <Leader>tc <Plug>LatexWrapSelection
-    xmap <buffer> <Leader>te <Plug>LatexEnvWrapSelection
-
-    nn <buffer> <leader>aa :NeomakeSh make<cr>
-endfunc
-
 fu! Vim_init()
   setl keywordprg=:help
 endf
@@ -871,8 +702,6 @@ if filereadable(expand('~/.vim/bundle/vim-indent-guides/README.markdown'))
   vn <leader> :<C-u>LeaderGuideVisual '<Space>'<cr>
 endif
 " nmap <leader><leader> (easymotion) TODO {{{3
-"nn <leader><leader>l <Plug>(easymotion-lineforward)
-"nn <leader><leader>h <Plug>(easymotion-linebackward)
 " nmap <leader>a {{{4
 let g:lmap.a = {'name': '+applications'}
 nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
@@ -899,6 +728,7 @@ nn <leader>bY :%y+<cr>
 nn <leader>cC :let b:neomake_target=input('make ')<Bar>exe 'NeomakeSh make ' . b:neomake_target<cr>
 nn <leader>cr :exe 'NeomakeSh make ' . b:neomake_target<cr>
 " nmap <leader>d (diff) {{{4
+nn <leader>dd :Zeavim<CR>
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
 " nmap <leader>e (edit) {{{4
@@ -915,6 +745,7 @@ nn <leader>fed :e ~/.vim/vimrc<cr>
 nn <leader>feR :so ~/.vim/vimrc<cr>
 nn <leader>ff :Denite file_rec<cr>
 nn <silent> <leader>fr :Denite file_mru<cr>
+nn <leader>fj :Dirvish<cr>
 nn <leader>fJ :JunkFile<cr>
 nn <leader>fs :update<cr>
 nn <leader>fS :bufdo update<cr>
@@ -1083,7 +914,6 @@ nn <silent> <C-j> :call MarkPush()<cr>:call LanguageClient_textDocument_definiti
 nn <silent> K :call LanguageClient_textDocument_hover()<cr>
 nn <f2> :call LanguageClient_textDocument_rename()<cr>
 " nmap Alt {{{3
-"nn <silent> <M-,> :Gtags <C-r><C-w><cr>
 "nn <M-,> :Denite references<cr>
 nn <M-,> :sil call LanguageClient_textDocument_references({'includeDeclaration': v:false})<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
@@ -1143,9 +973,6 @@ xn ga <Plug>(EasyAlign)
 " visual shifting (does not exit Visual mode)
 vn < <gv
 vn > >gv
-" * #
-"xn * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
-"xn # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
 " search for visual-mode selected text
 "vmap // y/<C-R>"<CR>
 vn <leader>S y:execute @@<cr>
