@@ -5,6 +5,10 @@
       (user-error "No file at point"))
     (ffap filename)))
 
+(defun my/compilation-buffer ()
+  (interactive)
+  (set-window-buffer nil (get-buffer "*compilation*")))
+
 
 ;;; realgud
 
@@ -88,6 +92,9 @@
 
 ;;; xref
 
+(defun my-advice/xref-set-jump (&optional args)
+  (lsp-ui-peek--with-evil-jumps (evil-set-jump)))
+
 (defun my-xref/find-definitions ()
   (interactive)
   (if lsp-mode (lsp-ui-peek-find-definitions) (spacemacs/jump-to-definition)))
@@ -104,17 +111,12 @@
    ((cl-some (lambda (x) (string-match-p x buffer-file-name))
              my-xref-blacklist)
     nil)
-   ((and (not (cdr xrefs)) (not always-show-list))
-    ;; PATCH
-    (lsp-ui-peek--with-evil-jumps (evil-set-jump))
-
-    (xref--pop-to-location (car xrefs) display-action))
    (t
     ;; PATCH
     (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
     ;; PATCH Jump to the first candidate
-    ;; (when xrefs
+    ;; (when (not (cdr xrefs))
       ;; (xref--pop-to-location (car xrefs) display-action))
 
     (funcall xref-show-xrefs-function xrefs

@@ -27,6 +27,19 @@
              (insert "volatile static int z=0;while(!z)asm(\"pause\");")
              (evil-normal-state)
              )))
+
+  ;; https://github.com/radare/radare2
+  (c-add-style
+   "radare2"
+   '((c-basic-offset . 2)
+     (indent-tabs-mode . t)
+     (c-auto-align-backslashes . nil)
+     (c-offsets-alist
+      (arglist-intro . ++)
+      (arglist-cont . ++)
+      (arglist-cont-nonempty . ++)
+      (statement-cont . ++)
+      )))
   )
 
 (defun my-code/post-init-dumb-jump ()
@@ -49,6 +62,19 @@
 (defun my-code/post-init-evil ()
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
+  (with-eval-after-load 'evil-mc
+    (dolist (key '("C-n" "C-p" "C-t"))
+      (evil-define-key 'normal evil-mc-key-map (kbd key) nil)
+      (evil-define-key 'visual evil-mc-key-map (kbd key) nil)
+      )
+    (evil-define-key 'normal evil-mc-key-map
+      (kbd "M-n") #'evil-mc-make-and-goto-next-match
+      (kbd "M-p") #'evil-mc-make-and-goto-prev-match
+      (kbd "M-t") #'evil-mc-skip-and-goto-next-match
+      ))
+
+  (spacemacs/set-leader-keys "cb" #'my/compilation-buffer)
+
   (define-key evil-normal-state-map "gf" 'my/ffap)
   (define-key evil-normal-state-map (kbd "<backspace>") 'spacemacs/evil-search-clear-highlight)
   (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
@@ -56,8 +82,6 @@
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
   (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
   (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
-  (define-key evil-motion-state-map (kbd "M-n") 'next-error)
-  (define-key evil-motion-state-map (kbd "M-p") 'previous-error)
   (define-key evil-normal-state-map (kbd "C-c P s") 'profiler-start)
   (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
   (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
@@ -99,6 +123,19 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (assq-delete-all :unmatched-expression sp-message-alist))
   )
 
+(defun my-code/post-init-evil-snipe ()
+  ;; Rebind surround to S instead of s, so we can use s for avy
+  (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+
+  ;; avy
+  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
+  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
+  (setq avy-timeout-seconds 0.3)
+
+  (evil-snipe-mode -1)
+  )
+
 (defun my-code/post-init-lsp-mode ()
   (use-package lsp-mode
     :config
@@ -106,9 +143,13 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)) ;; in flycheck.el
 
     (setq company-quickhelp-delay 0)
+    (setq company-show-numbers t)
 
     (require 'lsp-imenu)
     (add-hook 'lsp-after-open-hook #'lsp-enable-imenu)
+
+    (advice-add 'spacemacs/jump-to-definition :before #'my-advice/xref-set-jump)
+    (advice-add 'spacemacs/jump-to-reference :before #'my-advice/xref-set-jump)
 
     ;;; Override
     (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
@@ -123,15 +164,64 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
     (defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
 
+    (defun cquery/references-address ()
+      (interactive)
+      (lsp-ui-peek-find-custom
+       'address "textDocument/references"
+       (plist-put (lsp--text-document-position-params) :context
+                  '(:role 128))))
+
+    (defun cquery/references-read ()
+      (interactive)
+      (lsp-ui-peek-find-custom
+       'read "textDocument/references"
+       (plist-put (lsp--text-document-position-params) :context
+                  '(:role 8))))
+
+    (defun cquery/references-write ()
+      (interactive)
+      (lsp-ui-peek-find-custom
+       'write "textDocument/references"
+       (plist-put (lsp--text-document-position-params) :context
+                  '(:role 16))))
+
     (spacemacs/set-leader-keys-for-minor-mode 'lsp-mode
       "la" #'lsp-ui-find-workspace-symbol
       "lA" #'lsp-ui-peek-find-workspace-symbol
       "lf" #'lsp-format-buffer
       "ll" #'lsp-ui-sideline-mode
       "lD" #'lsp-ui-doc-mode
-      "ln" #'lsp-ui-find-next-reference
-      "lp" #'lsp-ui-find-previous-reference
       "lr" #'lsp-rename
+      )
+
+    (defhydra hydra/ref (spacemacs-lsp-mode-map "l")
+      "reference"
+      ("d" lsp-ui-peek-find-definitions "next" :bind nil)
+      ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
+             (if (> n 0) (message "%d/%d" i n))) "prev")
+      ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
+             (if (> n 0) (message "%d/%d" i n))) "next")
+      ("R" (-let [(i . n) (lsp-ui-find-prev-reference
+                           (lambda (x)
+                             (/= (logand (ht-get x "role" 0) 8) 0)))]
+             (if (> n 0) (message "read %d/%d" i n))) "prev read" :bind nil)
+      ("r" (-let [(i . n) (lsp-ui-find-next-reference
+                           (lambda (x)
+                             (/= (logand (ht-get x "role" 0) 8) 0)))]
+             (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
+      ("W" (-let [(i . n) (lsp-ui-find-prev-reference
+                           (lambda (x)
+                             (/= (logand (ht-get x "role" 0) 16) 0)))]
+             (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
+      ("w" (-let [(i . n) (lsp-ui-find-next-reference
+                           (lambda (x)
+                             (/= (logand (ht-get x "role" 0) 16) 0)))]
+             (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
+      )
+
+    (defhydra hydra/random (spacemacs-lsp-mode-map "l")
+      "random"
+      ("SPC" cquery/random "random")
       )
 
     (dolist (mode c-c++-modes)
@@ -142,7 +232,19 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "lR" #'cquery-freshen-index
         "lv" #'cquery/vars
         "l SPC" #'cquery/random
-       ))
+        "a" #'cquery/references-address
+        "r" #'cquery/references-read
+        "w" #'cquery/references-write
+        "m" #'cquery-member-hierarchy
+        ;; bases
+        "i" #'cquery-inheritance-hierarchy
+        ;; derived
+        "I" (lambda () (interactive) (cquery-inheritance-hierarchy t))
+        ;; callers
+        "c" #'cquery-call-hierarchy
+        ;; callees
+        "C" (lambda () (interactive) (cquery-call-hierarchy t))
+        ))
 
     (define-key evil-motion-state-map (kbd "M-<down>") 'lsp-ui-find-next-reference)
     (define-key evil-motion-state-map (kbd "M-<up>") 'lsp-ui-find-previous-reference)
@@ -272,7 +374,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
     (define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
     (define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
-    (define-key smartparens-mode-map (kbd "M-t") 'sp-transpose-sexp)
+    ;; (define-key smartparens-mode-map (kbd "M-t") 'sp-transpose-sexp)
     (define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
     (define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
     (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
