@@ -356,9 +356,9 @@ bindkey '^u' backward-kill-line  # was kill-whole-line
 #[[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
 # community/fzf
-if [[ -s /usr/share/fzf/completion.zsh ]] then
-  source /usr/share/fzf/completion.zsh
-  source /usr/share/fzf/key-bindings.zsh
+if [[ -s ~/.vim/bundle/fzf/shell/completion.zsh ]] then
+  source ~/.vim/bundle/fzf/shell/completion.zsh
+  source ~/.vim/bundle/fzf/shell/key-bindings.zsh
   # redefine __fzfcmd (appending `-e` option) to disable fuzzy matching
   #__fzfcmd() {
   #  [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"

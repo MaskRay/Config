@@ -1,4 +1,5 @@
 e cfg.newtab = true
-e scr.promptsect = true
-e scr.truecolor = true
+e scr.prompt.sect = true
+e scr.color = 3
 e scr.utf8 = true
+eco monokai

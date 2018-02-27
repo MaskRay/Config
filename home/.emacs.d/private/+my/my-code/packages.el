@@ -2,7 +2,9 @@
   '(
     cc-mode
     dumb-jump
+    emacs-lisp
     evil
+    evil-snipe
     flycheck
     haskell-mode
     lsp-haskell
@@ -40,6 +42,12 @@
       (arglist-cont-nonempty . ++)
       (statement-cont . ++)
       )))
+
+  (c-add-style "my-cc"
+               '("cc-mode"
+                 (c-basic-offset . 2)
+                 (c-offsets-alist . ((innamespace . [0])))))
+  (setf (alist-get 'other c-default-style) "my-cc")
   )
 
 (defun my-code/post-init-dumb-jump ()
@@ -59,6 +67,16 @@
     )
   )
 
+(defun my-code/post-init-emacs-lisp ()
+  (evil-define-key 'insert emacs-lisp-mode-map "[" (lambda () (interactive) (insert ?\()))
+  (evil-define-key 'insert emacs-lisp-mode-map "]" (lambda () (interactive) (insert ?\))))
+  (evil-define-key 'insert emacs-lisp-mode-map "(" (lambda () (interactive) (insert ?\[)))
+  (evil-define-key 'insert emacs-lisp-mode-map ")" (lambda () (interactive) (insert ?\])))
+
+  (require 'projectile)
+  (add-to-list 'projectile-project-root-files-functions #'my-projectile/dotemacs-elpa-package)
+  )
+
 (defun my-code/post-init-evil ()
   (add-to-list 'evil-emacs-state-modes 'xref--xref-buffer-mode)
 
@@ -74,6 +92,10 @@
       ))
 
   (spacemacs/set-leader-keys "cb" #'my/compilation-buffer)
+
+  (evil-define-key 'normal global-map (kbd "M-g b") #'my-avy/goto-paren)
+  (evil-define-key 'normal global-map (kbd "M-g c") #'my-avy/goto-conditional)
+  (evil-define-key '(motion visual operator) global-map (kbd "M-l") #'avy-goto-line)
 
   (define-key evil-normal-state-map "gf" 'my/ffap)
   (define-key evil-normal-state-map (kbd "<backspace>") 'spacemacs/evil-search-clear-highlight)
@@ -131,7 +153,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
   ;; avy
   (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
   (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
-  (setq avy-timeout-seconds 0.3)
+  (setq avy-timeout-seconds 0.2)
 
   (evil-snipe-mode -1)
   )
@@ -142,8 +164,9 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
     (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)) ;; in flycheck.el
 
-    (setq company-quickhelp-delay 0)
-    (setq company-show-numbers t)
+    (setq company-quickhelp-delay 0
+          company-show-numbers t
+          company-idle-delay 0.1)
 
     (require 'lsp-imenu)
     (add-hook 'lsp-after-open-hook #'lsp-enable-imenu)
@@ -158,6 +181,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
         (add-to-list handler 'lsp-ui-peek-find-references)))
 
+    (defun text-document/type-definition () (interactive) (lsp-ui-peek-find-custom 'type "textDocument/typeDefinition"))
     (defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
     (defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
     (defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
@@ -189,9 +213,10 @@ If COUNT is given, move COUNT - 1 lines downward first."
       "la" #'lsp-ui-find-workspace-symbol
       "lA" #'lsp-ui-peek-find-workspace-symbol
       "lf" #'lsp-format-buffer
-      "ll" #'lsp-ui-sideline-mode
+      "lL" #'lsp-ui-sideline-mode
       "lD" #'lsp-ui-doc-mode
       "lr" #'lsp-rename
+      "lt" #'text-document/type-definition
       )
 
     (defhydra hydra/ref (spacemacs-lsp-mode-map "l")
@@ -229,6 +254,8 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "lb" #'cquery/base
         "lc" #'cquery/callers
         "ld" #'cquery/derived
+        "ll" #'cquery-code-lens-mode
+        "lP" #'cquery-preprocess-file
         "lR" #'cquery-freshen-index
         "lv" #'cquery/vars
         "l SPC" #'cquery/random
@@ -253,6 +280,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
 
 (defun my-code/post-init-lsp-ui ()
   (use-package lsp-ui
+    :demand t
     :config
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
 

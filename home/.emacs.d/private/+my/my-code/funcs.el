@@ -9,6 +9,21 @@
   (interactive)
   (set-window-buffer nil (get-buffer "*compilation*")))
 
+(defun my-projectile/dotemacs-elpa-package (dir)
+  (when (string-match ".*emacs.d/elpa/[^/]+/develop/[^/]+/" dir)
+    (match-string 0 dir)))
+
+(defun my-avy/goto-paren ()
+  (interactive)
+  (avy--generic-jump "(" nil 'pre))
+
+(defun my-avy/goto-conditional ()
+  (interactive)
+  (avy--generic-jump (pcase major-mode
+                       ('emacs-lisp-mode
+                        "(\\(if\\|cond\\|when\\|when-let\\|unless\\)\\b")
+                       (_ "\\bif\\b")) nil 'pre))
+
 
 ;;; realgud
 
@@ -68,7 +83,7 @@
 
 (defun my/realtime-elisp-doc-function ()
   (let ((w (selected-window)))
-    (when-let (s (intern-soft (current-word)))
+    (when-let* ((s (intern-soft (current-word))))
       (cond
        ((fboundp s) (describe-function s))
        ((boundp s) (describe-variable s))
@@ -101,7 +116,9 @@
 
 (defun my-xref/find-references ()
   (interactive)
-  (if lsp-mode (lsp-ui-peek-find-references) (spacemacs/jump-to-definition)))
+  (if lsp-mode
+      (lsp-ui-peek-find-references)
+    (spacemacs/search-project-rg-region-or-symbol)))
 
 ;;; Override
 ;; This function is transitively called by xref-find-{definitions,references,apropos}

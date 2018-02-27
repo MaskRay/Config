@@ -40,6 +40,7 @@ This function should only modify configuration layer settings."
      colors
      d
      dash
+     elfeed
      (emacs-lisp :variables emacs-lisp-hide-namespace-prefix nil)
      emoji
      evil-commentary

@@ -14,7 +14,7 @@
     (let ((i 0))
      (while (string-match pattern line i)
        (setq i (match-end 0))
-       (add-face-text-property (match-beginning 0) (match-end 0) 'highlight t line)
+       (add-face-text-property (match-beginning 0) (match-end 0) 'isearch t line)
        )
      line)))
 
