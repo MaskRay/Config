@@ -57,8 +57,8 @@ xterm*cursorUnderLine: False
 xterm*eightBitInput: false
 ! uncomment to output a summary of each font s metrics
 !xterm.reportFonts: true
-xterm*faceName: DejaVu Sans Mono:size=18
-xterm*faceNameDoublesize: Source Han Sans TC Normal:size=18
+XTerm.vt100.faceName: DejaVu Sans Mono:size=18
+XTerm.vt100.faceNameDoublesize: Source Han Sans TC Normal:size=18
 xterm*fastScroll: true
 xterm*highlightSelection: true
 XTerm*jumpScroll: true

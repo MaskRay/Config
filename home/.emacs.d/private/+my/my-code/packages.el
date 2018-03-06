@@ -263,10 +263,10 @@ If COUNT is given, move COUNT - 1 lines downward first."
         "r" #'cquery/references-read
         "w" #'cquery/references-write
         "m" #'cquery-member-hierarchy
-        ;; bases
-        "i" #'cquery-inheritance-hierarchy
         ;; derived
-        "I" (lambda () (interactive) (cquery-inheritance-hierarchy t))
+        "i" (lambda () (interactive) (cquery-inheritance-hierarchy t))
+        ;; bases
+        "I" #'cquery-inheritance-hierarchy
         ;; callers
         "c" #'cquery-call-hierarchy
         ;; callees
@@ -285,8 +285,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (setq lsp-ui-doc-include-signature nil)  ; don't include type signature in the child frame
 
     ;; TODO slow https://github.com/emacs-lsp/lsp-ui/issues/45
-    ;; (lsp-ui-flycheck-enable 1)
-    (setq lsp-ui-flycheck-enable nil)
+    ;; (setq lsp-ui-flycheck-enable nil)
     (setq lsp-ui-sideline-enable nil)
     (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
     (setq lsp-ui-sideline-ignore-duplicate t)

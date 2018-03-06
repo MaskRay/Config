@@ -15,7 +15,8 @@
     (setq cquery-sem-highlight-method 'font-lock)
     (cquery-use-default-rainbow-sem-highlight)
     (setq cquery-extra-init-params
-          '(:cacheFormat "msgpack" :completion (:detailedLabel t) :xref (:container t)))
+          '(:cacheFormat "msgpack" :completion (:detailedLabel t) :xref (:container t)
+                         :diagnostics (:frequencyMs 5000)))
 
     (require 'projectile)
     (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index")
