@@ -19,6 +19,7 @@
     ))
 
 (defun my-code/post-init-cc-mode ()
+  (setq c-mode-common-hook (remove 'spacemacs//c-toggle-auto-newline c-mode-common-hook))
   (dolist (mode c-c++-modes)
     (spacemacs/declare-prefix-for-mode mode "mx" "format")
     (spacemacs/set-leader-keys-for-major-mode mode
