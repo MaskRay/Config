@@ -18,7 +18,6 @@ UNAME=$(uname)
 alias sudo='sudo ' # zsh: next word is elligible for alias expansion
 alias L=less
 alias d='dirs -v'
-alias e='TERM=xterm-termite-24bits emacsclient'
 alias eg='egrep --color=auto -I'
 alias g='grep --color=auto -I'
 alias l="ls -l"
@@ -312,6 +311,11 @@ alias mpopulate=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-
 
 # functions {{{1
 
+e() {
+  wmctrl -a emacs@
+  TERM=xterm-termite-24bits emacsclient "$@"
+}
+
 mtrg() {
   sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}'
 }
@@ -324,8 +328,6 @@ web() {
 info2() { info --subnodes -o - "$1" | less; }
 johnrar() { rar2john "$1" > /tmp/_.john && john --wordlist=~/Information/Dict/dict.txt /tmp/_.john; }
 lst() { r2 -q "$1" -c "s $2; pd 10"; }
-ord() { printf "0x%x\n" "'$1'"; }
-chr() { printf $(printf '\\%03o\\n' "$1"); }
 uniinfo() { python -c "import unicodedata as u; print u.name(unichr("$1"))"; }
 udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
 if [[ -n $ZSH_VERSION ]]; then
@@ -343,7 +345,7 @@ c() { cd "$1" && ls -a; }
   done
 }
 
-ssht() { ssh -t "$1" 'tmux a || tmux'; } # TODO tmux 2.0 attach-session -A
+ssht() { ssh -t "$1" "tmux new -As $2"; }
 
 fweb() {
   local f=/tmp/$UID.Chrome.History

@@ -1,0 +1,7 @@
+#!/bin/zsh
+XWININFO=$(xwininfo)
+read X < <(awk -F: '/Absolute upper-left X/{print $2}' <<< "$XWININFO")
+read Y < <(awk -F: '/Absolute upper-left Y/{print $2}' <<< "$XWININFO")
+read W < <(awk -F: '/Width/{print $2}' <<< "$XWININFO")
+read H < <(awk -F: '/Height/{print $2}' <<< "$XWININFO")
+byzanz-record --verbose --x=$X --y=$Y --width=$W --height=$H --duration=${1:-10} /tmp/recorded.gif

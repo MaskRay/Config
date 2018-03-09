@@ -19,10 +19,15 @@
 
 (defun my-avy/goto-conditional ()
   (interactive)
-  (avy--generic-jump (pcase major-mode
-                       ('emacs-lisp-mode
-                        "(\\(if\\|cond\\|when\\|when-let\\|unless\\)\\b")
-                       (_ "\\bif\\b")) nil 'pre))
+  (avy--generic-jump "\\s(\\(if\\|cond\\|when\\|unless\\)\\b" nil 'pre))
+
+(defun my/define-key (keymap key def &rest bindings)
+  "Define multi keybind with KEYMAP KEY DEF BINDINGS."
+  (interactive)
+  (while key
+    (define-key keymap (kbd key) def)
+    (setq key (pop bindings)
+          def (pop bindings))))
 
 
 ;;; realgud

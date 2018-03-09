@@ -19,7 +19,7 @@
     ))
 
 (defun my-code/post-init-cc-mode ()
-  (setq c-mode-common-hook (remove 'spacemacs//c-toggle-auto-newline c-mode-common-hook))
+  (delq 'spacemacs//c-toggle-auto-newline c-mode-common-hook)
   (dolist (mode c-c++-modes)
     (spacemacs/declare-prefix-for-mode mode "mx" "format")
     (spacemacs/set-leader-keys-for-major-mode mode
@@ -44,10 +44,16 @@
       (statement-cont . ++)
       )))
 
-  (c-add-style "my-cc"
-               '("cc-mode"
-                 (c-basic-offset . 2)
-                 (c-offsets-alist . ((innamespace . [0])))))
+  (c-add-style
+   "my-cc" '("user"
+             (c-basic-offset . 2)
+             (c-offsets-alist
+              . ((innamespace . 0)
+                 (access-label . -)
+                 (case-label . 0)
+                 (member-init-intro . +)
+                 (topmost-intro . 0)
+                 (arglist-cont-nonempty . +)))))
   (setf (alist-get 'other c-default-style) "my-cc")
   )
 
@@ -94,22 +100,60 @@
 
   (spacemacs/set-leader-keys "cb" #'my/compilation-buffer)
 
-  (evil-define-key 'normal global-map (kbd "M-g b") #'my-avy/goto-paren)
-  (evil-define-key 'normal global-map (kbd "M-g c") #'my-avy/goto-conditional)
-  (evil-define-key '(motion visual operator) global-map (kbd "M-l") #'avy-goto-line)
+  (define-key evil-normal-state-map (kbd "M-g b") #'my-avy/goto-paren)
+  (define-key evil-normal-state-map (kbd "M-g c") #'my-avy/goto-conditional)
 
   (define-key evil-normal-state-map "gf" 'my/ffap)
   (define-key evil-normal-state-map (kbd "<backspace>") 'spacemacs/evil-search-clear-highlight)
   (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
-  (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
+  ;; (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
   (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
-  (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
-  (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
+  ;; (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
+  ;; (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
   (define-key evil-normal-state-map (kbd "C-c P s") 'profiler-start)
   (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
   (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
 
   (define-key evil-insert-state-map (kbd "C-x C-l") #'my/expand-line)
+
+  (my/define-key evil-motion-state-map
+    "gd" #'my-xref/find-definitions
+    "C-j" #'my-xref/find-definitions
+    "gs" #'my-xref/find-references
+    "C-," #'my-xref/find-references
+    ";" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-definitions))
+    "x;" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-references))
+    "J" #'lsp-ui-peek-jump-backward
+    "xb" #'cquery/base
+    "xd" #'cquery/derived
+    "xe" #'cquery/callers
+    ;; callers
+    "xc" #'cquery-call-hierarchy
+    ;; callees
+    "xC" (lambda () (interactive) (cquery-call-hierarchy t))
+    ;; derived
+    "xi" (lambda () (interactive) (cquery-inheritance-hierarchy t))
+    ;; base
+    "xI" #'cquery-inheritance-hierarchy
+    "xl" #'cquery-code-lens-mode
+    "xm" #'cquery-member-hierarchy
+    "xP" #'cquery-preprocess-file
+    "xR" #'cquery-freshen-index
+    "M-<" #'previous-error
+    "M->" #'next-error
+    )
+  (my/define-key evil-normal-state-map
+    "gd" nil
+    "J" nil
+    "x" nil
+    "xx" #'evil-delete-char
+    "xr" #'evil-replace
+    "xv" #'cquery/vars
+    "x SPC" #'cquery/random
+    )
+  (my/define-key evil-visual-state-map
+    "J" #'evil-join
+    )
 
   (evil-define-motion evil-end-of-line (count)
     "Move the cursor to the end of the current line.
@@ -150,13 +194,12 @@ If COUNT is given, move COUNT - 1 lines downward first."
   ;; Rebind surround to S instead of s, so we can use s for avy
   (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+  (evil-snipe-mode -1)
 
   ;; avy
-  (evil-define-key '(normal motion) global-map "s" 'avy-goto-char-timer)
-  (evil-define-key '(visual operator) evil-surround-mode-map "s" 'avy-goto-char-timer)
+  (evil-define-key '(normal motion) global-map "s" #'avy-goto-char-timer)
+  (evil-define-key '(visual operator) evil-surround-mode-map "s" #'avy-goto-char-timer)
   (setq avy-timeout-seconds 0.2)
-
-  (evil-snipe-mode -1)
   )
 
 (defun my-code/post-init-lsp-mode ()
@@ -252,22 +295,9 @@ If COUNT is given, move COUNT - 1 lines downward first."
 
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode
-        "lb" #'cquery/base
-        "lc" #'cquery/callers
-        "ld" #'cquery/derived
-        "ll" #'cquery-code-lens-mode
-        "lP" #'cquery-preprocess-file
-        "lR" #'cquery-freshen-index
-        "lv" #'cquery/vars
-        "l SPC" #'cquery/random
         "a" #'cquery/references-address
         "r" #'cquery/references-read
         "w" #'cquery/references-write
-        "m" #'cquery-member-hierarchy
-        ;; derived
-        "i" (lambda () (interactive) (cquery-inheritance-hierarchy t))
-        ;; bases
-        "I" #'cquery-inheritance-hierarchy
         ;; callers
         "c" #'cquery-call-hierarchy
         ;; callees

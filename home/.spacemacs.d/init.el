@@ -44,7 +44,7 @@ This function should only modify configuration layer settings."
      (emacs-lisp :variables emacs-lisp-hide-namespace-prefix nil)
      emoji
      evil-commentary
-     (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
+     (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t evil-snipe-override-evil-repeat-keys nil)
      git
      go
      gtags
@@ -430,7 +430,9 @@ It should only modify the values of Spacemacs settings."
    ;; %z - mnemonics of buffer, terminal, and keyboard coding systems
    ;; %Z - like %z, but including the end-of-line format
    ;; (default "%I@%S")
-   dotspacemacs-frame-title-format "%I@%S"
+   ;; FIXME work around slow projectile-project-name called by frame-title-format in core-spacemacs.el
+   ;; dotspacemacs-frame-title-format "%I@%S"
+   dotspacemacs-frame-title-format nil
 
    ;; Format specification for setting the icon title format
    ;; (default nil - same as frame-title-format)

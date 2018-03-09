@@ -11,6 +11,7 @@ xrdb ~/.Xresources
 syndaemon -t -k &
 xset r rate 200 50
 compton -cC &
+copyq &
 xsetroot -cursor_name left_ptr
 
 # Weird, xkbcomp does not work in .xinitrc.
