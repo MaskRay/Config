@@ -7,6 +7,9 @@
     evil-snipe
     flycheck
     haskell-mode
+    ivy-posframe
+    lispy
+    lispyville
     lsp-haskell
     lsp-rust
     ;; (lsp-mode :location local)
@@ -74,6 +77,31 @@
     )
   )
 
+(defun my-code/init-lispy ()
+  (use-package lispy
+    :init
+    (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+    ))
+
+(defun my-code/init-lispyville ()
+  (use-package lispyville
+    :init
+    (add-hook 'lispy-mode-hook #'lispyville-mode)
+    :config
+    (lispyville-set-key-theme
+     '(operators
+       c-w
+       (escape insert)
+       (additional-movement normal visual motion)))
+    ))
+
+(defun my-code/init-ivy-posframe ()
+  (use-package ivy-posframe
+    :config
+    (setq ivy-display-function #'ivy-posframe-display)
+    (ivy-posframe-enable)
+    ))
+
 (defun my-code/post-init-emacs-lisp ()
   (evil-define-key 'insert emacs-lisp-mode-map "[" (lambda () (interactive) (insert ?\()))
   (evil-define-key 'insert emacs-lisp-mode-map "]" (lambda () (interactive) (insert ?\))))
@@ -98,61 +126,64 @@
       (kbd "M-t") #'evil-mc-skip-and-goto-next-match
       ))
 
+  (my/define-key
+   evil-motion-state-map
+   "M-g b" #'my-avy/goto-paren
+   "M-g c" #'my-avy/goto-conditional
+   )
+
   (spacemacs/set-leader-keys "cb" #'my/compilation-buffer)
 
-  (define-key evil-normal-state-map (kbd "M-g b") #'my-avy/goto-paren)
-  (define-key evil-normal-state-map (kbd "M-g c") #'my-avy/goto-conditional)
+  (my/define-key
+   evil-normal-state-map
+   "gd" #'my-xref/find-definitions
+   "gf" #'my/ffap
+   "C-j" #'my-xref/find-definitions
+   "gs" #'my-xref/find-references
+   "C-," #'my-xref/find-references
+   ";" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-definitions))
+   "H" #'lsp-ui-peek-jump-backward
+   "L" #'lsp-ui-peek-jump-forward
+   "x" nil
+   "x SPC" #'cquery/random
+   "x;" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-references))
+   "xb" #'cquery/base
+   "xd" #'cquery/derived
+   "xe" #'cquery/callers
+   ;; callers
+   "xc" #'cquery-call-hierarchy
+   ;; callees
+   "xC" (lambda () (interactive) (cquery-call-hierarchy t))
+   ;; derived
+   "xi" (lambda () (interactive) (cquery-inheritance-hierarchy t))
+   ;; base
+   "xI" #'cquery-inheritance-hierarchy
+   "xl" #'cquery-code-lens-mode
+   "xm" #'cquery-member-hierarchy
+   "xt" #'text-document/type-definition
+   "xv" #'cquery/vars
+   "xx" #'evil-delete-char
+   "M-<" #'previous-error
+   "M->" #'next-error
 
-  (define-key evil-normal-state-map "gf" 'my/ffap)
-  (define-key evil-normal-state-map (kbd "<backspace>") 'spacemacs/evil-search-clear-highlight)
-  (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
-  ;; (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward)
-  (define-key evil-motion-state-map (kbd "M-?") 'xref-find-references)
-  ;; (define-key evil-motion-state-map (kbd "C-,") #'my-xref/find-references)
-  ;; (define-key evil-motion-state-map (kbd "C-j") #'my-xref/find-definitions)
-  (define-key evil-normal-state-map (kbd "C-c P s") 'profiler-start)
-  (define-key evil-normal-state-map (kbd "C-c P r") 'profiler-report)
-  (define-key evil-normal-state-map (kbd "C-c P S") 'profiler-stop)
+   "<Backspace>" #'spacemacs/evil-search-clear-highlight
+   "C-c P s" #'profiler-start
+   "C-c P r" #'profiler-report
+   "C-c P S" #'profiler-stop
+   )
+  (my/define-key
+   evil-motion-state-map
+   "L" nil
+   )
+  (my/define-key
+   evil-insert-state-map
+   "C-x C-l" #'my/expand-line
+   )
 
-  (define-key evil-insert-state-map (kbd "C-x C-l") #'my/expand-line)
-
-  (my/define-key evil-motion-state-map
-    "gd" #'my-xref/find-definitions
-    "C-j" #'my-xref/find-definitions
-    "gs" #'my-xref/find-references
-    "C-," #'my-xref/find-references
-    ";" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-definitions))
-    "x;" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-references))
-    "J" #'lsp-ui-peek-jump-backward
-    "xb" #'cquery/base
-    "xd" #'cquery/derived
-    "xe" #'cquery/callers
-    ;; callers
-    "xc" #'cquery-call-hierarchy
-    ;; callees
-    "xC" (lambda () (interactive) (cquery-call-hierarchy t))
-    ;; derived
-    "xi" (lambda () (interactive) (cquery-inheritance-hierarchy t))
-    ;; base
-    "xI" #'cquery-inheritance-hierarchy
-    "xl" #'cquery-code-lens-mode
-    "xm" #'cquery-member-hierarchy
-    "xP" #'cquery-preprocess-file
-    "xR" #'cquery-freshen-index
-    "M-<" #'previous-error
-    "M->" #'next-error
-    )
-  (my/define-key evil-normal-state-map
-    "gd" nil
-    "J" nil
-    "x" nil
-    "xx" #'evil-delete-char
-    "xr" #'evil-replace
-    "xv" #'cquery/vars
-    "x SPC" #'cquery/random
-    )
-  (my/define-key evil-visual-state-map
-    "J" #'evil-join
+  (defhydra hydra/ref (evil-normal-state-map "x")
+    "reference"
+    ("j" lsp-ui-find-next-reference)
+    ("k" lsp-ui-find-prev-reference)
     )
 
   (evil-define-motion evil-end-of-line (count)
@@ -225,51 +256,24 @@ If COUNT is given, move COUNT - 1 lines downward first."
       (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
         (add-to-list handler 'lsp-ui-peek-find-references)))
 
-    (defun text-document/type-definition () (interactive) (lsp-ui-peek-find-custom 'type "textDocument/typeDefinition"))
-    (defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
-    (defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
-    (defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
-    (defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
-    (defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
-
-    (defun cquery/references-address ()
-      (interactive)
-      (lsp-ui-peek-find-custom
-       'address "textDocument/references"
-       (plist-put (lsp--text-document-position-params) :context
-                  '(:role 128))))
-
-    (defun cquery/references-read ()
-      (interactive)
-      (lsp-ui-peek-find-custom
-       'read "textDocument/references"
-       (plist-put (lsp--text-document-position-params) :context
-                  '(:role 8))))
-
-    (defun cquery/references-write ()
-      (interactive)
-      (lsp-ui-peek-find-custom
-       'write "textDocument/references"
-       (plist-put (lsp--text-document-position-params) :context
-                  '(:role 16))))
-
     (spacemacs/set-leader-keys-for-minor-mode 'lsp-mode
       "la" #'lsp-ui-find-workspace-symbol
       "lA" #'lsp-ui-peek-find-workspace-symbol
-      "lf" #'lsp-format-buffer
+      "lf" #'cquery-freshen-index
+      "lF" #'lsp-format-buffer
       "lL" #'lsp-ui-sideline-mode
       "lD" #'lsp-ui-doc-mode
+      "lp" #'cquery-preprocess-file
       "lr" #'lsp-rename
-      "lt" #'text-document/type-definition
       )
 
-    (defhydra hydra/ref (spacemacs-lsp-mode-map "l")
+    (defhydra hydra/ref (evil-normal-state-map "x")
       "reference"
       ("d" lsp-ui-peek-find-definitions "next" :bind nil)
-      ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
-             (if (> n 0) (message "%d/%d" i n))) "prev")
-      ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
+      ("j" (-let [(i . n) (lsp-ui-find-next-reference)]
              (if (> n 0) (message "%d/%d" i n))) "next")
+      ("k" (-let [(i . n) (lsp-ui-find-prev-reference)]
+             (if (> n 0) (message "%d/%d" i n))) "prev")
       ("R" (-let [(i . n) (lsp-ui-find-prev-reference
                            (lambda (x)
                              (/= (logand (ht-get x "role" 0) 8) 0)))]
@@ -278,7 +282,7 @@ If COUNT is given, move COUNT - 1 lines downward first."
                            (lambda (x)
                              (/= (logand (ht-get x "role" 0) 8) 0)))]
              (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
-      ("W" (-let [(i . n) (lsp-ui-find-prev-reference
+      ("W" (-let [(i . n) (
                            (lambda (x)
                              (/= (logand (ht-get x "role" 0) 16) 0)))]
              (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
@@ -286,11 +290,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
                            (lambda (x)
                              (/= (logand (ht-get x "role" 0) 16) 0)))]
              (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
-      )
-
-    (defhydra hydra/random (spacemacs-lsp-mode-map "l")
-      "random"
-      ("SPC" cquery/random "random")
       )
 
     (dolist (mode c-c++-modes)
@@ -320,21 +319,22 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (setq lsp-ui-sideline-enable nil)
     (setq lsp-ui-sideline-show-symbol nil)  ; don't show symbol on the right of info
     (setq lsp-ui-sideline-ignore-duplicate t)
-    (set-face-attribute 'lsp-ui-sideline-symbol nil :foreground "grey30" :box nil)
-    (set-face-attribute 'lsp-ui-sideline-current-symbol nil :foreground "grey38" :box nil)
 
     (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
-    (define-key lsp-ui-peek-mode-map (kbd "h") 'lsp-ui-peek--select-prev-file)
-    (define-key lsp-ui-peek-mode-map (kbd "l") 'lsp-ui-peek--select-next-file)
-    (define-key lsp-ui-peek-mode-map (kbd "j") 'lsp-ui-peek--select-next)
-    (define-key lsp-ui-peek-mode-map (kbd "k") 'lsp-ui-peek--select-prev)
+
+    (my/define-key
+     lsp-ui-peek-mode-map
+     "h" #'lsp-ui-peek--select-prev-file
+     "j" #'lsp-ui-peek--select-next
+     "k" #'lsp-ui-peek--select-prev
+     "l" #'lsp-ui-peek--select-next-file
+     )
     ))
 
 (defun my-code/init-lsp-haskell ()
   (use-package lsp-haskell
-    :mode ("\\.hs\\'" . haskell-mode)
-    :after lsp-mode
-    :config
+    :commands lsp-haskell-enable
+    :init (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
     )
   )
 
@@ -426,22 +426,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
 
 (defun my-code/post-init-smartparens ()
   (with-eval-after-load 'smartparens
-    (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
-    ;; (define-key smartparens-mode-map (kbd "M-t") 'sp-transpose-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
-    (define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
-    (define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
-    (define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
-    (define-key smartparens-mode-map (kbd "C-S-f") 'sp-forward-symbol)
-    (define-key smartparens-mode-map (kbd "C-S-b") 'sp-backward-symbol)
-    (define-key smartparens-mode-map (kbd "M-k") 'sp-backward-kill-sexp)
     (define-key smartparens-mode-map (kbd "M-]") 'sp-unwrap-sexp)
     ;; For termite modify_other_keys or xterm modifyOtherKeys to work,
     ;; we cannot bind M-[

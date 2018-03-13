@@ -1,9 +1,38 @@
+(defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
+(defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
+(defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
+(defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
+(defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
+(defun text-document/type-definition () (interactive) (lsp-ui-peek-find-custom 'type "textDocument/typeDefinition"))
+
+(defun cquery/references-address ()
+  (interactive)
+  (lsp-ui-peek-find-custom
+   'address "textDocument/references"
+   (plist-put (lsp--text-document-position-params) :context
+              '(:role 128))))
+
+(defun cquery/references-read ()
+  (interactive)
+  (lsp-ui-peek-find-custom
+   'read "textDocument/references"
+   (plist-put (lsp--text-document-position-params) :context
+              '(:role 8))))
+
+(defun cquery/references-write ()
+  (interactive)
+  (lsp-ui-peek-find-custom
+   'write "textDocument/references"
+   (plist-put (lsp--text-document-position-params) :context
+              '(:role 16))))
+
+
+
 (defun my/ffap ()
   (interactive)
-  (let ((filename (ffap-guess-file-name-at-point)))
-    (when (not filename)
-      (user-error "No file at point"))
-    (ffap filename)))
+  (-if-let ((filename (ffap-guess-file-name-at-point)))
+      (ffap filename)
+    (user-error "No file at point")))
 
 (defun my/compilation-buffer ()
   (interactive)

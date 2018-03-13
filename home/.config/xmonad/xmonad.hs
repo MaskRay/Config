@@ -722,7 +722,7 @@ myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
   , Project wsGen "~" . Just $ spawn (termite "tmux new -As default")
-  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -R 9010:0:9010 -tX linode-ca \"tmux new -As weechat\"'"
+  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -tX linode-ca \"tmux new -As weechat\"'"
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
   , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux new -As ida")

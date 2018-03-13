@@ -11,17 +11,18 @@ Config {
                    Run BatteryP ["BAT0"] ["-t","<left>","-L","30","-H","80","-l","red","-n","orange","-h","#00c000"] 300
                  , Run Com "ponymix" ["get-volume"] "volume" 50
                  , Run Date "%H:%M %a %y-%m-%d " "date" 50
-                 , Run Mail [ ("<fc=green>INBOX</fc>", "~/Maildir/INBOX")] "mail"
+                 -- , Run Mail [ ("<fc=green>INBOX</fc>", "~/Maildir/INBOX")] "mail"
                  , Run Memory ["-H","50","--low","#808080","--normal","#83AD2E","--high","#FF0000","-t","Mem: <usedratio>%"] 50
                  , Run StdinReader
-                 , Run Wireless "wlp3s0" [ "-t", "<essid>" ] 60
+                 -- , Run Wireless "wlp3s0" [ "-t", "<essid>" ] 60
                  ]
     --, iconRoot = "/home/ray/.xmonad/icons"
 
     -- layout
     , sepChar = "%"
     , alignSep = "}{"
-    , template = "%StdinReader% }{ Vol: %volume% <fc=#daff30>|</fc> %memory% <fc=#daff30>|</fc> Bat: %battery% <fc=#daff30>|</fc> %wlp3s0wi% <fc=#daff30>|</fc> %mail% <fc=#e09000>%date%</fc>"
+    -- , template = "%StdinReader% }{ Vol: %volume% <fc=#daff30>|</fc> %memory% <fc=#daff30>|</fc> Bat: %battery% <fc=#daff30>|</fc> %wlp3s0wi% <fc=#daff30>|</fc> %mail% <fc=#e09000>%date%</fc>"
+    , template = "%StdinReader% }{ Vol: %volume% <fc=#daff30>|</fc> %memory% <fc=#daff30>|</fc> Bat: %battery% <fc=#daff30>|</fc> <fc=#e09000>%date%</fc>"
 
     -- general behavior
     , hideOnStart = False
