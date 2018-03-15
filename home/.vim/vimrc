@@ -503,7 +503,7 @@ let g:grepper = {}
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['cquery', '--language-server'],
-      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/bin/cquery'), '--init={}', '--log-file=/tmp/cq.log', '--record=/tmp/record'],
+      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/cquery'), '--init={}', '--log-file=/tmp/cq.log', '--record=/tmp/record'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'objc': ['cquery', '--language-server'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],

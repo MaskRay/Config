@@ -1,1 +1,1 @@
-#include "/usr/share/rofi/themes//glue_pro_blue.theme"
+include "/usr/share/rofi/themes/glue_pro_blue.rasi"

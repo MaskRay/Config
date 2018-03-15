@@ -6,6 +6,7 @@
     evil
     evil-snipe
     flycheck
+    git-link
     haskell-mode
     ivy-posframe
     lispy
@@ -64,6 +65,21 @@
   ;; Don't use dumb-jump-go in large code base.
   (advice-add 'dumb-jump-go :around #'my-advice/dumb-jump-go))
 
+(defun my-code/post-init-git-link ()
+  (with-eval-after-load 'git-link
+    (defun git-link-llvm (hostname dirname filename branch commit start end)
+      (format "https://github.com/llvm-mirror/%s/tree/%s/%s"
+              (file-name-base dirname)
+	            (or branch commit)
+              (concat filename
+                      (when start
+                        (concat "#"
+                                (if end
+                                    (format "L%s-%s" start end)
+                                  (format "L%s" start)))))))
+    (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
+    ))
+
 (defun my-code/post-init-flycheck ()
   (setq flycheck-check-syntax-automatically '(mode-enabled save)))
 
@@ -111,7 +127,7 @@
     ")" (lambda () (interactive) (insert ?\]))
     )
 
-  (evil-define-key 'normal emacs-lisp-mode-map "/" #'lispy-splice)
+  (evil-define-key 'normal emacs-lisp-mode-map "C-c /" #'lispy-splice)
 
   (require 'projectile)
   (add-to-list 'projectile-project-root-files-functions #'my-projectile/dotemacs-elpa-package)
@@ -141,10 +157,12 @@
 
   (my/define-key
    evil-normal-state-map
+   "SPC SPC" #'counsel-projectile-switch-to-buffer
    "gd" #'my-xref/find-definitions
    "gf" #'my/ffap
+   "gs" #'lsp-ui-find-workspace-symbol
+   "go" (lambda () (interactive) (message "%S" (text-properties-at (point))))
    "C-j" #'my-xref/find-definitions
-   "gs" #'my-xref/find-references
    "C-," #'my-xref/find-references
    ";" (lambda () (interactive) (avy-goto-char-timer) (my-xref/find-definitions))
    "H" #'lsp-ui-peek-jump-backward
@@ -262,7 +280,6 @@ If COUNT is given, move COUNT - 1 lines downward first."
         (add-to-list handler 'lsp-ui-peek-find-references)))
 
     (spacemacs/set-leader-keys-for-minor-mode 'lsp-mode
-      "la" #'lsp-ui-find-workspace-symbol
       "lA" #'lsp-ui-peek-find-workspace-symbol
       "lf" #'cquery-freshen-index
       "lF" #'lsp-format-buffer

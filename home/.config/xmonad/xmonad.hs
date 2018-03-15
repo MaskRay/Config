@@ -577,6 +577,7 @@ myKeys =
     , ("M-y b", windowPromptBring myXPConfig)
     , ("M-y c", mainCommandPrompt myXPConfig)
     , ("M-y d", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-y e", spawn "~/Dev/Util/rofimoji/rofimoji.py")
     , ("M-y p", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
     , ("M-y r", spawn "rofi -sort -matching fuzzy -show run")
     , ("M-<Space>", spawn "rofi -sort -matching fuzzy -show run")
@@ -727,7 +728,7 @@ myProjects =
 
   , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux new -As ida")
   , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (termite "tmux new -As ida")
-  , Project wsMail "/tmp" . Just $ spawn (termite "mutt")
+  , Project wsMail "/tmp" . Just $ spawn (termite "neomutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"
   ]
