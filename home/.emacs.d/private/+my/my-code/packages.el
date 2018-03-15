@@ -91,6 +91,7 @@
     (lispyville-set-key-theme
      '(operators
        c-w
+       slurp/barf-lispy
        (escape insert)
        (additional-movement normal visual motion)))
     ))
@@ -103,10 +104,14 @@
     ))
 
 (defun my-code/post-init-emacs-lisp ()
-  (evil-define-key 'insert emacs-lisp-mode-map "[" (lambda () (interactive) (insert ?\()))
-  (evil-define-key 'insert emacs-lisp-mode-map "]" (lambda () (interactive) (insert ?\))))
-  (evil-define-key 'insert emacs-lisp-mode-map "(" (lambda () (interactive) (insert ?\[)))
-  (evil-define-key 'insert emacs-lisp-mode-map ")" (lambda () (interactive) (insert ?\])))
+  (evil-define-key 'insert emacs-lisp-mode-map
+    "[" (lambda () (interactive) (insert ?\())
+    "]" (lambda () (interactive) (insert ?\)))
+    "(" (lambda () (interactive) (insert ?\[))
+    ")" (lambda () (interactive) (insert ?\]))
+    )
+
+  (evil-define-key 'normal emacs-lisp-mode-map "/" #'lispy-splice)
 
   (require 'projectile)
   (add-to-list 'projectile-project-root-files-functions #'my-projectile/dotemacs-elpa-package)
