@@ -26,6 +26,58 @@
    (plist-put (lsp--text-document-position-params) :context
               '(:role 16))))
 
+(defvar +amos/default-include-headers
+  '("algorithm" "any" "array" "atomic" "bitset" "cassert" "ccomplex" "cctype" "cerrno"
+    "cfenv" "cfloat" "chrono" "cinttypes" "ciso646" "climits" "clocale" "cmath" "codecvt"
+    "complex" "complex.h" "condition_variable" "csetjmp" "csignal" "cstdalign" "cstdarg"
+    "cstdbool" "cstddef" "cstdint" "cstdio" "cstdlib" "cstring" "ctgmath" "ctime" "cuchar"
+    "cwchar" "cwctype" "cxxabi.h" "deque" "exception" "fenv.h" "forward_list" "fstream"
+    "functional" "future" "initializer_list" "iomanip" "ios" "iosfwd" "iostream" "istream"
+    "iterator" "limits" "list" "locale" "map" "math.h" "memory" "mutex" "new" "numeric"
+    "optional" "ostream" "queue" "random" "ratio" "regex" "scoped_allocator" "set"
+    "shared_mutex" "sstream" "stack" "stdexcept" "stdlib.h" "streambuf" "string" "string_view"
+    "system_error" "tgmath.h" "thread" "tuple" "type_traits" "typeindex" "typeinfo" "unordered_map"
+    "unordered_set" "utility" "valarray" "variant" "vector" "auto_ptr.h" "backward_warning.h"
+    "binders.h" "hash_fun.h" "hash_map" "hash_set" "hashtable.h" "strstream" "adxintrin.h"
+    "altivec.h" "ammintrin.h" "arm_acle.h" "arm_neon.h" "armintr.h" "avx2intrin.h" "avx512bwintrin.h"
+    "avx512cdintrin.h" "avx512dqintrin.h" "avx512erintrin.h" "avx512fintrin.h" "avx512ifmaintrin.h"
+    "avx512ifmavlintrin.h" "avx512pfintrin.h" "avx512vbmiintrin.h" "avx512vbmivlintrin.h"
+    "avx512vlbwintrin.h" "avx512vlcdintrin.h" "avx512vldqintrin.h" "avx512vlintrin.h" "avx512vpopcntdqintrin.h"
+    "avxintrin.h" "bmi2intrin.h" "bmiintrin.h" "clflushoptintrin.h" "clzerointrin.h" "cpuid.h"
+    "cuda_wrappers" "emmintrin.h" "f16cintrin.h" "fcntl.h" "float.h" "fma4intrin.h" "fmaintrin.h" "fxsrintrin.h"
+    "htmintrin.h" "htmxlintrin.h" "ia32intrin.h" "immintrin.h" "intrin.h" "inttypes.h" "iso646.h"
+    "limits.h" "lwpintrin.h" "lzcntintrin.h" "mm3dnow.h" "mm_malloc.h" "mmintrin.h" "module.modulemap"
+    "msa.h" "mwaitxintrin.h" "nmmintrin.h" "opencl-c.h" "pkuintrin.h" "pmmintrin.h" "popcntintrin.h"
+    "prfchwintrin.h" "rdseedintrin.h" "rtmintrin.h" "s390intrin.h" "sanitizer" "shaintrin.h" "smmintrin.h"
+    "stdalign.h" "stdarg.h" "stdatomic.h" "stdbool.h" "stddef.h" "stdint.h" "stdnoreturn.h" "tbmintrin.h"
+    "tgmath.h" "tmmintrin.h" "unwind.h" "vadefs.h" "varargs.h" "vecintrin.h" "wmmintrin.h" "x86intrin.h"
+    "xmmintrin.h" "xopintrin.h" "xray" "xsavecintrin.h" "xsaveintrin.h" "xsaveoptintrin.h" "xsavesintrin.h"
+    "xtestintrin.h" "unistd.h" "libaio.h" "numa.h"))
+
+(defun my//insert-include (h &rest others)
+  "Add an #include line for `h' near top of file, avoiding duplicates."
+  (interactive "M#include: ")
+  (dolist (header (cons h others))
+    (let ((incl (if (string-match-p "\\." header)
+                    (format "#include \"%s\"" header)
+                  (format "#include <%s>" header))))
+      (save-excursion
+        (unless (search-backward incl nil t)
+          (when (search-backward "#include" nil t)
+            (forward-line)
+            (beginning-of-line))
+          (insert incl)
+          (newline))))))
+
+(defun my/ivy-insert-include ()
+  (interactive)
+  (ivy-read "#include: "
+            (append
+             +amos/default-include-headers
+             (split-string
+              (shell-command-to-string "(cd /usr/local/include ; find . -type f ; cd /usr/include ; find -L sys -type f) | sed 's=^./=='")))
+            :action #'my//insert-include))
+
 
 
 (defun my/ffap ()
@@ -167,11 +219,21 @@
     (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
     ;; PATCH Jump to the first candidate
-    ;; (when (not (cdr xrefs))
-      ;; (xref--pop-to-location (car xrefs) display-action))
+    (if (not (cdr xrefs))
+        (xref--pop-to-location (car xrefs) display-action)
+      (funcall xref-show-xrefs-function xrefs
+               `((window . ,(selected-window))))
+      ))))
 
-    (funcall xref-show-xrefs-function xrefs
-             `((window . ,(selected-window)))))))
+(with-eval-after-load 'ivy-xref
+  (defun ivy-xref-show-xrefs (xrefs alist)
+    (let (ivy-display-function)
+     (minibuffer-with-setup-hook #'hydra-ivy/body
+       (minibuffer-with-setup-hook #'ivy-toggle-calling
+         (ivy-read "xref: " (ivy-xref-make-collection xrefs)
+                   :require-match t
+                   :action #'(lambda (candidate)
+                               (xref--show-location (cdr candidate) 'quit))))))))
 
 
 ;; https://github.com/syl20bnr/spacemacs/pull/9911

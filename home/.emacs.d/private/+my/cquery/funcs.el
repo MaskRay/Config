@@ -2,9 +2,11 @@
 (require 'subr-x)
 
 (defun cquery//enable ()
-  (condition-case nil
-      (lsp-cquery-enable)
-    (user-error nil)))
+  ;; Avoid php-mode.
+  (when (member major-mode '(c-mode cc-mode c++-mode objc-mode))
+    (condition-case nil
+        (lsp-cquery-enable)
+      (user-error nil))))
 
 
 ;; xref-find-apropos (workspace/symbol)

@@ -8,6 +8,7 @@
     flycheck
     git-link
     haskell-mode
+    ivy
     ivy-posframe
     lispy
     lispyville
@@ -27,7 +28,8 @@
   (dolist (mode c-c++-modes)
     (spacemacs/declare-prefix-for-mode mode "mx" "format")
     (spacemacs/set-leader-keys-for-major-mode mode
-      "xf" 'clang-format-region
+      "=" #'clang-format-region
+      "ii" #'my/ivy-insert-include
       "db" (lambda ()
              (interactive)
              (evil-open-above 1)
@@ -112,6 +114,14 @@
        (additional-movement normal visual motion)))
     ))
 
+(defun my-code/post-init-ivy ()
+  (use-package ivy
+    :config
+    (setq ivy-initial-inputs-alist nil)
+    (ivy-set-display-transformer 'counsel-projectile-switch-to-buffer
+                                 #'ivy-rich-switch-buffer-transformer)
+    ))
+
 (defun my-code/init-ivy-posframe ()
   (use-package ivy-posframe
     :config
@@ -127,7 +137,8 @@
     ")" (lambda () (interactive) (insert ?\]))
     )
 
-  (evil-define-key 'normal emacs-lisp-mode-map "C-c /" #'lispy-splice)
+  (evil-define-key 'normal emacs-lisp-mode-map
+    (kbd "C-c /") #'lispy-splice)
 
   (require 'projectile)
   (add-to-list 'projectile-project-root-files-functions #'my-projectile/dotemacs-elpa-package)
@@ -155,9 +166,11 @@
 
   (spacemacs/set-leader-keys "cb" #'my/compilation-buffer)
 
+  (with-eval-after-load 'counsel
+    (my/define-key evil-normal-state-map "SPC SPC" #'counsel-projectile-switch-to-buffer))
+
   (my/define-key
    evil-normal-state-map
-   "SPC SPC" #'counsel-projectile-switch-to-buffer
    "gd" #'my-xref/find-definitions
    "gf" #'my/ffap
    "gs" #'lsp-ui-find-workspace-symbol
@@ -188,6 +201,7 @@
    "xx" #'evil-delete-char
    "M-<" #'previous-error
    "M->" #'next-error
+   "M-." #'xref-find-definitions
 
    "<Backspace>" #'spacemacs/evil-search-clear-highlight
    "C-c P s" #'profiler-start
@@ -246,13 +260,12 @@ If COUNT is given, move COUNT - 1 lines downward first."
 
 (defun my-code/post-init-evil-snipe ()
   ;; Rebind surround to S instead of s, so we can use s for avy
-  (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
-  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
+  ;; (evil-define-key 'operator evil-surround-mode-map "S" 'evil-surround-edit)
+  ;; (evil-define-key 'visual evil-surround-mode-map "S" 'evil-surround-region)
   (evil-snipe-mode -1)
 
   ;; avy
-  (evil-define-key '(normal motion) global-map "s" #'avy-goto-char-timer)
-  (evil-define-key '(visual operator) evil-surround-mode-map "s" #'avy-goto-char-timer)
+  (evil-define-key 'normal global-map "s" #'avy-goto-char-timer)
   (setq avy-timeout-seconds 0.2)
   )
 

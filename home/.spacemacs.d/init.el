@@ -33,7 +33,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(asm
+   '(ruby
+     asm
      (auto-completion :variables auto-completion-enable-help-tooltip t)
      better-defaults
      (c-c++ :variables c-c++-default-mode-for-headers 'c++-mode)
@@ -54,7 +55,7 @@ This function should only modify configuration layer settings."
      javascript
      haskell
      html
-     ivy
+     (ivy :variables ivy-enable-advanced-buffer-information t)
      latex
      lsp
      markdown
@@ -385,7 +386,7 @@ It should only modify the values of Spacemacs settings."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers '(relative nil)
+   dotspacemacs-line-numbers nil
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -519,14 +520,17 @@ you should place your code here."
   ;; Remove (yes-or-no-p "File GTAGS not found. Run 'gtags'? ")
   (with-eval-after-load "helm-gtags"
     (defun helm-gtags--find-tag-simple ()
-     (or (getenv "GTAGSROOT")
-         (locate-dominating-file default-directory "GTAGS"))))
+      (or (getenv "GTAGSROOT")
+          (locate-dominating-file default-directory "GTAGS"))))
 
   (with-eval-after-load "treemacs"
     (treemacs-map-icons-with-auto-mode-alist
      '(".h")
      '((c-mode . treemacs-icon-c)
        (c++-mode . treemacs-icon-cpp))))
+
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  (add-hook 'text-mode-hook #'display-line-numbers-mode)
 
   ;; +lang/c-c++
   (put 'c-auto-align-backslashes 'safe-local-variable 'booleanp)
