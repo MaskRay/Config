@@ -79,7 +79,60 @@
             :action #'my//insert-include))
 
 
+;; eshell
 
+(with-eval-after-load 'em-prompt
+  (defun eshell-previous-prompt (n)
+    "Move to end of Nth previous prompt in the buffer.
+See `eshell-prompt-regexp'."
+    (interactive "p")
+    (beginning-of-line)               ; Don't count prompt on current line.
+    ;; PATCH beginning-of-line does not move across the prompt
+    (backward-char)
+    (eshell-next-prompt (- n))))
+
+;; PATCH counsel-esh-history
+(defun my/ivy-eshell-history ()
+  (interactive)
+  (require 'em-hist)
+  (let* ((start-pos (save-excursion (eshell-bol) (point)))
+         (end-pos (point))
+         (input (buffer-substring-no-properties start-pos end-pos))
+         (command (ivy-read "Command: "
+                            (delete-dups
+                             (when (> (ring-size eshell-history-ring) 0)
+                               (ring-elements eshell-history-ring)))
+                            :initial-input input)))
+    (setf (buffer-substring start-pos end-pos) command)
+    (end-of-line)))
+
+(defun +eshell/quit-or-delete-char (arg)
+  (interactive "p")
+  (if (and (eolp) (looking-back eshell-prompt-regexp nil))
+      (eshell-life-is-too-much)
+    (delete-char arg)))
+
+;; PATCH no git
+(defun +eshell-prompt ()
+  (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face 'eshell-prompt)
+          (propertize " λ " 'face 'font-lock-constant-face)))
+
+(defun eshell/l (&rest args) (eshell/ls "-l" args))
+(defun eshell/e (file) (find-file file))
+(defun eshell/md (dir) (eshell/mkdir dir) (eshell/cd dir))
+(defun eshell/ft (&optional arg) (treemacs arg))
+
+(defun eshell/up (&optional pattern)
+  (let ((p (locate-dominating-file
+                (f-parent default-directory)
+                (lambda (p)
+                  (if pattern
+                      (string-match-p pattern (f-base p))
+                    t)))
+))
+    (eshell/pushd p)))
+
+
 (defun my/ffap ()
   (interactive)
   (-if-let ((filename (ffap-guess-file-name-at-point)))
@@ -148,7 +201,7 @@
 
 (defun my/realgud-eval-region-or-word-at-point ()
   (interactive)
-  (when-let
+  (when-let*
       ((cmdbuf (realgud-get-cmdbuf))
        (process (get-buffer-process cmdbuf))
        (expr

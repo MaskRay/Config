@@ -1,8 +1,10 @@
 (defconst my-code-packages
   '(
     cc-mode
+    company
     dumb-jump
     emacs-lisp
+    eshell
     evil
     evil-snipe
     flycheck
@@ -60,8 +62,20 @@
                  (member-init-intro . +)
                  (topmost-intro . 0)
                  (arglist-cont-nonempty . +)))))
-  (setf (alist-get 'other c-default-style) "my-cc")
-  )
+  (setf (alist-get 'other c-default-style) "my-cc"))
+
+(defun my-code/post-init-company ()
+  (with-eval-after-load 'company
+    (setq company-quickhelp-delay 0
+          company-show-numbers t
+          company-idle-delay 0.1)
+    (my/define-key
+     company-active-map
+     "C-v" #'company-next-page
+     "M-v" #'company-previous-page
+     "C-o" #'company-search-kill-others
+     )
+    ))
 
 (defun my-code/post-init-dumb-jump ()
   ;; Don't use dumb-jump-go in large code base.
@@ -117,7 +131,11 @@
 (defun my-code/post-init-ivy ()
   (use-package ivy
     :config
-    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-initial-inputs-alist nil
+          ;; spacemacs-completion/init-default-ivy-config sets it to annoying ivy--regex-ignore-order
+          ;; See https://github.com/lewang/flx/issues/98 where I seek for a better sequence alignment algorithm.
+          ivy-re-builders-alist '((t . ivy--regex-plus)))
+    (my/define-key ivy-minibuffer-map "TAB" #'ivy-call-and-recenter)
     (ivy-set-display-transformer 'counsel-projectile-switch-to-buffer
                                  #'ivy-rich-switch-buffer-transformer)
     ))
@@ -137,11 +155,28 @@
     ")" (lambda () (interactive) (insert ?\]))
     )
 
-  (evil-define-key 'normal emacs-lisp-mode-map
+  (evil-define-key '(insert normal) emacs-lisp-mode-map
     (kbd "C-c /") #'lispy-splice)
 
   (require 'projectile)
   (add-to-list 'projectile-project-root-files-functions #'my-projectile/dotemacs-elpa-package)
+  )
+
+(defun my-code/post-init-eshell ()
+  (setq eshell-banner-message "")
+  (setq eshell-list-files-after-cd t)
+  (setq eshell-prompt-function #'+eshell-prompt)
+  (setq eshell-prompt-regexp "^.* λ ")
+  (defun my/eshell-init-keymap ()
+    (evil-define-key 'insert eshell-mode-map
+      (kbd "C-d") #'+eshell/quit-or-delete-char
+      (kbd "C-r") #'my/ivy-eshell-history
+      (kbd "C-p") #'eshell-previous-input
+      (kbd "C-n") #'eshell-next-input
+      (kbd "<tab>") (lambda () (interactive) (pcomplete-std-complete))
+      ))
+
+  (add-hook 'eshell-first-time-mode-hook #'my/eshell-init-keymap)
   )
 
 (defun my-code/post-init-evil ()
@@ -168,6 +203,8 @@
 
   (with-eval-after-load 'counsel
     (my/define-key evil-normal-state-map "SPC SPC" #'counsel-projectile-switch-to-buffer))
+  (spacemacs/set-leader-keys
+    "ha" #'apropos)
 
   (my/define-key
    evil-normal-state-map
@@ -275,22 +312,11 @@ If COUNT is given, move COUNT - 1 lines downward first."
     (add-to-list 'spacemacs-jump-handlers-d-mode 'company-dcd-goto-definition)
     (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)) ;; in flycheck.el
 
-    (setq company-quickhelp-delay 0
-          company-show-numbers t
-          company-idle-delay 0.1)
-
     (require 'lsp-imenu)
     (add-hook 'lsp-after-open-hook #'lsp-enable-imenu)
 
     (advice-add 'spacemacs/jump-to-definition :before #'my-advice/xref-set-jump)
     (advice-add 'spacemacs/jump-to-reference :before #'my-advice/xref-set-jump)
-
-    ;;; Override
-    (dolist (mode '("c" "c++" "go" "haskell" "javascript" "python" "rust"))
-      (let ((handler (intern (format "spacemacs-jump-handlers-%s-mode" mode))))
-        (add-to-list handler 'lsp-ui-peek-find-definitions))
-      (let ((handler (intern (format "spacemacs-reference-handlers-%s-mode" mode))))
-        (add-to-list handler 'lsp-ui-peek-find-references)))
 
     (spacemacs/set-leader-keys-for-minor-mode 'lsp-mode
       "lA" #'lsp-ui-peek-find-workspace-symbol
