@@ -1,5 +1,7 @@
 ;;; private/my-cc/config.el -*- lexical-binding: t; -*-
 
+(defvar +my/cquery-blacklist '("^/usr/") ".")
+
 (after! cc-mode
   ;; https://github.com/radare/radare2
   (c-add-style
@@ -13,11 +15,28 @@
       (arglist-cont-nonempty . ++)
       (statement-cont . ++)
       )))
+  (c-add-style
+   "my-cc" '("user"
+             (c-basic-offset . 2)
+             (c-offsets-alist
+              . ((innamespace . 0)
+                 (access-label . -)
+                 (case-label . 0)
+                 (member-init-intro . +)
+                 (topmost-intro . 0)
+                 (arglist-cont-nonempty . +)))))
+  (setq c-default-style "my-cc")
 
   (map!
    :map (c-mode-map c++-mode-map)
    :localleader
-   "=" #'clang-format-region)
+   "=" #'clang-format-region
+   :desc "breakpoint"
+   "db" (lambda ()
+          (interactive)
+          (evil-open-above 1)
+          (insert "volatile static int z=0;while(!z)asm(\"pause\");")
+          (evil-normal-state)))
   )
 
 (def-package! clang-format
@@ -25,6 +44,7 @@
   )
 
 (def-package! cquery
+  :load-path "~/Dev/Emacs/emacs-cquery"
   :init (add-hook 'c-mode-common-hook #'+cquery//enable)
   :config
   ;; overlay is slow
@@ -41,6 +61,6 @@
   (setq cquery-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
 
   (evil-set-initial-state 'cquery-tree-mode 'emacs)
-  (set! :company-backend 'c-mode '(company-lsp company-yasnippet))
-  (set! :company-backend 'c++-mode '(company-lsp company-yasnippet))
+  (set! :company-backend 'c-mode '(company-lsp))
+  (set! :company-backend 'c++-mode '(company-lsp))
   )

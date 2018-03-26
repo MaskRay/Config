@@ -1,21 +1,43 @@
 ;;; private/my/+bindings.el -*- lexical-binding: t; -*-
 
+(define-inline +my/prefix-M-x (prefix)
+  (inline-quote
+   (lambda () (interactive)
+     (setq unread-command-events (string-to-list ,prefix))
+     (call-interactively #'execute-extended-command))))
+
 (map!
  ;; localleader
  :m ","    nil
 
- :n "C-s"  #'swiper
+ ;; Override default :n [b [w
+ :nm "[" nil
+ :nm "]" nil
+ (:map prog-mode-map
+   :m "["  #'lispyville-previous-opening
+   :m "]"  #'lispyville-next-closing
+   ;; Override default :n < >
+   :nm "<" #'lispyville-next-opening
+   :nm ">" #'lispyville-previous-closing
+
+   :n "H"  #'lsp-ui-peek-jump-backward
+   :n "L"  #'lsp-ui-peek-jump-forward
+   )
+
+ :m "M-h"  #'smart-up
+ :m "M-l"  #'smart-down
  :n "M-."  #'+lookup/definition
  :n "M-j"  #'+my/find-definitions
+
+ :n "C-s"  #'swiper
  :n "C-,"  #'+my/find-references
- :n ";"    (lambda () (interactive) (avy-goto-char-timer) (+my/find-definitions))
+ :n ";"    (λ! (avy-goto-char-timer) (+my/find-definitions))
  :n "s"    #'avy-goto-char-timer
 
+ :n "ga"   #'ff-find-other-file
  :n "gf"   #'+my/ffap
  :n "gs"   #'lsp-ui-find-workspace-symbol
- :n "go"   (lambda () (interactive) (message "%S" (text-properties-at (point))))
- :n "H"    #'lsp-ui-peek-jump-backward
- :n "L"    #'lsp-ui-peek-jump-forward
+ :n "go"   (λ! (message "%S" (text-properties-at (point))))
 
  :n "M-<"  #'previous-error
  :n "M->"  #'next-error
@@ -26,16 +48,30 @@
 
  (:leader
    :n "SPC" #'+ivy/switch-workspace-buffer
+   (:desc "app" :prefix "a"
+    :n "g" (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
+    :n "G" (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+    )
    (:desc "error" :prefix "e"
      :n "n" #'flycheck-next-error
      :n "p" #'flycheck-previous-error
      )
    (:prefix "f"
      :n "f" #'find-file
+     :n "p" #'treemacs-projectile-toggle
+     :n "P" #'treemacs-projectile
+     :n "C-p" #'+private/find-in-config
+     :n "C-S-p" #'+private/browse-config
+     :n "t" #'treemacs-toggle
+     :n "T" #'treemacs
      )
    (:prefix "g"
      :n "g" #'magit-status
      :n "l" #'+gist:list
+     :n "*" (+my/prefix-M-x "magit-")
+     )
+   (:prefix "h"
+     :n "C" #'helpful-command
      )
    (:desc "jump" :prefix "j"
      :n "i" #'imenu
@@ -43,6 +79,7 @@
    (:prefix "p"
      :n "e" #'projectile-run-eshell
      :n "f" #'counsel-projectile-find-file
+     :n "*" (+my/prefix-M-x "projectile-")
      )
    (:prefix "r"
      :n "l" #'ivy-resume
@@ -58,7 +95,7 @@
    (:desc "search" :prefix "s"
      :n "b" #'swiper-all
      :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
-     :desc "Project"                :nv "p" #'+ivy/project-search
+     :desc "Project"                :nv "s" #'+ivy/project-search
      )
 
    (:desc "toggle" :prefix "t"
@@ -67,20 +104,20 @@
      )
    )
 
- ;; :n "x" nil
+ :n "x" nil
  (:desc "xref" :prefix "x"
    :n "SPC" #'cquery/random
-   :n ";" (lambda () (interactive) (avy-goto-char-timer) (+my/find-references))
+   :n ";" (λ! (avy-goto-char-timer) (+my/find-references))
    :n "b" #'cquery/base
    :n "d" #'cquery/derived
    :n "e" #'cquery/callers
-   :n ; callers
+   ;; caller hierarchy
    :n "c" #'cquery-call-hierarchy
-   :n ; callees
-   :n "C" (lambda () (interactive) (cquery-call-hierarchy t))
-   :n ; derived
-   :n "i" (lambda () (interactive) (cquery-inheritance-hierarchy t))
-   :n ; base
+   ;; callee hierarchy
+   :n "C" (λ! (cquery-call-hierarchy t))
+   ;; derived hierarchy
+   :n "i" (λ! (cquery-inheritance-hierarchy t))
+   ;; base hierarchy
    :n "I" #'cquery-inheritance-hierarchy
    :n "l" #'cquery-code-lens-mode
    :n "m" #'cquery-member-hierarchy
@@ -109,15 +146,12 @@
      "C-S-s"      #'company-search-candidates
      "C-s"        #'company-filter-candidates
      "C-i"        #'company-complete-selection
+     "<tab>"      #'company-complete-common
      "RET"        nil
-     "SPC"        nil
-     [return]     nil
-     [tab]        nil
-     [backtab]    nil)
+     "SPC"        nil)
    ;; Automatically applies to `company-filter-map'
    (:map company-search-map
      "C-j"        #'company-search-repeat-forward
      "C-k"        #'company-search-repeat-backward
-     "C-s"        (lambda! (company-search-abort) (company-filter-candidates))
-     [escape]     #'company-search-abort))
- )
+     "C-s"        (λ! (company-search-abort) (company-filter-candidates))
+     [escape]     #'company-search-abort)))

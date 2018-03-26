@@ -2,9 +2,11 @@
 
 ;;;###autoload
 (defun +cquery//enable ()
-  (condition-case nil
-      (lsp-cquery-enable)
-    (user-error nil)))
+  (let ((filename (buffer-file-name)))
+    (when (-none? (lambda (x) (string-match-p x filename)) +my/cquery-blacklist))
+    (condition-case nil
+        (lsp-cquery-enable)
+      (user-error nil))))
 
 (defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
 (defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))

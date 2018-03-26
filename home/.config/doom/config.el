@@ -20,9 +20,11 @@
         company-dabbrev-ignore-case nil
         company-dabbrev-code-other-buffers t
         company-quickhelp-delay 0.1
+        company-show-numbers t
         company-tooltip-align-annotations t
         company-require-match 'never
         company-frontends '(company-childframe-frontend company-echo-metadata-frontend)
+        company-backends '(company-capf company-dabbrev)
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         company-childframe-child-frame nil))
 
@@ -53,11 +55,14 @@
   (setq lispy-outline "^;; \\(?:;[^#]\\|\\*+\\)"
         lispy-outline-header ";; ")
   (map! :map lispy-mode-map
+        :i "C-c (" #'lispy-wrap-round
         :i "_" #'special-lispy-different
         "d" nil
         :i [remap delete-backward-char] #'lispy-delete-backward))
 
+;; Also use lispyville in prog-mode for [ ] < >
 (def-package! lispyville
+  :demand t
   :after (evil)
   :hook (lispy-mode . lispyville-mode)
   :config
@@ -66,9 +71,28 @@
      c-w
      (escape insert)
      (slurp/barf-lispy)
-     additional)))
+     additional-movement))
+  (map! :map emacs-lisp-mode-map
+        :nm "gh" #'lispyville-left
+        :nm "gl" #'lispyville-right
+        :nm "J" #'lispyville-forward-sexp
+        :nm "K" #'lispyville-backward-sexp
+        :n "C-<left>" #'lispy-forward-barf-sexp
+        :n "C-<right>" #'lispy-forward-slurp-sexp
+        :n "C-M-<left>" #'lispy-backward-slurp-sexp
+        :n "C-M-<right>" #'lispy-backward-barf-sexp
+        :localleader
+        :n "e" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil)))
+        )
+  )
+
+(def-package! lsp-mode
+  :load-path "~/Dev/Emacs/lsp-mode"
+  :defer t
+  )
 
 (def-package! lsp-ui
+  :load-path "~/Dev/Emacs/lsp-ui"
   :demand t
   :hook (lsp-mode . lsp-ui-mode)
   :config
@@ -153,20 +177,32 @@
                                          xref-find-references))
 
   (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
-    (cond
-     ((cl-some (lambda (x) (string-match-p x buffer-file-name))
-               +my/xref-blacklist)
-      nil)
-     (t
-      ;; PATCH
-      (lsp-ui-peek--with-evil-jumps (evil-set-jump))
+    ;; PATCH
+    (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
-      ;; PATCH Jump to the first candidate
-      (if (not (cdr xrefs))
-          (xref--pop-to-location (car xrefs) display-action)
-        (funcall xref-show-xrefs-function xrefs
-                 `((window . ,(selected-window))))
-        )))))
+    ;; PATCH Jump to the first candidate
+    (if (not (cdr xrefs))
+        (xref--pop-to-location (car xrefs) display-action)
+      (funcall xref-show-xrefs-function xrefs
+               `((window . ,(selected-window))))
+      ))
+
+  (defun +my*ivy-xref-show-xrefs (xrefs alist)
+    (let ((xref-pos (point))
+          (xref-buffer (current-buffer))
+          success)
+      (ivy-read "xref: " (ivy-xref-make-collection xrefs)
+                :require-match t
+                :unwind (lambda ()
+                          (unless success
+                            (switch-to-buffer xref-buffer)
+                            (goto-char xref-pos)
+                            (recenter)))
+                :action (lambda (candidate)
+                          (setq success (eq 'ivy-done this-command))
+                          (xref--show-location (cdr candidate) 'quit)))))
+  (advice-add #'ivy-xref-show-xrefs :override #'+my*ivy-xref-show-xrefs)
+  )
 
 (after! ivy-xref
   ;; (defun ivy-xref-show-xrefs (xrefs alist)
@@ -179,3 +215,19 @@
   ;; (push '(xref-find-references) ivy-display-functions-alist)
   (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist)
   )
+
+(def-package! treemacs
+  :commands (treemacs treemacs-toggle)
+  :config
+  (setq treemacs-follow-after-init t)
+  (treemacs-follow-mode +1)
+  )
+
+(def-package! treemacs-evil)
+
+(def-package! treemacs-projectile
+  :commands (treemacs-projectile treemacs-projectile-toggle))
+
+(let ((profile "~/.config/doom/profile.el"))
+  (when (file-exists-p profile)
+    (load-file profile)))
