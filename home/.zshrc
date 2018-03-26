@@ -256,15 +256,17 @@ function n() {
 }
 
 # terminfo {{{1
-bindkey  "${terminfo[khome]}"    beginning-of-line
-bindkey  "${terminfo[kend]}"     end-of-line
-bindkey  "${terminfo[kich1]}"    overwrite-mode
-bindkey  "${terminfo[kbs]}"      backward-delete-char # original: kbs=^H (\177, Debian)
-bindkey  "${terminfo[kcuu1]}"    up-line-or-history
-bindkey  "${terminfo[kcud1]}"    down-line-or-history
-bindkey  "${terminfo[kcub1]}"    backward-char
-bindkey  "${terminfo[kcuf1]}"    forward-char
-bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
+if ((${terminfo[khome]+1})); then
+  bindkey  "${terminfo[khome]}"    beginning-of-line
+  bindkey  "${terminfo[kend]}"     end-of-line
+  bindkey  "${terminfo[kich1]}"    overwrite-mode
+  bindkey  "${terminfo[kbs]}"      backward-delete-char # original: kbs=^H (\177, Debian)
+  bindkey  "${terminfo[kcuu1]}"    up-line-or-history
+  bindkey  "${terminfo[kcud1]}"    down-line-or-history
+  bindkey  "${terminfo[kcub1]}"    backward-char
+  bindkey  "${terminfo[kcuf1]}"    forward-char
+  bindkey  "${terminfo[kdch1]}"    delete-char # original: kdch1=\E[3~
+fi
 
 # http://lilydjwg.is-programmer.com/2014/2/2/systemd-user-daemons.42631.html
 function juser () {

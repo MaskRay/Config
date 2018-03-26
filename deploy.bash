@@ -8,7 +8,9 @@ LN_OPT=-sf
 
 declare -A dir
 dir[.vim]=1
-dir[.emacs.d/private/+my]=1
+#dir[.emacs.d/private/+my]=1
+dir[.emacs.d/modules/private/my]=1
+dir[.emacs.d/modules/private/my-cc]=1
 
 info() {
   printf "\e[1;36m$*\e[m\n"

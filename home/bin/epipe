@@ -1,0 +1,11 @@
+#!/bin/zsh
+tmp=$(mktemp -p /tmp emacs.pipe.XXXXXXXXXX)
+cat > $tmp
+
+read -r -d '' lisp <<EOF
+  (switch-to-buffer (generate-new-buffer-name "*pipe*"))
+  (insert-file-contents "$tmp")
+EOF
+
+emacsclient --eval "(progn $lisp $1)"
+rm "$tmp"

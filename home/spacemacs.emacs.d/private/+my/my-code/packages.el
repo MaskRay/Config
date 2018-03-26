@@ -22,6 +22,7 @@
     lsp-ui
     modern-cpp-font-lock
     realgud
+    shell
     smartparens
     ))
 
@@ -177,6 +178,12 @@
       ))
 
   (add-hook 'eshell-first-time-mode-hook #'my/eshell-init-keymap)
+  (require 'em-smart)
+  (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
+  )
+
+(defun my-code/post-init-shell ()
+  (setq-default comint-process-echoes t)
   )
 
 (defun my-code/post-init-evil ()
