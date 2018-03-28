@@ -7,6 +7,8 @@
 (package! lsp-ui :ignore t)
 (package! company-lsp)
 
+(package! tldr)
+
 (package! treemacs)
 (package! treemacs-evil)
 (package! treemacs-projectile)

@@ -3,6 +3,8 @@
 (load! +bindings)
 (load! +ui)
 
+(setq doom-scratch-buffer-major-mode t)
+
 (def-package! avy
   :commands (avy-goto-char-timer)
   :init
@@ -11,22 +13,13 @@
 
 (after! company
   (setq company-idle-delay 0.1
-        company-tooltip-limit 10
         company-minimum-prefix-length 2
-        company-tooltip-minimum-width 60
-        company-tooltip-margin 0
-        company-tooltip-offset-display nil
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case nil
-        company-dabbrev-code-other-buffers t
         company-quickhelp-delay 0.1
         company-show-numbers t
-        company-tooltip-align-annotations t
-        company-require-match 'never
         company-frontends '(company-childframe-frontend company-echo-metadata-frontend)
         company-backends '(company-capf company-dabbrev)
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
-        company-childframe-child-frame nil))
+        ))
 
 (set! :lookup 'emacs-lisp-mode :documentation #'helpful-at-point)
 
@@ -77,6 +70,7 @@
         :nm "gl" #'lispyville-right
         :nm "J" #'lispyville-forward-sexp
         :nm "K" #'lispyville-backward-sexp
+        :n "gh" #'+lookup/documentation
         :n "C-<left>" #'lispy-forward-barf-sexp
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
@@ -99,7 +93,7 @@
   (setq
    lsp-ui-sideline-enable nil
    lsp-ui-doc-header nil
-   lsp-ui-doc-include-signature t
+   lsp-ui-doc-include-signature nil
    lsp-ui-doc-background (doom-color 'base4)
    lsp-ui-doc-border (doom-color 'fg)
 
@@ -109,8 +103,8 @@
         :localleader
         :n "lA" #'lsp-ui-peek-find-workspace-symbol
         :n "lF" #'lsp-format-buffer
-        :n "lL" #'lsp-ui-sideline-mode
-        :n "lD" #'lsp-ui-doc-mode
+        :n "ll" #'lsp-ui-sideline-mode
+        :n "ld" #'lsp-ui-doc-mode
         :n "lr" #'lsp-rename
 
         :n "lp" #'cquery-preprocess-file
@@ -216,6 +210,13 @@
   (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist)
   )
 
+(def-package! tldr
+  :commands (tldr)
+  :config
+  (setq tldr-directory-path (concat doom-etc-dir "tldr/"))
+  (set! :popup "^\\*tldr\\*" '((side . right)) '((select . t) (quit . t)))
+  )
+
 (def-package! treemacs
   :commands (treemacs treemacs-toggle)
   :config
@@ -227,6 +228,9 @@
 
 (def-package! treemacs-projectile
   :commands (treemacs-projectile treemacs-projectile-toggle))
+
+(set! :popup "^\\*helpful" '((size . 0.4)))
+(set! :popup "^\\*info\\*$" '((size . 0.4)))
 
 (let ((profile "~/.config/doom/profile.el"))
   (when (file-exists-p profile)

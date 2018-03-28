@@ -49,9 +49,9 @@
  (:leader
    :n "SPC" #'+ivy/switch-workspace-buffer
    (:desc "app" :prefix "a"
-    :n "g" (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
-    :n "G" (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
-    )
+     :n "g" (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
+     :n "G" (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+     )
    (:desc "error" :prefix "e"
      :n "n" #'flycheck-next-error
      :n "p" #'flycheck-previous-error
@@ -73,8 +73,13 @@
    (:prefix "h"
      :n "C" #'helpful-command
      )
-   (:desc "jump" :prefix "j"
-     :n "i" #'imenu
+   (:prefix "o"
+     :n "ee" #'+eshell/open
+     :n "el" #'+eshell/open-last
+     :n "ej" #'+eshell/next
+     :n "ek" #'+eshell/previous
+     :n "ep" #'+eshell/open-popup
+     :n "es" #'+eshell/switch
      )
    (:prefix "p"
      :n "e" #'projectile-run-eshell
@@ -96,6 +101,9 @@
      :n "b" #'swiper-all
      :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
      :desc "Project"                :nv "s" #'+ivy/project-search
+     :desc "Symbols"                :nv "i" #'imenu
+     :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
+     :desc "Online providers"       :nv "o" #'+lookup/online-select
      )
 
    (:desc "toggle" :prefix "t"
@@ -135,23 +143,8 @@
  (:after company
    (:map company-active-map
      ;; Don't interfere with `evil-delete-backward-word' in insert mode
-     "C-w"        nil
      "C-v"        #'company-next-page
      "M-v"        #'company-previous-page
-     "C-o"        #'company-search-kill-others
-     "C-j"        #'company-select-next
-     "C-k"        #'company-select-previous
-     "C-h"        #'company-quickhelp-manual-begin
-     "C-S-h"      #'company-show-doc-buffer
-     "C-S-s"      #'company-search-candidates
-     "C-s"        #'company-filter-candidates
      "C-i"        #'company-complete-selection
-     "<tab>"      #'company-complete-common
-     "RET"        nil
-     "SPC"        nil)
-   ;; Automatically applies to `company-filter-map'
-   (:map company-search-map
-     "C-j"        #'company-search-repeat-forward
-     "C-k"        #'company-search-repeat-backward
-     "C-s"        (λ! (company-search-abort) (company-filter-candidates))
-     [escape]     #'company-search-abort)))
+     "SPC"        nil))
+ )

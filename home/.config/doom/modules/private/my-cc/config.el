@@ -29,14 +29,16 @@
 
   (map!
    :map (c-mode-map c++-mode-map)
-   :localleader
-   "=" #'clang-format-region
-   :desc "breakpoint"
-   "db" (lambda ()
-          (interactive)
-          (evil-open-above 1)
-          (insert "volatile static int z=0;while(!z)asm(\"pause\");")
-          (evil-normal-state)))
+   (:leader
+     :n "=" #'clang-format-region
+     )
+   (:localleader
+     :desc "breakpoint"
+     :n "db" (lambda ()
+               (interactive)
+               (evil-open-above 1)
+               (insert "volatile static int z=0;while(!z)asm(\"pause\");")
+               (evil-normal-state))))
   )
 
 (def-package! clang-format
