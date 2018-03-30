@@ -1,6 +1,6 @@
 ;;; private/my-cc/config.el -*- lexical-binding: t; -*-
 
-(defvar +my/cquery-blacklist '("^/usr/") ".")
+(defvar +my/ccls-blacklist '("^/usr/") ".")
 
 (after! cc-mode
   ;; https://github.com/radare/radare2
@@ -45,24 +45,24 @@
   :commands (clang-format-region)
   )
 
-(def-package! cquery
-  :load-path "~/Dev/Emacs/emacs-cquery"
-  :init (add-hook 'c-mode-common-hook #'+cquery//enable)
+(def-package! ccls
+  :load-path "~/Dev/Emacs/emacs-ccls"
+  :init (add-hook 'c-mode-common-hook #'+ccls//enable)
   :config
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
-  (setq cquery-sem-highlight-method 'font-lock)
-  (cquery-use-default-rainbow-sem-highlight)
-  (setq cquery-extra-init-params
+  (setq ccls-sem-highlight-method 'font-lock)
+  (ccls-use-default-rainbow-sem-highlight)
+  (setq ccls-extra-init-params
         '(:cacheFormat "msgpack" :completion (:detailedLabel t) :xref (:container t)
                        :diagnostics (:frequencyMs 5000)))
 
   (require 'projectile)
-  (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index")
+  (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
 
-  (setq cquery-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
+  (setq ccls-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
 
-  (evil-set-initial-state 'cquery-tree-mode 'emacs)
+  (evil-set-initial-state 'ccls-tree-mode 'emacs)
   (set! :company-backend 'c-mode '(company-lsp))
   (set! :company-backend 'c++-mode '(company-lsp))
   )

@@ -83,6 +83,8 @@
 (def-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
   :defer t
+  :config
+  (setq lsp-project-blacklist '("^/usr/"))
   )
 
 (def-package! lsp-ui
@@ -107,11 +109,11 @@
         :n "ld" #'lsp-ui-doc-mode
         :n "lr" #'lsp-rename
 
-        :n "lp" #'cquery-preprocess-file
-        :n "lf" #'cquery-freshen-index
-        :n "a" #'cquery/references-address
-        :n "r" #'cquery/references-read
-        :n "w" #'cquery/references-write
+        :n "lp" #'ccls-preprocess-file
+        :n "lf" #'ccls-freshen-index
+        :n "a" #'ccls/references-address
+        :n "r" #'ccls/references-read
+        :n "w" #'ccls/references-write
         )
 
    (map! :after lsp-ui-peek

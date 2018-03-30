@@ -2,4 +2,4 @@
 ;;; private/my-cc/packages.el
 
 (package! clang-format)
-(package! cquery :ignore t)
+(package! ccls :ignore t)

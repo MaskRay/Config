@@ -114,23 +114,23 @@
 
  :n "x" nil
  (:desc "xref" :prefix "x"
-   :n "SPC" #'cquery/random
+   :n "SPC" #'ccls/random
    :n ";" (λ! (avy-goto-char-timer) (+my/find-references))
-   :n "b" #'cquery/base
-   :n "d" #'cquery/derived
-   :n "e" #'cquery/callers
+   :n "b" #'ccls/base
+   :n "d" #'ccls/derived
+   :n "e" #'ccls/callers
    ;; caller hierarchy
-   :n "c" #'cquery-call-hierarchy
+   :n "c" #'ccls-call-hierarchy
    ;; callee hierarchy
-   :n "C" (λ! (cquery-call-hierarchy t))
+   :n "C" (λ! (ccls-call-hierarchy t))
    ;; derived hierarchy
-   :n "i" (λ! (cquery-inheritance-hierarchy t))
+   :n "i" (λ! (ccls-inheritance-hierarchy t))
    ;; base hierarchy
-   :n "I" #'cquery-inheritance-hierarchy
-   :n "l" #'cquery-code-lens-mode
-   :n "m" #'cquery-member-hierarchy
+   :n "I" #'ccls-inheritance-hierarchy
+   :n "l" #'ccls-code-lens-mode
+   :n "m" #'ccls-member-hierarchy
    :n "t" #'text-document/type-definition
-   :n "v" #'cquery/vars
+   :n "v" #'ccls/vars
    :n "x" #'evil-delete-char
    )
 

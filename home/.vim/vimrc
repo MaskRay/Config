@@ -268,9 +268,6 @@ endif
 aug C
   au!
   au FileType c,cpp :call C_init()
-aug D
-  au!
-  au FileType d :call D_init()
 " GP {{{2
 aug GP
   au!
@@ -279,11 +276,6 @@ fu! GP_init()
   " Override
   nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T gp <C-r>=expand('%:p')<cr><cr>
 endf
-" Haskell {{{2
-aug Haskell
-  au!
-  au FileType haskell :call Haskell_init()
-  au BufEnter *.hs call LoadHscope()
 " Automatically make cscope connections
 fu! LoadHscope()
   let db = findfile("hscope.out", ".;")
@@ -299,36 +291,6 @@ fu! Pointfree()
 endf
 fu! Pointful()
   call setline('.', split(system('pointful '.shellescape(join(getline(a:firstline, a:lastline), "\n"))), "\n"))
-endf
-fu! Haskell_init()
-  setl omnifunc=necoghc#omnifunc
-  setl cscopeprg=hscope
-  setl cscopetagorder=1
-  setl cscopeverbose
-
-  nn <buffer> sf :cs find g <C-r><C-w><cr>
-  nn <buffer> sr :cs find c <C-r><C-w><cr>
-  nn <buffer> <leader>mH :Hoogle 
-  nn <buffer> <leader>mT :GhcModTypeInsert<cr>
-  nn <buffer> <leader>mc :GhcModCheck<cr>
-  nn <buffer> <leader>md :GhcModDiagnostics<cr>
-  nn <buffer> <leader>mh :HoogleInfo<cr>
-  nn <buffer> <leader>mi :GhcModInfoPreview<cr>
-  nn <buffer> <leader>mq :HdevtoolsClear<cr>
-  nn <buffer> <leader>ms :GhcModSplitFunCase<cr>
-  nn <buffer> <leader>mt :HdevtoolsType<cr>
-  " Override
-  nn <buffer> <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T runghc <C-r>=expand('%:p')<cr> < i<cr>
-  nn <buffer> <leader>ta :!fast-tags -R .<cr>
-
-  vn <buffer><silent> <leader>h. :call Pointfree()<cr>
-  vn <buffer><silent> <leader>h> :call Pointful()<cr>
-endf
-" Java {{{2
-aug Java
-  au!
-  au FileType java :call Java_init()
-fu! Java_init()
 endf
 " Make {{{2
 au FileType make setl ts=8 sts=0 sw=8 noet
@@ -358,26 +320,6 @@ let g:pymode_lint = 0
 "let g:pymode_breakpoint_bind = '<leader>mb'
 "let g:pymode_rope_goto_definition_bind = '<m-.>'
 "let g:pymode_rope_goto_definition_cmd = 'e'
-" Ruby {{{2
-aug Ruby
-  au!
-  au FileType ruby :call Ruby_init()
-fu! Ruby_init()
-  let &makeprg="ruby -c %"
-  ia <buffer> #! #!/usr/bin/env ruby
-  ia <buffer> #e # encoding: utf-8
-  imap <C-CR> <CR><CR>end<Esc>-cc
-  nnoremap <buffer><space>rc :Rcontroller<space><tab>
-  nnoremap <buffer><space>rh :Rhelper<space><tab>
-  nnoremap <buffer><space>rj :Rjavascript<space><tab>
-  nnoremap <buffer><space>rl :Rlayout<space><tab>
-  nnoremap <buffer><space>ro :Rlocale<space><tab>
-  nnoremap <buffer><space>rm :Rmodel<space><tab>
-  nnoremap <buffer><space>rt :Rspec<space><tab>
-  nnoremap <buffer><space>rk :Rtask<space><tab>
-  nnoremap <buffer><space>rs :Rstylesheet<space><tab>
-  nnoremap <buffer><space>rv :Rview<space><tab>
-endf
 " Plugins --------------------------------------------- {{{1
 if 1
   so ~/.vim/bundle/vim-plug/plug.vim
@@ -484,8 +426,6 @@ let g:deoplete#omni#functions.cpp = ['LanguageClient#complete']
 let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_leader_key = "<leader><leader>"
-" eclim {{{2
-let g:EclimCompletionMethod = 'omnifunc'
 " denite {{{2
 call denite#custom#var('file_rec', 'command',
       \ ['rg', '--files', '--glob', '!.git', ''])
@@ -502,10 +442,9 @@ let g:grepper = {}
 " LanguageClient-neovim {{{2
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
-      \ 'c': ['cquery', '--language-server'],
-      \ 'cpp': [expand('~/Dev/Util/cquery/build/debug/cquery'), '--init={}', '--log-file=/tmp/cq.log', '--record=/tmp/record'],
+      \ 'c': ['ccls'],
+      \ 'cpp': [expand('~/Dev/Util/ccls/debug/ccls'), '--init={}', '--log-file=/tmp/ls.log'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
-      \ 'objc': ['cquery', '--language-server'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
@@ -519,7 +458,7 @@ augroup LanguageClient_config
   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient_textDocument_signatureHelp() | endif
+  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient#textDocument_signatureHelp() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -527,8 +466,6 @@ call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
 " markdown {{{2
 let g:vim_markdown_folding_disabled = 1
 " neoterm {{{2
-"let g:neoterm_position = 'vertical'
-let g:neoterm_position = 'horizontal'
 " sneak {{{2
 let g:sneak#label = 1
 let g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
@@ -661,13 +598,6 @@ fu! CSS_init()
   setl dictionary=~/.vim/dict/css
 endf
 
-fu! D_init()
-  setl cino+=g0,:0,j1,l1,N-s,t0,(0
-  nn <buffer> <C-j> :MarkPush<cr>:DUjump<cr>
-  nn <buffer> sd :DUddoc<cr>
-  nn <buffer> ss :MarkPush<cr>:DUsjump<cr>
-endf
-
 fu! Fortran_init()
   let g:fortran_free_source = 1
 endf
@@ -701,7 +631,6 @@ if filereadable(expand('~/.vim/bundle/vim-indent-guides/README.markdown'))
   nn <leader> :<C-u>LeaderGuide '<Space>'<cr>
   vn <leader> :<C-u>LeaderGuideVisual '<Space>'<cr>
 endif
-" nmap <leader><leader> (easymotion) TODO {{{3
 " nmap <leader>a {{{4
 let g:lmap.a = {'name': '+applications'}
 nn <leader>aa :silent !pkill -f <C-r>=expand('%:p')<cr><cr>:T <C-r>=expand('%:p')<cr><cr>
@@ -712,8 +641,9 @@ nn <leader>ag :%!genhdr<cr>
 nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 let g:lmap.b = {'name': '+buffers'}
-nn <leader>bb :Denite buffer<cr>
-nn <leader>bd :bp\|bd #<cr>
+nn <leader><leader> :Denite -winheight=10 buffer<cr>
+nn <leader>bk :bp\|bd #<cr>
+nn <Leader>bK :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nn <leader>bn :bn<cr>
 nn <leader>bNh :topleft vertical new<cr>
 nn <leader>bNj :rightbelow new<cr>
@@ -741,8 +671,7 @@ nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " nmap <leader>f (file) {{{4
 let g:lmap.f = {'name': '+files'}
 nn <leader>fc :cd %:p:h<cr>
-nn <leader>fed :e ~/.vim/vimrc<cr>
-nn <leader>feR :so ~/.vim/vimrc<cr>
+nn <leader>fe :e ~/.vim/vimrc<cr>
 nn <leader>ff :Denite file_rec<cr>
 nn <silent> <leader>fr :Denite file_mru<cr>
 nn <leader>fj :Dirvish<cr>
@@ -766,22 +695,6 @@ nn <leader>h3 :execute '3match InterestingWord3 /\<c-r><c-w>\>/'<cr>
 hi InterestingWord1 guifg=#000000 guibg=#FF4300 ctermfg=16 ctermbg=196
 hi InterestingWord2 guifg=#000000 guibg=#53FF00 ctermfg=16 ctermbg=82
 hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
-" nmap <leader>h (fzf) {{{4
-"nn <silent> <leader>hb :Unite -quick-match buffer<cr>
-"nn <silent> <leader>hc :Unite -buffer-name=change change<cr>
-"nn <silent> <leader>hd :Unite -buffer-name=file -start-insert directory_mru<cr>
-nn <silent> <leader>hf :Unite -buffer-name=file -start-insert file<cr>
-"nn <silent> <leader>hF :UniteWithBufferDir -buffer-name=file -start-insert file<cr>
-"nn <silent> <leader>hg :Unite -buffer-name=grep grep<cr>
-"nn <silent> <leader>hG :UniteResume grep<cr>
-"nn <silent> <leader>hl :Unite -auto-resize -start-insert -buffer-name=line line<cr>
-"nn <silent> <leader>hm :Unite -buffer-name=file -start-insert file_mru<cr>
-"nn <silent> <leader>hM :Unite mapping<cr>
-"if has('nvim')
-"  nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/neovim<cr>
-"else
-"  nn <silent> <leader>hr :Unite -buffer-name=file_rec -start-insert file_rec/async<cr>
-"endif
 
 nn <silent> <leader>hc :Commits<cr>
 nn <silent> <leader>hC :BCommits<cr>
@@ -813,11 +726,10 @@ nn <leader>rl :Denite -resume<cr>
 nn <leader>rr :Denite register<cr>
 " nmap <leader>s (search) {{{4
 let g:lmap.s = {'name': '+search'}
-nn <leader>sa :Grepper -query<space>
+nn <leader>ss :Grepper -query<space>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sP :Grepper -noprompt -cword<cr>
-nn <leader>ss :Denite line<cr>
 nn <leader>st :vimgrep TODO\|FIXME<cr>
 " nmap <leader>t (toggle) {{{4
 let g:lmap.t = {'name': '+toggles'}
@@ -826,14 +738,12 @@ nn <silent> <leader>ta :call deoplete#toggle()<Bar>echo 'deoplete '.(deoplete#is
 nn <leader>tCd :RainbowParentheses!!<cr>
 nn <leader>thc :set cursorcolumn!<cr>
 nn <leader>tb :set breakindent!<cr>
+nn <leader>tf :ALEToggle<cr>
 nn <leader>ti :IndentGuidesToggle<cr>
-nn <leader>tl :set wrap!<cr>
+nn <leader>tw :set wrap!<cr>
 nn <leader>tha :MatchmakerToggle<cr>
-nn <leader>tn :set nu!<cr>
-nn <leader>ts :SyntasticToggleMode<cr>
-nn <leader>tS :set spell!<cr>
-nn <leader>tw :call ToggleUnwantedWhitespaces()<cr>
-nn <leader>ty :let g:ycm_auto_trigger = ! g:ycm_auto_trigger<cr>:echo g:ycm_auto_trigger<cr>
+nn <leader>tl :set nu!<cr>
+nn <leader>ts :set spell!<cr>
 nn <leader>td :let b:deoplete_disable_auto_complete = exists('b:deoplete_disable_auto_complete') ? ! b:deoplete_disable_auto_complete : 1<cr>:echo ! b:deoplete_disable_auto_complete<cr>
 " nmap <leader>v (vimux) {{{4
 let g:lmap.v = {'name': '+vimux'}
@@ -864,7 +774,6 @@ nn <leader>5 :set cmdheight=5<cr>
 nn <leader>l :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
-nn <Leader>bk :!cp % ~/tmp/%.bak --backup=numbered<cr>
 " nmap g {{{3
 let g:lmap.g = {'name': '+git'}
 nmap ga <Plug>(EasyAlign)
@@ -895,49 +804,42 @@ function! MarkPop(d)
 endfunction
 
 " nmap easymotion sneak {{{3
-"nmap t <Plug>(easymotion-w)
-"nmap T <Plug>(easymotion-b)
 map t <Plug>Sneak_t
 map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
-"nmap S <Plug>(easymotion-overwin-f2)
-" nmap Y (global) {{{3
-"nn Ys :Gtags <C-r><C-w><cr>
-"nn Yr :Gtags -r <C-r><C-w><cr>
-"nn Yp :Gtags -P <C-r><C-w><cr>
-"nn Yg :Gtags -g <C-r><C-w><cr>
-"nn Y<space> :Gtags
-" nmap Y (youcompleteme) {{{3
-let g:lmap.Y = {'name': '+YCM'}
-nn <silent> <C-j> :call MarkPush()<cr>:call LanguageClient_textDocument_definition()<cr>
-nn <silent> K :call LanguageClient_textDocument_hover()<cr>
-nn <f2> :call LanguageClient_textDocument_rename()<cr>
+nn <silent> K :call LanguageClient#textDocument_hover()<cr>
 " nmap Alt {{{3
-"nn <M-,> :Denite references<cr>
-nn <M-,> :sil call LanguageClient_textDocument_references({'includeDeclaration': v:false})<cr>
+nn <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
+nn <M-,> :Denite references<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
 nn <M-down> :lnext<cr>zvzz
 nn <M-up> :lprevious<cr>zvzz
-nn <M-n> :cnext<cr>zvzz
+nn <silent> <M-j> :call MarkPush()<cr>:call LanguageClient#textDocument_definition()<cr>
+nn <M-1> :tabnext 1<cr>
+nn <M-2> :tabnext 2<cr>
+nn <M-3> :tabnext 3<cr>
+nn <M-4> :tabnext 4<cr>
+nn <M-5> :tabnext 5<cr>
+nn <M-n> :new<cr>
 nn <M-p> :cprevious<cr>zvzz
-nn <M-h> <C-w>h
-nn <M-j> <C-w>j
-nn <M-k> <C-w>k
-nn <M-l> <C-w>l
+nn <M-r> :QuickRun<cr>
+nn <M-q> :qa<cr>
+nn <M-s> :w<cr>
+nn <M-w> :q<cr>
 " nmap , {{{3
 nn ,al :LanguageClientStart<cr>
 nn ,db :call append(line('.')-1, 'volatile static int z=0;while(!z)asm("pause");')<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
-nn ,la :call LanguageClient_workspace_symbol({'query':input('workspace/symbol ')})<cr>
-nn ,lb :call LanguageClient_cquery_base()<cr>
-nn ,lc :call LanguageClient_cquery_callers()<cr>
-nn ,ld :call LanguageClient_cquery_derived()<cr>
-nn ,lC :call LanguageClient_textDocument_codeAction()<cr>
-nn ,lf :call LanguageClient_textDocument_formatting()<cr>
-nn ,lr :call LanguageClient_textDocument_rename()<cr>
-nn ,lv :call LanguageClient_cquery_vars()<cr>
+nn ,la :call LanguageClient#workspace_symbol({'query':input('workspace/symbol ')})<cr>
+nn ,lb :call LanguageClient#cquery_base()<cr>
+nn ,lc :call LanguageClient#cquery_callers()<cr>
+nn ,ld :call LanguageClient#cquery_derived()<cr>
+nn ,lC :call LanguageClient#textDocument_codeAction()<cr>
+nn ,lf :call LanguageClient#textDocument_formatting()<cr>
+nn ,lr :call LanguageClient#textDocument_rename()<cr>
+nn ,lv :call LanguageClient#cquery_vars()<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
@@ -946,30 +848,28 @@ nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw
 nn [C <Plug>GitGutterPrevHunk
 nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
-"nn <C-q> :qa<cr>
-nn Q :qa<cr>
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
 nn mm :call MarkPush(0)<cr>
 nn 'm <C-t>
-nn <C-p> :call MarkPop(1)<cr>
-nn <C-t> :call MarkPop(-1)<cr>
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
+nn L :call MarkPop(1)<cr>
+nn H :call MarkPop(-1)<cr>
+nn <C-h> <C-w>h
+nn <C-j> <C-w>j
+nn <C-k> <C-w>k
+nn <C-l> <C-w>l
+nn <C-s> :Lines<cr>
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz
       \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
       \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
       \`zp:let @" = @z<CR>a
-" imap Alt {{{3
-ino <M-h> <C-o><C-w>h
-ino <M-j> <C-o><C-w>j
-ino <M-k> <C-o><C-w>k
-ino <M-l> <C-o><C-w>l
-" xmap {{{2
-xn ga <Plug>(EasyAlign)
+" imap C- {{{3
+ino <C-h> <C-o><C-w>h
+ino <C-j> <C-o><C-w>j
+ino <C-k> <C-o><C-w>k
+ino <C-l> <C-o><C-w>l
 " visual shifting (does not exit Visual mode)
 vn < <gv
 vn > >gv

@@ -1,35 +1,35 @@
 ;;; private/my-cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +cquery//enable ()
+(defun +ccls//enable ()
   (let ((filename (buffer-file-name)))
-    (when (-none? (lambda (x) (string-match-p x filename)) +my/cquery-blacklist))
+    (when (-none? (lambda (x) (string-match-p x filename)) +my/ccls-blacklist))
     (condition-case nil
-        (lsp-cquery-enable)
+        (lsp-ccls-enable)
       (user-error nil))))
 
-(defun cquery/base () (interactive) (lsp-ui-peek-find-custom 'base "$cquery/base"))
-(defun cquery/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$cquery/callers"))
-(defun cquery/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$cquery/derived"))
-(defun cquery/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$cquery/vars"))
-(defun cquery/random () (interactive) (lsp-ui-peek-find-custom 'random "$cquery/random"))
+(defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
+(defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
+(defun ccls/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$ccls/derived"))
+(defun ccls/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$ccls/vars"))
+(defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
 (defun text-document/type-definition () (interactive) (lsp-ui-peek-find-custom 'type "textDocument/typeDefinition"))
 
-(defun cquery/references-address ()
+(defun ccls/references-address ()
   (interactive)
   (lsp-ui-peek-find-custom
    'address "textDocument/references"
    (plist-put (lsp--text-document-position-params) :context
               '(:role 128))))
 
-(defun cquery/references-read ()
+(defun ccls/references-read ()
   (interactive)
   (lsp-ui-peek-find-custom
    'read "textDocument/references"
    (plist-put (lsp--text-document-position-params) :context
               '(:role 8))))
 
-(defun cquery/references-write ()
+(defun ccls/references-write ()
   (interactive)
   (lsp-ui-peek-find-custom
    'write "textDocument/references"
