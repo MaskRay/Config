@@ -2,18 +2,15 @@
 
 ;;;###autoload
 (defun +ccls//enable ()
-  (let ((filename (buffer-file-name)))
-    (when (-none? (lambda (x) (string-match-p x filename)) +my/ccls-blacklist))
-    (condition-case nil
-        (lsp-ccls-enable)
-      (user-error nil))))
+  (condition-case nil
+      (lsp-ccls-enable)
+    (user-error nil)))
 
 (defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
 (defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
 (defun ccls/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$ccls/derived"))
 (defun ccls/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$ccls/vars"))
 (defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
-(defun text-document/type-definition () (interactive) (lsp-ui-peek-find-custom 'type "textDocument/typeDefinition"))
 
 (defun ccls/references-address ()
   (interactive)

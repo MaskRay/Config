@@ -6,80 +6,80 @@
      (setq unread-command-events (string-to-list ,prefix))
      (call-interactively #'execute-extended-command))))
 
+(define-inline +my/simulate-key (key)
+  (inline-quote
+   (lambda () (interactive)
+     (setq prefix-arg current-prefix-arg)
+     (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key))))))
+
 (map!
  ;; localleader
  :m ","    nil
 
- ;; Override default :n [b [w
- :nm "[" nil
- :nm "]" nil
  (:map prog-mode-map
-   :m "["  #'lispyville-previous-opening
-   :m "]"  #'lispyville-next-closing
    ;; Override default :n < >
-   :nm "<" #'lispyville-next-opening
-   :nm ">" #'lispyville-previous-closing
+   :nm "<" #'lispyville-previous-opening
+   :nm ">" #'lispyville-next-closing
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
    )
 
+ :n "M-u" (+my/simulate-key "[")
+ :n "M-i" (+my/simulate-key "]")
  :m "M-h"  #'smart-up
  :m "M-l"  #'smart-down
  :n "M-."  #'+lookup/definition
  :n "M-j"  #'+my/find-definitions
 
+ :n "C-c a" #'org-agenda
  :n "C-s"  #'swiper
  :n "C-,"  #'+my/find-references
  :n ";"    (λ! (avy-goto-char-timer) (+my/find-definitions))
- :n "s"    #'avy-goto-char-timer
+ ;; :n "s"    #'avy-goto-char-timer
 
- :n "ga"   #'ff-find-other-file
+ :n "ga"   #'lsp-ui-find-workspace-symbol
  :n "gf"   #'+my/ffap
- :n "gs"   #'lsp-ui-find-workspace-symbol
  :n "go"   (λ! (message "%S" (text-properties-at (point))))
-
- :n "M-<"  #'previous-error
- :n "M->"  #'next-error
-
- :n "C-c P s" #'profiler-start
- :n "C-c P r" #'profiler-report
- :n "C-c P S" #'profiler-stop
 
  (:leader
    :n "SPC" #'+ivy/switch-workspace-buffer
+   :n "M-u" (+my/simulate-key "SPC [")
+   :n "M-i" (+my/simulate-key "SPC ]")
    (:desc "app" :prefix "a"
      :n "g" (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
      :n "G" (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+     )
+   (:prefix "b"
+     :desc "Last buffer" :n "b" #'evil-switch-to-windows-last-buffer
+     :n "l" #'ivy-switch-buffer
      )
    (:desc "error" :prefix "e"
      :n "n" #'flycheck-next-error
      :n "p" #'flycheck-previous-error
      )
    (:prefix "f"
-     :n "f" #'find-file
      :n "p" #'treemacs-projectile-toggle
      :n "P" #'treemacs-projectile
-     :n "C-p" #'+private/find-in-config
-     :n "C-S-p" #'+private/browse-config
+     :n "C-p" #'+default/find-in-config
+     :n "C-S-p" #'+default/browse-config
      :n "t" #'treemacs-toggle
      :n "T" #'treemacs
      )
    (:prefix "g"
-     :n "g" #'magit-status
-     :n "l" #'+gist:list
      :n "*" (+my/prefix-M-x "magit-")
      )
    (:prefix "h"
      :n "C" #'helpful-command
      )
+   :desc "lispyville" :n "l" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
      :n "ee" #'+eshell/open
      :n "el" #'+eshell/open-last
      :n "ej" #'+eshell/next
      :n "ek" #'+eshell/previous
-     :n "ep" #'+eshell/open-popup
      :n "es" #'+eshell/switch
+     :n "s" #'+eshell/open-popup
      )
    (:prefix "p"
      :n "e" #'projectile-run-eshell
@@ -129,7 +129,8 @@
    :n "I" #'ccls-inheritance-hierarchy
    :n "l" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
-   :n "t" #'text-document/type-definition
+   :n "n" #'lsp-goto-implementation
+   :n "t" #'lsp-goto-type-definition
    :n "v" #'ccls/vars
    :n "x" #'evil-delete-char
    )
@@ -138,6 +139,7 @@
  (:after ivy
    :map ivy-minibuffer-map
    "<tab>" #'ivy-call-and-recenter
+   "C-;"   #'ivy-avy
    )
 
  (:after company
@@ -146,5 +148,4 @@
      "C-v"        #'company-next-page
      "M-v"        #'company-previous-page
      "C-i"        #'company-complete-selection
-     "SPC"        nil))
- )
+     "SPC"        nil)))

@@ -3,7 +3,7 @@
 (load! +bindings)
 (load! +ui)
 
-(setq doom-scratch-buffer-major-mode t)
+(setq projectile-require-project-root t)
 
 (def-package! avy
   :commands (avy-goto-char-timer)
@@ -40,7 +40,9 @@
       (eshell/pushd p)))
   )
 
-(remove-hook 'doom-post-init-hook #'evil-snipe-mode)
+(after! evil-snipe
+  (setq evil-snipe-scope 'buffer)
+  )
 
 (def-package! lispy
   :hook (emacs-lisp-mode . lispy-mode)
@@ -75,16 +77,14 @@
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
         :n "C-M-<right>" #'lispy-backward-barf-sexp
+        :n "TAB" #'lispyville-prettify
         :localleader
         :n "e" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil)))
         )
   )
 
 (def-package! lsp-mode
-  :load-path "~/Dev/Emacs/lsp-mode"
   :defer t
-  :config
-  (setq lsp-project-blacklist '("^/usr/"))
   )
 
 (def-package! lsp-ui
@@ -149,6 +149,10 @@
             (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
      )
    )
+
+(after! ivy
+  (push '(+ivy/switch-workspace-buffer) ivy-display-functions-alist)
+  )
 
 (defun +advice/xref-set-jump (&rest args)
   (lsp-ui-peek--with-evil-jumps (evil-set-jump)))

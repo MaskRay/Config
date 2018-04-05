@@ -1,7 +1,5 @@
 ;;; private/my-cc/config.el -*- lexical-binding: t; -*-
 
-(defvar +my/ccls-blacklist '("^/usr/") ".")
-
 (after! cc-mode
   ;; https://github.com/radare/radare2
   (c-add-style
@@ -26,6 +24,7 @@
                  (topmost-intro . 0)
                  (arglist-cont-nonempty . +)))))
   (setq c-default-style "my-cc")
+  (add-hook 'c-mode-common-hook (lambda () (c-set-style "my-cc")))
 
   (map!
    :map (c-mode-map c++-mode-map)
@@ -54,8 +53,8 @@
   (setq ccls-sem-highlight-method 'font-lock)
   (ccls-use-default-rainbow-sem-highlight)
   (setq ccls-extra-init-params
-        '(:cacheFormat "msgpack" :completion (:detailedLabel t) :xref (:container t)
-                       :diagnostics (:frequencyMs 5000)))
+        '(:completion (:detailedLabel t) :xref (:container t)
+                      :diagnostics (:frequencyMs 5000)))
 
   (require 'projectile)
   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
@@ -63,6 +62,6 @@
   (setq ccls-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
-  (set! :company-backend 'c-mode '(company-lsp))
-  (set! :company-backend 'c++-mode '(company-lsp))
+  (set! :company-backend 'c-mode '(company-lsp company-yasnippet))
+  (set! :company-backend 'c++-mode '(company-lsp company-yasnippet))
   )

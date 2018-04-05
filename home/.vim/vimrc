@@ -423,7 +423,7 @@ let g:deoplete#omni_patterns.cpp = '[^. *\t]\.\w*|[^. *\t]\::\w*|[^. *\t]\->\w*|
 let g:deoplete#omni#functions={}
 let g:deoplete#omni#functions.cpp = ['LanguageClient#complete']
 " EasyMotion {{{2
-let g:EasyMotion_do_mapping = 1
+let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_leader_key = "<leader><leader>"
 " denite {{{2
@@ -642,6 +642,7 @@ nn <leader>aG :%!genhdr windows<cr>
 " nmap <leader>b (buffer) {{{4
 let g:lmap.b = {'name': '+buffers'}
 nn <leader><leader> :Denite -winheight=10 buffer<cr>
+nn <leader>bb <C-^>
 nn <leader>bk :bp\|bd #<cr>
 nn <Leader>bK :!cp % ~/tmp/%.bak --backup=numbered<cr>
 nn <leader>bn :bn<cr>
@@ -670,6 +671,7 @@ nn <leader>ev :vsp <C-R>=expand("%:p:h") . "/" <CR>
 nn <leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
 " nmap <leader>f (file) {{{4
 let g:lmap.f = {'name': '+files'}
+nn <leader>. :Denite file_rec<cr>
 nn <leader>fc :cd %:p:h<cr>
 nn <leader>fe :e ~/.vim/vimrc<cr>
 nn <leader>ff :Denite file_rec<cr>
@@ -710,8 +712,6 @@ nn <silent> <leader>hx :Commands<cr>
 " nmap <leader>j (jump) {{{4
 let g:lmap.j = {'name': '+jump'}
 nmap <leader>jb <C-o>
-nn <leader>ji :Denite documentSymbol<cr>
-nn <leader>jI :Denite workspaceSymbol<cr>
 nmap <leader>jj <Plug>(easymotion-prefix)s
 nmap <leader>jJ <Plug>(easymotion-s2)
 nmap <leader>jk j==
@@ -727,6 +727,8 @@ nn <leader>rr :Denite register<cr>
 " nmap <leader>s (search) {{{4
 let g:lmap.s = {'name': '+search'}
 nn <leader>ss :Grepper -query<space>
+nn <leader>si :Denite documentSymbol<cr>
+nn <leader>sI :Denite workspaceSymbol<cr>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sP :Grepper -noprompt -cword<cr>
