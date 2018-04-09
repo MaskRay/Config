@@ -68,6 +68,7 @@
      )
    (:prefix "g"
      :n "*" (+my/prefix-M-x "magit-")
+     :n "q" #'git-link
      )
    (:prefix "h"
      :n "C" #'helpful-command
@@ -135,11 +136,19 @@
    :n "x" #'evil-delete-char
    )
 
+ (:after evil-collection-info
+   :map Info-mode-map
+   "/" #'Info-search
+   "?" #'Info-search-backward
+   )
+
  ;; ivy
  (:after ivy
    :map ivy-minibuffer-map
    "<tab>" #'ivy-call-and-recenter
    "C-;"   #'ivy-avy
+   "C-b"   #'backward-char
+   "C-f"   #'forward-char
    )
 
  (:after company
@@ -148,4 +157,6 @@
      "C-v"        #'company-next-page
      "M-v"        #'company-previous-page
      "C-i"        #'company-complete-selection
+     "RET"        nil
+     [return]     nil
      "SPC"        nil)))

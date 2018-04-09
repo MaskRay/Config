@@ -44,6 +44,20 @@
   (setq evil-snipe-scope 'buffer)
   )
 
+(after! git-link
+  (defun git-link-llvm (hostname dirname filename branch commit start end)
+      (format "https://github.com/llvm-mirror/%s/tree/%s/%s"
+              (file-name-base dirname)
+                (or branch commit)
+              (concat filename
+                      (when start
+                        (concat "#"
+                                (if end
+                                    (format "L%s-%s" start end)
+                                  (format "L%s" start)))))))
+    (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
+  )
+
 (def-package! lispy
   :hook (emacs-lisp-mode . lispy-mode)
   :config
@@ -149,6 +163,8 @@
             (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
      )
    )
+
+(setq magit-repository-directories '("~/Dev"))
 
 (after! ivy
   (push '(+ivy/switch-workspace-buffer) ivy-display-functions-alist)
