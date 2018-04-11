@@ -1,6 +1,7 @@
 ;;; private/my/config.el -*- lexical-binding: t; -*-
 
 (load! +bindings)
+(load! +org)
 (load! +ui)
 
 (setq projectile-require-project-root t)
@@ -12,11 +13,10 @@
   )
 
 (after! company
-  (setq company-idle-delay 0.1
-        company-minimum-prefix-length 2
-        company-quickhelp-delay 0.1
+  (setq company-minimum-prefix-length 2
+        company-quickhelp-delay nil
         company-show-numbers t
-        company-frontends '(company-childframe-frontend company-echo-metadata-frontend)
+        company-frontends '(company-childframe-frontend)
         company-backends '(company-capf company-dabbrev)
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
@@ -38,6 +38,12 @@
                   t)))
              ))
       (eshell/pushd p)))
+  )
+
+(def-package! eshell-autojump)
+
+(def-package! evil-nerd-commenter
+  :commands (evilnc-comment-or-uncomment-lines)
   )
 
 (after! evil-snipe
@@ -167,6 +173,7 @@
 (setq magit-repository-directories '("~/Dev"))
 
 (after! ivy
+  (setq ivy-initial-inputs-alist nil)
   (push '(+ivy/switch-workspace-buffer) ivy-display-functions-alist)
   )
 
@@ -202,22 +209,6 @@
       (funcall xref-show-xrefs-function xrefs
                `((window . ,(selected-window))))
       ))
-
-  (defun +my*ivy-xref-show-xrefs (xrefs alist)
-    (let ((xref-pos (point))
-          (xref-buffer (current-buffer))
-          success)
-      (ivy-read "xref: " (ivy-xref-make-collection xrefs)
-                :require-match t
-                :unwind (lambda ()
-                          (unless success
-                            (switch-to-buffer xref-buffer)
-                            (goto-char xref-pos)
-                            (recenter)))
-                :action (lambda (candidate)
-                          (setq success (eq 'ivy-done this-command))
-                          (xref--show-location (cdr candidate) 'quit)))))
-  (advice-add #'ivy-xref-show-xrefs :override #'+my*ivy-xref-show-xrefs)
   )
 
 (after! ivy-xref
@@ -230,6 +221,22 @@
   ;;                              (xref--show-location (cdr candidate) 'quit))))))
   ;; (push '(xref-find-references) ivy-display-functions-alist)
   (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist)
+  )
+
+(def-package! rust-mode
+  :mode "\\.rs$"
+  :config
+  (set! :docset 'rust-mode "Rust")
+  (map! :map rust-mode-map
+        :leader
+        :n "=" #'rust-format-buffer
+        )
+  )
+
+(def-package! lsp-rust
+  :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
+  :config
+  (set! :company-backend 'rust-mode '(company-lsp))
   )
 
 (def-package! tldr

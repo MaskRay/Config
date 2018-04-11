@@ -458,7 +458,7 @@ augroup LanguageClient_config
   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | call LanguageClient#textDocument_signatureHelp() | endif
+  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_signatureHelp() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -812,7 +812,7 @@ map f <Plug>Sneak_f
 map F <Plug>Sneak_F
 nn <silent> K :call LanguageClient#textDocument_hover()<cr>
 " nmap Alt {{{3
-nn <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
+nn <silent> <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
 nn <M-,> :Denite references<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
 nn <M-down> :lnext<cr>zvzz

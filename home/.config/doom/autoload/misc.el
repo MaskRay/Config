@@ -19,8 +19,8 @@
 ;;;###autoload
 (defun +my/ffap ()
   (interactive)
-  (-if-let ((filename (ffap-guess-file-name-at-point)))
-      (ffap filename)
+  (-if-let (filename (ffap-guess-file-name-at-point))
+      (find-file filename)
     (user-error "No file at point")))
 
 (defun +my/avy-goto-paren ()
@@ -113,3 +113,11 @@
 (defun +my/find-references ()
   (interactive)
   (if lsp-mode (lsp-ui-peek-find-references) (call-interactively #'+lookup/references)))
+
+;;;###autoload
+(defun counsel-imenu-comments ()
+  "Imenu display comments."
+  (interactive)
+  (require 'evil-nerd-commenter)
+  (let* ((imenu-create-index-function 'evilnc-imenu-create-index-function))
+    (counsel-imenu)))

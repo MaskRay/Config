@@ -62,6 +62,5 @@
   (setq ccls-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
-  (set! :company-backend 'c-mode '(company-lsp company-yasnippet))
-  (set! :company-backend 'c++-mode '(company-lsp company-yasnippet))
+  (set! :company-backend '(c-mode c++-mode) '(company-lsp))
   )

@@ -39,6 +39,7 @@
  ;; :n "s"    #'avy-goto-char-timer
 
  :n "ga"   #'lsp-ui-find-workspace-symbol
+ :n "gc"   #'evilnc-comment-or-uncomment-lines
  :n "gf"   #'+my/ffap
  :n "go"   (λ! (message "%S" (text-properties-at (point))))
 
@@ -47,8 +48,10 @@
    :n "M-u" (+my/simulate-key "SPC [")
    :n "M-i" (+my/simulate-key "SPC ]")
    (:desc "app" :prefix "a"
-     :n "g" (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
-     :n "G" (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+     :desc "genhdr" :n "g"
+     (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
+     :desc "genhdr windows" :n "G"
+     (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
      )
    (:prefix "b"
      :desc "Last buffer" :n "b" #'evil-switch-to-windows-last-buffer
@@ -75,6 +78,7 @@
      )
    :desc "lispyville" :n "l" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
+     :n "c" #'counsel-imenu-comments
      :n "ee" #'+eshell/open
      :n "el" #'+eshell/open-last
      :n "ej" #'+eshell/next
