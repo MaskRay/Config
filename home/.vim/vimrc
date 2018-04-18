@@ -357,13 +357,14 @@ if 1
   endif
   Plug 'justinmk/vim-sneak'
   Plug 'justinmk/vim-dirvish'
-  Plug 'Lokaltog/vim-easymotion'
+  Plug 'easymotion/vim-easymotion'
   Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neomru.vim'
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
   Plug 'Shougo/neoyank.vim'
   Plug 'Shougo/denite.nvim'
+  Plug 'Shougo/unite.vim' " dependency of vimfiler
   Plug 'Shougo/vimfiler.vim', { 'on': 'VimFilerExplorer' }
   Plug 'Shougo/vimproc.vim', { 'do': 'make' }
   Plug 'Shougo/vimshell.vim'
@@ -423,9 +424,9 @@ let g:deoplete#omni_patterns.cpp = '[^. *\t]\.\w*|[^. *\t]\::\w*|[^. *\t]\->\w*|
 let g:deoplete#omni#functions={}
 let g:deoplete#omni#functions.cpp = ['LanguageClient#complete']
 " EasyMotion {{{2
-let g:EasyMotion_do_mapping = 0
+let g:EasyMotion_do_mapping = 1
 let g:EasyMotion_startofline = 0
-let g:EasyMotion_leader_key = "<leader><leader>"
+let g:EasyMotion_leader_key = 'gs'
 " denite {{{2
 call denite#custom#var('file_rec', 'command',
       \ ['rg', '--files', '--glob', '!.git', ''])
@@ -438,6 +439,7 @@ let g:gitgutter_map_keys = 0
 let g:gitgutter_enabled = 0
 " grepper {{{2
 let g:grepper = {}
+let g:grepper.tools = ['rg', 'git']
 "let g:ack_use_dispatch = 1
 " LanguageClient-neovim {{{2
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
@@ -448,7 +450,7 @@ let g:LanguageClient_serverCommands = {
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
-let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_autoStart = 0
 "let g:LanguageClient_devel = 1
 
 augroup LanguageClient_config
@@ -645,6 +647,7 @@ nn <leader><leader> :Denite -winheight=10 buffer<cr>
 nn <leader>bb <C-^>
 nn <leader>bk :bp\|bd #<cr>
 nn <Leader>bK :!cp % ~/tmp/%.bak --backup=numbered<cr>
+nn <leader>bl :Buffers<cr>
 nn <leader>bn :bn<cr>
 nn <leader>bNh :topleft vertical new<cr>
 nn <leader>bNj :rightbelow new<cr>
@@ -659,7 +662,6 @@ nn <leader>bY :%y+<cr>
 nn <leader>cC :let b:neomake_target=input('make ')<Bar>exe 'NeomakeSh make ' . b:neomake_target<cr>
 nn <leader>cr :exe 'NeomakeSh make ' . b:neomake_target<cr>
 " nmap <leader>d (diff) {{{4
-nn <leader>dd :Zeavim<CR>
 nn <leader>dt :diffthis<CR>
 nn <leader>do :bufdo diffoff<CR>
 " nmap <leader>e (edit) {{{4
@@ -684,40 +686,13 @@ nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
 nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
 " nmap <leader>g (fugitive) {{{4
-nn <leader>gb :Gblame<CR>
-nn <leader>gc :Gcd<CR>
-nn <leader>gd :Gdiff<CR>
-nn <leader>gg :GitGutterToggle<cr>
-nn <leader>gp :Git push<CR>
-nn <leader>gs :Gstatus<CR>
-" nmap <leader>h (highlight) {{{4
-nn <leader>h1 :execute 'match InterestingWord1 /\<c-r><c-w>\>/'<cr>
-nn <leader>h2 :execute '2match InterestingWord2 /\<c-r><c-w>\>/'<cr>
-nn <leader>h3 :execute '3match InterestingWord3 /\<c-r><c-w>\>/'<cr>
-hi InterestingWord1 guifg=#000000 guibg=#FF4300 ctermfg=16 ctermbg=196
-hi InterestingWord2 guifg=#000000 guibg=#53FF00 ctermfg=16 ctermbg=82
-hi InterestingWord3 guifg=#000000 guibg=#FF74F8 ctermfg=16 ctermbg=165
-
-nn <silent> <leader>hc :Commits<cr>
-nn <silent> <leader>hC :BCommits<cr>
-"nn <silent> <leader>hR :UniteResume<cr>
-"nn <silent> <leader>hy :Unite -auto-resize -buffer-name=yank history/yank<cr>
-nn <silent> <leader>hy :Denite neoyank<cr>
-
-"nn <silent> <leader>hh :History<cr>
-nn <silent> <leader>hi :DeniteCursorWord help<cr>
-nn <silent> <leader>hL :BLines<cr>
-nn <leader>hm :Man<Space>
-nn <silent> <leader>hx :Commands<cr>
-" nmap <leader>j (jump) {{{4
-let g:lmap.j = {'name': '+jump'}
-nmap <leader>jb <C-o>
-nmap <leader>jj <Plug>(easymotion-prefix)s
-nmap <leader>jJ <Plug>(easymotion-s2)
-nmap <leader>jk j==
-nmap <leader>jl <Plug>(easymotion-bd-jk)
-nmap <leader>jo i<cr><esc>
-nmap <leader>jw <Plug>(easymotion-bd-w)
+nn <leader>gb :Gblame<cr>
+nn <leader>gc :Gcd<cr>
+nn <leader>gd :Gdiff<cr>
+nn <leader>gl :Glog<cr>
+nn <leader>gp :Gpush<cr>
+nn <leader>gP :Gpull<cr>
+nn <leader>gg :Gstatus<cr>
 " nmap <leader>q (quit) {{{4
 let g:lmap.q = {'name': '+quit'}
 nn <leader>qq :quit<cr>
@@ -726,13 +701,14 @@ nn <leader>rl :Denite -resume<cr>
 nn <leader>rr :Denite register<cr>
 " nmap <leader>s (search) {{{4
 let g:lmap.s = {'name': '+search'}
-nn <leader>ss :Grepper -query<space>
+nn <leader>sd :Grepper -dir file<cr>
+nn <leader>ss :Grepper<cr>
 nn <leader>si :Denite documentSymbol<cr>
 nn <leader>sI :Denite workspaceSymbol<cr>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sP :Grepper -noprompt -cword<cr>
-nn <leader>st :vimgrep TODO\|FIXME<cr>
+nn <leader>pt :Grepper -query TODO\<bar>FIXME<cr>
 " nmap <leader>t (toggle) {{{4
 let g:lmap.t = {'name': '+toggles'}
 "nn <leader>ta :!gtags && ctags -R<cr>
@@ -778,10 +754,9 @@ nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 " nmap g {{{3
 let g:lmap.g = {'name': '+git'}
-nmap ga <Plug>(EasyAlign)
+nn ga :call LanguageClient#workspace_symbol({'query':input('workspace/symbol ')})<cr>
 nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
-nmap gs <Plug>(GrepperOperator)
-xmap gs <Plug>(GrepperOperator)
+nmap gss <Plug>(easymotion-s2)
 " nmap mark stack {{{3
 let g:mark_ring = [{},{},{},{},{},{},{},{},{},{}]
 let g:mark_ring_i = 0
@@ -810,7 +785,6 @@ map t <Plug>Sneak_t
 map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
-nn <silent> K :call LanguageClient#textDocument_hover()<cr>
 " nmap Alt {{{3
 nn <silent> <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
 nn <M-,> :Denite references<cr>
@@ -834,14 +808,9 @@ nn ,al :LanguageClientStart<cr>
 nn ,db :call append(line('.')-1, 'volatile static int z=0;while(!z)asm("pause");')<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
-nn ,la :call LanguageClient#workspace_symbol({'query':input('workspace/symbol ')})<cr>
-nn ,lb :call LanguageClient#cquery_base()<cr>
-nn ,lc :call LanguageClient#cquery_callers()<cr>
-nn ,ld :call LanguageClient#cquery_derived()<cr>
 nn ,lC :call LanguageClient#textDocument_codeAction()<cr>
 nn ,lf :call LanguageClient#textDocument_formatting()<cr>
 nn ,lr :call LanguageClient#textDocument_rename()<cr>
-nn ,lv :call LanguageClient#cquery_vars()<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
@@ -856,11 +825,13 @@ nn mm :call MarkPush(0)<cr>
 nn 'm <C-t>
 nn L :call MarkPop(1)<cr>
 nn H :call MarkPop(-1)<cr>
+nn <silent> K :call LanguageClient#textDocument_hover()<cr>
 nn <C-h> <C-w>h
 nn <C-j> <C-w>j
 nn <C-k> <C-w>k
 nn <C-l> <C-w>l
 nn <C-s> :Lines<cr>
+nn zx :bdelete<cr>
 " imap {{{2
 " insert word of the line above
 ino <C-Y> <C-C>:let @z = @"<CR>mz

@@ -17,9 +17,12 @@
  :m ","    nil
 
  (:map prog-mode-map
-   ;; Override default :n < >
+   ;; Override default :n < > ( )
    :nm "<" #'lispyville-previous-opening
    :nm ">" #'lispyville-next-closing
+
+   :nm "(" #'lispyville-next-opening
+   :nm ")" #'lispyville-previous-closing
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
@@ -42,6 +45,9 @@
  :n "gc"   #'evilnc-comment-or-uncomment-lines
  :n "gf"   #'+my/ffap
  :n "go"   (λ! (message "%S" (text-properties-at (point))))
+
+ :n "[ M-u" #'symbol-overlay-switch-backward
+ :n "] M-i" #'symbol-overlay-switch-forward
 
  (:leader
    :n "SPC" #'+ivy/switch-workspace-buffer
@@ -84,6 +90,7 @@
      :n "ej" #'+eshell/next
      :n "ek" #'+eshell/previous
      :n "es" #'+eshell/switch
+     :n "o" #'symbol-overlay-put
      :n "s" #'+eshell/open-popup
      )
    (:prefix "p"
@@ -137,8 +144,7 @@
    :n "n" #'lsp-goto-implementation
    :n "t" #'lsp-goto-type-definition
    :n "v" #'ccls/vars
-   :n "x" #'evil-delete-char
-   )
+   :n "x" #'evil-delete-char)
 
  (:after evil-collection-info
    :map Info-mode-map

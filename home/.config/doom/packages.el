@@ -9,6 +9,7 @@
 
 (package! eshell-autojump)
 (package! evil-nerd-commenter)
+(package! symbol-overlay)
 (package! tldr)
 
 (package! rust-mode)

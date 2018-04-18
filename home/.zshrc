@@ -381,6 +381,9 @@ if [[ -s /etc/profile.d/autojump.zsh ]]; then
   source /etc/profile.d/autojump.zsh
 elif [[ -s /usr/share/autojump/autojump.zsh ]]; then
   source /usr/share/autojump/autojump.zsh
+elif [[ -s /usr/local/share/autojump/autojump.zsh ]]; then
+  # FreeBSD
+  source /usr/local/share/autojump/autojump.zsh
 fi
 
 # OCaml

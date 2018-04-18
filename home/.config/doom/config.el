@@ -4,8 +4,6 @@
 (load! +org)
 (load! +ui)
 
-(setq projectile-require-project-root t)
-
 (def-package! avy
   :commands (avy-goto-char-timer)
   :init
@@ -16,7 +14,6 @@
   (setq company-minimum-prefix-length 2
         company-quickhelp-delay nil
         company-show-numbers t
-        company-frontends '(company-childframe-frontend)
         company-backends '(company-capf company-dabbrev)
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
@@ -105,6 +102,8 @@
 
 (def-package! lsp-mode
   :defer t
+  :init
+  (setq lsp-project-blacklist '("/CC/"))
   )
 
 (def-package! lsp-ui
@@ -177,6 +176,14 @@
   (push '(+ivy/switch-workspace-buffer) ivy-display-functions-alist)
   )
 
+(after! quickrun
+  (quickrun-add-command "c++/c1z"
+    '((:command . "clang++")
+      (:exec    . ("%c -std=c++1z %o -o %e %s"
+                   "%e %a"))
+      (:remove  . ("%e")))
+    :default "c++"))
+
 (defun +advice/xref-set-jump (&rest args)
   (lsp-ui-peek--with-evil-jumps (evil-set-jump)))
 (advice-add '+lookup/definition :before #'+advice/xref-set-jump)
@@ -233,11 +240,38 @@
         )
   )
 
+(def-package! symbol-overlay
+  :commands (symbol-overlay-put))
+
 (def-package! lsp-rust
   :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
   :config
   (set! :company-backend 'rust-mode '(company-lsp))
   )
+
+(setq projectile-require-project-root t)
+
+(after! counsel-projectile
+  (ivy-add-actions
+   'counsel-projectile-switch-project
+   `(("b" counsel-projectile-switch-project-action-switch-to-buffer
+      "jump to a project buffer")
+     ("s" counsel-projectile-switch-project-action-save-all-buffers
+      "save all project buffers")
+     ("k" counsel-projectile-switch-project-action-kill-buffers
+      "kill all project buffers")
+     ("c" counsel-projectile-switch-project-action-compile
+      "run project compilation command")
+     ("e" counsel-projectile-switch-project-action-edit-dir-locals
+      "edit project dir-locals")
+     ("v" counsel-projectile-switch-project-action-vc
+      "open project in vc-dir / magit / monky")
+     ("xe" counsel-projectile-switch-project-action-run-eshell
+      "invoke eshell from project root")
+     ("xt" counsel-projectile-switch-project-action-run-term
+      "invoke term from project root")
+     ("_" counsel-projectile-switch-project-action-org-capture
+      "org-capture into project"))))
 
 (def-package! tldr
   :commands (tldr)
@@ -258,8 +292,19 @@
 (def-package! treemacs-projectile
   :commands (treemacs-projectile treemacs-projectile-toggle))
 
+(after! nav-flash
+  ;; (defun nav-flash-show (&optional pos end-pos face delay)
+  ;; ...
+  ;; (let ((inhibit-point-motion-hooks t))
+  ;; (goto-char pos)
+  ;; (beginning-of-visual-line) ; work around args-out-of-range error when the target file is not opened
+  (defun +advice/nav-flash-show (orig-fn &rest args)
+    (ignore-errors (apply orig-fn args)))
+  (advice-add 'nav-flash-show :around #'+advice/nav-flash-show))
+
 (set! :popup "^\\*helpful" '((size . 0.4)))
-(set! :popup "^\\*info\\*$" '((size . 0.4)))
+(set! :popup "^\\*info.*" '((size . 80) (side . right)))
+(set! :popup "^\\*Man.*" '((size . 80) (side . right)))
 
 (let ((profile "~/.config/doom/profile.el"))
   (when (file-exists-p profile)

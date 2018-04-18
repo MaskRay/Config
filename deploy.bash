@@ -64,7 +64,7 @@ for f in ${files[@]}; do
       [[ $ff =~ / ]] || break
       ff=${ff%/*}
     done
-    [[ -n $skip ]] && break
+    [[ -n $skip ]] && continue
   else
     continue
   fi

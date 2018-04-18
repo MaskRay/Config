@@ -24,7 +24,11 @@
                  (topmost-intro . 0)
                  (arglist-cont-nonempty . +)))))
   (setq c-default-style "my-cc")
-  (add-hook 'c-mode-common-hook (lambda () (c-set-style "my-cc")))
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (c-set-style "my-cc")
+              (modify-syntax-entry ?_ "w")
+              ))
 
   (map!
    :map (c-mode-map c++-mode-map)
@@ -58,8 +62,6 @@
 
   (require 'projectile)
   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
-
-  (setq ccls-project-roots '("~/Dev/llvm-project" "~/Dev/llvm"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   (set! :company-backend '(c-mode c++-mode) '(company-lsp))
