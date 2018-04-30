@@ -79,6 +79,7 @@ headers = {
   'iterator' => ['back_inserter','front_inserter','inserter'],
   'list' => ['list'],
   'map' => ['map','multimap'],
+  'memory' => ['make_unique','unique_ptr'],
   'numeric' => ['accumulate','iota','partial_sum'],
   'pthread.h' => ['pthread_create'],
   'queue' => ['queue', 'priority_queue'],

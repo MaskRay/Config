@@ -4,7 +4,7 @@
 (package! avy)
 (package! lispyville)
 (package! lsp-mode)
-(package! lsp-ui :ignore t)
+(package! lsp-ui)
 (package! company-lsp)
 
 (package! eshell-autojump)

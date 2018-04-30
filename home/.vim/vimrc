@@ -754,7 +754,7 @@ nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 " nmap g {{{3
 let g:lmap.g = {'name': '+git'}
-nn ga :call LanguageClient#workspace_symbol({'query':input('workspace/symbol ')})<cr>
+nn ga :call LanguageClient#workspace_symbol(input('workspace/symbol '))<cr>
 nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
 nmap gss <Plug>(easymotion-s2)
 " nmap mark stack {{{3

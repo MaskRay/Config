@@ -107,7 +107,6 @@
   )
 
 (def-package! lsp-ui
-  :load-path "~/Dev/Emacs/lsp-ui"
   :demand t
   :hook (lsp-mode . lsp-ui-mode)
   :config
