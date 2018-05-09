@@ -50,6 +50,7 @@
 
 (def-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
+  :defer t
   :init (add-hook 'c-mode-common-hook #'+ccls//enable)
   :config
   ;; overlay is slow

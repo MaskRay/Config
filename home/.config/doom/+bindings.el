@@ -68,8 +68,7 @@
      :n "p" #'flycheck-previous-error
      )
    (:prefix "f"
-     :n "p" #'treemacs-projectile-toggle
-     :n "P" #'treemacs-projectile
+     :n "p" #'treemacs-projectile
      :n "C-p" #'+default/find-in-config
      :n "C-S-p" #'+default/browse-config
      :n "t" #'treemacs-toggle
@@ -129,7 +128,7 @@
    :n "SPC" #'ccls/random
    :n ";" (λ! (avy-goto-char-timer) (+my/find-references))
    :n "b" #'ccls/base
-   :n "d" #'ccls/derived
+   :n "d" #'lsp-ui-peek-find-implementation
    :n "e" #'ccls/callers
    ;; caller hierarchy
    :n "c" #'ccls-call-hierarchy
@@ -141,7 +140,6 @@
    :n "I" #'ccls-inheritance-hierarchy
    :n "l" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
-   :n "n" #'lsp-goto-implementation
    :n "t" #'lsp-goto-type-definition
    :n "v" #'ccls/vars
    :n "x" #'evil-delete-char)

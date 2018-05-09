@@ -2,13 +2,13 @@
 
 ;;;###autoload
 (defun +ccls//enable ()
+  (require 'ccls)
   (condition-case nil
       (lsp-ccls-enable)
     (user-error nil)))
 
 (defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
 (defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
-(defun ccls/derived () (interactive) (lsp-ui-peek-find-custom 'derived "$ccls/derived"))
 (defun ccls/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$ccls/vars"))
 (defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
 
