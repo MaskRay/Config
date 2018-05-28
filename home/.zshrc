@@ -28,10 +28,12 @@ PROMPT=$'%F{blue}%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{g
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
-if [[ "$TERM" = *256color && -f $HOME/.lscolor256 ]]; then
+if [[ $UNAME = Linux ]]; then
+  if [[ "$TERM" = *256color* && -f $HOME/.lscolor256 ]]; then
     eval $(dircolors -b ~/.lscolor256)
-else if [[ -f $HOME/.lscolor ]];
+  else if [[ -f $HOME/.lscolor ]];
     eval $(dircolors -b ~/.lscolor)
+  fi
 fi
 
 # Options {{{1

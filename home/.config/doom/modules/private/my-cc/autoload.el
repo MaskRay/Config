@@ -9,7 +9,7 @@
 
 (defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
 (defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
-(defun ccls/vars () (interactive) (lsp-ui-peek-find-custom 'vars "$ccls/vars"))
+(defun ccls/vars (kind) (lsp-ui-peek-find-custom 'vars "$ccls/vars" (plist-put (lsp--text-document-position-params) :kind kind)))
 (defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
 
 (defun ccls/references-address ()

@@ -84,13 +84,7 @@
    :desc "lispyville" :n "l" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
      :n "c" #'counsel-imenu-comments
-     :n "ee" #'+eshell/open
-     :n "el" #'+eshell/open-last
-     :n "ej" #'+eshell/next
-     :n "ek" #'+eshell/previous
-     :n "es" #'+eshell/switch
      :n "o" #'symbol-overlay-put
-     :n "s" #'+eshell/open-popup
      )
    (:prefix "p"
      :n "e" #'projectile-run-eshell
@@ -134,14 +128,15 @@
    :n "c" #'ccls-call-hierarchy
    ;; callee hierarchy
    :n "C" (λ! (ccls-call-hierarchy t))
-   ;; derived hierarchy
-   :n "i" (λ! (ccls-inheritance-hierarchy t))
    ;; base hierarchy
-   :n "I" #'ccls-inheritance-hierarchy
+   :n "i" #'ccls-inheritance-hierarchy
+   ;; derived hierarchy
+   :n "I" (λ! (ccls-inheritance-hierarchy t))
    :n "l" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
    :n "t" #'lsp-goto-type-definition
-   :n "v" #'ccls/vars
+   :n "v" (λ! (ccls/vars 3))
+   :n "V" (λ! (ccls/vars 1))
    :n "x" #'evil-delete-char)
 
  (:after evil-collection-info

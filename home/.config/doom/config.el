@@ -1,8 +1,8 @@
 ;;; private/my/config.el -*- lexical-binding: t; -*-
 
-(load! +bindings)
-(load! +org)
-(load! +ui)
+(load! "+bindings")
+(load! "+org")
+(load! "+ui")
 
 (def-package! avy
   :commands (avy-goto-char-timer)
@@ -17,6 +17,12 @@
         company-backends '(company-capf company-dabbrev)
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
+
+(def-package! company-lsp
+  :after company
+  :init
+  (setq company-transformers nil company-lsp-cache-candidates nil)
+  )
 
 (set! :lookup 'emacs-lisp-mode :documentation #'helpful-at-point)
 
@@ -239,6 +245,8 @@
         )
   )
 
+(def-package! smart-forward)
+
 (def-package! symbol-overlay
   :commands (symbol-overlay-put))
 
@@ -271,6 +279,14 @@
       "invoke term from project root")
      ("_" counsel-projectile-switch-project-action-org-capture
       "org-capture into project"))))
+
+(def-package! smartparens
+  :config
+  (setq sp-autoinsert-pair nil
+        sp-autodelete-pair nil
+        sp-autoskip-closing-pair nil
+        sp-escape-quotes-after-insert nil)
+  )
 
 (def-package! tldr
   :commands (tldr)
