@@ -50,20 +50,21 @@
 
 (def-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
-  :defer t
-  :init (add-hook 'c-mode-common-hook #'+ccls//enable)
+  :init (add-hook! (c-mode c++-mode objc-mode) #'+ccls//enable)
   :config
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
   (setq ccls-sem-highlight-method 'font-lock)
   (ccls-use-default-rainbow-sem-highlight)
   (setq ccls-extra-init-params
-        '(:completion (:detailedLabel t)
-                      :diagnostics (:frequencyMs 5000)))
+        '(:clang (:extraArgs ("-D__cpp_deduction_guides=0" "-Wno-macro-redefined"))
+                 :completion (:detailedLabel t)
+                 :diagnostics (:frequencyMs 5000)
+                 :index (:initialReparseForDependency :json-false)))
 
   (with-eval-after-load 'projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
-  (set! :company-backend '(c-mode c++-mode) '(company-lsp))
+  (set! :company-backend '(c-mode c++-mode objc-mode) 'company-lsp)
   )

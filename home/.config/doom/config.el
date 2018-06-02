@@ -14,7 +14,7 @@
   (setq company-minimum-prefix-length 2
         company-quickhelp-delay nil
         company-show-numbers t
-        company-backends '(company-capf company-dabbrev)
+        company-backends '((:separate company-capf company-dabbrev))
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
 
