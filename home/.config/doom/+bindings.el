@@ -35,6 +35,7 @@
  :n "M-."  #'+lookup/definition
  :n "M-j"  #'+my/find-definitions
 
+ :n "C-1" #'+popup/raise
  :n "C-c a" #'org-agenda
  :n "C-s"  #'swiper
  :n "C-,"  #'+my/find-references
@@ -71,8 +72,7 @@
      :n "p" #'treemacs-projectile
      :n "C-p" #'+default/find-in-config
      :n "C-S-p" #'+default/browse-config
-     :n "t" #'treemacs-toggle
-     :n "T" #'treemacs
+     :n "t" #'treemacs
      )
    (:prefix "g"
      :n "*" (+my/prefix-M-x "magit-")
@@ -85,6 +85,7 @@
    (:prefix "o"
      :n "c" #'counsel-imenu-comments
      :n "o" #'symbol-overlay-put
+     :n "q" #'symbol-overlay-remove-all
      )
    (:prefix "p"
      :n "e" #'projectile-run-eshell
@@ -112,7 +113,7 @@
      )
 
    (:desc "toggle" :prefix "t"
-     :n "d" #'doom/toggle-debug-mode
+     :n "d" #'toggle-debug-on-error
      :n "D" #'+my/realtime-elisp-doc
      )
    )
@@ -138,6 +139,11 @@
    :n "v" (λ! (ccls/vars 3))
    :n "V" (λ! (ccls/vars 1))
    :n "x" #'evil-delete-char)
+
+ (:prefix "C-x"
+   :n "e"  #'pp-eval-last-sexp
+   :n "u" #'link-hint-open-link
+   )
 
  (:after evil-collection-info
    :map Info-mode-map

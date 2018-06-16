@@ -10,6 +10,7 @@
 
 (package! eshell-autojump)
 (package! evil-nerd-commenter)
+(package! link-hint)
 (package! smart-forward)
 (package! symbol-overlay)
 (package! tldr)
@@ -17,13 +18,7 @@
 (package! rust-mode)
 (package! lsp-rust)
 
-(package! treemacs)
-(package! treemacs-evil)
-(package! treemacs-projectile)
-
 (package! function-args)
 (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
 
-(package! company-statistics :disable t)
-(package! irony :disable t)
-(package! rtags :disable t)
+(disable-packages! irony rtags)

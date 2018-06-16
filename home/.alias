@@ -281,7 +281,7 @@ alias disp='sudo dispatch-conf'
 alias bv=bviplus
 alias off='LC_ALL=C grep --color=auto -Pabo'
 alias lt=ltrace
-alias ob='objdump -M intel'
+alias ob='objdump -w -M intel'
 alias re='readelf -W'
 alias st=strace
 alias sst='sudo strace'

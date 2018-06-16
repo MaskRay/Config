@@ -14,7 +14,6 @@
   (setq company-minimum-prefix-length 2
         company-quickhelp-delay nil
         company-show-numbers t
-        company-backends '((:separate company-capf company-dabbrev))
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
 
@@ -67,6 +66,9 @@
     (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
   )
 
+(def-package! link-hint
+  :commands link-hint-open-link link-hint-open-all-links)
+
 (def-package! lispy
   :hook (emacs-lisp-mode . lispy-mode)
   :config
@@ -95,7 +97,7 @@
         :nm "gl" #'lispyville-right
         :nm "J" #'lispyville-forward-sexp
         :nm "K" #'lispyville-backward-sexp
-        :n "gh" #'+lookup/documentation
+        :n "gH" #'+lookup/documentation
         :n "C-<left>" #'lispy-forward-barf-sexp
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
@@ -123,6 +125,7 @@
    lsp-ui-doc-background (doom-color 'base4)
    lsp-ui-doc-border (doom-color 'fg)
 
+   lsp-ui-peek-force-fontify nil
    lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
 
   (map! :map lsp-ui-mode-map
@@ -174,7 +177,7 @@
      )
    )
 
-(setq magit-repository-directories '("~/Dev"))
+(setq magit-repository-directories '(("~/Dev" . 2)))
 
 (after! ivy
   (setq ivy-initial-inputs-alist nil)
@@ -284,28 +287,16 @@
   :config
   (setq sp-autoinsert-pair nil
         sp-autodelete-pair nil
-        sp-autoskip-closing-pair nil
         sp-escape-quotes-after-insert nil)
+  (setq-default sp-autoskip-closing-pair nil)
   )
 
 (def-package! tldr
   :commands (tldr)
   :config
   (setq tldr-directory-path (concat doom-etc-dir "tldr/"))
-  (set! :popup "^\\*tldr\\*" '((side . right)) '((select . t) (quit . t)))
+  (set-popup-rule! "^\\*tldr\\*" :side 'right :select t :quit t)
   )
-
-(def-package! treemacs
-  :commands (treemacs treemacs-toggle)
-  :config
-  (setq treemacs-follow-after-init t)
-  (treemacs-follow-mode +1)
-  )
-
-(def-package! treemacs-evil)
-
-(def-package! treemacs-projectile
-  :commands (treemacs-projectile treemacs-projectile-toggle))
 
 (after! nav-flash
   ;; (defun nav-flash-show (&optional pos end-pos face delay)
@@ -317,9 +308,11 @@
     (ignore-errors (apply orig-fn args)))
   (advice-add 'nav-flash-show :around #'+advice/nav-flash-show))
 
-(set! :popup "^\\*helpful" '((size . 0.4)))
-(set! :popup "^\\*info.*" '((size . 80) (side . right)))
-(set! :popup "^\\*Man.*" '((size . 80) (side . right)))
+(set-popup-rules! '(
+  ("^\\*helpful" :size 0.4)
+  ("^\\*info.*" :size 80 :size 'right)
+  ("^\\*Man.*" :size 80 :side 'right)
+  ))
 
 (let ((profile "~/.config/doom/profile.el"))
   (when (file-exists-p profile)
