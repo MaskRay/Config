@@ -444,8 +444,8 @@ let g:grepper.tools = ['rg', 'git']
 " LanguageClient-neovim {{{2
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
-      \ 'c': ['ccls'],
-      \ 'cpp': [expand('~/Dev/Util/ccls/debug/ccls'), '--init={}', '--log-file=/tmp/ls.log'],
+      \ 'c': ['ccls.debug'],
+      \ 'cpp': ['ccls.debug'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],

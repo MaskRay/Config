@@ -36,6 +36,10 @@
      :n "=" #'clang-format-region
      )
    (:localleader
+     :n "a" #'ccls/references-address
+     :n "f" #'ccls/references-not-call
+     :n "r" #'ccls/references-read
+     :n "w" #'ccls/references-write
      :desc "breakpoint"
      :n "db" (lambda ()
                (interactive)

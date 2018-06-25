@@ -8,6 +8,7 @@
   :commands (avy-goto-char-timer)
   :init
   (setq avy-timeout-seconds 0.2)
+  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?u ?i ?o ?p))
   )
 
 (after! company
@@ -138,9 +139,6 @@
 
         :n "lp" #'ccls-preprocess-file
         :n "lf" #'ccls-freshen-index
-        :n "a" #'ccls/references-address
-        :n "r" #'ccls/references-read
-        :n "w" #'ccls/references-write
         )
 
    (map! :after lsp-ui-peek
@@ -191,6 +189,15 @@
                    "%e %a"))
       (:remove  . ("%e")))
     :default "c++"))
+
+(after! realgud
+  (setq realgud-safe-mode nil)
+  (evil-collection-define-key 'normal 'realgud:shortkey-mode-map
+    "d" #'realgud:cmd-newer-frame
+    "D" #'realgud:cmd-delete
+    "u" #'realgud:cmd-older-frame
+    )
+  )
 
 (defun +advice/xref-set-jump (&rest args)
   (lsp-ui-peek--with-evil-jumps (evil-set-jump)))
@@ -260,6 +267,7 @@
   )
 
 (setq projectile-require-project-root t)
+(setq compilation-read-command nil)     ; no prompt in projectile-compile-project
 
 (after! counsel-projectile
   (ivy-add-actions
@@ -310,8 +318,8 @@
 
 (set-popup-rules! '(
   ("^\\*helpful" :size 0.4)
-  ("^\\*info.*" :size 80 :size 'right)
-  ("^\\*Man.*" :size 80 :side 'right)
+  ("^\\*info.*" :size 80 :size right)
+  ("^\\*Man.*" :size 80 :side right)
   ))
 
 (let ((profile "~/.config/doom/profile.el"))

@@ -19,6 +19,13 @@
    (plist-put (lsp--text-document-position-params) :context
               '(:role 128))))
 
+(defun ccls/references-not-call ()
+  (interactive)
+  (lsp-ui-peek-find-custom
+   'address "textDocument/references"
+   (plist-put (lsp--text-document-position-params) :context
+              '(:excludeRole 32))))
+
 (defun ccls/references-read ()
   (interactive)
   (lsp-ui-peek-find-custom

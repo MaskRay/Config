@@ -26,6 +26,8 @@
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
+   :m "C-S-h"  #'+my/xref-jump-backward-file
+   :m "C-S-l"  #'+my/xref-jump-forward-file
    )
 
  :n "M-u" (+my/simulate-key "[")
@@ -39,8 +41,7 @@
  :n "C-c a" #'org-agenda
  :n "C-s"  #'swiper
  :n "C-,"  #'+my/find-references
- :n ";"    (λ! (avy-goto-char-timer) (+my/find-definitions))
- ;; :n "s"    #'avy-goto-char-timer
+ :n ";"    (λ! (+my/avy-document-symbol) (+my/find-definitions))
 
  :n "ga"   #'lsp-ui-find-workspace-symbol
  :n "gc"   #'evilnc-comment-or-uncomment-lines
@@ -84,6 +85,7 @@
    :desc "lispyville" :n "l" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
      :n "c" #'counsel-imenu-comments
+     :n "d" #'+debugger:start
      :n "o" #'symbol-overlay-put
      :n "q" #'symbol-overlay-remove-all
      )
@@ -121,7 +123,7 @@
  :n "x" nil
  (:desc "xref" :prefix "x"
    :n "SPC" #'ccls/random
-   :n ";" (λ! (avy-goto-char-timer) (+my/find-references))
+   :n ";" (λ! (+my/avy-document-symbol) (+my/find-references))
    :n "b" #'ccls/base
    :n "d" #'lsp-ui-peek-find-implementation
    :n "e" #'ccls/callers
@@ -168,4 +170,33 @@
      "C-i"        #'company-complete-selection
      "RET"        nil
      [return]     nil
-     "SPC"        nil)))
+     "SPC"        nil))
+
+ (:after realgud
+   (:map realgud-track-mode-map
+     :in ";" #'realgud-window-src-undisturb-cmd)
+   (:map realgud:shortkey-mode-map
+     :n "e" (λ! (realgud:cmd-run-command (thing-at-point 'symbol) "eval"))
+     :n "t" #'realgud:cmd-tbreak
+     :n "U" #'realgud:cmd-until
+     :n "1" (λ! (+my/realgud-eval-nth-name-forward 1))
+     :n "2" (λ! (+my/realgud-eval-nth-name-forward 2))
+     :n "3" (λ! (+my/realgud-eval-nth-name-forward 3))
+     :n "4" (λ! (+my/realgud-eval-nth-name-forward 4))
+     :n "5" (λ! (+my/realgud-eval-nth-name-forward 5))
+     :n "6" (λ! (+my/realgud-eval-nth-name-forward 6))
+     :n "7" (λ! (+my/realgud-eval-nth-name-forward 7))
+     :n "8" (λ! (+my/realgud-eval-nth-name-forward 8))
+     :n "9" (λ! (+my/realgud-eval-nth-name-forward 9))
+     :n "M-1" (λ! (+my/realgud-eval-nth-name-backward 1))
+     :n "M-2" (λ! (+my/realgud-eval-nth-name-backward 2))
+     :n "M-3" (λ! (+my/realgud-eval-nth-name-backward 3))
+     :n "M-4" (λ! (+my/realgud-eval-nth-name-backward 4))
+     :n "M-5" (λ! (+my/realgud-eval-nth-name-backward 5))
+     :n "M-6" (λ! (+my/realgud-eval-nth-name-backward 6))
+     :n "M-7" (λ! (+my/realgud-eval-nth-name-backward 7))
+     :n "M-8" (λ! (+my/realgud-eval-nth-name-backward 8))
+     :n "M-9" (λ! (+my/realgud-eval-nth-name-backward 9))
+     )
+   )
+ )
