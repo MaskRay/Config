@@ -2,4 +2,4 @@ e cfg.newtab = true
 e scr.prompt.sect = true
 e scr.color = 3
 e scr.utf8 = true
-eco monokai
+eco ayu

@@ -12,6 +12,9 @@
 (defun ccls/vars (kind) (lsp-ui-peek-find-custom 'vars "$ccls/vars" (plist-put (lsp--text-document-position-params) :kind kind)))
 (defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
 
+;; The meaning of :role corresponds to https://github.com/maskray/ccls/blob/master/src/symbol.h
+
+;; References w/ Role::Address bit (e.g. variables explicitly being taken addresses)
 (defun ccls/references-address ()
   (interactive)
   (lsp-ui-peek-find-custom
@@ -19,6 +22,15 @@
    (plist-put (lsp--text-document-position-params) :context
               '(:role 128))))
 
+;; References w/ Role::Dynamic bit (macro expansions)
+(defun ccls/references-macro ()
+  (interactive)
+  (lsp-ui-peek-find-custom
+   'address "textDocument/references"
+   (plist-put (lsp--text-document-position-params) :context
+              '(:role 64))))
+
+;; References w/o Role::Call bit (e.g. where functions are taken addresses)
 (defun ccls/references-not-call ()
   (interactive)
   (lsp-ui-peek-find-custom
@@ -26,6 +38,7 @@
    (plist-put (lsp--text-document-position-params) :context
               '(:excludeRole 32))))
 
+;; References w/ Role::Read
 (defun ccls/references-read ()
   (interactive)
   (lsp-ui-peek-find-custom
@@ -33,6 +46,7 @@
    (plist-put (lsp--text-document-position-params) :context
               '(:role 8))))
 
+;; References w/ Role::Write
 (defun ccls/references-write ()
   (interactive)
   (lsp-ui-peek-find-custom

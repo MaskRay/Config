@@ -122,9 +122,9 @@
 
  :n "x" nil
  (:desc "xref" :prefix "x"
-   :n "SPC" #'ccls/random
    :n ";" (λ! (+my/avy-document-symbol) (+my/find-references))
    :n "b" #'ccls/base
+   ;; derived
    :n "d" #'lsp-ui-peek-find-implementation
    :n "e" #'ccls/callers
    ;; caller hierarchy
@@ -138,8 +138,9 @@
    :n "l" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
    :n "t" #'lsp-goto-type-definition
-   :n "v" (λ! (ccls/vars 3))
-   :n "V" (λ! (ccls/vars 1))
+   ;; https://github.com/maskray/ccls/blob/master/src/messages/ccls_vars.cc#L15
+   :n "v" (λ! (ccls/vars 3))           ; field or local variable
+   :n "V" (λ! (ccls/vars 1))           ; field
    :n "x" #'evil-delete-char)
 
  (:prefix "C-x"

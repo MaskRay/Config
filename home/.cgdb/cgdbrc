@@ -12,10 +12,10 @@ imap ; <ESC>
 map a iinfo<Space>args<CR><ESC>
 # bt : backtrace
 map bt ibt<CR><ESC>
-# c : continue
 map c :continue<CR>
-# d : down
 map d :down<CR>
+map e :set<Space>dis<CR>
+map E :set<Space>nodis<CR>
 # f : finish
 map f :finish<CR>
 # n : next
@@ -23,12 +23,8 @@ map n :next<CR>
 # o : open file dialog
 # r : run
 map r :run<CR>
-# s : step
 map s :step<CR>
 # t : temp Breakpoint
-# u : up
 map u :up<CR>
-# U : until
 map U :until<CR>
-# v : info locals
 map v iinfo<Space>locals<CR><ESC>

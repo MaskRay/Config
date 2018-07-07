@@ -41,6 +41,10 @@ do_mkdir() {
 
 do_git() {
   git submodule update --init --recursive
+  mkdir -p ~/.vim/bundle
+  if [[ ! -d ~/.vim/bundle/vim-plug ]]; then
+    git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
+  fi
 }
 
 for f in "${!dir[@]}"; do
@@ -70,7 +74,7 @@ for f in ${files[@]}; do
   fi
 
   info "Copying $f"
-  g="$target/$f"
+  g="$target/${f/home\//}"
   mkdir -p "${g%/*}"
   if ! [[ -L "$g" ]]; then
     if [[ -f "$g" || "$f" -ot "$g" ]]; then

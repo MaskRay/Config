@@ -38,6 +38,7 @@
    (:localleader
      :n "a" #'ccls/references-address
      :n "f" #'ccls/references-not-call
+     :n "m" #'ccls/references-macro
      :n "r" #'ccls/references-read
      :n "w" #'ccls/references-write
      :desc "breakpoint"
@@ -60,11 +61,11 @@
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
   (setq ccls-sem-highlight-method 'font-lock)
   (ccls-use-default-rainbow-sem-highlight)
-  (setq ccls-extra-init-params
-        '(:clang (:extraArgs ("-D__cpp_deduction_guides=0" "-Wno-macro-redefined"))
-                 :completion (:detailedLabel t)
-                 :diagnostics (:frequencyMs 5000)
-                 :index (:initialReparseForDependency :json-false)))
+  ;; https://github.com/maskray/ccls/blob/master/src/config.h
+  (setq ccls-extra-init-params '(
+          :completion (:detailedLabel t)
+          :diagnostics (:frequencyMs 5000)
+          :index (:reparseForDependency 1)))
 
   (with-eval-after-load 'projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
