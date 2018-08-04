@@ -225,9 +225,9 @@ bindkey '^xh' _complete_help
 # General aliases & functions (partially shared with bash) {{{2
 [[ -f ~/.alias ]] && source ~/.alias
 
-for i in ~/Dev/llvm/ASAN/bin/*(-.x); do alias asan${i##*/}=$i; done
-for i in ~/Dev/llvm/Debug/bin/*(-.x); do alias my${i##*/}=$i; done
-for i in ~/Dev/llvm/Release/bin/*(-.x); do alias f${i##*/}=$i; done
+for i in ~/llvm/ASAN/bin/*(-.x); do alias asan${i##*/}=$i; done
+for i in ~/llvm/Debug/bin/*(-.x); do alias my${i##*/}=$i; done
+for i in ~/llvm/Release/bin/*(-.x); do alias f${i##*/}=$i; done
 alias asanlit=asanllvm-lit
 alias flit=fllvm-lit
 alias fnm=fllvm-nm

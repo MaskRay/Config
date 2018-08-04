@@ -123,9 +123,11 @@
  :n "x" nil
  (:desc "xref" :prefix "x"
    :n ";" (λ! (+my/avy-document-symbol) (+my/find-references))
-   :n "b" #'ccls/base
+   :n "b" #'ccls/bases
+   :n "B" #'ccls/base
    ;; derived
-   :n "d" #'lsp-ui-peek-find-implementation
+   :n "d" #'ccls/derived
+   :n "D" #'lsp-ui-peek-find-implementation
    :n "e" #'ccls/callers
    ;; caller hierarchy
    :n "c" #'ccls-call-hierarchy
