@@ -10,7 +10,6 @@
 (defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
 (defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
 (defun ccls/vars (kind) (lsp-ui-peek-find-custom 'vars "$ccls/vars" (plist-put (lsp--text-document-position-params) :kind kind)))
-(defun ccls/random () (interactive) (lsp-ui-peek-find-custom 'random "$ccls/random"))
 (defun ccls/bases ()
   (interactive)
   (lsp-ui-peek-find-custom 'base "$ccls/inheritanceHierarchy"
@@ -19,6 +18,10 @@
   (interactive)
   (lsp-ui-peek-find-custom 'derived "$ccls/inheritanceHierarchy"
                            (append (lsp--text-document-position-params) '(:flat t :level 3 :derived t))))
+(defun ccls/members ()
+  (interactive)
+  (lsp-ui-peek-find-custom 'base "$ccls/memberHierarchy"
+                           (append (lsp--text-document-position-params) '(:flat t))))
 
 ;; The meaning of :role corresponds to https://github.com/maskray/ccls/blob/master/src/symbol.h
 

@@ -444,9 +444,9 @@ let g:grepper.tools = ['rg', 'git']
 " LanguageClient-neovim {{{2
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
-      \ 'c': ['ccls.debug'],
-      \ 'cpp': ['ccls.debug'],
-      \ 'objc': ['ccls.debug'],
+      \ 'c': ['ccls'],
+      \ 'cpp': ['ccls'],
+      \ 'objc': ['ccls'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
@@ -461,7 +461,7 @@ augroup LanguageClient_config
   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_signatureHelp() | endif
+  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -704,8 +704,8 @@ nn <leader>rr :Denite register<cr>
 let g:lmap.s = {'name': '+search'}
 nn <leader>sd :Grepper -dir file<cr>
 nn <leader>ss :Grepper<cr>
-nn <leader>si :Denite documentSymbol<cr>
-nn <leader>sI :Denite workspaceSymbol<cr>
+nn <silent> <leader>si :call LanguageClient#textDocument_documentSymbol()<cr>
+nn <silent> <leader>sI :call LanguageClient#workspace_symbol()<cr>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sP :Grepper -noprompt -cword<cr>
@@ -786,6 +786,19 @@ map t <Plug>Sneak_t
 map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
+" nmap n {{{3
+" one-level base
+nn <silent> xB :call LanguageClient#findLocations({'method':'$ccls/base'})<cr>
+" bases of up to 3 levels
+nn <silent> xb :call LanguageClient#findLocations({'method':'$ccls/inheritanceHierarchy','flat':v:true,'levels':3,'derived':v:false})<cr>
+" derived of up to 3 levels
+nn <silent> xd :call LanguageClient#findLocations({'method':'$ccls/inheritanceHierarchy','flat':v:true,'levels':3,'derived':v:true})<cr>
+nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
+nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/memberHierarchy','flat':v:true})<cr>
+nn <silent> xt :call LanguageClient#textDocument_typeDefinition()<cr>
+nn <silent> xv :call LanguageClient#findLocations({'method':'$ccls/vars'})<cr>
+nn <silent> xV :call LanguageClient#findLocations({'method':'$ccls/vars','kind':1})<cr>
+nn xx x
 " nmap Alt {{{3
 nn <silent> <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
 nn <M-,> :Denite references<cr>

@@ -4,7 +4,7 @@
   ;; https://github.com/radare/radare2
   (c-add-style
    "radare2"
-   '((c-basic-offset . 2)
+   '((c-basic-offset . 4)
      (indent-tabs-mode . t)
      (c-auto-align-backslashes . nil)
      (c-offsets-alist
@@ -29,6 +29,8 @@
               (c-set-style "my-cc")
               (modify-syntax-entry ?_ "w")
               ))
+
+  (add-to-list 'auto-mode-alist '("\\.inc\\'" . +cc-c-c++-objc-mode))
 
   (map!
    :map (c-mode-map c++-mode-map)
@@ -62,8 +64,14 @@
   (setq ccls-sem-highlight-method 'font-lock)
   (ccls-use-default-rainbow-sem-highlight)
   ;; https://github.com/maskray/ccls/blob/master/src/config.h
-  (setq ccls-extra-init-params '(
-          :completion (:detailedLabel t)
+  (setq ccls-extra-init-params
+        '(:completion
+          (
+           :detailedLabel t
+           :includeBlacklist
+           ("^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
+            "^/usr/(local/)?include/c\\+\\+/v1/"
+            ))
           :diagnostics (:frequencyMs 5000)
           :index (:reparseForDependency 1)))
 

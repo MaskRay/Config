@@ -139,6 +139,7 @@
    :n "I" (λ! (ccls-inheritance-hierarchy t))
    :n "l" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
+   :n "M" #'ccls/members
    :n "t" #'lsp-goto-type-definition
    ;; https://github.com/maskray/ccls/blob/master/src/messages/ccls_vars.cc#L15
    :n "v" (λ! (ccls/vars 3))           ; field or local variable

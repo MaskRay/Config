@@ -21,4 +21,4 @@
 (package! function-args)
 (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
 
-(disable-packages! irony rtags)
+(disable-packages! company-prescient irony rtags)

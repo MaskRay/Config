@@ -24,7 +24,7 @@
   (setq company-transformers nil company-lsp-cache-candidates nil)
   )
 
-(set! :lookup 'emacs-lisp-mode :documentation #'helpful-at-point)
+(set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
 
 (after! eshell
   (defun eshell/l (&rest args) (eshell/ls "-l" args))
@@ -54,6 +54,7 @@
   )
 
 (after! flycheck
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
   )
 
@@ -68,7 +69,15 @@
                                 (if end
                                     (format "L%s-%s" start end)
                                   (format "L%s" start)))))))
+  (defun git-link-sourceware (hostname dirname filename branch commit start end)
+    (format "https://sourceware.org/git/?p=%s.git;a=blob;hb=%s;f=%s"
+            (file-name-base dirname)
+            commit
+            (concat filename
+                    (when start
+                      (concat "#" (format "l%s" start))))))
     (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
+    (add-to-list 'git-link-remote-alist '("sourceware.org" git-link-sourceware))
   )
 
 (def-package! link-hint
@@ -252,7 +261,6 @@
 (def-package! rust-mode
   :mode "\\.rs$"
   :config
-  (set! :docset 'rust-mode "Rust")
   (map! :map rust-mode-map
         :leader
         :n "=" #'rust-format-buffer
@@ -267,7 +275,6 @@
 (def-package! lsp-rust
   :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
   :config
-  (set! :company-backend 'rust-mode '(company-lsp))
   )
 
 (after! projectile
