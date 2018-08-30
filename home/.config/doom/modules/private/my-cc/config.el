@@ -40,6 +40,8 @@
    (:localleader
      :n "a" #'ccls/references-address
      :n "f" #'ccls/references-not-call
+     :n "lp" #'ccls-preprocess-file
+     :n "lf" #'ccls-freshen-index
      :n "m" #'ccls/references-macro
      :n "r" #'ccls/references-read
      :n "w" #'ccls/references-write
@@ -79,5 +81,5 @@
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
-  (set! :company-backend '(c-mode c++-mode objc-mode) 'company-lsp)
+  (set-company-backend! '(c-mode c++-mode objc-mode) 'company-lsp)
   )

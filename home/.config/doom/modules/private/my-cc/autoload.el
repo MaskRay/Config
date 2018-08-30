@@ -3,17 +3,16 @@
 ;;;###autoload
 (defun +ccls//enable ()
   (require 'ccls)
+  (setq-local lsp-ui-sideline-show-symbol nil)
   (condition-case nil
       (lsp-ccls-enable)
     (user-error nil)))
 
-(defun ccls/base () (interactive) (lsp-ui-peek-find-custom 'base "$ccls/base"))
 (defun ccls/callers () (interactive) (lsp-ui-peek-find-custom 'callers "$ccls/callers"))
 (defun ccls/vars (kind) (lsp-ui-peek-find-custom 'vars "$ccls/vars" (plist-put (lsp--text-document-position-params) :kind kind)))
-(defun ccls/bases ()
-  (interactive)
+(defun ccls/bases (level)
   (lsp-ui-peek-find-custom 'base "$ccls/inheritanceHierarchy"
-                           (append (lsp--text-document-position-params) '(:flat t :level 3))))
+                           (append (lsp--text-document-position-params) `(:flat t :level ,level))))
 (defun ccls/derived ()
   (interactive)
   (lsp-ui-peek-find-custom 'derived "$ccls/inheritanceHierarchy"

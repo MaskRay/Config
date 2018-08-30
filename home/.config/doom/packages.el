@@ -3,6 +3,7 @@
 (disable-packages! cmake-mode company-irony company-irony-c-headers flycheck-irony irony irony-eldoc ivy-rtags rtags)
 
 (package! avy)
+(package! atomic-chrome)
 (package! lispyville)
 (package! lsp-mode)
 (package! lsp-ui)
@@ -21,4 +22,4 @@
 (package! function-args)
 (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
 
-(disable-packages! company-prescient irony rtags)
+(disable-packages! company-prescient)

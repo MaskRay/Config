@@ -444,8 +444,8 @@ let g:grepper.tools = ['rg', 'git']
 " LanguageClient-neovim {{{2
 let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
-      \ 'c': ['ccls'],
-      \ 'cpp': ['ccls'],
+      \ 'c': ['ccls.debug'],
+      \ 'cpp': ['ccls.debug'],
       \ 'objc': ['ccls'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
@@ -794,6 +794,10 @@ nn <silent> xb :call LanguageClient#findLocations({'method':'$ccls/inheritanceHi
 " derived of up to 3 levels
 nn <silent> xd :call LanguageClient#findLocations({'method':'$ccls/inheritanceHierarchy','flat':v:true,'levels':3,'derived':v:true})<cr>
 nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
+nn <silent> xh :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'L'})<cr>
+nn <silent> xj :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'D'})<cr>
+nn <silent> xk :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'U'})<cr>
+nn <silent> xl :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'R'})<cr>
 nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/memberHierarchy','flat':v:true})<cr>
 nn <silent> xt :call LanguageClient#textDocument_typeDefinition()<cr>
 nn <silent> xv :call LanguageClient#findLocations({'method':'$ccls/vars'})<cr>

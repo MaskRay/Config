@@ -4,6 +4,8 @@
 (load! "+org")
 (load! "+ui")
 
+(setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
+
 (def-package! avy
   :commands (avy-goto-char-timer)
   :init
@@ -87,7 +89,8 @@
   :hook (emacs-lisp-mode . lispy-mode)
   :config
   (setq lispy-outline "^;; \\(?:;[^#]\\|\\*+\\)"
-        lispy-outline-header ";; ")
+        lispy-outline-header ";; "
+        lispy-ignore-whitespace t)
   (map! :map lispy-mode-map
         :i "C-c (" #'lispy-wrap-round
         :i "_" #'special-lispy-different
@@ -107,16 +110,16 @@
      (slurp/barf-lispy)
      additional-movement))
   (map! :map emacs-lisp-mode-map
-        :nm "gh" #'lispyville-left
-        :nm "gl" #'lispyville-right
+        :nm "xk" #'lispyville-backward-up-list
+        :nm "xj" #'lispyville-up-list
         :nm "J" #'lispyville-forward-sexp
         :nm "K" #'lispyville-backward-sexp
-        :n "gH" #'+lookup/documentation
+        :n "gh" #'helpful-at-point
         :n "C-<left>" #'lispy-forward-barf-sexp
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
         :n "C-M-<right>" #'lispy-backward-barf-sexp
-        :n "TAB" #'lispyville-prettify
+        :n "<tab>" #'lispyville-prettify
         :localleader
         :n "e" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil)))
         )
@@ -134,6 +137,7 @@
   :config
   (setq
    lsp-ui-sideline-enable nil
+   lsp-ui-sideline-ignore-duplicate t
    lsp-ui-doc-header nil
    lsp-ui-doc-include-signature nil
    lsp-ui-doc-background (doom-color 'base4)
@@ -142,17 +146,12 @@
    lsp-ui-peek-force-fontify nil
    lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
 
-  (map! :map lsp-ui-mode-map
-        :localleader
-        :n "lA" #'lsp-ui-peek-find-workspace-symbol
-        :n "lF" #'lsp-format-buffer
-        :n "ll" #'lsp-ui-sideline-mode
-        :n "ld" #'lsp-ui-doc-mode
-        :n "lr" #'lsp-rename
-
-        :n "lp" #'ccls-preprocess-file
-        :n "lf" #'ccls-freshen-index
-        )
+  (custom-set-faces
+   '(ccls-sem-global-variable-face ((t (:underline t :weight extra-bold))))
+   '(lsp-face-highlight-read ((t (:background "sea green"))))
+   '(lsp-face-highlight-write ((t (:background "firebrick"))))
+   '(lsp-ui-sideline-current-symbol ((t (:foreground "grey38" :box nil))))
+   '(lsp-ui-sideline-symbol ((t (:foreground "grey30" :box nil)))))
 
    (map! :after lsp-ui-peek
          :map lsp-ui-peek-mode-map
@@ -165,9 +164,9 @@
    (defhydra hydra/ref (evil-normal-state-map "x")
      "reference"
      ("d" lsp-ui-peek-find-definitions "next" :bind nil)
-     ("j" (-let [(i . n) (lsp-ui-find-next-reference)]
+     ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
             (if (> n 0) (message "%d/%d" i n))) "next")
-     ("k" (-let [(i . n) (lsp-ui-find-prev-reference)]
+     ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
             (if (> n 0) (message "%d/%d" i n))) "prev")
      ("R" (-let [(i . n) (lsp-ui-find-prev-reference
                           (lambda (x)

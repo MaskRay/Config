@@ -18,11 +18,11 @@
 
  (:map prog-mode-map
    ;; Override default :n < > ( )
-   :nm "<" #'lispyville-previous-opening
-   :nm ">" #'lispyville-next-closing
+   ;; :nm "<" #'lispyville-previous-opening
+   ;; :nm ">" #'lispyville-next-closing
 
-   :nm "(" #'lispyville-next-opening
-   :nm ")" #'lispyville-previous-closing
+   :nm "(" #'lispyville-backward-up-list
+   :nm ")" #'lispyville-up-list
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
@@ -39,9 +39,14 @@
 
  :n "C-1" #'+popup/raise
  :n "C-c a" #'org-agenda
- :n "C-s"  #'swiper
  :n "C-,"  #'+my/find-references
- :n ";"    (λ! (+my/avy-document-symbol) (+my/find-definitions))
+ ;; all symbols
+ :n ";"    (λ! (if lsp-mode
+                    (progn (+my/avy-document-symbol t)
+                           (+my/find-definitions))
+                  (avy-goto-word-0 nil)))
+ ;; outline
+ :n "z;"   (λ! (+my/avy-document-symbol nil) (+my/find-definitions))
 
  :n "ga"   #'lsp-ui-find-workspace-symbol
  :n "gc"   #'evilnc-comment-or-uncomment-lines
@@ -82,7 +87,17 @@
    (:prefix "h"
      :n "C" #'helpful-command
      )
-   :desc "lispyville" :n "l" (+my/prefix-M-x "lispyville ")
+   (:desc "lsp" :prefix "l"
+     :n "a" #'lsp-execute-code-action
+     :n "l" #'lsp-ui-sideline-mode
+     :n "d" #'lsp-ui-doc-mode
+     :n "e" #'lsp-ui-flycheck-list
+     :n "F" #'lsp-format-buffer
+     :n "r" #'lsp-rename
+     :n "R" #'lsp-restart-workspace
+     :n "w" #'lsp-ui-peek-find-workspace-symbol
+     )
+   :desc "lispyville" :n "L" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
      :n "c" #'counsel-imenu-comments
      :n "d" #'+debugger:start
@@ -107,7 +122,7 @@
 
    (:desc "search" :prefix "s"
      :n "b" #'swiper-all
-     :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
+     :desc "Directory"              :nv "d" #'+ivy/project-search-from-cwd
      :desc "Project"                :nv "s" #'+ivy/project-search
      :desc "Symbols"                :nv "i" #'imenu
      :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
@@ -122,9 +137,9 @@
 
  :n "x" nil
  (:desc "xref" :prefix "x"
-   :n ";" (λ! (+my/avy-document-symbol) (+my/find-references))
-   :n "b" #'ccls/bases
-   :n "B" #'ccls/base
+   :n ";" (λ! (+my/avy-document-symbol t) (+my/find-references))
+   :n "b" (λ! (ccls/bases 1))
+   :n "B" (λ! (ccls/bases 3))
    ;; derived
    :n "d" #'ccls/derived
    :n "D" #'lsp-ui-peek-find-implementation
@@ -133,11 +148,15 @@
    :n "c" #'ccls-call-hierarchy
    ;; callee hierarchy
    :n "C" (λ! (ccls-call-hierarchy t))
+   :n "h" (λ! (ccls-navigate "L"))
    ;; base hierarchy
    :n "i" #'ccls-inheritance-hierarchy
    ;; derived hierarchy
    :n "I" (λ! (ccls-inheritance-hierarchy t))
-   :n "l" #'ccls-code-lens-mode
+   :n "j" (λ! (ccls-navigate "D"))
+   :n "k" (λ! (ccls-navigate "U"))
+   :n "l" (λ! (ccls-navigate "R"))
+   :n "L" #'ccls-code-lens-mode
    :n "m" #'ccls-member-hierarchy
    :n "M" #'ccls/members
    :n "t" #'lsp-goto-type-definition
@@ -202,5 +221,4 @@
      :n "M-8" (λ! (+my/realgud-eval-nth-name-backward 8))
      :n "M-9" (λ! (+my/realgud-eval-nth-name-backward 9))
      )
-   )
- )
+   ))

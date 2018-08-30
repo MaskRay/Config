@@ -137,7 +137,7 @@
   (+my//xref-jump-file (lsp-ui-peek-jump-forward)))
 
 ;;;###autoload
-(defun +my/avy-document-symbol ()
+(defun +my/avy-document-symbol (all)
   (interactive)
   (let ((line 0) (col 0) (w (selected-window))
         (ccls (memq major-mode '(c-mode c++-mode objc-mode)))
@@ -151,6 +151,7 @@
                (lsp--send-request (lsp--make-request
                                    "textDocument/documentSymbol"
                                    `(:textDocument ,(lsp--text-document-identifier)
+                                                   :all ,(if all t :json-false)
                                                    :startLine ,start-line :endLine ,end-line)))
                for range = (if ccls loc (->> loc (gethash "location") (gethash "range")))
                for range_start = (gethash "start" range)
