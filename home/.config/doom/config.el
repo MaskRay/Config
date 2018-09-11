@@ -146,10 +146,12 @@
    lsp-ui-peek-force-fontify nil
    lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
 
+  (advice-add #'lsp-ui-doc--eldoc :override #'+my/lsp-ui-doc--eldoc)
+
   (custom-set-faces
    '(ccls-sem-global-variable-face ((t (:underline t :weight extra-bold))))
    '(lsp-face-highlight-read ((t (:background "sea green"))))
-   '(lsp-face-highlight-write ((t (:background "firebrick"))))
+   '(lsp-face-highlight-write ((t (:background "brown4"))))
    '(lsp-ui-sideline-current-symbol ((t (:foreground "grey38" :box nil))))
    '(lsp-ui-sideline-symbol ((t (:foreground "grey30" :box nil)))))
 

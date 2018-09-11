@@ -93,6 +93,7 @@
      :n "d" #'lsp-ui-doc-mode
      :n "e" #'lsp-ui-flycheck-list
      :n "F" #'lsp-format-buffer
+     :n "i" #'lsp-ui-imenu
      :n "r" #'lsp-rename
      :n "R" #'lsp-restart-workspace
      :n "w" #'lsp-ui-peek-find-workspace-symbol
@@ -138,27 +139,32 @@
  :n "x" nil
  (:desc "xref" :prefix "x"
    :n ";" (λ! (+my/avy-document-symbol t) (+my/find-references))
-   :n "b" (λ! (ccls/bases 1))
-   :n "B" (λ! (ccls/bases 3))
-   ;; derived
-   :n "d" #'ccls/derived
-   :n "D" #'lsp-ui-peek-find-implementation
-   :n "e" #'ccls/callers
+
+   ;; $ccls/inheritance
+   :n "b" (λ! (ccls/base 1))
+   :n "B" (λ! (ccls/base 3))
+   :n "d" (λ! (ccls/derived 1))
+   :n "D" (λ! (ccls/derived 3))
+   :n "i" #'ccls-inheritance-hierarchy  ; base hierarchy
+   :n "I" (λ! (ccls-inheritance-hierarchy t)) ; derived hierarchy
+
+   ;; $ccls/call
+   :n "c" #'ccls/caller
+   :n "C" #'ccls/callee
    ;; caller hierarchy
-   :n "c" #'ccls-call-hierarchy
+   :n "e" #'ccls-call-hierarchy
    ;; callee hierarchy
-   :n "C" (λ! (ccls-call-hierarchy t))
+   :n "E" (λ! (ccls-call-hierarchy t))
+
+   ;; $ccls/member
+   :n "m" #'ccls/member
+   :n "M" #'ccls-member-hierarchy
+
    :n "h" (λ! (ccls-navigate "L"))
-   ;; base hierarchy
-   :n "i" #'ccls-inheritance-hierarchy
-   ;; derived hierarchy
-   :n "I" (λ! (ccls-inheritance-hierarchy t))
    :n "j" (λ! (ccls-navigate "D"))
    :n "k" (λ! (ccls-navigate "U"))
    :n "l" (λ! (ccls-navigate "R"))
    :n "L" #'ccls-code-lens-mode
-   :n "m" #'ccls-member-hierarchy
-   :n "M" #'ccls/members
    :n "t" #'lsp-goto-type-definition
    ;; https://github.com/maskray/ccls/blob/master/src/messages/ccls_vars.cc#L15
    :n "v" (λ! (ccls/vars 3))           ; field or local variable

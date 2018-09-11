@@ -788,17 +788,28 @@ map f <Plug>Sneak_f
 map F <Plug>Sneak_F
 " nmap n {{{3
 " one-level base
-nn <silent> xB :call LanguageClient#findLocations({'method':'$ccls/base'})<cr>
+" bases
+nn <silent> xb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
 " bases of up to 3 levels
-nn <silent> xb :call LanguageClient#findLocations({'method':'$ccls/inheritanceHierarchy','flat':v:true,'levels':3,'derived':v:false})<cr>
+nn <silent> xB :call LanguageClient#findLocations({'method':'$ccls/inheritance','levels':3})<cr>
 " derived of up to 3 levels
-nn <silent> xd :call LanguageClient#findLocations({'method':'$ccls/inheritanceHierarchy','flat':v:true,'levels':3,'derived':v:true})<cr>
-nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
+nn <silent> xd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+" derived of up to 3 levels
+nn <silent> xD :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true,'levels':3})<cr>
+
+" caller
+nn <silent> xc :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
+" callee
+nn <silent> xC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<cr>
+
+" $ccls/member
+nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/member'})<cr>
+
+"nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
 nn <silent> xh :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'L'})<cr>
 nn <silent> xj :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'D'})<cr>
 nn <silent> xk :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'U'})<cr>
 nn <silent> xl :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'R'})<cr>
-nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/memberHierarchy','flat':v:true})<cr>
 nn <silent> xt :call LanguageClient#textDocument_typeDefinition()<cr>
 nn <silent> xv :call LanguageClient#findLocations({'method':'$ccls/vars'})<cr>
 nn <silent> xV :call LanguageClient#findLocations({'method':'$ccls/vars','kind':1})<cr>

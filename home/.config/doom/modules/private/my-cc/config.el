@@ -39,9 +39,10 @@
      )
    (:localleader
      :n "a" #'ccls/references-address
+     :n "c" #'ccls/callers
      :n "f" #'ccls/references-not-call
      :n "lp" #'ccls-preprocess-file
-     :n "lf" #'ccls-freshen-index
+     :n "lf" #'ccls-reload
      :n "m" #'ccls/references-macro
      :n "r" #'ccls/references-read
      :n "w" #'ccls/references-write
@@ -69,7 +70,6 @@
   (setq ccls-extra-init-params
         '(:completion
           (
-           :detailedLabel t
            :includeBlacklist
            ("^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
             "^/usr/(local/)?include/c\\+\\+/v1/"
