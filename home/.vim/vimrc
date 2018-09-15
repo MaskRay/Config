@@ -686,6 +686,12 @@ nn <leader>fS :bufdo update<cr>
 nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
 nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
+" nmap <leader>l (lsp) {{{4
+nn <leader>l= :call LanguageClient#textDocument_formatting()<cr>
+vn <leader>= :<C-u>call LanguageClient#textDocument_rangeFormatting()<cr>
+nn <leader>la :call LanguageClient#textDocument_codeAction()<cr>
+nn <leader>lf :call LanguageClient#textDocument_formatting()<cr>
+nn <leader>lr :call LanguageClient#textDocument_rename()<cr>
 " nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<cr>
 nn <leader>gc :Gcd<cr>
@@ -750,7 +756,7 @@ nn <leader>2 :set cmdheight=2<cr>
 nn <leader>3 :set cmdheight=3<cr>
 nn <leader>4 :set cmdheight=4<cr>
 nn <leader>5 :set cmdheight=5<cr>
-nn <leader>l :call ErrorsToggle()<cr>
+nn <leader>L :call ErrorsToggle()<cr>
 nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 " nmap g {{{3
@@ -803,6 +809,11 @@ nn <silent> xc :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
 nn <silent> xC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<cr>
 
 " $ccls/member
+" nested classes / types in a namespace
+nn <silent> xs :call LanguageClient#findLocations({'method':'$ccls/member','kind':2})<cr>
+" member functions / functions in a namespace
+nn <silent> xf :call LanguageClient#findLocations({'method':'$ccls/member','kind':3})<cr>
+" member variables / variables in a namespace
 nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/member'})<cr>
 
 "nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
@@ -837,9 +848,6 @@ nn ,al :LanguageClientStart<cr>
 nn ,db :call append(line('.')-1, 'volatile static int z=0;while(!z)asm("pause");')<cr>
 nn ,gs :Denite tag<cr>
 nn ,gR :Denite tag -resume<cr>
-nn ,lC :call LanguageClient#textDocument_codeAction()<cr>
-nn ,lf :call LanguageClient#textDocument_formatting()<cr>
-nn ,lr :call LanguageClient#textDocument_rename()<cr>
 " nmap misc {{{3
 nn / ms/
 nn <silent><Tab> :wincmd w<cr>
@@ -855,10 +863,6 @@ nn 'm <C-t>
 nn L :call MarkPop(1)<cr>
 nn H :call MarkPop(-1)<cr>
 nn <silent> K :call LanguageClient#textDocument_hover()<cr>
-nn <C-h> <C-w>h
-nn <C-j> <C-w>j
-nn <C-k> <C-w>k
-nn <C-l> <C-w>l
 nn <C-s> :Lines<cr>
 nn zx :bdelete<cr>
 " imap {{{2

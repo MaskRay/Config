@@ -64,13 +64,19 @@
   (defun git-link-llvm (hostname dirname filename branch commit start end)
       (format "https://github.com/llvm-mirror/%s/tree/%s/%s"
               (file-name-base dirname)
-                (or branch commit)
+              (or branch commit)
               (concat filename
                       (when start
                         (concat "#"
                                 (if end
                                     (format "L%s-%s" start end)
                                   (format "L%s" start)))))))
+  (defun git-link-musl (hostname dirname filename branch commit start end)
+      (format "http://git.musl-libc.org/cgit/%s/tree/%s%s%s"
+              (file-name-base dirname)
+              filename
+              (if branch "" (format "?id=%s" commit))
+              (if start (concat "#" (format "n%s" start)) "")))
   (defun git-link-sourceware (hostname dirname filename branch commit start end)
     (format "https://sourceware.org/git/?p=%s.git;a=blob;hb=%s;f=%s"
             (file-name-base dirname)
@@ -78,8 +84,9 @@
             (concat filename
                     (when start
                       (concat "#" (format "l%s" start))))))
-    (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
-    (add-to-list 'git-link-remote-alist '("sourceware.org" git-link-sourceware))
+  (add-to-list 'git-link-remote-alist '("git.llvm.org" git-link-llvm))
+  (add-to-list 'git-link-remote-alist '("git.musl-libc.org" git-link-musl))
+  (add-to-list 'git-link-remote-alist '("sourceware.org" git-link-sourceware))
   )
 
 (def-package! link-hint
@@ -110,11 +117,8 @@
      (slurp/barf-lispy)
      additional-movement))
   (map! :map emacs-lisp-mode-map
-        :nm "xk" #'lispyville-backward-up-list
-        :nm "xj" #'lispyville-up-list
-        :nm "J" #'lispyville-forward-sexp
-        :nm "K" #'lispyville-backward-sexp
         :n "gh" #'helpful-at-point
+        :n "gl" (λ! (let (lispy-ignore-whitespace) (call-interactively #'lispyville-right)))
         :n "C-<left>" #'lispy-forward-barf-sexp
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
@@ -126,12 +130,15 @@
   )
 
 (def-package! lsp-mode
+  :load-path "~/Dev/Emacs/lsp-mode"
   :defer t
   :init
   (setq lsp-project-blacklist '("/CC/"))
+  ;; (setq lsp--json-array-use-vector t)
   )
 
 (def-package! lsp-ui
+  :load-path "~/Dev/Emacs/lsp-ui"
   :demand t
   :hook (lsp-mode . lsp-ui-mode)
   :config
@@ -309,6 +316,8 @@
       "invoke term from project root")
      ("_" counsel-projectile-switch-project-action-org-capture
       "org-capture into project"))))
+
+(def-package! rg)
 
 (def-package! smartparens
   :config

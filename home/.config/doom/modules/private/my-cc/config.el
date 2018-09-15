@@ -26,7 +26,6 @@
   (setq c-default-style "my-cc")
   (add-hook 'c-mode-common-hook
             (lambda ()
-              (c-set-style "my-cc")
               (modify-syntax-entry ?_ "w")
               ))
 
@@ -34,12 +33,15 @@
 
   (map!
    :map (c-mode-map c++-mode-map)
+   :n "C-h" (λ! (ccls-navigate "U"))
+   :n "C-j" (λ! (ccls-navigate "R"))
+   :n "C-k" (λ! (ccls-navigate "L"))
+   :n "C-l" (λ! (ccls-navigate "D"))
    (:leader
      :n "=" #'clang-format-region
      )
    (:localleader
      :n "a" #'ccls/references-address
-     :n "c" #'ccls/callers
      :n "f" #'ccls/references-not-call
      :n "lp" #'ccls-preprocess-file
      :n "lf" #'ccls-reload
@@ -60,22 +62,25 @@
 
 (def-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
+  :defer t
   :init (add-hook! (c-mode c++-mode objc-mode) #'+ccls//enable)
   :config
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
   (setq ccls-sem-highlight-method 'font-lock)
+  (add-hook 'lsp-after-open-hook #'ccls-code-lens-mode)
   (ccls-use-default-rainbow-sem-highlight)
   ;; https://github.com/maskray/ccls/blob/master/src/config.h
-  (setq ccls-extra-init-params
-        '(:completion
-          (
-           :includeBlacklist
-           ("^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
-            "^/usr/(local/)?include/c\\+\\+/v1/"
-            ))
-          :diagnostics (:frequencyMs 5000)
-          :index (:reparseForDependency 1)))
+  (setq
+   ccls-extra-init-params
+   `(:clang (:pathMappings ,+ccls-path-mappings)
+            :completion
+            (:include
+             (:blacklist
+              ("^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
+               "^/usr/(local/)?include/c\\+\\+/v1/"
+               )))
+            :index (:initialBlacklist ,+ccls-initial-blacklist :trackDependency 1)))
 
   (with-eval-after-load 'projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))

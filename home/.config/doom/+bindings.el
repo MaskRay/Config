@@ -21,8 +21,10 @@
    ;; :nm "<" #'lispyville-previous-opening
    ;; :nm ">" #'lispyville-next-closing
 
-   :nm "(" #'lispyville-backward-up-list
-   :nm ")" #'lispyville-up-list
+   :n "C-h" #'lispyville-backward-up-list
+   :n "C-j" #'lispyville-forward-sexp
+   :n "C-k" #'lispyville-backward-sexp
+   :n "C-l" #'lispyville-up-list
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
@@ -88,11 +90,11 @@
      :n "C" #'helpful-command
      )
    (:desc "lsp" :prefix "l"
+     :n "=" #'lsp-format-buffer
      :n "a" #'lsp-execute-code-action
      :n "l" #'lsp-ui-sideline-mode
      :n "d" #'lsp-ui-doc-mode
      :n "e" #'lsp-ui-flycheck-list
-     :n "F" #'lsp-format-buffer
      :n "i" #'lsp-ui-imenu
      :n "r" #'lsp-rename
      :n "R" #'lsp-restart-workspace
@@ -124,7 +126,9 @@
    (:desc "search" :prefix "s"
      :n "b" #'swiper-all
      :desc "Directory"              :nv "d" #'+ivy/project-search-from-cwd
-     :desc "Project"                :nv "s" #'+ivy/project-search
+     :desc "Project"                :nv "/" #'+ivy/project-search
+     :nv "s" (λ! (minibuffer-with-setup-hook
+                      (lambda () (insert ivy--default)) (+ivy/project-search)))
      :desc "Symbols"                :nv "i" #'imenu
      :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
      :desc "Online providers"       :nv "o" #'+lookup/online-select
@@ -157,18 +161,17 @@
    :n "E" (λ! (ccls-call-hierarchy t))
 
    ;; $ccls/member
-   :n "m" #'ccls/member
+   :n "s" (λ! (ccls/member 2))        ; 2 (Type) => nested classes/namespace members
+   :n "f" (λ! (ccls/member 3))        ; 3 (Func) => member functions
+   :n "m" (λ! (ccls/member 0))        ; other => member variables
    :n "M" #'ccls-member-hierarchy
 
-   :n "h" (λ! (ccls-navigate "L"))
-   :n "j" (λ! (ccls-navigate "D"))
-   :n "k" (λ! (ccls-navigate "U"))
-   :n "l" (λ! (ccls-navigate "R"))
    :n "L" #'ccls-code-lens-mode
    :n "t" #'lsp-goto-type-definition
    ;; https://github.com/maskray/ccls/blob/master/src/messages/ccls_vars.cc#L15
    :n "v" (λ! (ccls/vars 3))           ; field or local variable
    :n "V" (λ! (ccls/vars 1))           ; field
+   :n "C-v" (λ! (ccls/vars 7))         ; any
    :n "x" #'evil-delete-char)
 
  (:prefix "C-x"
@@ -197,6 +200,7 @@
      "C-v"        #'company-next-page
      "M-v"        #'company-previous-page
      "C-i"        #'company-complete-selection
+     [tab]        #'company-complete-selection
      "RET"        nil
      [return]     nil
      "SPC"        nil))
