@@ -5,13 +5,15 @@ set ignorecase
 set tabstop=2
 set winsplit=src_big
 imap ; <ESC>
+map <CR> i
 #set cgdbmodekey=;
 
 # SPC : toggle breakpoint
 # a : list args
 map a iinfo<Space>args<CR><ESC>
 # bt : backtrace
-map bt ibt<CR><ESC>
+# map bt ibt<CR><ESC>
+map b ib
 map c :continue<CR>
 map d :down<CR>
 map e :set<Space>dis<CR>
@@ -25,6 +27,7 @@ map n :next<CR>
 map r :run<CR>
 map s :step<CR>
 # t : temp Breakpoint
+map t it<Space>
 map u :up<CR>
 map U :until<CR>
 map v iinfo<Space>locals<CR><ESC>

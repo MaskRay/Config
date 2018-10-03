@@ -325,6 +325,7 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
+  Plug 'sakhnik/nvim-gdb'
   Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
   Plug 'kopischke/vim-fetch'
@@ -352,6 +353,9 @@ if 1
     Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ }
+    Plug 'roxma/nvim-yarp'
+    Plug 'ncm2/ncm2'
+    Plug 'ncm2/ncm2-ultisnips'
     Plug 'kassio/neoterm'
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   endif
@@ -414,8 +418,10 @@ if 1
 endif
 
 " ale {{{2
+let g:ale_enabled = 0
 let g:ale_linters = {
-      \   'cpp': [],
+      \   'c': ['ccls'],
+      \   'cpp': ['ccls'],
       \}
 " deoplete {{{2
 let g:deoplete#enable_at_startup = 1
@@ -446,12 +452,14 @@ let g:LanguageClient_settingsPath = expand('~/.config/nvim/settings.json')
 let g:LanguageClient_serverCommands = {
       \ 'c': ['ccls.debug'],
       \ 'cpp': ['ccls.debug'],
-      \ 'objc': ['ccls'],
+      \ 'cuda': ['ccls.debug'],
+      \ 'objc': ['ccls.debug'],
       \ 'go': ['go-langserver', '-gocodecompletion', '-func-snippet-enabled', '-logfile=/tmp/gols.log'],
       \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_autoStart = 0
+let g:LanguageClient_hasSnippetSupport = 0
 "let g:LanguageClient_devel = 1
 
 augroup LanguageClient_config
@@ -461,7 +469,7 @@ augroup LanguageClient_config
   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
   au User LanguageClientStopped setl signcolumn=auto
   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | endif
+  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | sil call LanguageClient#textDocument_hover() | endif
 augroup END
 " leader-guide {{{2
 let g:lmap = {}
@@ -576,6 +584,7 @@ fu! C_init()
   abbr #i #include
   setl syntax=cpp.doxygen
   "let &makeprg="clang++ % -g -Wall -Wextra -O0 -std=c++11 -o %<"
+  setl formatexpr=LanguageClient#textDocument_rangeFormatting()
   syn keyword cppType ulong i8 i16 i32 i64 u8 u16 u32 u64 real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T

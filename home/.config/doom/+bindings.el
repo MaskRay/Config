@@ -207,9 +207,11 @@
 
  (:after realgud
    (:map realgud-track-mode-map
-     :in ";" #'realgud-window-src-undisturb-cmd)
+     :in ";" #'realgud-window-src-undisturb-cmd
+     :in "C-j" (λ! (realgud:cmd-repeat-last) (realgud-window-src-undisturb-cmd)))
    (:map realgud:shortkey-mode-map
-     :n "e" (λ! (realgud:cmd-run-command (thing-at-point 'symbol) "eval"))
+     ;; :n "e" (λ! (realgud:cmd-run-command (thing-at-point 'symbol) "eval"))
+     :n "i" #'realgud-window-cmd-undisturb-src
      :n "t" #'realgud:cmd-tbreak
      :n "U" #'realgud:cmd-until
      :n "1" (λ! (+my/realgud-eval-nth-name-forward 1))
