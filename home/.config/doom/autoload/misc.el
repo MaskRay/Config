@@ -1,5 +1,23 @@
 ;;; private/my/autoload/misc.el -*- lexical-binding: t; -*-
 
+(defvar +my-use-clangd nil)
+
+;;;###autoload
+(defvar +my-use-eglot nil)
+
+;; While I mainly use lsp-mode and ccls, it is nice to learn what the alternatives offer.
+;;;###autoload
+(defun +my|toggle-clangd ()
+  (interactive)
+  (setq +my-use-clangd (not +my-use-clangd))
+  (setf (cdr (assoc '(c++-mode c-mode) eglot-server-programs)) (if +my-use-clangd '("clangd") '("ccls")))
+  (message "use: %s" (if +my-use-clangd "clangd" "ccls")))
+
+(defun +my|toggle-eglot ()
+  (interactive)
+  (setq +my-use-eglot (not +my-use-eglot))
+  (message "use: %s" (if +my-use-eglot "eglot" "lsp-mode")))
+
 ;; PATCH counsel-esh-history
 ;;;###autoload
 (defun +my/ivy-eshell-history ()

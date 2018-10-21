@@ -154,5 +154,5 @@
 
        :private
        my-cc
-       ;; my-python
+       my-python
        )

@@ -588,10 +588,11 @@ fu! C_init()
   syn keyword cppType ulong i8 i16 i32 i64 u8 u16 u32 u64 real_t Vec Vec2D Vector Matrix Plane Sphere Geometry Ray Color Img imgptr
   syn keyword cppSTL priority_queue hypot isnormal isfinite isnan shared_ptr make_shared numeric_limits move
   syn keyword cppSTLType T
-  nn <buffer> [[ [m
-  nn <buffer> [] [M
-  nn <buffer> ]] ]m
-  nn <buffer> ][ ]M
+
+  nn <silent><buffer> <C-k> :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'L'})<cr>
+  nn <silent><buffer> <C-l> :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'D'})<cr>
+  nn <silent><buffer> <C-h> :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'U'})<cr>
+  nn <silent><buffer> <C-j> :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'R'})<cr>
 
   ia <buffer> re return
   ia <buffer> return a<bs>
@@ -826,10 +827,6 @@ nn <silent> xf :call LanguageClient#findLocations({'method':'$ccls/member','kind
 nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/member'})<cr>
 
 "nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
-nn <silent> xh :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'L'})<cr>
-nn <silent> xj :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'D'})<cr>
-nn <silent> xk :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'U'})<cr>
-nn <silent> xl :call LanguageClient#findLocations({'method':'$ccls/navigate','direction':'R'})<cr>
 nn <silent> xt :call LanguageClient#textDocument_typeDefinition()<cr>
 nn <silent> xv :call LanguageClient#findLocations({'method':'$ccls/vars'})<cr>
 nn <silent> xV :call LanguageClient#findLocations({'method':'$ccls/vars','kind':1})<cr>
@@ -880,6 +877,13 @@ ino <C-Y> <C-C>:let @z = @"<CR>mz
       \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
       \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
       \`zp:let @" = @z<CR>a
+" imap {{{2
+fu! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endf
+imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : deoplete#mappings#manual_complete()
+inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 " imap C- {{{3
 ino <C-h> <C-o><C-w>h
 ino <C-j> <C-o><C-w>j

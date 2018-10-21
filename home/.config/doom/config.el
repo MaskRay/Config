@@ -49,6 +49,8 @@
 
 (set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
 
+(def-package! eglot)
+
 (after! eshell
   (defun eshell/l (&rest args) (eshell/ls "-l" args))
   (defun eshell/e (file) (find-file file))
@@ -154,8 +156,7 @@
   :load-path "~/Dev/Emacs/lsp-mode"
   :defer t
   :init
-  (setq lsp-project-blacklist '("/CC/"))
-  (setq lsp--json-array-use-vector t)
+  ;; (setq lsp-project-blacklist '("/CC/"))
   )
 
 (def-package! lsp-ui
@@ -193,26 +194,17 @@
 
    (defhydra hydra/ref (evil-normal-state-map "x")
      "reference"
-     ("d" lsp-ui-peek-find-definitions "next" :bind nil)
-     ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
-            (if (> n 0) (message "%d/%d" i n))) "next")
      ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
             (if (> n 0) (message "%d/%d" i n))) "prev")
-     ("R" (-let [(i . n) (lsp-ui-find-prev-reference
-                          (lambda (x)
-                            (/= (logand (gethash "role" x 0) 8) 0)))]
+     ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
+            (if (> n 0) (message "%d/%d" i n))) "next")
+     ("R" (-let [(i . n) (lsp-ui-find-prev-reference '(:context (:role 8)))]
             (if (> n 0) (message "read %d/%d" i n))) "prev read" :bind nil)
-     ("r" (-let [(i . n) (lsp-ui-find-next-reference
-                          (lambda (x)
-                            (/= (logand (gethash "role" x 0) 8) 0)))]
+     ("r" (-let [(i . n) (lsp-ui-find-next-reference '(:context (:role 8)))]
             (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
-     ("W" (-let [(i . n) (lsp-ui-find-prev-reference
-                          (lambda (x)
-                            (/= (logand (gethash "role" x 0) 16) 0)))]
+     ("W" (-let [(i . n) (lsp-ui-find-prev-reference '(:context (:role 16)))]
             (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
-     ("w" (-let [(i . n) (lsp-ui-find-next-reference
-                          (lambda (x)
-                            (/= (logand (gethash "role" x 0) 16) 0)))]
+     ("w" (-let [(i . n) (lsp-ui-find-next-reference '(:context (:role 16)))]
             (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
      )
    )
@@ -302,6 +294,7 @@
   :commands (symbol-overlay-put))
 
 (def-package! lsp-rust
+  :defer t
   :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
   :config
   )
