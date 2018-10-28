@@ -20,6 +20,7 @@
    ;; Override default :n < > ( )
    ;; :nm "<" #'lispyville-previous-opening
    ;; :nm ">" #'lispyville-next-closing
+   :m "RET" #'+ivy/switch-workspace-buffer
 
    :n "C-h" #'lispyville-backward-up-list
    :n "C-j" #'lispyville-forward-sexp
@@ -42,6 +43,7 @@
  :n "C-1" #'+popup/raise
  :n "C-c a" #'org-agenda
  :n "C-,"  #'+my/find-references
+ :n "M-,"  (λ! (+my/find-references (+my//folder-param t)))
  ;; all symbols
  :n ";"    (λ! (if lsp-mode
                     (progn (+my/avy-document-symbol t)
@@ -50,7 +52,8 @@
  ;; outline
  :n "z;"   (λ! (+my/avy-document-symbol nil) (+my/find-definitions))
 
- :n "ga"   #'lsp-ui-find-workspace-symbol
+ :n "ga"   #'+my/workspace-symbol
+ :n "gA"   (λ! (setq current-prefix-arg t) (call-interactively #'+my/workspace-symbol))
  :n "gc"   #'evilnc-comment-or-uncomment-lines
  :n "gf"   #'+my/ffap
  :n "go"   (λ! (message "%S" (text-properties-at (point))))

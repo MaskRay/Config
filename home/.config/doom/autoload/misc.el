@@ -128,9 +128,9 @@
   (if lsp-mode (lsp-ui-peek-find-definitions) (call-interactively #'+lookup/definition)))
 
 ;;;###autoload
-(defun +my/find-references ()
+(defun +my/find-references (&optional extra)
   (interactive)
-  (if lsp-mode (lsp-ui-peek-find-references) (call-interactively #'+lookup/references)))
+  (if lsp-mode (lsp-ui-peek-find-references nil extra) (call-interactively #'+lookup/references)))
 
 (defmacro +my//xref-jump-file (command)
   `(let* ((target (buffer-name))
@@ -243,3 +243,20 @@
             (cl-decf n 1))))
       (when name
         (realgud:cmd-eval name)))))
+
+;;;###autoload
+(defun +my//folder-param (current)
+  (list :folders (if current (vector (projectile-project-root)) []))
+  )
+
+;;;###autoload
+(defun +my/workspace-symbol (pattern)
+  (interactive (list (read-string "workspace/symbol: " nil 'xref--read-pattern-history)))
+  (let ((symbols (lsp--send-request
+                  (lsp--make-request
+                   "workspace/symbol"
+                   `(:query ,pattern :folders ,(if current-prefix-arg (vector (projectile-project-root)) []))))))
+    (unless symbols
+      (user-error "No symbol found for: %s" pattern))
+    (xref--show-xrefs
+     (mapcar (lambda (x) (lsp--symbol-information-to-xref pattern x)) symbols) nil)))

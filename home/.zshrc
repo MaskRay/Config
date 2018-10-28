@@ -230,10 +230,14 @@ for i in ~/llvm/Debug/bin/*(-.x); do alias my${i##*/}=$i; done
 for i in ~/llvm/Release/bin/*(-.x); do alias f${i##*/}=$i; done
 alias asanlit=asanllvm-lit
 alias flit=fllvm-lit
+alias fas=fllvm-as
+alias fdiff=fllvm-diff
+alias fdis=fllvm-dis
 alias fnm=fllvm-nm
 alias fob=fllvm-objdump
 alias fre=fllvm-readelf
 alias mylit=myllvm-lit
+alias lobj='fllvm-mc -filetype=obj'
 
 for i in gb gf gh gr gt; do
   zle -N $i

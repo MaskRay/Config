@@ -198,13 +198,13 @@
             (if (> n 0) (message "%d/%d" i n))) "prev")
      ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
             (if (> n 0) (message "%d/%d" i n))) "next")
-     ("R" (-let [(i . n) (lsp-ui-find-prev-reference '(:context (:role 8)))]
+     ("R" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 8))]
             (if (> n 0) (message "read %d/%d" i n))) "prev read" :bind nil)
-     ("r" (-let [(i . n) (lsp-ui-find-next-reference '(:context (:role 8)))]
+     ("r" (-let [(i . n) (lsp-ui-find-next-reference '(:role 8))]
             (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
-     ("W" (-let [(i . n) (lsp-ui-find-prev-reference '(:context (:role 16)))]
+     ("W" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 16))]
             (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
-     ("w" (-let [(i . n) (lsp-ui-find-next-reference '(:context (:role 16)))]
+     ("w" (-let [(i . n) (lsp-ui-find-next-reference '(:role 16))]
             (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
      )
    )
