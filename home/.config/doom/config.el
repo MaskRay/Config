@@ -115,9 +115,7 @@
 (def-package! link-hint
   :commands link-hint-open-link link-hint-open-all-links)
 
-(def-package! lispy
-  :hook (emacs-lisp-mode . lispy-mode)
-  :config
+(after! lispy
   (setq lispy-outline "^;; \\(?:;[^#]\\|\\*+\\)"
         lispy-outline-header ";; "
         lispy-ignore-whitespace t)
@@ -128,17 +126,13 @@
         :i [remap delete-backward-char] #'lispy-delete-backward))
 
 ;; Also use lispyville in prog-mode for [ ] < >
-(def-package! lispyville
-  :demand t
-  :after (evil)
-  :hook (lispy-mode . lispyville-mode)
-  :config
-  (lispyville-set-key-theme
-   '(operators
-     c-w
-     (escape insert)
-     (slurp/barf-lispy)
-     additional-movement))
+(after! lispyville
+  ;; (lispyville-set-key-theme
+  ;;  '(operators
+  ;;    c-w
+  ;;    (escape insert)
+  ;;    (slurp/barf-lispy)
+  ;;    additional-movement))
   (map! :map emacs-lisp-mode-map
         :n "gh" #'helpful-at-point
         :n "gl" (λ! (let (lispy-ignore-whitespace) (call-interactively #'lispyville-right)))
