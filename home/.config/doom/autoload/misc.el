@@ -18,6 +18,13 @@
   (setq +my-use-eglot (not +my-use-eglot))
   (message "use: %s" (if +my-use-eglot "eglot" "lsp-mode")))
 
+(defun +my/yank-filename-with-line ()
+  "Copy the current buffer's filename with line number to the kill ring."
+  (interactive)
+  (if-let* ((filename (or buffer-file-name (bound-and-true-p list-buffers-directory))))
+      (message (kill-new (concat "b" filename ":" (number-to-string (line-number-at-pos)))))
+    (error "Couldn't find filename in current buffer")))
+
 ;; PATCH counsel-esh-history
 ;;;###autoload
 (defun +my/ivy-eshell-history ()
@@ -189,6 +196,7 @@
                (setq point1 (point))
                (setq line l1 col c1)
                (push `((,point0 . ,point1) . ,w) candidates)))
+    (require 'avy)
     (avy-with avy-document-symbol
       (avy--process candidates
                     (avy--style-fn avy-style)))))

@@ -26,6 +26,10 @@
   (setq c-default-style "my-cc")
   (add-hook 'c-mode-common-hook
             (lambda ()
+              ;; TODO work around https://github.com/hlissner/doom-emacs/issues/1006
+              (when (and buffer-file-name (string-match-p "binutils\\|glibc" buffer-file-name))
+                (setq tab-width 8)
+                (c-set-style "gnu"))
               (modify-syntax-entry ?_ "w")
               ))
 
@@ -90,6 +94,8 @@
         "^/usr/(local/)?include/c\\+\\+/v1/"
         ]))
      :index (:initialBlacklist ,+ccls-initial-blacklist :trackDependency 1)))
+
+  (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   (set-company-backend! '(c-mode c++-mode cuda-mode objc-mode) 'company-lsp)

@@ -326,7 +326,6 @@ if 1
   call plug#begin('~/.vim/bundle')
 
   Plug 'sakhnik/nvim-gdb'
-  Plug 'wellle/tmux-complete.vim'
   Plug 'kana/vim-arpeggio'
   Plug 'kopischke/vim-fetch'
   Plug 'AndrewRadev/splitjoin.vim'
@@ -349,6 +348,7 @@ if 1
 
   " Tools
   Plug 'benmills/vimux'
+  Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
   if has('nvim')
     Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
@@ -357,7 +357,7 @@ if 1
     Plug 'ncm2/ncm2'
     Plug 'ncm2/ncm2-ultisnips'
     Plug 'kassio/neoterm'
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   endif
   Plug 'justinmk/vim-sneak'
   Plug 'justinmk/vim-dirvish'
@@ -400,15 +400,12 @@ if 1
   Plug 'fatih/vim-go', { 'for': 'go' }
   Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
   Plug 'mattn/emmet-vim'
-  Plug 'LaTeX-Box-Team/LaTeX-Box'
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
   Plug 'zah/nim.vim', { 'for': 'nim' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
   Plug 'python-mode/python-mode', { 'for': 'python' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
   Plug 'ledger/vim-ledger', { 'for': 'ledger' }
-  "" C/C++
-  Plug 'rhysd/vim-clang-format'
 
   "Colors
   Plug 'junegunn/seoul256.vim'
@@ -423,6 +420,9 @@ let g:ale_linters = {
       \   'c': ['ccls'],
       \   'cpp': ['ccls'],
       \}
+let g:ale_linters_explicit = 1
+" arpeggio {{{2
+call arpeggio#map('i', '', 0, 'jk', '<Esc>')
 " deoplete {{{2
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#omni_patterns = {}
@@ -460,17 +460,65 @@ let g:LanguageClient_serverCommands = {
       \ }
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_hasSnippetSupport = 0
+let g:LanguageClient_completionPreferTextEdit = 1
 "let g:LanguageClient_devel = 1
+"nn ga :call LanguageClient#workspace_symbol(input('workspace/symbol '))<cr>
+"vn <leader>= :<C-u>call LanguageClient#textDocument_rangeFormatting()<cr>
+"nn <leader>l= :call LanguageClient#textDocument_formatting()<cr>
+"nn <leader>la :call LanguageClient#textDocument_codeAction()<cr>
+"nn <leader>lf :call LanguageClient#textDocument_formatting()<cr>
+"nn <leader>lr :call LanguageClient#textDocument_rename()<cr>
+"nn <leader>l= :call LanguageClient#textDocument_formatting()<cr>
+"nn <silent> K :call LanguageClient#textDocument_hover()<cr>
+"nn <silent> <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
+"nn <silent> <leader>si :call LanguageClient#textDocument_documentSymbol()<cr>
+"nn <silent> <leader>sI :call LanguageClient#workspace_symbol()<cr>
 
-augroup LanguageClient_config
+" coc.nvim {{{2
+set updatetime=300
+augroup coc_config
   au!
-  au BufEnter * let b:Plugin_LanguageClient_started = 0
-  au User LanguageClientStarted setl signcolumn=yes
-  au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
-  au User LanguageClientStopped setl signcolumn=auto
-  au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-  au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | sil call LanguageClient#textDocument_hover() | endif
+  au BufEnter * let b:Plugin_coc_started = 0
+  au User CocNvimInit let b:Plugin_coc_started = 1
+  au CursorHold * if b:Plugin_coc_started | sil call CocActionAsync('highlight') | endif
+  au CursorHoldI * if b:Plugin_coc_started | sil call CocActionAsync('showSignatureHelp') | endif
 augroup END
+nmap <silent> <M-j> <Plug>(coc-definition)
+nmap <silent> <C-,> <Plug>(coc-references)
+nn <silent> K :call CocActionAsync('doHover')<cr>
+nn <silent> <leader>si :Denite coc-symbols<cr>
+nn <silent> ga :Denite coc-workspace<cr>
+nn <leader>l= :call CocAction('format')<cr>
+nmap <leader>la <Plug>(coc-codeaction)
+nn <silent> <leader>lc :call CocAction('codeLens')<cr>
+nmap <leader>lf <Plug>(coc-format-selected)
+nmap <leader>lr <Plug>(coc-rename)
+" one-level base
+" bases
+nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
+" bases of up to 3 levels
+nn <silent> xb :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
+" derived of up to 3 levels
+nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
+" derived of up to 3 levels
+nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
+
+" caller
+nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
+" callee
+nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+
+" $ccls/member
+" member variables / variables in a namespace
+nn <silent> xm :call CocLocations('ccls','$ccls/member')<cr>
+" member functions / functions in a namespace
+nn <silent> xf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+" nested classes / types in a namespace
+nn <silent> xs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+
+nmap <silent> xt <Plug>(coc-type-definition)<cr>
+nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
+nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
 " leader-guide {{{2
 let g:lmap = {}
 call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
@@ -696,12 +744,6 @@ nn <leader>fS :bufdo update<cr>
 nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
 nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
-" nmap <leader>l (lsp) {{{4
-nn <leader>l= :call LanguageClient#textDocument_formatting()<cr>
-vn <leader>= :<C-u>call LanguageClient#textDocument_rangeFormatting()<cr>
-nn <leader>la :call LanguageClient#textDocument_codeAction()<cr>
-nn <leader>lf :call LanguageClient#textDocument_formatting()<cr>
-nn <leader>lr :call LanguageClient#textDocument_rename()<cr>
 " nmap <leader>g (fugitive) {{{4
 nn <leader>gb :Gblame<cr>
 nn <leader>gc :Gcd<cr>
@@ -720,8 +762,6 @@ nn <leader>rr :Denite register<cr>
 let g:lmap.s = {'name': '+search'}
 nn <leader>sd :Grepper -dir file<cr>
 nn <leader>ss :Grepper<cr>
-nn <silent> <leader>si :call LanguageClient#textDocument_documentSymbol()<cr>
-nn <silent> <leader>sI :call LanguageClient#workspace_symbol()<cr>
 nn <leader>sj :SplitjoinJoin<cr>
 nn <leader>sJ :SplitjoinSplit<cr>
 nn <leader>sP :Grepper -noprompt -cword<cr>
@@ -771,7 +811,6 @@ nn <leader>q :call QFixToggle()<cr>
 nn <Leader>cp :!xsel -ib < %<cr><cr>
 " nmap g {{{3
 let g:lmap.g = {'name': '+git'}
-nn ga :call LanguageClient#workspace_symbol(input('workspace/symbol '))<cr>
 nn <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
 nmap gss <Plug>(easymotion-s2)
 " nmap mark stack {{{3
@@ -803,41 +842,12 @@ map T <Plug>Sneak_T
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
 " nmap n {{{3
-" one-level base
-" bases
-nn <silent> xb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-" bases of up to 3 levels
-nn <silent> xB :call LanguageClient#findLocations({'method':'$ccls/inheritance','levels':3})<cr>
-" derived of up to 3 levels
-nn <silent> xd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
-" derived of up to 3 levels
-nn <silent> xD :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true,'levels':3})<cr>
-
-" caller
-nn <silent> xc :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
-" callee
-nn <silent> xC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<cr>
-
-" $ccls/member
-" nested classes / types in a namespace
-nn <silent> xs :call LanguageClient#findLocations({'method':'$ccls/member','kind':2})<cr>
-" member functions / functions in a namespace
-nn <silent> xf :call LanguageClient#findLocations({'method':'$ccls/member','kind':3})<cr>
-" member variables / variables in a namespace
-nn <silent> xm :call LanguageClient#findLocations({'method':'$ccls/member'})<cr>
-
-"nn <silent> xe :call LanguageClient#findLocations({'method':'$ccls/callers'})<cr>
-nn <silent> xt :call LanguageClient#textDocument_typeDefinition()<cr>
-nn <silent> xv :call LanguageClient#findLocations({'method':'$ccls/vars'})<cr>
-nn <silent> xV :call LanguageClient#findLocations({'method':'$ccls/vars','kind':1})<cr>
 nn xx x
 " nmap Alt {{{3
-nn <silent> <C-,> :sil call LanguageClient#textDocument_references({'includeDeclaration': v:false})<cr>
-nn <M-,> :Denite references<cr>
 nn <silent> <M-.> :YcmCompleter GoTo<cr>
 nn <M-down> :lnext<cr>zvzz
 nn <M-up> :lprevious<cr>zvzz
-nn <silent> <M-j> :call MarkPush()<cr>:call LanguageClient#textDocument_definition()<cr>
+"nn <silent> <M-j> :call MarkPush()<cr>:call LanguageClient#textDocument_definition()<cr>
 nn <M-1> :tabnext 1<cr>
 nn <M-2> :tabnext 2<cr>
 nn <M-3> :tabnext 3<cr>
@@ -868,7 +878,6 @@ nn mm :call MarkPush(0)<cr>
 nn 'm <C-t>
 nn L :call MarkPop(1)<cr>
 nn H :call MarkPop(-1)<cr>
-nn <silent> K :call LanguageClient#textDocument_hover()<cr>
 nn <C-s> :Lines<cr>
 nn zx :bdelete<cr>
 " imap {{{2
@@ -882,7 +891,7 @@ fu! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
 endf
-imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : deoplete#mappings#manual_complete()
+imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : coc#refresh()
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 " imap C- {{{3
 ino <C-h> <C-o><C-w>h
