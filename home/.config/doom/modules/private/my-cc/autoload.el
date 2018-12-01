@@ -13,9 +13,7 @@
     (setq-local lsp-ui-sideline-show-symbol nil)
     (if +my-use-eglot
         (call-interactively #'eglot)
-      (condition-case nil
-          (lsp-ccls-enable)
-        (user-error nil)))))
+      (lsp))))
 
 (defun ccls/callee ()
   (interactive)

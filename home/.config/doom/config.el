@@ -42,6 +42,7 @@
         ))
 
 (def-package! company-lsp
+  :load-path "~/Dev/Emacs/company-lsp"
   :after company
   :init
   (setq company-transformers nil company-lsp-cache-candidates nil)
@@ -150,13 +151,14 @@
   :load-path "~/Dev/Emacs/lsp-mode"
   :defer t
   :init
+  (setq lsp-auto-guess-root t)
   ;; (setq lsp-project-blacklist '("/CC/"))
   )
 
 (def-package! lsp-ui
   :load-path "~/Dev/Emacs/lsp-ui"
   :demand t
-  :hook (lsp-mode . lsp-ui-mode)
+  ;; :hook (lsp-mode . lsp-ui-mode)
   :config
   (setq
    lsp-ui-sideline-enable nil
