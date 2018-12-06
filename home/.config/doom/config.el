@@ -126,6 +126,8 @@
         "d" nil
         :i [remap delete-backward-char] #'lispy-delete-backward))
 
+;(remove-hook 'emacs-lisp-mode-hook #'lispy-mode)
+
 ;; Also use lispyville in prog-mode for [ ] < >
 (after! lispyville
   ;; (lispyville-set-key-theme
@@ -134,6 +136,12 @@
   ;;    (escape insert)
   ;;    (slurp/barf-lispy)
   ;;    additional-movement))
+  (map! :map lispyville-mode-map
+       :i "C-w" #'backward-delete-char
+       :n "M-j" nil
+       :n "H" #'sp-backward-sexp
+       :n "L" #'sp-forward-sexp
+       )
   (map! :map emacs-lisp-mode-map
         :n "gh" #'helpful-at-point
         :n "gl" (λ! (let (lispy-ignore-whitespace) (call-interactively #'lispyville-right)))
@@ -141,6 +149,7 @@
         :n "C-<right>" #'lispy-forward-slurp-sexp
         :n "C-M-<left>" #'lispy-backward-slurp-sexp
         :n "C-M-<right>" #'lispy-backward-barf-sexp
+        :i "C-w" #'delete-backward-char
         :n "<tab>" #'lispyville-prettify
         :localleader
         :n "e" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil)))
@@ -149,16 +158,18 @@
 
 (def-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
-  :defer t
+  :commands lsp
   :init
   (setq lsp-auto-guess-root t)
-  ;; (setq lsp-project-blacklist '("/CC/"))
+  )
+
+(after! lsp-clients
+  (remhash 'clangd lsp-clients)
   )
 
 (def-package! lsp-ui
   :load-path "~/Dev/Emacs/lsp-ui"
-  :demand t
-  ;; :hook (lsp-mode . lsp-ui-mode)
+  :commands lsp-ui-mode
   :config
   (setq
    lsp-ui-sideline-enable nil
@@ -171,7 +182,7 @@
    lsp-ui-peek-force-fontify nil
    lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
 
-  (advice-add #'lsp-ui-doc--eldoc :override #'+my/lsp-ui-doc--eldoc)
+                                        ;(setq lsp-eldoc-hook '(lsp-document-highlight +my/hover-or-signature-help))
 
   (custom-set-faces
    '(ccls-sem-global-variable-face ((t (:underline t :weight extra-bold))))
@@ -180,30 +191,30 @@
    '(lsp-ui-sideline-current-symbol ((t (:foreground "grey38" :box nil))))
    '(lsp-ui-sideline-symbol ((t (:foreground "grey30" :box nil)))))
 
-   (map! :after lsp-ui-peek
-         :map lsp-ui-peek-mode-map
-         "h" #'lsp-ui-peek--select-prev-file
-         "j" #'lsp-ui-peek--select-next
-         "k" #'lsp-ui-peek--select-prev
-         "l" #'lsp-ui-peek--select-next-file
-         )
+  (map! :after lsp-ui-peek
+        :map lsp-ui-peek-mode-map
+        "h" #'lsp-ui-peek--select-prev-file
+        "j" #'lsp-ui-peek--select-next
+        "k" #'lsp-ui-peek--select-prev
+        "l" #'lsp-ui-peek--select-next-file
+        )
 
-   (defhydra hydra/ref (evil-normal-state-map "x")
-     "reference"
-     ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
-            (if (> n 0) (message "%d/%d" i n))) "prev")
-     ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
-            (if (> n 0) (message "%d/%d" i n))) "next")
-     ("R" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 8))]
-            (if (> n 0) (message "read %d/%d" i n))) "prev read" :bind nil)
-     ("r" (-let [(i . n) (lsp-ui-find-next-reference '(:role 8))]
-            (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
-     ("W" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 16))]
-            (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
-     ("w" (-let [(i . n) (lsp-ui-find-next-reference '(:role 16))]
-            (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
-     )
-   )
+  (defhydra hydra/ref (evil-normal-state-map "x")
+    "reference"
+    ("p" (-let [(i . n) (lsp-ui-find-prev-reference)]
+           (if (> n 0) (message "%d/%d" i n))) "prev")
+    ("n" (-let [(i . n) (lsp-ui-find-next-reference)]
+           (if (> n 0) (message "%d/%d" i n))) "next")
+    ("R" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 8))]
+           (if (> n 0) (message "read %d/%d" i n))) "prev read" :bind nil)
+    ("r" (-let [(i . n) (lsp-ui-find-next-reference '(:role 8))]
+           (if (> n 0) (message "read %d/%d" i n))) "next read" :bind nil)
+    ("W" (-let [(i . n) (lsp-ui-find-prev-reference '(:role 16))]
+           (if (> n 0) (message "write %d/%d" i n))) "prev write" :bind nil)
+    ("w" (-let [(i . n) (lsp-ui-find-next-reference '(:role 16))]
+           (if (> n 0) (message "write %d/%d" i n))) "next write" :bind nil)
+    )
+  )
 
 (setq magit-repository-directories '(("~/Dev" . 2)))
 

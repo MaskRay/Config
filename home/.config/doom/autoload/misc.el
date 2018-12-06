@@ -137,7 +137,7 @@
 ;;;###autoload
 (defun +my/find-references (&optional extra)
   (interactive)
-  (if lsp-mode (lsp-ui-peek-find-references nil extra) (call-interactively #'+lookup/references)))
+  (if lsp-mode (lsp-ui-peek-find-references nil) (call-interactively #'+lookup/references)))
 
 (defmacro +my//xref-jump-file (command)
   `(let* ((target (buffer-name))
@@ -202,22 +202,10 @@
                     (avy--style-fn avy-style)))))
 
 ;;;###autoload
-(defun +my/lsp-ui-doc--eldoc (&rest _)
-  (when (and (lsp--capability "documentHighlightProvider")
-             lsp-highlight-symbol-at-point)
-    (lsp-symbol-highlight))
+(defun +my/hover-or-signature-help ()
   (if (evil-insert-state-p)
-      (lsp--text-document-signature-help)
-      lsp-ui-doc--string-eldoc
-      ))
-
-;;;###autoload
-(defun counsel-imenu-comments ()
-  "Imenu display comments."
-  (interactive)
-  (require 'evil-nerd-commenter)
-  (let* ((imenu-create-index-function 'evilnc-imenu-create-index-function))
-    (counsel-imenu)))
+      (lsp-signature-help)
+    (lsp-hover)))
 
 ;;;###autoload
 (defun +my/realgud-eval-nth-name-forward (n)
@@ -260,11 +248,10 @@
 ;;;###autoload
 (defun +my/workspace-symbol (pattern)
   (interactive (list (read-string "workspace/symbol: " nil 'xref--read-pattern-history)))
-  (let ((symbols (lsp--send-request
-                  (lsp--make-request
-                   "workspace/symbol"
-                   `(:query ,pattern :folders ,(if current-prefix-arg (vector (projectile-project-root)) []))))))
+  (let ((symbols (lsp-request
+                  "workspace/symbol"
+                  `(:query ,pattern :folders ,(if current-prefix-arg (vector (projectile-project-root)) [])))))
     (unless symbols
       (user-error "No symbol found for: %s" pattern))
     (xref--show-xrefs
-     (mapcar (lambda (x) (lsp--symbol-information-to-xref pattern x)) symbols) nil)))
+     (mapcar #'lsp--symbol-information-to-xref symbols) nil)))

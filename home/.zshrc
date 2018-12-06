@@ -393,13 +393,8 @@ if [[ -n ${commands[bfs]} ]]; then
   export FZF_DEFAULT_COMMAND=$FZF_CTRL_T_COMMAND
 fi
 
-if [[ -s /etc/profile.d/autojump.zsh ]]; then
-  source /etc/profile.d/autojump.zsh
-elif [[ -s /usr/share/autojump/autojump.zsh ]]; then
-  source /usr/share/autojump/autojump.zsh
-elif [[ -s /usr/local/share/autojump/autojump.zsh ]]; then
-  # FreeBSD
-  source /usr/local/share/autojump/autojump.zsh
+if [[ -d ~/Util/z.lua ]]; then
+  eval "$(lua ~/Util/z.lua/z.lua --init zsh once)"
 fi
 
 # OCaml

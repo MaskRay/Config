@@ -353,9 +353,9 @@ if 1
     Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ }
-    Plug 'roxma/nvim-yarp'
-    Plug 'ncm2/ncm2'
-    Plug 'ncm2/ncm2-ultisnips'
+    "Plug 'roxma/nvim-yarp'
+    "Plug 'ncm2/ncm2'
+    "Plug 'ncm2/ncm2-ultisnips'
     Plug 'kassio/neoterm'
     "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   endif
@@ -493,6 +493,9 @@ nmap <leader>la <Plug>(coc-codeaction)
 nn <silent> <leader>lc :call CocAction('codeLens')<cr>
 nmap <leader>lf <Plug>(coc-format-selected)
 nmap <leader>lr <Plug>(coc-rename)
+ino <expr><tab> pumvisible() ? "\<C-y>" : "\<tab>"
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<S-tab>'
 " one-level base
 " bases
 nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
@@ -602,12 +605,14 @@ au BufReadPost *
       \   exe "normal g`\"" |
       \ endif
 
+if isdirectory(expand('~/.vim/bundle/vim-sneak'))
 " ; :
-nn <silent> ; :if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
-nn : ;
-"nn <silent><expr> ; sneak#is_sneaking() ? ":call sneak#rpt('',0)<cr>" : ':'
-xn <silent> ; :<C-u>if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(":'<,'>", 'n')<Bar>endif<cr>
-xn : ;
+  nn <silent> ; :if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(':', 'n')<Bar>endif<cr>
+  nn : ;
+  "nn <silent><expr> ; sneak#is_sneaking() ? ":call sneak#rpt('',0)<cr>" : ':'
+  xn <silent> ; :<C-u>if sneak#is_sneaking()<Bar>call sneak#rpt('',0)<Bar>else<Bar>call feedkeys(":'<,'>", 'n')<Bar>endif<cr>
+  xn : ;
+endif
 
 " clang-format
 let g:clang_format#style_options = {
@@ -891,7 +896,7 @@ fu! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
 endf
-imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : coc#refresh()
+"imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : coc#refresh()
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
 " imap C- {{{3
 ino <C-h> <C-o><C-w>h

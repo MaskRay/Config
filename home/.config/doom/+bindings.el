@@ -97,7 +97,7 @@
      :n "a" #'lsp-execute-code-action
      :n "l" #'lsp-ui-sideline-mode
      :n "d" #'lsp-ui-doc-mode
-     :n "e" #'lsp-ui-flycheck-list
+     :n "e" #'flymake-show-diagnostics-buffer
      :n "i" #'lsp-ui-imenu
      :n "r" #'lsp-rename
      :n "R" #'lsp-restart-workspace
@@ -105,7 +105,6 @@
      )
    :desc "lispyville" :n "L" (+my/prefix-M-x "lispyville ")
    (:prefix "o"
-     :n "c" #'counsel-imenu-comments
      :n "d" #'+debugger:start
      :n "o" #'symbol-overlay-put
      :n "q" #'symbol-overlay-remove-all
