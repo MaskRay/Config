@@ -43,9 +43,10 @@
 
 (def-package! company-lsp
   :load-path "~/Dev/Emacs/company-lsp"
-  :after company
-  :init
+  :after lsp-mode
+  :config
   (setq company-transformers nil company-lsp-cache-candidates nil)
+  (set-company-backend! 'lsp-mode 'company-lsp)
   )
 
 (set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
@@ -71,6 +72,8 @@
 
 (def-package! eshell-autojump)
 
+;; (setq evil-move-beyond-eol t)
+
 (def-package! evil-nerd-commenter
   :commands (evilnc-comment-or-uncomment-lines)
   )
@@ -80,9 +83,43 @@
   )
 
 (after! flycheck
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;; (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+  (global-flycheck-mode -1)
   )
+
+(after! flymake-proc
+  ;; disable flymake-proc
+  (setq-default flymake-diagnostic-functions nil)
+  )
+(defvar flymake-posframe-delay 0.5)
+(defvar flymake-posframe-buffer "*flymake-posframe*")
+(defvar-local flymake-posframe-timer nil)
+
+(defun flymake-posframe-hide ()
+  (posframe-hide flymake-posframe-buffer))
+
+(defun flymake-posframe-display ()
+  (when flymake-mode
+    (flymake-posframe-hide)
+    (when-let ((diag (and flymake-mode
+                          (get-char-property (point) 'flymake-diagnostic))))
+      (posframe-show
+       flymake-posframe-buffer
+       :string (propertize (concat "➤ " (flymake--diag-text diag))
+                           'face
+                           (case (flymake--diag-type diag)
+                             (:error 'error)
+                             (:warning 'warning)
+                             (:note 'info)))))))
+
+(defun flymake-posframe-set-timer ()
+  (when flymake-posframe-timer
+    (cancel-timer flymake-posframe-timer))
+  (setq flymake-posframe-timer
+        (run-with-idle-timer flymake-posframe-delay nil #'flymake-posframe-display)))
+(add-hook 'post-command-hook #'flymake-posframe-set-timer)
+(add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
 
 (after! git-link
   (defun git-link-llvm (hostname dirname filename branch commit start end)
@@ -142,29 +179,31 @@
        :n "H" #'sp-backward-sexp
        :n "L" #'sp-forward-sexp
        )
-  (map! :map emacs-lisp-mode-map
-        :n "gh" #'helpful-at-point
-        :n "gl" (λ! (let (lispy-ignore-whitespace) (call-interactively #'lispyville-right)))
-        :n "C-<left>" #'lispy-forward-barf-sexp
-        :n "C-<right>" #'lispy-forward-slurp-sexp
-        :n "C-M-<left>" #'lispy-backward-slurp-sexp
-        :n "C-M-<right>" #'lispy-backward-barf-sexp
-        :i "C-w" #'delete-backward-char
-        :n "<tab>" #'lispyville-prettify
-        :localleader
-        :n "e" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil)))
-        )
   )
+(map! :after elisp-mode
+      :map emacs-lisp-mode-map
+      :n "gh" #'helpful-at-point
+      :n "gl" (λ! (let (lispy-ignore-whitespace) (call-interactively #'lispyville-right)))
+      :n "C-<left>" #'lispy-forward-barf-sexp
+      :n "C-<right>" #'lispy-forward-slurp-sexp
+      :n "C-M-<left>" #'lispy-backward-slurp-sexp
+      :n "C-M-<right>" #'lispy-backward-barf-sexp
+      :i "C-w" #'delete-backward-char
+      :n "<tab>" #'lispyville-prettify
+      :localleader
+      :n "x" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil))))
 
 (def-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
-  :init
+  :config
   (setq lsp-auto-guess-root t)
+  (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))
+  (add-hook 'evil-insert-state-exit-hook (lambda () (setq-local lsp-hover-enabled t)))
   )
 
 (after! lsp-clients
-  (remhash 'clangd lsp-clients)
+  ;; (remhash 'clangd lsp-clients)
   )
 
 (def-package! lsp-ui
@@ -181,8 +220,6 @@
 
    lsp-ui-peek-force-fontify nil
    lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
-
-                                        ;(setq lsp-eldoc-hook '(lsp-document-highlight +my/hover-or-signature-help))
 
   (custom-set-faces
    '(ccls-sem-global-variable-face ((t (:underline t :weight extra-bold))))
@@ -241,6 +278,7 @@
   )
 
 (defun +advice/xref-set-jump (&rest args)
+  (require 'lsp-ui)
   (lsp-ui-peek--with-evil-jumps (evil-set-jump)))
 (advice-add '+lookup/definition :before #'+advice/xref-set-jump)
 (advice-add '+lookup/references :before #'+advice/xref-set-jump)
@@ -337,6 +375,8 @@
       "invoke term from project root")
      ("_" counsel-projectile-switch-project-action-org-capture
       "org-capture into project"))))
+
+(add-hook! python-mode #'lsp)
 
 (def-package! rg)
 

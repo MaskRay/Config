@@ -350,9 +350,9 @@ if 1
   Plug 'benmills/vimux'
   Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
   if has('nvim')
-    Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ }
+    "Plug 'autozimu/LanguageClient-neovim', {
+    "  \ 'branch': 'next',
+    "  \ }
     "Plug 'roxma/nvim-yarp'
     "Plug 'ncm2/ncm2'
     "Plug 'ncm2/ncm2-ultisnips'

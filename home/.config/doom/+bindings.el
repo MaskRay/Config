@@ -12,6 +12,8 @@
      (setq prefix-arg current-prefix-arg)
      (setq unread-command-events (listify-key-sequence (read-kbd-macro ,key))))))
 
+(general-define-key :states '(normal visual motion) "x" nil)
+
 (map!
  ;; localleader
  :m ","    nil
@@ -29,14 +31,13 @@
 
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
-   :m "C-S-h"  #'+my/xref-jump-backward-file
-   :m "C-S-l"  #'+my/xref-jump-forward-file
+   :m "C-H"  #'+my/xref-jump-backward-file
+   :m "C-L"  #'+my/xref-jump-forward-file
    )
 
- :n "M-u" (+my/simulate-key "[")
- :n "M-i" (+my/simulate-key "]")
- :m "M-h"  #'smart-up
- :m "M-l"  #'smart-down
+ ;; :n "M-u" (+my/simulate-key "[")
+ ;; :n "M-i" (+my/simulate-key "]")
+ :n "M-;"  #'eval-expression
  :n "M-."  #'+lookup/definition
  :n "M-j"  #'+my/find-definitions
 
@@ -50,7 +51,7 @@
                            (+my/find-definitions))
                   (avy-goto-word-0 nil)))
  ;; outline
- :n "z;"   (λ! (+my/avy-document-symbol nil) (+my/find-definitions))
+ :n "z;"   (λ! (+my/avy-document-symbol nil))
 
  :n "ga"   #'+my/workspace-symbol
  :n "gA"   (λ! (setq current-prefix-arg t) (call-interactively #'+my/workspace-symbol))
@@ -61,89 +62,7 @@
  :n "[ M-u" #'symbol-overlay-switch-backward
  :n "] M-i" #'symbol-overlay-switch-forward
 
- (:leader
-   :n "SPC" #'+ivy/switch-workspace-buffer
-   :n "M-u" (+my/simulate-key "SPC [")
-   :n "M-i" (+my/simulate-key "SPC ]")
-   (:desc "app" :prefix "a"
-     :desc "genhdr" :n "g"
-     (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
-     :desc "genhdr windows" :n "G"
-     (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
-     )
-   (:prefix "b"
-     :desc "Last buffer" :n "b" #'evil-switch-to-windows-last-buffer
-     :n "l" #'ivy-switch-buffer
-     )
-   (:desc "error" :prefix "e"
-     :n "n" #'flycheck-next-error
-     :n "p" #'flycheck-previous-error
-     )
-   (:prefix "f"
-     :n "p" #'treemacs-projectile
-     :n "C-p" #'+default/find-in-config
-     :n "C-S-p" #'+default/browse-config
-     :n "t" #'treemacs
-     )
-   (:prefix "g"
-     :n "*" (+my/prefix-M-x "magit-")
-     :n "q" #'git-link
-     )
-   (:prefix "h"
-     :n "C" #'helpful-command
-     )
-   (:desc "lsp" :prefix "l"
-     :n "=" #'lsp-format-buffer
-     :n "a" #'lsp-execute-code-action
-     :n "l" #'lsp-ui-sideline-mode
-     :n "d" #'lsp-ui-doc-mode
-     :n "e" #'flymake-show-diagnostics-buffer
-     :n "i" #'lsp-ui-imenu
-     :n "r" #'lsp-rename
-     :n "R" #'lsp-restart-workspace
-     :n "w" #'lsp-ui-peek-find-workspace-symbol
-     )
-   :desc "lispyville" :n "L" (+my/prefix-M-x "lispyville ")
-   (:prefix "o"
-     :n "d" #'+debugger:start
-     :n "o" #'symbol-overlay-put
-     :n "q" #'symbol-overlay-remove-all
-     )
-   (:prefix "p"
-     :n "e" #'projectile-run-eshell
-     :n "f" #'counsel-projectile-find-file
-     :n "*" (+my/prefix-M-x "projectile-")
-     )
-   (:prefix "r"
-     :n "l" #'ivy-resume
-     )
-
-   ;; Rebind to "S"
-   (:desc "snippets" :prefix "S"
-     :desc "New snippet"            :n  "n" #'yas-new-snippet
-     :desc "Insert snippet"         :nv "i" #'yas-insert-snippet
-     :desc "Find snippet for mode"  :n  "s" #'yas-visit-snippet-file
-     :desc "Find snippet"           :n  "S" #'+default/find-in-snippets)
-
-   (:desc "search" :prefix "s"
-     :n "b" #'swiper-all
-     :desc "Directory"              :nv "d" #'+ivy/project-search-from-cwd
-     :desc "Project"                :nv "/" #'+ivy/project-search
-     :nv "s" (λ! (minibuffer-with-setup-hook
-                      (lambda () (insert ivy--default)) (+ivy/project-search)))
-     :desc "Symbols"                :nv "i" #'imenu
-     :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
-     :desc "Online providers"       :nv "o" #'+lookup/online-select
-     )
-
-   (:desc "toggle" :prefix "t"
-     :n "d" #'toggle-debug-on-error
-     :n "D" #'+my/realtime-elisp-doc
-     )
-   )
-
- :n "x" nil
- (:desc "xref" :prefix "x"
+ (:prefix "x"
    :n ";" (λ! (+my/avy-document-symbol t) (+my/find-references))
 
    ;; $ccls/inheritance
@@ -151,7 +70,7 @@
    :n "B" (λ! (ccls/base 3))
    :n "d" (λ! (ccls/derived 1))
    :n "D" (λ! (ccls/derived 3))
-   :n "i" #'ccls-inheritance-hierarchy  ; base hierarchy
+   :n "i" #'ccls-inheritance-hierarchy         ; base hierarchy
    :n "I" (λ! (ccls-inheritance-hierarchy t)) ; derived hierarchy
 
    ;; $ccls/call
@@ -163,9 +82,9 @@
    :n "E" (λ! (ccls-call-hierarchy t))
 
    ;; $ccls/member
-   :n "s" (λ! (ccls/member 2))        ; 2 (Type) => nested classes/namespace members
-   :n "f" (λ! (ccls/member 3))        ; 3 (Func) => member functions
-   :n "m" (λ! (ccls/member 0))        ; other => member variables
+   :n "s" (λ! (ccls/member 2))   ; 2 (Type) => nested classes/namespace members
+   :n "f" (λ! (ccls/member 3))   ; 3 (Func) => member functions
+   :n "m" (λ! (ccls/member 0))   ; other => member variables
    :n "M" #'ccls-member-hierarchy
 
    :n "L" #'ccls-code-lens-mode
@@ -180,7 +99,84 @@
    :n "e"  #'pp-eval-last-sexp
    :n "u" #'link-hint-open-link
    )
+ )
 
+(map! :leader
+   "SPC" #'+ivy/switch-workspace-buffer
+   ;; :n "M-u" (+my/simulate-key "SPC [")
+   ;; :n "M-i" (+my/simulate-key "SPC ]")
+   (:prefix ("a" . "app")
+     :desc "genhdr" :n "g"
+     (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
+     :desc "genhdr windows" :n "G"
+     (λ! (shell-command-on-region (point-min) (point-max) "genhdr windows" t t))
+     )
+   (:prefix "b"
+     :desc "Last buffer" :n "b" #'evil-switch-to-windows-last-buffer
+     "l" #'ivy-switch-buffer
+     )
+   (:prefix ("e" . "error")
+     "n" #'flycheck-next-error
+     "p" #'flycheck-previous-error
+     )
+   (:prefix "g"
+     "*" (+my/prefix-M-x "magit-")
+     "q" #'git-link
+     )
+   (:prefix "h"
+     "C" #'helpful-command
+     )
+   (:prefix ("l" . "lsp")
+     "=" #'lsp-format-buffer
+     "a" #'lsp-execute-code-action
+     "l" #'lsp-ui-sideline-mode
+     "d" #'lsp-ui-doc-mode
+     "e" #'flymake-show-diagnostics-buffer
+     "i" #'lsp-ui-imenu
+     "r" #'lsp-rename
+     "R" #'lsp-restart-workspace
+     "w" #'lsp-ui-peek-find-workspace-symbol
+     )
+   :desc "lispyville" :n "L" (+my/prefix-M-x "lispyville ")
+   (:prefix "o"
+     "d" #'+debugger:start
+     "o" #'symbol-overlay-put
+     "q" #'symbol-overlay-remove-all
+     )
+   (:prefix "p"
+     "e" #'projectile-run-eshell
+     "f" #'counsel-projectile-find-file
+     "*" (+my/prefix-M-x "projectile-")
+     )
+   (:prefix "r"
+     "l" #'ivy-resume
+     )
+
+   ;; Rebind to "S"
+   (:prefix ("S" . "snippets")
+     :desc "New snippet"            "n" #'yas-new-snippet
+     :desc "Insert snippet"         "i" #'yas-insert-snippet
+     :desc "Find snippet for mode"  "s" #'yas-visit-snippet-file
+     :desc "Find snippet"           "S" #'+default/find-in-snippets)
+
+   (:prefix ("s" . "search")
+     "b" #'swiper-all
+     :desc "Directory"              "d" #'+ivy/project-search-from-cwd
+     :desc "Project"                "/" #'+ivy/project-search
+     "s" (λ! (minibuffer-with-setup-hook
+                  (lambda () (insert ivy--default)) (+ivy/project-search)))
+     :desc "Symbols"                "i" #'imenu
+     :desc "Symbols across buffers" "I" #'imenu-anywhere
+     :desc "Online providers"       "o" #'+lookup/online-select
+     )
+
+   (:prefix ("t" . "toggle")
+     "d" #'toggle-debug-on-error
+     "D" #'+my/realtime-elisp-doc
+     )
+   )
+
+(map!
  (:after evil-collection-info
    :map Info-mode-map
    "/" #'Info-search
@@ -191,7 +187,7 @@
  (:after ivy
    :map ivy-minibuffer-map
    "<tab>" #'ivy-call-and-recenter
-   "C-;"   #'ivy-avy
+   "C-;"   #'ivy-posframe-avy
    "C-b"   #'backward-char
    "C-f"   #'forward-char
    )
@@ -235,4 +231,5 @@
      :n "M-8" (λ! (+my/realgud-eval-nth-name-backward 8))
      :n "M-9" (λ! (+my/realgud-eval-nth-name-backward 9))
      )
-   ))
+   )
+ )
