@@ -131,7 +131,7 @@
        ;;scala             ; java, but good
        sh                ; she sells (ba|z|fi)sh shells on the C xor
        ;;solidity          ; do you need a blockchain? No.
-       ;;swift             ; who asked for emoji variables?
+       swift             ; who asked for emoji variables?
        ;;web               ; the tubes
        ;;vala              ; GObjective-C
 

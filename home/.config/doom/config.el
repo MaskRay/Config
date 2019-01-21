@@ -94,30 +94,35 @@
   )
 (defvar flymake-posframe-delay 0.5)
 (defvar flymake-posframe-buffer "*flymake-posframe*")
-(defvar-local flymake-posframe-timer nil)
+(defvar flymake-posframe--last-diag nil)
+(defvar flymake-posframe--timer nil)
 
 (defun flymake-posframe-hide ()
   (posframe-hide flymake-posframe-buffer))
 
 (defun flymake-posframe-display ()
   (when flymake-mode
-    (flymake-posframe-hide)
-    (when-let ((diag (and flymake-mode
-                          (get-char-property (point) 'flymake-diagnostic))))
-      (posframe-show
-       flymake-posframe-buffer
-       :string (propertize (concat "➤ " (flymake--diag-text diag))
-                           'face
-                           (case (flymake--diag-type diag)
-                             (:error 'error)
-                             (:warning 'warning)
-                             (:note 'info)))))))
+    (if-let (diag (and flymake-mode
+                       (get-char-property (point) 'flymake-diagnostic)))
+        (unless (and (eq diag flymake-posframe--last-diag)
+                     (frame-visible-p (buffer-local-value 'posframe--frame (get-buffer flymake-posframe-buffer))))
+          (setq flymake-posframe--last-diag diag)
+          (posframe-show
+           flymake-posframe-buffer
+           :string (propertize (concat "➤ " (flymake--diag-text diag))
+                               'face
+                               (case (flymake--diag-type diag)
+                                 (:error 'error)
+                                 (:warning 'warning)
+                                 (:note 'info)))))
+      (flymake-posframe-hide))))
 
 (defun flymake-posframe-set-timer ()
-  (when flymake-posframe-timer
-    (cancel-timer flymake-posframe-timer))
+  (when flymake-posframe--timer
+    (cancel-timer flymake-posframe--timer))
   (setq flymake-posframe-timer
         (run-with-idle-timer flymake-posframe-delay nil #'flymake-posframe-display)))
+
 (add-hook 'post-command-hook #'flymake-posframe-set-timer)
 (add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
 
@@ -197,7 +202,7 @@
   :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
   :config
-  (setq lsp-auto-guess-root t)
+  (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))
   (add-hook 'evil-insert-state-exit-hook (lambda () (setq-local lsp-hover-enabled t)))
   )
