@@ -349,6 +349,9 @@ if 1
   " Tools
   Plug 'benmills/vimux'
   Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+  "Plug 'prabirshrestha/async.vim'
+  "Plug 'prabirshrestha/vim-lsp'
+  "Plug 'jackguo380/vim-lsp-cxx-highlight'
   if has('nvim')
     "Plug 'autozimu/LanguageClient-neovim', {
     "  \ 'branch': 'next',
@@ -485,9 +488,11 @@ augroup coc_config
 augroup END
 nmap <silent> <M-j> <Plug>(coc-definition)
 nmap <silent> <C-,> <Plug>(coc-references)
-nn <silent> K :call CocActionAsync('doHover')<cr>
-nn <silent> <leader>si :Denite coc-symbols<cr>
-nn <silent> ga :Denite coc-workspace<cr>
+nn <silent> K :call CocAction('doHover')<cr>
+nn <silent> <leader>si :<C-u>CocList -I outline<cr>
+nmap <silent> <leader>en <Plug>(coc-diagnostic-next)
+nmap <silent> <leader>ep <Plug>(coc-diagnostic-prev)
+nn <silent> ga :<C-u>CocList -I symbols<cr>
 nn <leader>l= :call CocAction('format')<cr>
 nmap <leader>la <Plug>(coc-codeaction)
 nn <silent> <leader>lc :call CocAction('codeLens')<cr>

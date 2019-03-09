@@ -176,7 +176,7 @@
                (lsp--send-request (lsp--make-request
                                    "textDocument/documentSymbol"
                                    `(:textDocument ,(lsp--text-document-identifier)
-                                                   :all ,(if all t :json-false)
+                                                   ,@(when all '(excludeRole 0))
                                                    :startLine ,start-line :endLine ,end-line)))
                for range = (if ccls loc (->> loc (gethash "location") (gethash "range")))
                for range_start = (gethash "start" range)

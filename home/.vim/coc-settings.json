@@ -1,0 +1,30 @@
+{
+  "languageserver": {
+    "ccls": {
+      "command": "ccls.debug",
+      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "initializationOptions": {
+        "cache": {
+          "format": "json",
+          "directory": "/tmp/ccls"
+        },
+        "capabilities": {
+          "foldingRangeProvider": false,
+          "workspace": {
+            "workspaceFolders": {
+              "supported": false
+            }
+          }
+        },
+        "clang":{"extraArgs": ["--gcc-toolchain=/usr"]},
+        "completion": {
+          "detailedLabel": true
+        },
+        "index": {
+          "onChange": false,
+          "threads": 2
+        }
+      }
+    }
+  }
+}

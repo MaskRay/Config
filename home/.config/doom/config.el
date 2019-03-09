@@ -155,6 +155,17 @@
   (add-to-list 'git-link-remote-alist '("sourceware.org" git-link-sourceware))
   )
 
+(setq isearch-lax-whitespace t)
+(setq search-whitespace-regexp ".*")
+(define-key isearch-mode-map (kbd "DEL") #'isearch-del-char)
+(defadvice isearch-search (after isearch-no-fail activate)
+  (unless isearch-success
+    (ad-disable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)
+    (isearch-repeat (if isearch-forward 'forward))
+    (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)))
+
 (def-package! link-hint
   :commands link-hint-open-link link-hint-open-all-links)
 

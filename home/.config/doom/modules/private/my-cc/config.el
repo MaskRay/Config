@@ -94,12 +94,16 @@
        ["^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
         "^/usr/(local/)?include/c\\+\\+/v1/"
         ]))
-     :index (:initialBlacklist ,+ccls-initial-blacklist :trackDependency 1)))
+     :index (:initialBlacklist ,+ccls-initial-blacklist :parametersInDeclarations :json-false :trackDependency 1)))
 
-  (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
+  (after! projectile
+   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
 
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   )
+
+(def-package! modern-cpp-font-lock
+  :hook (c++-mode . modern-c++-font-lock-mode))
 
 (def-package! llvm-mode
   :load-path "~/llvm/utils/emacs")
