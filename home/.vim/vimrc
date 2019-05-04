@@ -501,6 +501,9 @@ nmap <leader>lr <Plug>(coc-rename)
 ino <expr><tab> pumvisible() ? "\<C-y>" : "\<tab>"
 let g:coc_snippet_next = '<tab>'
 let g:coc_snippet_prev = '<S-tab>'
+let g:coc_start_at_startup = 0
+au VimEnter * if getcwd() !~ 'Dev\|llvm\|projects' | let g:coc_start_at_startup=1 | endif
+"let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
 " one-level base
 " bases
 nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>

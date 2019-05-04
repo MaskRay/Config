@@ -69,8 +69,7 @@
 
 (def-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
-  :defer t
-  :init (add-hook! (c-mode c++-mode cuda-mode objc-mode) #'+ccls//enable)
+  :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +ccls|enable)
   :config
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay

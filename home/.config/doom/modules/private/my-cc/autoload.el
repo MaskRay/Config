@@ -7,13 +7,13 @@
 (defvar +ccls-initial-blacklist [])
 
 ;;;###autoload
-(defun +ccls//enable ()
+(defun +ccls|enable ()
   (when buffer-file-name
     (require 'ccls)
     (setq-local lsp-ui-sideline-show-symbol nil)
-    (if +my-use-eglot
-        (call-interactively #'eglot)
-      (lsp))))
+    (when (string-match-p "/llvm" buffer-file-name)
+      (setq-local lsp-enable-file-watchers nil))
+    (if +my-use-eglot (call-interactively #'eglot) (lsp))))
 
 (defun ccls/callee ()
   (interactive)

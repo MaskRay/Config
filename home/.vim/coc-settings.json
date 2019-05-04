@@ -5,8 +5,8 @@
       "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
       "initializationOptions": {
         "cache": {
-          "format": "json",
-          "directory": "/tmp/ccls"
+          "format": "b",
+          "directory": ".ccls-cache"
         },
         "capabilities": {
           "foldingRangeProvider": false,
@@ -22,6 +22,7 @@
         },
         "index": {
           "onChange": false,
+          "initialNoLinkage": true,
           "threads": 2
         }
       }
