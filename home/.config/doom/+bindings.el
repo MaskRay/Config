@@ -39,6 +39,7 @@
  ;; :n "M-i" (+my/simulate-key "]")
  :n "M-;"  #'eval-expression
  :n "M-."  #'+lookup/definition
+ :n "M-f"  #'swiper
  :n "M-j"  #'+my/find-definitions
 
  :n "C-1" #'+popup/raise
@@ -121,6 +122,8 @@
      )
    (:prefix "g"
      "*" (+my/prefix-M-x "magit-")
+     :desc "Magit blame"               "b"   #'magit-blame-addition
+     :desc "Magit switch branch"       "B"   #'magit-branch-checkout
      "q" #'git-link
      )
    (:prefix "h"

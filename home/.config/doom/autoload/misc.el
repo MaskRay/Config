@@ -254,4 +254,4 @@
     (unless symbols
       (user-error "No symbol found for: %s" pattern))
     (xref--show-xrefs
-     (mapcar #'lsp--symbol-information-to-xref symbols) nil)))
+     (lambda () (mapcar #'lsp--symbol-information-to-xref symbols)) nil)))

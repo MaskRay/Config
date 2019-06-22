@@ -6,7 +6,8 @@
       "initializationOptions": {
         "cache": {
           "format": "b",
-          "directory": ".ccls-cache"
+          "directory": ".ccls-cache",
+          "hierarchicalPath": true
         },
         "capabilities": {
           "foldingRangeProvider": false,

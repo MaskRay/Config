@@ -6,8 +6,7 @@
 
 (setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
 
-(use-package atomic-chrome
-  :ensure t
+(def-package! atomic-chrome
   :defer 5                              ; since the entry of this
                                         ; package is from Chrome
   :config
@@ -122,6 +121,8 @@
     (cancel-timer flymake-posframe--timer))
   (setq flymake-posframe-timer
         (run-with-idle-timer flymake-posframe-delay nil #'flymake-posframe-display)))
+
+(def-package! frog-jump-buffer)
 
 (add-hook 'post-command-hook #'flymake-posframe-set-timer)
 (add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
@@ -276,6 +277,10 @@
   (setq ivy-initial-inputs-alist nil)
   (push '(+ivy/switch-workspace-buffer) ivy-display-functions-alist)
   )
+(after! ivy-hydra
+  ;; Override ivy/autoload/hydras.el
+  (define-key hydra-ivy/keymap "q" #'hydra-ivy/nil)
+  )
 
 (after! quickrun
   (quickrun-add-command "c++/c1z"
@@ -317,16 +322,16 @@
                                          xref-find-definitions-other-frame
                                          xref-find-references))
 
-  (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
-    ;; PATCH
-    (lsp-ui-peek--with-evil-jumps (evil-set-jump))
+  ;; (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
+  ;;   ;; PATCH
+  ;;   (lsp-ui-peek--with-evil-jumps (evil-set-jump))
 
-    ;; PATCH Jump to the first candidate
-    (if (not (cdr xrefs))
-        (xref--pop-to-location (car xrefs) display-action)
-      (funcall xref-show-xrefs-function xrefs
-               `((window . ,(selected-window))))
-      ))
+  ;;   ;; PATCH Jump to the first candidate
+  ;;   (if (not (cdr xrefs))
+  ;;       (xref-pop-to-location (car xrefs) display-action)
+  ;;     (funcall xref-show-xrefs-function xrefs
+  ;;              `((window . ,(selected-window))))
+  ;;     ))
   )
 
 (after! ivy-xref

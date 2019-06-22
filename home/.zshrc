@@ -179,6 +179,8 @@ compdef pgrep=killall
 compdef pkill=killall
 compdef proxychains=command
 
+_rsync_files () { _alternative "files:file:_files" }
+
 # ... completion
 user_complete(){
 	if [[ -z $BUFFER ]]; then

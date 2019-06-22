@@ -13,6 +13,7 @@
 
 (package! eshell-autojump)
 (package! evil-nerd-commenter)
+(package! frog-jump-buffer)
 (package! link-hint)
 (package! htmlize)
 (package! rg)
