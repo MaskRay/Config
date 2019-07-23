@@ -40,6 +40,7 @@
   ls = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
   lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
   lg = log --graph
+  news = log -p HEAD@{1}..HEAD@{0}
 
   # rebase
   rb = rebase
@@ -59,9 +60,6 @@
 
   # status
   s = status -s
-
-  # tag
-  t = tag
 
   # misc
   save-untracked = !git ls-files --others --exclude-standard -z | cpio -pmd0

@@ -18,7 +18,8 @@ if (( ! ${+WINDOWID} )) {
 # Parameters & environment variables {{{1
 WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 typeset -U path
-path=(~/bin ~/.local/bin "$path[@]")
+path=(~/bin ~/.local/bin ~/.cargo/bin ~/.yarn/bin "$path[@]")
+path=( ${(u)^path:A}(N-/) )
 
 [[ $TERM = xterm-termite ]] && export TERM=xterm-256color
 [[ $TERM = xterm ]] && export TERM=xterm-256color
@@ -273,6 +274,28 @@ function n() {
   return retcode
 }
 
+up() {
+  local op=print
+  [[ -t 1 ]] && op=cd
+  case "$1" in
+    '') up 1;;
+    -*|+*) $op ~$1;;
+    <->) $op $(printf '../%.0s' {1..$1});;
+    *) local -a seg; seg=(${(s:/:)PWD%/*})
+       local n=${(j:/:)seg[1,(I)$1*]}
+       if [[ -n $n ]]; then
+         $op /$n
+       else
+         print -u2 up: could not find prefix $1 in $PWD
+         return 1
+       fi
+  esac
+}
+
+cde() {
+  cd ${(Q)~$(emacsclient -e '(with-current-buffer (window-buffer (selected-window)) default-directory) ')}
+}
+
 # terminfo {{{1
 if ((${terminfo[khome]+1})); then
   bindkey  "${terminfo[khome]}"    beginning-of-line
@@ -332,6 +355,10 @@ bindkey '^xf' vi-find-next-char
 bindkey '^xb' vi-find-prev-char
 bindkey '^x^s' prepend-sudo
 
+autoload -Uz copy-earlier-word
+zle -N copy-earlier-word
+bindkey "^[m" copy-earlier-word
+
 # url-quote-magic {{{2
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
@@ -383,6 +410,19 @@ if [[ -s ~/.vim/bundle/fzf/shell/completion.zsh ]] then
   #__fzfcmd() {
   #  [ ${FZF_TMUX:-1} -eq 1 ] && echo "fzf-tmux -e -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf -e"
   #}
+  autoload -Uz narrow-to-region
+  function _history-incremental-preserving-pattern-search-backward
+  {
+    local state
+    MARK=CURSOR  # magick, else multiple ^R don't work
+      narrow-to-region -p "$LBUFFER${BUFFER:+>>}" -P "${BUFFER:+<<}$RBUFFER" -S state
+      zle fzf-history-widget
+      narrow-to-region -R state
+    }
+  zle -N _history-incremental-preserving-pattern-search-backward
+  bindkey "^R" _history-incremental-preserving-pattern-search-backward
+  bindkey -M isearch "^R" history-incremental-pattern-search-backward
+  bindkey "^S" history-incremental-pattern-search-forward
 fi
 
 # https://github.com/junegunn/dotfiles/blob/master/bashrc
@@ -417,8 +457,8 @@ fi
 (($+VTE_VERSION)) && source /etc/profile.d/vte.sh
 
 # Environment Modules {{{1
-if [[ -f ~/bin/modulecmd.tcl ]]; then
-  module() { eval `~/bin/modulecmd.tcl zsh $*`; }
-  module use ~/.modules
-  module load go nodejs ruby/2.4.0 rust yarn #nim wps mpi/impi
-fi
+#if [[ -f ~/bin/modulecmd.tcl ]]; then
+#  module() { eval `~/bin/modulecmd.tcl zsh $*`; }
+#  module use ~/.modules
+#  module load go nodejs rust yarn #nim wps mpi/impi
+#fi
