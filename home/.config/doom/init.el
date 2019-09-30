@@ -30,6 +30,7 @@
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE tags
+       ;;hydra
        ;;indent-guides     ; highlighted indent columns
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink the current line after jumping
@@ -39,7 +40,7 @@
         +all             ; catch all popups that start with an asterix
         +defaults)       ; default popup rules
        ;;pretty-code       ; replace bits of code with pretty symbols
-       ;;tabbar            ; FIXME an (incomplete) tab bar for Emacs
+       ;;tabs              ; an tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
@@ -58,6 +59,7 @@
        ;;parinfer          ; turn lisp into python, sort of
        rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
+       ;;word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
        (dired            ; making dired pretty [functional]
@@ -121,9 +123,10 @@
        ;;idris             ;
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
        ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
-       ;;julia             ; a better, faster MATLAB
+       julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        ;;latex             ; writing papers in Emacs has never been so fun
+       ;;lean
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
@@ -131,10 +134,10 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
-        +dragndrop       ; file drag & drop support
-        +ipython         ; ipython support for babel
-        +pandoc          ; pandoc integration into org's exporter
-        +present)        ; using Emacs for presentations
+        +dragndrop       ; drag & drop files/images into org buffers
+        +ipython         ; ipython/jupyter support for babel
+        +pandoc          ; export-with-pandoc support
+        +present)        ; using org-mode for presentations
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
@@ -146,6 +149,7 @@
        ;;ruby              ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
+       ;;scheme            ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
@@ -163,16 +167,12 @@
        ;; should be loaded late.
        :app
        ;;calendar
-       ;;irc              ; how neckbeards socialize
+       ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
-       ;;(write            ; emacs as a word processor (latex + org + markdown)
+       ;;(write            ; emacs for writers (fiction, notes, papers, etc.)
        ;; +wordnut         ; wordnet (wn) search
        ;; +langtool)       ; a proofreader (grammar/style check) for Emacs
-
-       :collab
-       ;;floobits          ; peer programming for a price
-       ;;impatient-mode    ; show off code over HTTP
 
        :config
        ;; For literate config users. This will tangle+compile a config.org
@@ -186,5 +186,20 @@
 
        :private
        my-cc
+       my-julia
        my-python
+
+       my-org
        )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values '((whitespace-line-column . 80))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

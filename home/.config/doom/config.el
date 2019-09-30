@@ -59,17 +59,26 @@
   (defun eshell/ft (&optional arg) (treemacs arg))
 
   (defun eshell/up (&optional pattern)
-    (let ((p (locate-dominating-file
-              (f-parent default-directory)
-              (lambda (p)
-                (if pattern
-                    (string-match-p pattern (f-base p))
-                  t)))
-             ))
-      (eshell/pushd p)))
-  )
+    (eshell-up pattern))
 
-(def-package! eshell-autojump)
+  (defun +my/ivy-eshell-history ()
+    (interactive)
+    (require 'em-hist)
+    (let* ((start-pos (save-excursion (eshell-bol) (point)))
+           (end-pos (point))
+           (input (buffer-substring-no-properties start-pos end-pos))
+           (command (ivy-read "Command: "
+                              (delete-dups
+                               (when (> (ring-size eshell-history-ring) 0)
+                                 (ring-elements eshell-history-ring)))
+                              :initial-input input)))
+      (setf (buffer-substring start-pos end-pos) command)
+      (end-of-line)))
+
+  (defun +my/eshell-init-keymap ()
+    (evil-define-key 'insert eshell-mode-map
+      (kbd "C-r") #'+my/ivy-eshell-history))
+  (add-hook 'eshell-first-time-mode-hook #'+my/eshell-init-keymap))
 
 ;; (setq evil-move-beyond-eol t)
 
@@ -216,6 +225,7 @@
   :config
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (setq lsp-enable-links nil)
+  (setq lsp-enable-file-watchers nil)
   (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))
   (add-hook 'evil-insert-state-exit-hook (lambda () (setq-local lsp-hover-enabled t)))
   )
@@ -321,30 +331,10 @@
                                          xref-find-definitions-other-window
                                          xref-find-definitions-other-frame
                                          xref-find-references))
-
-  ;; (defun xref--show-xrefs (xrefs display-action &optional always-show-list)
-  ;;   ;; PATCH
-  ;;   (lsp-ui-peek--with-evil-jumps (evil-set-jump))
-
-  ;;   ;; PATCH Jump to the first candidate
-  ;;   (if (not (cdr xrefs))
-  ;;       (xref-pop-to-location (car xrefs) display-action)
-  ;;     (funcall xref-show-xrefs-function xrefs
-  ;;              `((window . ,(selected-window))))
-  ;;     ))
   )
 
 (after! ivy-xref
-  ;; (defun ivy-xref-show-xrefs (xrefs alist)
-  ;;   (minibuffer-with-setup-hook #'hydra-ivy/body
-  ;;      (minibuffer-with-setup-hook #'ivy-toggle-calling
-  ;;        (ivy-read "xref: " (ivy-xref-make-collection xrefs)
-  ;;                  :require-match t
-  ;;                  :action #'(lambda (candidate)
-  ;;                              (xref--show-location (cdr candidate) 'quit))))))
-  ;; (push '(xref-find-references) ivy-display-functions-alist)
-  (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist)
-  )
+  (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist))
 
 (def-package! rust-mode
   :mode "\\.rs$"

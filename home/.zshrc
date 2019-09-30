@@ -274,6 +274,10 @@ function n() {
   return retcode
 }
 
+# up [|N|pat] -- go up 1, N or until basename matches pat many directories
+#   just output directory when not used interactively, e.g. in backticks
+# 06sep2013  +chris+
+# 11oct2017  +leah+  add completion
 up() {
   local op=print
   [[ -t 1 ]] && op=cd
@@ -291,7 +295,10 @@ up() {
        fi
   esac
 }
+_up() { compadd -V segments -- ${(Oas:/:)PWD} }
+compdef _up up
 
+# cde - cd to working directory of current emacs buffer
 cde() {
   cd ${(Q)~$(emacsclient -e '(with-current-buffer (window-buffer (selected-window)) default-directory) ')}
 }
@@ -457,8 +464,8 @@ fi
 (($+VTE_VERSION)) && source /etc/profile.d/vte.sh
 
 # Environment Modules {{{1
-#if [[ -f ~/bin/modulecmd.tcl ]]; then
-#  module() { eval `~/bin/modulecmd.tcl zsh $*`; }
-#  module use ~/.modules
-#  module load go nodejs rust yarn #nim wps mpi/impi
-#fi
+if [[ -f ~/bin/modulecmd.tcl ]]; then
+  module() { eval `~/bin/modulecmd.tcl zsh $*`; }
+  module use ~/.modules
+  module load ruby #go nodejs rust yarn #nim wps mpi/impi
+fi

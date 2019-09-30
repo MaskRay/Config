@@ -255,3 +255,19 @@
       (user-error "No symbol found for: %s" pattern))
     (xref--show-xrefs
      (lambda () (mapcar #'lsp--symbol-information-to-xref symbols)) nil)))
+
+;;;###autoload
+(cl-defun +my/open-issue-in-browser ()
+  "In magit-revision-mode, open the issue page if something like `(#123)' is in the commit message."
+  (interactive)
+  (let ((pos 1))
+    (while (setq pos (next-property-change pos))
+      (when-let* ((section (get-text-property pos 'magit-section))
+                  (_ (eq (oref section type) 'commit-message)))
+        (goto-char pos)
+        (when (re-search-forward "#[0-9]+" (line-end-position) t)
+          (browse-url (format "%s/issues/%s"
+                              (shell-command-to-string "git ls-remote --get-url")
+                              (substring (match-string 0) 1)))
+          (shell-command "wmctrl -a chrome")
+          (return-from +my/open-issue-in-browser))))))

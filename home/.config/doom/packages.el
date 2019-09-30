@@ -22,8 +22,10 @@
 (package! tldr)
 (package! try)
 
-(package! rust-mode)
-(package! lsp-rust :ignore t)
+(package! julia-repl)
+
+;; (package! rust-mode)
+;; (package! lsp-rust :ignore t)
 
 (package! function-args)
 (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))

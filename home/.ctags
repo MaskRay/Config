@@ -1,3 +1,9 @@
 --recurse=yes
 --tag-relative=yes
 --totals=yes
+--exclude=.*
+--langdef=julia
+--langmap=julia:.jl
+--regex-julia=/^[ \t]*(([^ \t.({[]+\.)*@[^ \t({[]+[ \t]+)*(function|macro|abstract type|primitive type|struct|mutable struct|module)[ \t]+([^ \t({[]+).*$/\4/f,function/
+--regex-julia=/^[ \t]*(([^ \t.({[]+\.)*@[^ \t({[]+[ \t]+)*(([^@#$ \t({[]+)|\(([^@#$ \t({[]+)\))[ \t]*[ \t]*\([^#]*\)([ \t]+where[ \t]+\{.*\})?[ \t]*=([^=].*)?$/\4\5/f,function/
+--regex-julia=/^(([^ \t.({[]+\.)*@[^ \t({[]+[ \t]+)*(const[ \t]+)?(([^ \t.({[]+\.)*@[^ \t({[]+[ \t]+)*([^@#$ \t({[]+)[ \t]*=([^=].*)?$/\6/v,variable/

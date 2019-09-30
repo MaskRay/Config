@@ -88,6 +88,8 @@
    :n "m" (λ! (ccls/member 0))   ; other => member variables
    :n "M" #'ccls-member-hierarchy
 
+   :n "l" #'julia-repl-send-region-or-line
+
    :n "L" #'ccls-code-lens-mode
    :n "t" #'lsp-goto-type-definition
    ;; https://github.com/maskray/ccls/blob/master/src/messages/ccls_vars.cc#L15
@@ -205,6 +207,10 @@
      "RET"        nil
      [return]     nil
      "SPC"        nil))
+
+ (:after magit
+   (:map magit-revision-mode-map
+     "gq"        #'+my/open-issue-in-browser))
 
  (:after realgud
    (:map realgud-track-mode-map
