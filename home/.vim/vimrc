@@ -325,6 +325,7 @@ if 1
   so ~/.vim/bundle/vim-plug/plug.vim
   call plug#begin('~/.vim/bundle')
 
+  Plug 'liuchengxu/vim-clap'
   Plug 'sakhnik/nvim-gdb'
   Plug 'kana/vim-arpeggio'
   Plug 'kopischke/vim-fetch'
@@ -462,7 +463,7 @@ let g:LanguageClient_serverCommands = {
       \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
       \ }
 let g:LanguageClient_autoStart = 0
-let g:LanguageClient_hasSnippetSupport = 0
+"let g:LanguageClient_hasSnippetSupport = 0
 let g:LanguageClient_completionPreferTextEdit = 1
 "let g:LanguageClient_devel = 1
 "nn ga :call LanguageClient#workspace_symbol(input('workspace/symbol '))<cr>
@@ -483,8 +484,8 @@ augroup coc_config
   au!
   au BufEnter * let b:Plugin_coc_started = 0
   au User CocNvimInit let b:Plugin_coc_started = 1
-  au CursorHold * if b:Plugin_coc_started | sil call CocActionAsync('highlight') | endif
-  au CursorHoldI * if b:Plugin_coc_started | sil call CocActionAsync('showSignatureHelp') | endif
+  au CursorHold *.c,*.cc,*.cpp if b:Plugin_coc_started | sil call CocActionAsync('highlight') | endif
+  au CursorHoldI *.c,*.cc,*.cpp if b:Plugin_coc_started | sil call CocActionAsync('showSignatureHelp') | endif
 augroup END
 nmap <silent> <M-j> <Plug>(coc-definition)
 nmap <silent> <C-,> <Plug>(coc-references)

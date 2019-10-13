@@ -19,7 +19,11 @@
         },
         "clang":{"extraArgs": ["--gcc-toolchain=/usr"]},
         "completion": {
-          "detailedLabel": true
+          "detailedLabel": true,
+          "placeholder": false
+        },
+        "client": {
+          "snippetSupport": true
         },
         "index": {
           "onChange": false,
@@ -27,6 +31,11 @@
           "threads": 2
         }
       }
+    },
+
+    "lua-language-server": {
+      "command": "lua-language-server",
+      "filetypes": ["lua"]
     }
   }
 }
