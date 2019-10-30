@@ -3,12 +3,8 @@
     "ccls": {
       "command": "ccls.debug",
       "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "rootPatterns": [".ccls-root"],
       "initializationOptions": {
-        "cache": {
-          "format": "b",
-          "directory": ".ccls-cache",
-          "hierarchicalPath": true
-        },
         "capabilities": {
           "foldingRangeProvider": false,
           "workspace": {
@@ -20,7 +16,7 @@
         "clang":{"extraArgs": ["--gcc-toolchain=/usr"]},
         "completion": {
           "detailedLabel": true,
-          "placeholder": false
+          "placeholder": true
         },
         "client": {
           "snippetSupport": true

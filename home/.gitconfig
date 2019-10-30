@@ -95,6 +95,8 @@
   tool = vimdiff
 #[mergetool "vimdiffnice"]
 #  cmd = vimdiff -c \"wincmd J\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
+[pull]
+  rebase = true
 [push]
   default = simple
 [url "git://github.com/"]

@@ -7,6 +7,7 @@
 (package! eglot)
 (package! lispyville)
 (package! lsp-mode :ignore t)
+(package! lsp-treemacs :ignore t)
 (package! lsp-ui :ignore t)
 (package! company-lsp :ignore t)
 (package! spinner)                      ; required by lsp-mode
@@ -28,6 +29,6 @@
 ;; (package! lsp-rust :ignore t)
 
 (package! function-args)
-(package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
+;; (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
 
 (disable-packages! company-prescient)

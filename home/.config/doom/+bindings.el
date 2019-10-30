@@ -42,6 +42,7 @@
  :n "M-f"  #'swiper
  :n "M-j"  #'+my/find-definitions
 
+ :n [tab]  #'evil-window-next
  :n "C-1" #'+popup/raise
  :n "C-c a" #'org-agenda
  :n "C-,"  #'+my/find-references

@@ -6,7 +6,7 @@
 
 (setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
 
-(def-package! atomic-chrome
+(use-package! atomic-chrome
   :defer 5                              ; since the entry of this
                                         ; package is from Chrome
   :config
@@ -26,7 +26,7 @@
 
   (atomic-chrome-start-server))
 
-(def-package! avy
+(use-package! avy
   :commands (avy-goto-char-timer)
   :init
   (setq avy-timeout-seconds 0.2)
@@ -40,7 +40,7 @@
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
 
-(def-package! company-lsp
+(use-package! company-lsp
   :load-path "~/Dev/Emacs/company-lsp"
   :after lsp-mode
   :config
@@ -50,7 +50,7 @@
 
 (set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
 
-(def-package! eglot)
+(use-package! eglot)
 
 (after! eshell
   (defun eshell/l (&rest args) (eshell/ls "-l" args))
@@ -82,7 +82,7 @@
 
 ;; (setq evil-move-beyond-eol t)
 
-(def-package! evil-nerd-commenter
+(use-package! evil-nerd-commenter
   :commands (evilnc-comment-or-uncomment-lines)
   )
 
@@ -131,7 +131,7 @@
   (setq flymake-posframe-timer
         (run-with-idle-timer flymake-posframe-delay nil #'flymake-posframe-display)))
 
-(def-package! frog-jump-buffer)
+(use-package! frog-jump-buffer)
 
 (add-hook 'post-command-hook #'flymake-posframe-set-timer)
 (add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
@@ -176,7 +176,7 @@
     (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
     (ad-activate 'isearch-search)))
 
-(def-package! link-hint
+(use-package! link-hint
   :commands link-hint-open-link link-hint-open-all-links)
 
 (after! lispy
@@ -219,7 +219,7 @@
       :localleader
       :n "x" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil))))
 
-(def-package! lsp-mode
+(use-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
   :config
@@ -234,7 +234,10 @@
   ;; (remhash 'clangd lsp-clients)
   )
 
-(def-package! lsp-ui
+(use-package! lsp-treemacs
+  :load-path "~/Dev/Emacs/lsp-treemacs")
+
+(use-package! lsp-ui
   :load-path "~/Dev/Emacs/lsp-ui"
   :commands lsp-ui-mode
   :config
@@ -336,7 +339,7 @@
 (after! ivy-xref
   (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist))
 
-(def-package! rust-mode
+(use-package! rust-mode
   :mode "\\.rs$"
   :config
   (map! :map rust-mode-map
@@ -345,12 +348,12 @@
         )
   )
 
-(def-package! smart-forward)
+(use-package! smart-forward)
 
-(def-package! symbol-overlay
+(use-package! symbol-overlay
   :commands (symbol-overlay-put))
 
-(def-package! lsp-rust
+(use-package! lsp-rust
   :defer t
   :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
   :config
@@ -390,9 +393,9 @@
 
 (add-hook! python-mode #'lsp)
 
-(def-package! rg)
+(use-package! rg)
 
-(def-package! smartparens
+(use-package! smartparens
   :config
   (setq sp-autoinsert-pair nil
         sp-autodelete-pair nil
@@ -400,7 +403,7 @@
   (setq-default sp-autoskip-closing-pair nil)
   )
 
-(def-package! tldr
+(use-package! tldr
   :commands (tldr)
   :config
   (setq tldr-directory-path (concat doom-etc-dir "tldr/"))

@@ -192,6 +192,13 @@ fu! ToggleUnwantedWhitespaces()
   endif
   call MatchUnwantedWhitespaces()
 endf
+fu! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endf
 " Autocommands ---------------------------------------- {{{1
 if has("autocmd")
   aug Fortran_support
@@ -268,6 +275,9 @@ endif
 aug C
   au!
   au FileType c,cpp :call C_init()
+aug D
+  au!
+  au FileType d :call D_init()
 " GP {{{2
 aug GP
   au!
@@ -338,7 +348,6 @@ if 1
   Plug 'tpope/vim-endwise'
   Plug 'tpope/vim-eunuch'
   Plug 'tpope/vim-unimpaired'
-  Plug 'benmills/vimux'
   Plug 'vim-scripts/VisIncr'
   Plug 'romainl/vim-qf'
   Plug 'hecal3/vim-leader-guide'
@@ -482,22 +491,22 @@ let g:LanguageClient_completionPreferTextEdit = 1
 set updatetime=300
 augroup coc_config
   au!
-  au BufEnter * let b:Plugin_coc_started = 0
-  au User CocNvimInit let b:Plugin_coc_started = 1
-  au CursorHold *.c,*.cc,*.cpp if b:Plugin_coc_started | sil call CocActionAsync('highlight') | endif
-  au CursorHoldI *.c,*.cc,*.cpp if b:Plugin_coc_started | sil call CocActionAsync('showSignatureHelp') | endif
+  "au User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  "au CursorHold * sil call CocActionAsync('highlight')
+  "au CursorHoldI * sil call CocActionAsync('showSignatureHelp')
 augroup END
 nmap <silent> <M-j> <Plug>(coc-definition)
 nmap <silent> <C-,> <Plug>(coc-references)
-nn <silent> K :call CocAction('doHover')<cr>
-nn <silent> <leader>si :<C-u>CocList -I outline<cr>
+nn <silent> K :call <SID>show_documentation()<cr>
+nn <silent> <leader>si :<C-u>CocList outline<cr>
 nmap <silent> <leader>en <Plug>(coc-diagnostic-next)
 nmap <silent> <leader>ep <Plug>(coc-diagnostic-prev)
 nn <silent> ga :<C-u>CocList -I symbols<cr>
 nn <leader>l= :call CocAction('format')<cr>
 nmap <leader>la <Plug>(coc-codeaction)
 nn <silent> <leader>lc :call CocAction('codeLens')<cr>
-nmap <leader>lf <Plug>(coc-format-selected)
+nn <leader>le :<C-u>CocList diagnostics<cr>
+nmap <leader>lf <Plug>(coc-fix-current)
 nmap <leader>lr <Plug>(coc-rename)
 ino <expr><tab> pumvisible() ? "\<C-y>" : "\<tab>"
 let g:coc_snippet_next = '<tab>'
@@ -673,6 +682,10 @@ fu! CSS_init()
   setl dictionary=~/.vim/dict/css
 endf
 
+fu! D_init()
+  nn <buffer> <leader>aa :VimuxRunCommand 'make && ./<C-r>=expand("%:r")<cr>'<cr>
+endf
+
 fu! Fortran_init()
   let g:fortran_free_source = 1
 endf
@@ -759,6 +772,8 @@ nn <leader>ft :VimFilerExplorer -winwidth=20<cr>
 nn <leader>fT :VimFilerExplorer -winwidth=30<cr>
 nn <leader>fy :let @*=expand('%:p')<Bar>echo @*<cr>
 " nmap <leader>g (fugitive) {{{4
+nmap <leader>g[ <Plug>GitGutterPrevHunk
+nmap <leader>g] <Plug>GitGutterNextHunk
 nn <leader>gb :Gblame<cr>
 nn <leader>gc :Gcd<cr>
 nn <leader>gd :Gdiff<cr>
@@ -883,8 +898,6 @@ nn / ms/
 nn <silent><Tab> :wincmd w<cr>
 nn <silent><S-Tab> :wincmd p<cr>
 nn <silent><C-l> :nohls<cr><C-r>=has('diff')?'<Bar>diffupdate':''<cr><Bar>redraw!<cr>
-nn [C <Plug>GitGutterPrevHunk
-nn ]C <Plug>GitGutterNextHunk
 nmap <C-c><C-c> <Plug>SlimeParagraphSend
 "nn <silent> <F9> :echo "hi<".synIDattr(synID(line("."),col("."),1),"name"). '> trans<'.synIDattr(synID(line("."),col("."),0),"name"). "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<cr>
 nn <silent> <F9> :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>

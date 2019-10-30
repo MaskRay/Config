@@ -587,7 +587,7 @@ myKeys =
     ] ++
     searchBindings
 
-mlterm prog = ("mlterm -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
+kitty prog = ("kitty -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
@@ -723,7 +723,7 @@ myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
   , Project wsGen "~" . Just $ spawn (termite "tmux new -As default")
-  , Project wsIM "~" . Just $ spawn "termite -e 'env SSH_AUTH_SOCK= ssh -tX linode-ca \"tmux new -As weechat\"'"
+  , Project wsIM "~" . Just $ spawn (termite "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
   , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux new -As ida")

@@ -4,7 +4,7 @@
   (add-hook! julia-mode #'lsp)
   )
 
-(def-package! lsp-julia
+(use-package! lsp-julia
   :load-path "~/Dev/Emacs/lsp-julia"
   :hook ((julia-mode) . lsp)
   :init

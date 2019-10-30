@@ -63,11 +63,11 @@
      ))
   )
 
-(def-package! clang-format
+(use-package! clang-format
   :commands (clang-format-region)
   )
 
-(def-package! ccls
+(use-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +ccls|enable)
   :config
@@ -101,14 +101,14 @@
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   )
 
-(def-package! modern-cpp-font-lock
+(use-package! modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
-(def-package! llvm-mode
-  :load-path "~/llvm/utils/emacs")
+(use-package! llvm-mode
+  :load-path "~/llvm/llvm/utils/emacs")
 
-(def-package! tablegen-mode
-  :load-path "~/llvm/utils/emacs"
+(use-package! tablegen-mode
+  :load-path "~/llvm/llvm/utils/emacs"
   :defer t
   :mode "\\.td\\'"
   :config
