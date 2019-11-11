@@ -48,6 +48,15 @@
   (set-company-backend! 'lsp-mode 'company-lsp)
   )
 
+(after! d-mode
+  (require 'lsp)
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection "dls")
+    :major-modes '(d-mode)
+    :priority -1
+    :server-id 'ddls)))
+
 (set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
 
 (use-package! eglot)

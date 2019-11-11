@@ -23,8 +23,10 @@
 (package! tldr)
 (package! try)
 
+(package! d-mode)
 (package! julia-repl)
 
+(package! racer :disable t)
 ;; (package! rust-mode)
 ;; (package! lsp-rust :ignore t)
 

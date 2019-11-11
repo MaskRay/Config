@@ -366,10 +366,6 @@ if 1
     "Plug 'autozimu/LanguageClient-neovim', {
     "  \ 'branch': 'next',
     "  \ }
-    "Plug 'roxma/nvim-yarp'
-    "Plug 'ncm2/ncm2'
-    "Plug 'ncm2/ncm2-ultisnips'
-    Plug 'kassio/neoterm'
     "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   endif
   Plug 'justinmk/vim-sneak'
@@ -400,13 +396,12 @@ if 1
   Plug 'mhinz/vim-grepper'
   Plug 'w0rp/ale'
   Plug 'terryma/vim-expand-region'
-  Plug 'terryma/vim-multiple-cursors'
-  Plug 'thinca/vim-quickrun'
   Plug 'tommcdo/vim-exchange'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-surround'
   Plug 'AndrewRadev/linediff.vim'
+  Plug 'neomake/neomake'
 
   " Languages
   "" Go
@@ -414,7 +409,6 @@ if 1
   Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
   Plug 'mattn/emmet-vim'
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-  Plug 'zah/nim.vim', { 'for': 'nim' }
   Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
   Plug 'python-mode/python-mode', { 'for': 'python' }
   Plug 'chrisbra/csv.vim', { 'for': 'csv' }
@@ -913,18 +907,7 @@ ino <C-Y> <C-C>:let @z = @"<CR>mz
       \:exec 'normal!' (col('.')==1 && col('$')==1 ? 'k' : 'kl')<CR>
       \:exec (col('.')==col('$') - 1 ? 'let @" = @_' : 'normal! yw')<CR>
       \`zp:let @" = @z<CR>a
-" imap {{{2
-fu! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endf
-"imap <silent><expr> <tab> <SID>check_back_space() ? "\<TAB>" : coc#refresh()
 inoremap <expr><C-h> deoplete#mappings#smart_close_popup()."\<C-h>"
-" imap C- {{{3
-ino <C-h> <C-o><C-w>h
-ino <C-j> <C-o><C-w>j
-ino <C-k> <C-o><C-w>k
-ino <C-l> <C-o><C-w>l
 " visual shifting (does not exit Visual mode)
 vn < <gv
 vn > >gv
