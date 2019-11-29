@@ -55,7 +55,9 @@
     :new-connection (lsp-stdio-connection "dls")
     :major-modes '(d-mode)
     :priority -1
-    :server-id 'ddls)))
+    :server-id 'ddls))
+  (add-hook 'd-mode-hook #'lsp)
+  )
 
 (set-lookup-handlers! 'emacs-lisp-mode :documentation #'helpful-at-point)
 
