@@ -237,6 +237,7 @@
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (setq lsp-enable-links nil)
   (setq lsp-enable-file-watchers nil)
+  (setq lsp-keep-workspace-alive nil)
   (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))
   (add-hook 'evil-insert-state-exit-hook (lambda () (setq-local lsp-hover-enabled t)))
   )

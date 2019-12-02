@@ -1,9 +1,0 @@
-set folder=~/Maildir
-unmailboxes *
-mailboxes =INBOX =Tuna =ML =School =Work =Sent
-set sendmail="/usr/sbin/sendmail"
-set spoolfile=+INBOX \
-    postponed=+Drafts \
-    from=i@maskray.me
-#   smtp_url=smtps://emacsray@smtp.gmail.com \
-#   smtp_pass=$imap_pass \

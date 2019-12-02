@@ -22,8 +22,6 @@ set pager_context = 5
 set pager_index_lines = 5
 set pager_stop
 set pipe_decode
-#set query_command="echo; grep 'alias.*'%s ~/.mutt/aliases | cut -d' ' -f3-"
-set query_command="echo; recsel -ie 'Alias ~ \"'%s'\"' ~/.mutt/contacts.rec | recfmt '{{Name}} <{{Email}}>%' | tr % '\n'"
 set quit
 set read_inc=100
 set realname="Ray Song"
@@ -96,7 +94,7 @@ bind index,pager N search-opposite
 bind index,pager <esc>k sidebar-prev
 bind index,pager <esc>j sidebar-next
 bind index,pager <esc>o sidebar-open
-macro index,pager B '<enter-command>toggle sidebar_visible<enter>'
+bind index,pager B sidebar-toggle-visible
 macro index,pager \Cx0 "<enter-command>source ~/.mutt/local<enter>"
 macro index,pager \Cx1 "<enter-command>source ~/.mutt/remote<enter>"
 macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"

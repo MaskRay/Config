@@ -18,10 +18,9 @@ UNAME=$(uname)
 alias sudo='sudo ' # zsh: next word is elligible for alias expansion
 alias L=less
 alias d='dirs -v'
-alias eg='egrep --color=auto -I'
-alias g='grep --color=auto -I'
-alias l="ls -l"
+alias l="exa -l"
 alias la='l -A'
+alias le=exa
 alias lh='l -lh'
 alias mk=make
 alias ni=ninja
