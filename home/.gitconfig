@@ -35,8 +35,8 @@
   gr = grep -Ii
 
   # log
-  l = log
-  lp = log -p
+  l = log --date=local --format='format:%C(yellow)commit %H%C(auto)%d%n%C(white)Author: %an <%ae>%nDate:   %cd%n%n%w(0,4,4)%C(bold cyan)%B'
+  lp = l -p
   ls = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
   lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
   lg = log --graph
