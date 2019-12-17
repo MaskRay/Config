@@ -432,6 +432,8 @@
     (ignore-errors (apply orig-fn args)))
   (advice-add 'nav-flash-show :around #'+advice/nav-flash-show))
 
+(setq which-key-idle-delay 0)
+
 (set-popup-rules! '(
   ("^\\*helpful" :size 0.4)
   ("^\\*info.*" :size 80 :size right)

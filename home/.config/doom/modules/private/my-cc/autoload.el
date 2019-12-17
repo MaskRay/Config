@@ -7,8 +7,11 @@
 (defvar +ccls-initial-blacklist [])
 
 ;;;###autoload
+(defvar +lsp-blacklist nil)
+
+;;;###autoload
 (defun +ccls|enable ()
-  (when buffer-file-name
+  (when (and buffer-file-name (--all? (not (string-match-p it buffer-file-name)) +lsp-blacklist))
     (require 'ccls)
     (setq-local lsp-ui-sideline-show-symbol nil)
     (when (string-match-p "/llvm" buffer-file-name)
