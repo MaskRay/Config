@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Dot
+Exec=dot -T xlib %F
+Type=Application
+NoDisplay=true
+MimeType=application/msword-template

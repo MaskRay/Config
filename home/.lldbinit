@@ -1,8 +1,5 @@
 settings set target.x86-disassembly-flavor intel
 
-command script import ~/.lldb/python/parray.py
-command script add --function parray.parray parray
-
 # 't' was an abbreviation for 'thread select'
 command unalias t
 command regex t 's/^([0-9]+)[[:space:]]*$/thread select %1/' 's/(.*)/thread %1/'
