@@ -1,6 +1,6 @@
 # Headers {{{1
 ignore *
-unignore from to cc bcc reply-to mail-followup-to date organization message-id return-path user-agent x-mailer x-url
+unignore from to cc bcc date organization
 unhdr_order *
 hdr_order From: To: Cc: Subject: Date:
 
