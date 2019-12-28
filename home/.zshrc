@@ -241,6 +241,7 @@ alias fob=fllvm-objdump
 alias fre=fllvm-readelf
 alias mylit=myllvm-lit
 alias lobj='fllvm-mc -filetype=obj'
+function arcfilter() { git log -1 --pretty=%B | awk '/Reviewers:|Subscribers:/{p=1} /Reviewed By:|Differential Revision:/{p=0} !p && !/^Summary:/' | git commit --amend -F -; }
 
 for i in gb gf gh gr gt; do
   zle -N $i
