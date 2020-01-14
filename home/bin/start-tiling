@@ -19,4 +19,4 @@ xsetroot -cursor_name left_ptr
 xkbcomp -synch -w3 -I$HOME/.config/xkb ~/.config/xkb/keymap/my.xkb $DISPLAY
 # Restart xcape.service
 # Weird, xcape can not run too early.
-(sleep 5; systemctl --user restart xcape) &
+(sleep 5; xcape -e 'Control_L=Escape;Hyper_L=Tab;Hyper_R=backslash') &
