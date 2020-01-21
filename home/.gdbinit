@@ -9,7 +9,7 @@ set history save on
 set history size 100000
 set history filename ~/.history/gdb
 set history expansion on
-set disassembly-flavor intel
+#set disassembly-flavor intel
 #set output-radix 16
 
 # prevent "Type <return> to continue"

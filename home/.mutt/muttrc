@@ -179,7 +179,7 @@ set crypt_verify_sig = yes
 set editor="vim +'norm }' +'norm o' %s" # insert mode
 #auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
 auto_view application/* image/* text/html
-alternative_order text/html text/plain
+alternative_order text/plain text/html
 mime_lookup application/octet-stream
 
 charset-hook gb2312 gbk

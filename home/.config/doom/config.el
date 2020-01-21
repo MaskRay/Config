@@ -144,8 +144,8 @@
 
 (use-package! frog-jump-buffer)
 
-(add-hook 'post-command-hook #'flymake-posframe-set-timer)
-(add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
+;; (add-hook 'post-command-hook #'flymake-posframe-set-timer)
+;; (add-hook! (doom-exit-buffer doom-exit-window) #'flymake-posframe-hide)
 
 (after! git-link
   (defun git-link-llvm (hostname dirname filename branch commit start end)
@@ -236,6 +236,7 @@
   :config
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (setq lsp-enable-links nil)
+  (setq lsp-prefer-flymake nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-keep-workspace-alive nil)
   (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))

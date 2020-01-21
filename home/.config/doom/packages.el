@@ -13,8 +13,10 @@
 (package! spinner)                      ; required by lsp-mode
 
 (package! eshell-autojump)
+(package! evil-collection)
 (package! evil-nerd-commenter)
 (package! frog-jump-buffer)
+(package! git-link)
 (package! link-hint)
 (package! htmlize)
 (package! rg)
