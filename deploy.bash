@@ -4,7 +4,7 @@ set -e
 files=($(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee|weechat'))
 target=~
 LN_OPT=-sf
-[[ $(uname -s) == Linux ]] && LN_OPT=-sfr
+[[ $(ln --version) =~ coreutils ]] && LN_OPT=-sfr
 
 declare -A dir
 dir[.vim]=1
@@ -29,11 +29,14 @@ link() {
 
 do_ssh() {
   #cp -auT home/.ssh ~/.ssh
-  chmod 700 ~/.ssh
-  chmod 600 ~/.ssh/*
+  if [[ -d ~/.ssh ]]; then
+    chmod 700 ~/.ssh
+    chmod 600 ~/.ssh/*
+  fi
 }
 
 do_mkdir() {
+  [[ -f ~/.history ]] && rm -i ~/.history
   mkdir -p ~/{.history,tmp}
   mkdir -p ~/.vimtmp/{backup,swap,undo}
   mkdir -p ~/Wallpapers ~/.local/opt
@@ -46,6 +49,10 @@ do_git() {
     git clone https://github.com/junegunn/vim-plug ~/.vim/bundle/vim-plug
   fi
 }
+
+do_mkdir
+do_ssh
+do_git
 
 for f in "${!dir[@]}"; do
   g="$target/${f/home\//}"
@@ -106,7 +113,3 @@ for f in ${files[@]}; do
     link "$f" "$g"
   fi
 done
-
-do_ssh
-do_mkdir
-do_git
