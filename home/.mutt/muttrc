@@ -25,6 +25,7 @@ set pipe_decode
 set quit
 set read_inc=100
 set realname="Ray Song"
+set reply_to=yes
 set resolve
 set reverse_alias
 set reverse_name
@@ -38,7 +39,6 @@ set text_flowed
 set timeout = 3
 unset mark_old
 unset markers
-unset reply_to
 unset sort_re
 unset wait_key
 
@@ -65,6 +65,7 @@ set record = ~/Maildir/Sent
 # Sidebar {{{1
 set sidebar_width = 20
 set sidebar_visible
+set sidebar_format = "%B%* %?N?%N?"
 
 # Bindings {{{1
 macro index a "<limit>all\n" "show all messages (undo limit)"
