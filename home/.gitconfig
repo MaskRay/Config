@@ -35,10 +35,10 @@
   gr = grep -Ii
 
   # log
-  l = log --date=local --format='format:%C(yellow)commit %H%C(auto)%d%n%C(white)Author: %an <%ae>%nDate:   %cd%n%n%w(0,4,4)%C(bold cyan)%B'
+  l = log --pretty=mine
   lp = l -p
   ls = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
-  lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
+  lc = log --graph --abbrev-commit --date=relative
   lg = log --graph
   news = log -p HEAD@{1}..HEAD@{0}
 
@@ -89,12 +89,18 @@
   xfuncname="^(\\((def|test).*)$"
 [diff "python"]
   xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"
+[format]
+  pretty = mine
 [github]
   user = MaskRay
+[log]
+  date = local
 [merge]
   tool = vimdiff
 #[mergetool "vimdiffnice"]
 #  cmd = vimdiff -c \"wincmd J\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
+[pretty]
+  mine = format:%C(yellow)commit %H%C(auto)%d%n%C(white)Author: %an <%ae>%nDate:   %cd%n%n%w(0,4,4)%C(bold cyan)%B
 [pull]
   rebase = true
 [push]
