@@ -187,7 +187,7 @@
 
        :private
        my-cc
-       my-julia
+       ;; my-julia
        my-python
 
        my-org
