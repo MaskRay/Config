@@ -462,11 +462,11 @@ elif [[ -s '/usr/share/doc/pkgfile/command-not-found.zsh' ]]; then
   source '/usr/share/doc/pkgfile/command-not-found.zsh'
 fi
 
-(($+VTE_VERSION)) && source /etc/profile.d/vte.sh
+#(($+VTE_VERSION)) && source /etc/profile.d/vte.sh
 
 # Environment Modules {{{1
 if [[ -f ~/bin/modulecmd.tcl ]]; then
   module() { eval `~/bin/modulecmd.tcl zsh $*`; }
   module use ~/.modules
-  module load ruby #go nodejs rust yarn #nim wps mpi/impi
+  module load ruby/2.5.0 #go nodejs rust yarn #nim wps mpi/impi
 fi

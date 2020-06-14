@@ -135,10 +135,20 @@ if idents_use.member? 'ri' or idents_use.member? 'rd' or idents_use.member? 'rl'
   headers_use << 'cstdio'
 end
 
+def is_c_header h
+  h.start_with?('c') && !['complex', 'chrono'].member?(h)
+end
+
+c_header = nil
+if headers_use.all? {|x| is_c_header x}
+  c_header = true
+  headers_use.map! {|x| is_c_header(x) ? x[1..-1]+'.h' : x}
+end
+
 for x in headers_use.to_a.sort
   out << "#include <#{x}>"
 end
-out << 'using namespace std;' unless headers_use.empty?
+out << 'using namespace std;' unless c_header or headers_use.empty?
 out << 'using namespace std::placeholders;' if idents_use.member? '_1'
 
 if idents_use.member? 'rb_tree_tag'
@@ -160,8 +170,7 @@ end
 out << '' if ! out.empty? && ! idents.empty?
 
 if idents_use.member? 'ri'
-  out.push << 'int ri()
-{
+  out.push << 'int ri() {
   int x;
   scanf("%d", &x);
   return x;
@@ -170,8 +179,7 @@ if idents_use.member? 'ri'
 end
 
 if idents_use.member? 'rl'
-  out.push << %{long rl()
-{
+  out.push << %{long rl() {
   long x;
   scanf(#{idents_use.member?('PRId64') ? '"%" SCNd64' : ARGV.empty? ? '"%ld"' : '"%lld"'}, &x);
   return x;
@@ -180,8 +188,7 @@ if idents_use.member? 'rl'
 end
 
 if idents_use.member? 'rd'
-  out.push << 'double rd()
-{
+  out.push << 'double rd() {
   double x;
   scanf("%lf", &x);
   return x;
