@@ -576,12 +576,12 @@ myKeys =
     -- prompts
     , ("M-y b", windowPromptBring myXPConfig)
     , ("M-y c", mainCommandPrompt myXPConfig)
-    , ("M-y d", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
+    , ("M-y d", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
     , ("M-y e", spawn "~/Dev/Util/rofimoji/rofimoji.py")
-    , ("M-y p", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
-    , ("M-y r", spawn "rofi -sort -matching fuzzy -show run")
+    , ("M-y p", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
+    , ("M-y r", spawn "rofi -sort -sorting-method fzf -show run")
     , ("M-<Space>", spawn "rofi -sort -matching fuzzy -show run")
-    , ("M-y t", spawn "rofi -sort -matching fuzzy -show file -modi file:\"rofi-file-browser /tmp\"")
+    , ("M-y t", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser /tmp\"")
     , ("M-y v", spawn "pavucontrol")
     , ("M-y m", spawn "menu")
     ] ++
@@ -722,7 +722,7 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn (termite "tmux new -As default")
+  , Project wsGen "~" . Just $ spawn (termite "zsh -ic \"tmux new -As default\"")
   , Project wsIM "~" . Just $ spawn (termite "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
