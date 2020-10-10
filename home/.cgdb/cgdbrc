@@ -22,10 +22,12 @@ map E :set<Space>nodis<CR>
 map f :finish<CR>
 # n : next
 map n :next<CR>
+map N ireverse-next<CR>
 # o : open file dialog
 # r : run
 map r :run<CR>
 map s :step<CR>
+map S ireverse-step<CR>
 # t : temp Breakpoint
 map t it<Space>
 map u :up<CR>
