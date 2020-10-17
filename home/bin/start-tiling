@@ -10,7 +10,7 @@ dunst &
 xrdb ~/.Xresources
 syndaemon -t -k &
 xset r rate 200 50
-compton -cC &
+picom -cC &
 copyq &
 xsetroot -cursor_name left_ptr
 

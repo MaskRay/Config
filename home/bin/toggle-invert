@@ -1,8 +1,8 @@
 #!/bin/zsh
 if pgrep -f 'compton --glx-no-stencil'; then
-  pkill compton
-  compton &
+  pkill picom
+  picom &
 else
-  pkill compton
-  compton --glx-no-stencil --invert-color-include r:e:browser --invert-color-include 'g:p:IDA|idaq|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &
+  pkill picom
+  picom --glx-no-stencil --invert-color-include r:e:browser --invert-color-include 'g:p:IDA|idaq|Wps|Wpp|libreoffice|GoldenDict|com-mathworks-util-PostVMInit|Skype|Telegram|Zeal' &
 fi
