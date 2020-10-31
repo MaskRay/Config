@@ -1,0 +1,8 @@
+xterm-24bits|xterm with 24-bit direct color mode,
+  use=xterm-256color,
+  setb24=\E[48;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
+  setf24=\E[38;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
+
+tmux-24bits|tmux with 24-bit colors and italics,
+ use=tmux-256color,
+ Tc,

@@ -5,6 +5,7 @@
 (load! "+ui")
 
 (setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
+(setq doom-theme 'my-doom-one)
 
 (use-package! atomic-chrome
   :defer 5                              ; since the entry of this

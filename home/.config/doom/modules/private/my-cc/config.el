@@ -70,7 +70,15 @@
 (use-package! ccls
   :load-path "~/Dev/Emacs/emacs-ccls"
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +ccls|enable)
+  :init
+  (after! projectile
+    (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
+    (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root"))
+  ;; Avoid using `:after' because it ties the :config below to when `lsp-mode'
+  ;; loads, rather than `ccls' loads.
+  (after! lsp-mode (require 'ccls))
   :config
+  (evil-set-initial-state 'ccls-tree-mode 'emacs)
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
   (setq ccls-sem-highlight-method 'font-lock)
@@ -95,10 +103,6 @@
         ]))
      :index (:initialBlacklist ,+ccls-initial-blacklist :parametersInDeclarations :json-false :trackDependency 1)))
 
-  (after! projectile
-   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache"))
-
-  (evil-set-initial-state 'ccls-tree-mode 'emacs)
   )
 
 (use-package! modern-cpp-font-lock
