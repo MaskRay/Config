@@ -1,7 +1,8 @@
 # vim: set ft=sh fdm=marker:
 
-UNAME=$(uname)
-if [[ $UNAME == Linux ]]; then
+GNU=
+[[ $(ls --version) =~ coreutils ]] && GNU=1
+if [[ -n $GNU ]]; then
   alias ls=$'ls -XF --group-directories-first --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
 else
   alias ls="ls -F"
@@ -35,7 +36,7 @@ alias which='which -a'
 ## with common options
 alias cp='cp -iv'
 alias df='df -Th'
-if [[ $UNAME == Linux ]]; then
+if [[ -n $GNU ]]; then
   alias rm='rm -v --one-file-system' # -d since coreutils-8.19, `rm -rf` is evil
 else
   alias rm='rm -v'
