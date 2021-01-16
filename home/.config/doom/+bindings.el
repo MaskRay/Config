@@ -106,7 +106,7 @@
  )
 
 (map! :leader
-   "SPC" #'+ivy/switch-workspace-buffer
+   "SPC" #'frog-jump-buffer
    ;; :n "M-u" (+my/simulate-key "SPC [")
    ;; :n "M-i" (+my/simulate-key "SPC ]")
    (:prefix ("a" . "app")

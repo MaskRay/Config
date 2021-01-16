@@ -35,4 +35,6 @@
 (package! function-args)
 ;; (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
 
+(package! selectrum)
+
 (disable-packages! company-prescient)
