@@ -174,7 +174,8 @@ set crypt_replyencrypt = yes
 set crypt_replysignencrypted = yes
 
 # Attempt to verify email signatures automatically
-set crypt_verify_sig = yes
+# set crypt_verify_sig = yes
+unset crypt_verify_sig
 
 # Misc {{{1
 set editor="vim +'norm }' +'norm o' %s" # insert mode
