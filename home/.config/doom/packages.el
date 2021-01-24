@@ -9,7 +9,6 @@
 (package! lsp-mode :ignore t)
 (package! lsp-treemacs :ignore t)
 (package! lsp-ui :ignore t)
-(package! company-lsp :ignore t)
 (package! spinner)                      ; required by lsp-mode
 
 (package! eshell-autojump)

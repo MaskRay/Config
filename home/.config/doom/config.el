@@ -41,14 +41,6 @@
         company-global-modes '(not comint-mode erc-mode message-mode help-mode gud-mode)
         ))
 
-(use-package! company-lsp
-  :load-path "~/Dev/Emacs/company-lsp"
-  :after lsp-mode
-  :config
-  (setq company-transformers nil company-lsp-cache-candidates nil)
-  (set-company-backend! 'lsp-mode 'company-lsp)
-  )
-
 (after! d-mode
   (require 'lsp)
   (lsp-register-client
