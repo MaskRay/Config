@@ -1,0 +1,8 @@
+#!/bin/sh
+if [[ -z $1 ]]; then
+  echo git use '$branch'
+  exit 1
+fi
+branch=master
+[[ $PWD =~ llvm ]] && branch=main
+git rebase origin/$branch $1

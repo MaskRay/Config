@@ -1,0 +1,2 @@
+#!/bin/sh
+git pull --rebase origin main && git commit --amend --date=now --no-edit && git push origin HEAD:main && git fetch origin main:main && git rebase main && git checkout main
