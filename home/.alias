@@ -333,6 +333,7 @@ lst() { r2 -q "$1" -c "s $2; pd 10"; }
 uniinfo() { python -c "import unicodedata as u; print u.name(unichr("$1"))"; }
 udevinfo() { udevadm info -a -p $(udevadm info -q path -n $1); }
 if [[ -n $ZSH_VERSION ]]; then
+  eval '+w() { chmod +w "$@" }'
   eval '+x() { chmod +x "$@" }'
 fi
 c() { cd "$1" && ls -a; }
