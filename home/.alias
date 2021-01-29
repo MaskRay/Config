@@ -136,7 +136,7 @@ alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administ
 alias clip='xclip -i -selection clipboard'
 alias dhc='sudo dhcpcd -x wlp3s0; sudo dhcpcd wlp3s0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias drsync='rsync --progress --partial --delete --size-only'
-alias e='TERM=xterm-termite-24bits emacsclient -nw -c'
+alias e='emacsclient -nw -c'
 alias mt=multitail
 alias mtr='sudo mtr --curses'
 alias px='proxychains -f ~/.config/proxychains0.conf'
@@ -315,7 +315,7 @@ alias mpopulate=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-
 
 ew() {
   wmctrl -a emacs@
-  TERM=xterm-termite-24bits emacsclient "$@"
+  emacsclient "$@"
 }
 
 mtrg() {
