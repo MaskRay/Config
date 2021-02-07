@@ -13,6 +13,7 @@
 (defun +ccls|enable ()
   (when (and buffer-file-name (--all? (not (string-match-p it buffer-file-name)) +lsp-blacklist))
     (require 'ccls)
+    (require 'lsp-completion)
     (require 'lsp-headerline)
     (require 'lsp-modeline)
     (setq-local lsp-ui-sideline-show-symbol nil)
