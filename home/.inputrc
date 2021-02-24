@@ -39,3 +39,6 @@ set keymap vi-command
 
 # ipython
 set editing-mode emacs
+
+# https://github.com/cgdb/cgdb/issues/189
+set enable-bracketed-paste off
