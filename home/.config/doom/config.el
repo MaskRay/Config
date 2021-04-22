@@ -244,8 +244,8 @@
   ;; (remhash 'clangd lsp-clients)
   )
 
-(use-package! lsp-treemacs
-  :load-path "~/Dev/Emacs/lsp-treemacs")
+;; (use-package! lsp-treemacs
+;;   :load-path "~/Dev/Emacs/lsp-treemacs")
 
 (use-package! lsp-ui
   :load-path "~/Dev/Emacs/lsp-ui"
@@ -349,25 +349,25 @@
 (after! ivy-xref
   (push '(ivy-xref-show-xrefs . nil) ivy-sort-functions-alist))
 
-(use-package! rust-mode
-  :mode "\\.rs$"
-  :config
-  (map! :map rust-mode-map
-        :leader
-        :n "=" #'rust-format-buffer
-        )
-  )
+;; (use-package! rust-mode
+;;   :mode "\\.rs$"
+;;   :config
+;;   (map! :map rust-mode-map
+;;         :leader
+;;         :n "=" #'rust-format-buffer
+;;         )
+;;   )
 
 (use-package! smart-forward)
 
 (use-package! symbol-overlay
   :commands (symbol-overlay-put))
 
-(use-package! lsp-rust
-  :defer t
-  :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
-  :config
-  )
+;; (use-package! lsp-rust
+;;   :defer t
+;;   :init (add-hook 'rust-mode-hook #'lsp-rust-enable)
+;;   :config
+;;   )
 
 (after! projectile
   (setq compilation-read-command nil)  ; no prompt in projectile-compile-project

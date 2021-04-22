@@ -10,7 +10,7 @@ while l = STDIN.gets
   when /^#include </
   when /^using /
   when /^typedef /
-  when 'int ri()', 'double rd()', 'long rl()'
+  when 'int ri() {', 'double rd() {', 'long rl() {'
     nil while (l = STDIN.gets) and l.strip != '}'
     redo if (l = STDIN.gets).strip.empty?
     break
@@ -76,11 +76,11 @@ headers = {
   'functional' => ['bind','bit_xor','hash','less','negate','greater'],
   'iostream' => ['cout','cin'],
   'iomanip' => ['setfill','setprecision','setw'],
-  'iterator' => ['back_inserter','front_inserter','inserter'],
+  'iterator' => ['back_inserter','front_inserter','inserter','ostream_iterator'],
   'list' => ['list'],
   'map' => ['map','multimap'],
   'memory' => ['make_unique','unique_ptr'],
-  'numeric' => ['accumulate','iota','partial_sum'],
+  'numeric' => ['accumulate','gcd','inner_product','iota','partial_sum'],
   'pthread.h' => ['pthread_create'],
   'queue' => ['queue', 'priority_queue'],
   'set' => ['set','multiset'],
@@ -170,12 +170,13 @@ end
 out << '' if ! out.empty? && ! idents.empty?
 
 if idents_use.member? 'ri'
-  out.push << 'int ri() {
-  int x;
-  scanf("%d", &x);
-  return x;
+  out.push << "int ri() {
+  int m = 0, s = 0, c;
+  while ((c = getchar())-'0' >= 10u) m = c == '-';
+  for (; c < 10u; c = getchar()) s = s*10+c-'0';
+  return m ? -s : s;
 }
-'
+"
 end
 
 if idents_use.member? 'rl'
@@ -183,6 +184,19 @@ if idents_use.member? 'rl'
   long x;
   scanf(#{idents_use.member?('PRId64') ? '"%" SCNd64' : ARGV.empty? ? '"%ld"' : '"%lld"'}, &x);
   return x;
+}
+}
+end
+
+if idents_use.member? 'read'
+  out.push << %{template <class T>
+char read(T &s) {
+  int m = 0, c;
+  s = 0;
+  while ((c = getchar())-'0' >= 10u) m = c == '-';
+  for (; c-'0' < 10u; c = getchar()) s = s*10+c-'0';
+  if (m) s = -s;
+  return c;
 }
 }
 end

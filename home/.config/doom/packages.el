@@ -6,9 +6,9 @@
 (package! atomic-chrome)
 (package! eglot)
 (package! lispyville)
-(package! lsp-mode :ignore t)
-(package! lsp-treemacs :ignore t)
-(package! lsp-ui :ignore t)
+;; (package! lsp-mode :ignore t)
+;; (package! lsp-treemacs :ignore t)
+;; (package! lsp-ui :ignore t)
 (package! spinner)                      ; required by lsp-mode
 
 (package! eshell-autojump)
@@ -28,8 +28,6 @@
 (package! julia-repl)
 
 (package! racer :disable t)
-;; (package! rust-mode)
-;; (package! lsp-rust :ignore t)
 
 (package! function-args)
 ;; (package! lpy :recipe (:fetcher github :repo "abo-abo/lpy" :files ("*")))
