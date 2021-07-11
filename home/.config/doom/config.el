@@ -232,6 +232,7 @@
   :commands lsp
   :config
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
+  (setq lsp-semantic-tokens-enable t)
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-file-watchers nil)

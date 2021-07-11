@@ -20,7 +20,7 @@ while l = STDIN.gets
   end
 end
 
-idents = ['ri', 'rd', 'rl', 'long', 'rb_tree_tag']
+idents = ['read', 'ri', 'rd', 'rl', 'long', 'rb_tree_tag']
 idents_use = Set.new
 
 defines = {
@@ -173,7 +173,7 @@ if idents_use.member? 'ri'
   out.push << "int ri() {
   int m = 0, s = 0, c;
   while ((c = getchar())-'0' >= 10u) m = c == '-';
-  for (; c < 10u; c = getchar()) s = s*10+c-'0';
+  for (; c-'0' < 10u; c = getchar()) s = s*10+c-'0';
   return m ? -s : s;
 }
 "

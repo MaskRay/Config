@@ -118,3 +118,6 @@
 [pager]
 [log]
 	mailmap = true
+[sendemail]
+  smtpServer = /usr/bin/msmtp
+  xmailer = no
