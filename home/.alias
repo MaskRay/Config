@@ -1,7 +1,7 @@
 # vim: set ft=sh fdm=marker:
 
 GNU=
-[[ $(ls --version) =~ coreutils ]] && GNU=1
+[[ -f /etc/freebsd-update.conf ]] || GNU=1
 if [[ -n $GNU ]]; then
   alias ls=$'ls -XF --group-directories-first --color=auto --time-style="+\e[33m[\e[32m%Y-%m-%d \e[35m%k:%M\e[33m]\e[m"'
 else
@@ -17,6 +17,7 @@ LOCAL=$HOME/.local
 
 # core {{{1
 alias sudo='sudo ' # zsh: next word is elligible for alias expansion
+alias bm=bmake
 alias L=less
 alias d='dirs -v'
 alias l="exa -l"

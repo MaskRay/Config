@@ -411,7 +411,7 @@ bindkey '^u' backward-kill-line  # was kill-whole-line
 #[[ -s /usr/share/pinyin-completion/shell/pinyin-comp.zsh ]] && . /usr/share/pinyin-completion/shell/pinyin-comp.zsh
 
 # community/fzf
-if [[ -s ~/.vim/bundle/fzf/shell/completion.zsh ]] then
+if [[ -s ~/.vim/bundle/fzf/shell/completion.zsh && -n ${commands[fzf]} ]] then
   source ~/.vim/bundle/fzf/shell/completion.zsh
   source ~/.vim/bundle/fzf/shell/key-bindings.zsh
   # redefine __fzfcmd (appending `-e` option) to disable fuzzy matching
@@ -443,7 +443,7 @@ if [[ -n ${commands[bfs]} ]]; then
   export FZF_DEFAULT_COMMAND=$FZF_CTRL_T_COMMAND
 fi
 
-if [[ -d ~/Util/z.lua ]]; then
+if [[ -d ~/Util/z.lua && -n ${commands[lua]} ]]; then
   eval "$(lua ~/Util/z.lua/z.lua --init zsh once)"
 fi
 
@@ -468,5 +468,5 @@ fi
 if [[ -f ~/bin/modulecmd.tcl ]]; then
   module() { eval `~/bin/modulecmd.tcl zsh $*`; }
   module use ~/.modules
-  module load ruby/2.5.0 wasm #go nodejs rust yarn #nim wps mpi/impi
+  module load ruby/2.7.0 wasm #go nodejs rust yarn #nim wps mpi/impi
 fi
