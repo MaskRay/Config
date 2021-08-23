@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -e
 
 files=($(git ls-files | egrep -v 'backup|.ssh|proxy.pac.coffee|weechat'))
 target=~
 LN_OPT=-sf
-[[ $(ln --version) =~ coreutils ]] && LN_OPT=-sfr
+[[ $(uname) =~ Linux && $(ln --version) =~ coreutils ]] && LN_OPT=-sfr
 
 declare -A dir
 dir[.vim]=1
@@ -54,7 +54,7 @@ do_mkdir
 do_ssh
 do_git
 
-for f in "${!dir[@]}"; do
+for f in "${(@k)dir[@]}"; do
   g="$target/${f/home\//}"
   mkdir -p "${g%/*}"
   if ! [[ -L "$g" ]]; then
@@ -92,7 +92,7 @@ for f in ${files[@]}; do
         diff -u "$g" "$f" | less -FMX
         while :; do
           warning "Overwrite $g ?\n(y)es (n)o (m) vim -d (q)uit [y/n/m/q]"
-          read -rsn 1 option
+          read -rs 'option?Option: '
           case $option in
             [ny])
               break;;

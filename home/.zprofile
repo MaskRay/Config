@@ -33,8 +33,6 @@ if [[ $TERM =~ 256 ]] {
 # End underlining
 export LESS_TERMCAP_ue=$'\e[0m'
 
-if (( ! ${+SSH_AUTH_SOCK} )) {
+if [[ $(uname) != Darwin && ${+SSH_AUTH_SOCK} == 1 ]] {
   export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 }
-
-export PATH="$HOME/.cargo/bin:$PATH"
