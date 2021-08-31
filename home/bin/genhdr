@@ -10,7 +10,7 @@ while l = STDIN.gets
   when /^#include </
   when /^using /
   when /^typedef /
-  when 'int ri() {', 'double rd() {', 'long rl() {'
+  when 'int ri() {', 'double rd() {', 'long rl() {', 'template <class T>'
     nil while (l = STDIN.gets) and l.strip != '}'
     redo if (l = STDIN.gets).strip.empty?
     break
