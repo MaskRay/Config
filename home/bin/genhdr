@@ -24,11 +24,11 @@ idents = ['read', 'ri', 'rd', 'rl', 'long', 'rb_tree_tag']
 idents_use = Set.new
 
 defines = {
-  'REP' => '#define REP(i, n) FOR(i, 0, n)',
-  'REP1' => '#define REP1(i, n) for (remove_cv<remove_reference<decltype(n)>::type>::type i = 1; i <= (n); i++)',
-  'FOR' => '#define FOR(i, a, b) for (remove_cv<remove_reference<decltype(b)>::type>::type i = (a); i < (b); i++)',
-  'PER1' => '#define PER1(i, n) for (remove_cv<remove_reference<decltype(n)>::type>::type i = (n); i > 0; i--)',
-  'ROF' => '#define ROF(i, a, b) for (remove_cv<remove_reference<decltype(b)>::type>::type i = (b); --i >= (a); )',
+  'REP' => '#define REP(i, n) for (long i = 0; i < (n); i++)',
+  'REP1' => '#define REP1(i, n) for (long i = 1; i <= (n); i++)',
+  'FOR' => '#define FOR(i, a, b) for (long i = (a); i < (b); i++)',
+  'PER1' => '#define PER1(i, n) for (long i = (n); i > 0; i--)',
+  'ROF' => '#define ROF(i, a, b) for (long i = (b); --i >= (a); )',
   'SIZE' => '#define SIZE(x) (sizeof(x)/sizeof(*x))',
   'ALL' => '#define ALL(x) (x).begin(), (x).end()',
   'eb' => '#define eb emplace_back',
@@ -43,22 +43,23 @@ defines['long'] = '#define long long long' if ARGV.size > 0
 defines_use = Set.new
 
 typedefs = {
-  'cd' => 'typedef complex<double> cd;',
-  'vi' => 'typedef vector<int> vi;',
-  'pdd' => 'typedef pair<double, double> pdd;',
-  'pii' => 'typedef pair<int, int> pii;',
-  'pil' => 'typedef pair<int, long> pil;',
-  'pli' => 'typedef pair<long, int> pli;',
-  'pll' => 'typedef pair<long, long> pll;',
-  'tiii' => 'typedef tuple<int, int, int> tiii;',
-  'tlll' => 'typedef tuple<long, long, long> tlll;',
-  'ulong' => 'typedef unsigned long ulong;',
-  'vpii' => 'typedef vector<pair<int, int> > vpii;',
+  'cd' => 'using cd = complex<double>;',
+  'vi' => 'using vi = vector<int>;',
+  'pdd' => 'using pdd = pair<double, double>;',
+  'pii' => 'using pii = pair<int, int>;',
+  'pil' => 'using pil = pair<int, long>;',
+  'pli' => 'using pli = pair<long, int>;',
+  'pll' => 'using pll = pair<long, long>;',
+  'tiii' => 'using tiii = tuple<int, int, int>;',
+  'tlll' => 'using tlll = tuple<long, long, long>;',
+  'ulong' => 'using ulong = unsigned long;',
+  'vpii' => 'using vpii = vector<pair<int, int> >;',
 }
 typedefs_use = Set.new
 
 headers = {
   'algorithm' => ['count','count_if','find','iota','max','min','sort','unique','lower_bound','max_element','min_element','upper_bound','fill_n','fill','copy','copy_n','next_permutation','nth_element','random_shuffle','reverse','transform'],
+  'array' => ['array'],
   'bitset' => ['bitset'],
   'cassert' => ['assert'],
   'cfloat' => ['DBL_MAX'],
