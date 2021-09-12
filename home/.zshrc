@@ -25,7 +25,7 @@ path=( ${(u)^path:A}(N-/) )
 [[ $TERM = xterm ]] && export TERM=xterm-256color
 
 # Look {{{1
-PROMPT=$'%F{blue}%F{CYAN}%B%F{cyan}%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
+PROMPT=$'%F{cyan}%B%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b%F{white}$(my_git_prompt)\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
 
 # dircolors {{{2
@@ -228,19 +228,6 @@ bindkey '^xh' _complete_help
 # General aliases & functions (partially shared with bash) {{{2
 [[ -f ~/.alias ]] && source ~/.alias
 
-for i in ~/llvm/ASAN/bin/*(-.x); do alias asan${i##*/}=$i; done
-for i in ~/llvm/Debug/bin/*(-.x); do alias my${i##*/}=$i; done
-for i in ~/llvm/Release/bin/*(-.x); do alias f${i##*/}=$i; done
-alias asanlit=asanllvm-lit
-alias flit=fllvm-lit
-alias fas=fllvm-as
-alias fdiff=fllvm-diff
-alias fdis=fllvm-dis
-alias fnm=fllvm-nm
-alias fob=fllvm-objdump
-alias fre=fllvm-readelf
-alias mylit=myllvm-lit
-alias lobj='fllvm-mc -filetype=obj'
 function arcfilter() { arc amend; git log -1 --pretty=%B | awk '/Reviewers:|Subscribers:/{p=1} /Reviewed By:|Differential Revision:/{p=0} !p && !/^Summary:$/ {sub(/^Summary: /,"");print}' | git commit --amend --date=now -F -; }
 
 for i in gb gf gh gr gt; do
@@ -302,6 +289,11 @@ compdef _up up
 # cde - cd to working directory of current emacs buffer
 cde() {
   cd ${(Q)~$(emacsclient -e '(with-current-buffer (window-buffer (selected-window)) default-directory) ')}
+}
+
+my_git_prompt() {
+  [[ $PWD =~ '/(Dev/binutils-gdb|ccls|gcc|Dev/glibc|llvm)' ]] || return
+  git branch --show-current
 }
 
 # terminfo {{{1
@@ -468,5 +460,5 @@ fi
 if [[ -f ~/bin/modulecmd.tcl ]]; then
   module() { eval `~/bin/modulecmd.tcl zsh $*`; }
   module use ~/.modules
-  module load ruby/2.7.0 #wasm go nodejs rust yarn #nim wps mpi/impi
+  module load go nim ruby/2.7.0 #wasm nodejs rust yarn
 fi
