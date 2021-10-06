@@ -11,6 +11,7 @@
 ;; (package! lsp-ui :ignore t)
 (package! spinner)                      ; required by lsp-mode
 
+(package! annotate)
 (package! eshell-autojump)
 (package! evil-collection)
 (package! evil-nerd-commenter)

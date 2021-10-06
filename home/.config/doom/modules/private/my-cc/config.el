@@ -71,6 +71,9 @@
   :load-path "~/Dev/Emacs/emacs-ccls"
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +ccls|enable)
   :init
+  (defun +my/ccls-code-lens ()
+    (when (member major-mode '(c-mode c++-mode))
+      (ccls-code-lens-mode 1)))
   (after! projectile
     (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root"))
@@ -82,7 +85,7 @@
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
   (setq ccls-sem-highlight-method 'font-lock)
-  (add-hook 'lsp-after-open-hook #'ccls-code-lens-mode)
+  (add-hook 'lsp-after-open-hook #'+my/ccls-code-lens)
   (ccls-use-default-rainbow-sem-highlight)
   ;; https://github.com/maskray/ccls/blob/master/src/config.h
   (setq

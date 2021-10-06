@@ -7,6 +7,8 @@
 (setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
 (setq doom-theme 'my-doom-one)
 
+(use-package! annotate)
+
 (use-package! atomic-chrome
   :defer 5                              ; since the entry of this
                                         ; package is from Chrome
@@ -230,6 +232,7 @@
 (use-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
+  :hook (nim-mode . lsp)
   :config
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (setq lsp-semantic-tokens-enable t)

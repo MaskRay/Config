@@ -60,6 +60,8 @@
  :n "gc"   #'evilnc-comment-or-uncomment-lines
  :n "gf"   #'+my/ffap
  :n "go"   (λ! (message "%S" (text-properties-at (point))))
+ :n "gj"   #'evilem-motion-next-line
+ :n "gk"   #'evilem-motion-previous-line
 
  :n "[ M-u" #'symbol-overlay-switch-backward
  :n "] M-i" #'symbol-overlay-switch-forward
@@ -109,7 +111,7 @@
    "SPC" #'frog-jump-buffer
    ;; :n "M-u" (+my/simulate-key "SPC [")
    ;; :n "M-i" (+my/simulate-key "SPC ]")
-   (:prefix ("a" . "app")
+   (:prefix ("y" . "app")
      :desc "genhdr" :n "g"
      (λ! (shell-command-on-region (point-min) (point-max) "genhdr" t t))
      :desc "genhdr windows" :n "G"
