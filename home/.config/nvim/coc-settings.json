@@ -34,6 +34,12 @@
       }
     },
 
+    "gopls": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "filetypes": ["go"]
+    },
+
     "lua-language-server": {
       "command": "lua-language-server",
       "filetypes": ["lua"]
