@@ -9,6 +9,9 @@
 [submodule "home/.tmux/plugins/tpm"]
 	path = home/.tmux/plugins/tpm
 	url = https://git::@github.com/tmux-plugins/tpm
+[submodule "home/Util/fisher"]
+	path = home/Util/fisher
+	url = https://github.com/jorgebucaran/fisher
 [submodule "home/Util/z.lua"]
 	path = home/Util/z.lua
 	url = https://github.com/skywind3000/z.lua

@@ -12,8 +12,9 @@ function match
   echo $$argv[2] | grep -q $argv[1]
 end
 
-function export
-  set -x $argv
+function md
+  mkdir -p $argv[1]
+  cd $argv[1]
 end
 
 # Environment variables {{{1
@@ -22,10 +23,15 @@ set -x GREP_OPTIONS '--color=auto'
 set -x MENUCONFIG_COLOR blackbg
 
 # Set LS_COLORS {{{2
-if match 256color TERM; and [ -f ~/.lscolor256 ]
-  eval (dircolors -c ~/.lscolor256 | sed 's/env/ -x/')
-else if [ -f ~/.lscolor ]
-  eval (dircolors -c ~/.lscolor | sed 's/env/ -x/')
+if command -q dircolors  # GNU coreutils
+  set GNU 1
+end
+if set -q GNU
+  if match 256color TERM; and [ -f ~/.lscolor256 ]
+    eval (dircolors -c ~/.lscolor256 | sed 's/env/ -x/')
+  else if [ -f ~/.lscolor ]
+    eval (dircolors -c ~/.lscolor | sed 's/env/ -x/')
+  end
 end
 
 # Theme {{{1
@@ -37,7 +43,9 @@ set fish_color_error red -bold
 set fish_greeting ''
 
 # Prompt {{{2
+set fish_prompt_pwd_dir_length 0
 function fish_prompt
+  set reset \e'[m'
   set red \e'[31m'
   set blue \e'[1m'\e'[34m'
   set magenta \e'[1m'\e'[35m'
@@ -55,20 +63,20 @@ function fish_prompt
       set user_prompt '%'
   end
 
-  echo $blue\u256d\u2500$cyan(whoami) $white@ $magenta$__fish_prompt_hostname $white'>>=' $cyan(prompt_pwd)
+  echo $blue\u256d\u2500$cyan(whoami) $white@ $magenta$__fish_prompt_hostname $white'>>=' $cyan(prompt_pwd) $reset(fish_git_prompt)
   echo -n $blue\u2570\u2500$red$user_prompt(set_color normal)' '
 end
 
 # Bindings {{{1
 
-function fish_user_key_bindings
-  bind \e. history-token-search-backward
-end
-
 # Aliases {{{1
 
 # ls {{{2
-alias ls 'command ls -XF --color=auto --time-style="+'\e'[33m['\e'[32m%Y-%m-%d '\e'[35m%k:%M'\e'[33m]'\e'[m"'
+if set -q GNU
+  alias ls 'ls -XF --color=auto --time-style="+'\e'[33m['\e'[32m%Y-%m-%d '\e'[35m%k:%M'\e'[33m]'\e'[m"'
+else
+  alias ls 'ls -F'
+end
 alias l 'ls -l'
 alias la 'l -A'
 alias lh 'l -h'
@@ -80,12 +88,29 @@ alias l4 'tree --dirsfirst -ChFL 4'
 # coreutils {{{2
 alias L less
 alias c cat
-alias cp 'command cp -iv'
+alias cp 'cp -iv'
 alias eg 'egrep -I'
 alias g 'grep -I'
-alias mv 'command mv -iv'
-alias rm 'command rm -ivd'
+alias mv 'mv -iv'
+if set -q GNU
+  alias rm 'rm -iv --one-file-system'
+else
+  alias rm 'rm -iv'
+end
 alias x xargs
+
+# git {{{2
+alias ga 'git add'
+alias gau 'git add -u'
+alias gb 'git branch'
+alias gcl 'git clone'
+alias gco 'git checkout'
+alias gd 'git diff'
+alias gl 'git l'
+alias glp 'git l -p'
+alias gpl 'git pull'
+alias gpu 'git push'
+alias gs 'git status'
 
 # others
 alias psg 'ps aux | g'
@@ -94,22 +119,7 @@ alias clip 'xsel -ib'
 alias gdb 'command gdb -q'
 alias port '/sbin/ss -ntlp'
 alias r ruby
-alias rsync 'command rsync --progress --partial'
+alias rsync 'rsync --progress --partial'
 alias t task
-alias v 'vim --servername GVIM --remote-tab-silent'
-alias wgetpaste 'command wgetpaste -X'
-
-# Gentoo-specific {{{2
-alias eme 'sudo emerge'
-alias ei 'eix -uI --only-names'
-function eiu
-  begin
-    set -lx FORMAT '<installedversions:I>'
-    set -lx I '<category>/<name>-<version>[<use>]\n'
-    eix $argv
-  end
-end
-alias disp 'sudo dispatch-conf'
-
 
 # vim:sw=2 sts=2 et fdm=marker

@@ -6,7 +6,7 @@
   "hover.target": "float",
   "languageserver": {
     "ccls": {
-      "command": "ccls.debug",
+      "command": "ccls",
       "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
       "rootPatterns": [".ccls-root"],
       "initializationOptions": {

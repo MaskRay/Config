@@ -8,44 +8,44 @@ data.location=~/.task
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-red-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-green-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-blue-256.theme
-include /usr/share/doc/task/rc/dark-violets-256.theme
+#include /usr/share/doc/task/rc/dark-violets-256.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-yellow-green.theme
 #include /usr//usr/share/doc/task-2.1.2/rc/dark-gray-256.theme
 
-alias.l=long
-alias.a=add
-alias.w=waiting
-alias.p=projects
-alias.c=calendar
-alias.r=recurring
-alias.b=blocking
-alias.u=unblocked
-alias.t=timesheet
-alias.n=next
-dateformat=Y-M-D
-dateformat.annotation=Y-M-D=H:N
-dateformat.report=Y-M-D
-dateformat.edit=Y-M-D=H:N
-dateformat.info=Y-M-D=H:N
-dateformat.holiday=YMD
-journal.time=on
-report.taskbar.columns=due.countdown,description.count
-report.taskbar.sort=due+
-report.taskbar.filter=+READY
+#alias.l=long
+#alias.a=add
+#alias.w=waiting
+#alias.p=projects
+#alias.c=calendar
+#alias.r=recurring
+#alias.b=blocking
+#alias.u=unblocked
+#alias.t=timesheet
+#alias.n=next
+#dateformat=Y-M-D
+#dateformat.annotation=Y-M-D=H:N
+#dateformat.report=Y-M-D
+#dateformat.edit=Y-M-D=H:N
+#dateformat.info=Y-M-D=H:N
+#dateformat.holiday=YMD
+#journal.time=on
+#report.taskbar.columns=due.countdown,description.count
+#report.taskbar.sort=due+
+#report.taskbar.filter=+READY
+#
+#report.list.description=Lists all tasks matching the specified criteria
+#report.list.columns=id,project,priority,due,recur,tags,description
+#report.list.labels=ID,Project,Pri,Due,Recur,Tags,Description & Annotation
+#report.list.sort=priority-,project+,due+
+#report.list.filter=status:pending
+#
+#report.today.description=Lists all tasks matching the specified criteria
+#report.today.columns=id,project,priority,due,tags,description
+#report.today.labels=ID,Proj,Pri,Due,Tags,Description & Annotation
+#report.today.sort=due+,priority-,project+
+#report.today.filter=status:pending '( scheduled.before:tomorrow or due.before:tom )'
+#report.today.dateformat=b.D
 
-report.list.description=Lists all tasks matching the specified criteria
-report.list.columns=id,project,priority,due,recur,tags,description
-report.list.labels=ID,Project,Pri,Due,Recur,Tags,Description & Annotation
-report.list.sort=priority-,project+,due+
-report.list.filter=status:pending
-
-report.today.description=Lists all tasks matching the specified criteria
-report.today.columns=id,project,priority,due,tags,description
-report.today.labels=ID,Proj,Pri,Due,Tags,Description & Annotation
-report.today.sort=due+,priority-,project+
-report.today.filter=status:pending '( scheduled.before:tomorrow or due.before:tom )'
-report.today.dateformat=b.D
-
-due=3
-default.command=today
-calendar.holidays=full
+#due=3
+#default.command=today
+#calendar.holidays=full
