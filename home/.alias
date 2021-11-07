@@ -289,29 +289,6 @@ alias st=strace
 alias sst='sudo strace'
 alias strings='strings -a -tx' # CVE-2014-8485
 
-# ARM {{{2
-alias aob=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-objdump
-alias are=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-readelf
-alias agcc=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-gcc
-alias ag++=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-g++
-alias aas=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-as
-alias anm=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-nm
-alias ald=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld
-alias aldd=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ldd
-alias apopulate=~/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-populate
-
-# MIPSEL {{{2
-alias moc=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-objcopy
-alias mob=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-objdump
-alias mre=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-readelf
-alias mgcc=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-gcc
-alias mg++=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-g++
-alias mas=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-as
-alias mnm=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-nm
-alias mld=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-ld
-alias mldd=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-ldd
-alias mpopulate=~/x-tools/mipsel-unknown-linux-gnu/bin/mipsel-unknown-linux-gnu-populate
-
 # functions {{{1
 
 ew() {
