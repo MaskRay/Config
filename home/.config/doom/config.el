@@ -229,6 +229,7 @@
       :localleader
       :n "x" (λ! (save-excursion (forward-sexp) (eval-last-sexp nil))))
 
+(setq lsp-keymap-prefix "M-q")
 (use-package! lsp-mode
   :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
