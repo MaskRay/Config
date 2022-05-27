@@ -1,0 +1,29 @@
+#!/bin/zsh
+dry_run=
+if [[ $1 == --dry-run ]]; then dry_run=1; shift; fi
+
+f() {
+  for f in $1/*(ND.^x); do
+    [[ ${f##*/} =~ '^\.' ]] && continue
+    if [[ -n $dry_run ]]; then
+      echo $f
+    elif [[ $(wc -l < $f) == 1 ]]; then
+      echo "echo '$(<$f)' > $f"
+    else
+      if [[ ${f##*/} == Makefile ]]; then
+        printf '%s\n' "sed 's/^        /\\t/' > $f <<'eof'"
+      else
+        echo "cat > $f <<'eof'"
+      fi
+      cat $f
+      echo eof
+    fi
+  done
+  for d in $1/*(ND/); do
+    [[ $d =~ '^\.' ]] && continue
+    echo mkdir -p $d
+    f $d
+  done
+}
+
+f ${1:-.}
