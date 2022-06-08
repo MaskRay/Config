@@ -1,6 +1,6 @@
 local treesitter = require 'nvim-treesitter.configs'
 treesitter.setup {
-  ensure_installed = 'maintained',
+  ensure_installed = {'cpp', 'python'},
   highlight = {enable = true},
   textobjects = {
     move = {
