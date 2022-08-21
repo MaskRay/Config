@@ -2,7 +2,7 @@ set arrowstyle = highlight
 set hlsearch
 set ignorecase
 #set showdebugcommands
-set tabstop=2
+set tabstop=8
 set winsplit=src_big
 imap ; <ESC>
 map <CR> i
