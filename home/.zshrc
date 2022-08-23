@@ -292,7 +292,7 @@ cde() {
 }
 
 my_git_prompt() {
-  [[ $PWD =~ '/(Dev/binutils-gdb|ccls|gcc|Dev/glibc|llvm)/' ]] || return
+  [[ $PWD/ =~ '/(Dev/binutils-gdb|ccls|gcc|Dev/glibc|llvm)/' ]] || return
   git branch --show-current
 }
 
