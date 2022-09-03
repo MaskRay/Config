@@ -78,7 +78,9 @@
                                (when (> (ring-size eshell-history-ring) 0)
                                  (ring-elements eshell-history-ring)))
                               :initial-input input)))
-      (setf (buffer-substring start-pos end-pos) command)
+      (goto-char start-pos)
+      (delete-region start-pos end-pos)
+      (insert command)
       (end-of-line)))
 
   (defun +my/eshell-init-keymap ()
@@ -231,10 +233,11 @@
 
 (setq lsp-keymap-prefix "M-q")
 (use-package! lsp-mode
-  :load-path "~/Dev/Emacs/lsp-mode"
+  ;; :load-path "~/Dev/Emacs/lsp-mode"
   :commands lsp
   :hook (nim-mode . lsp)
   :config
+  (setq lsp-lens-enable nil) ;; Very slow
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
   (setq lsp-semantic-tokens-enable t)
   (setq lsp-enable-links nil)
@@ -253,7 +256,7 @@
 ;;   :load-path "~/Dev/Emacs/lsp-treemacs")
 
 (use-package! lsp-ui
-  :load-path "~/Dev/Emacs/lsp-ui"
+  ;; :load-path "~/Dev/Emacs/lsp-ui"
   :commands lsp-ui-mode
   :config
   (setq
