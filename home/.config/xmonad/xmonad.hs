@@ -382,7 +382,7 @@ myNav2DConf = def { defaultTiledNavigation = centerNavigation
                   , layoutNavigation = [("Full", centerNavigation)]
                   , unmappedWindowRect = [("Full", singleWindowRect)] }
 
-myTerminal = "termite"
+myTerminal = "alacritty"
 
 myKeys =
     let
@@ -491,7 +491,7 @@ myKeys =
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "termite" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-<Return>", spawn "alacritty" >> sendMessage (JumpToLayout "ResizableTall"))
     , ("M-C-i", spawn "toggle-invert")
     , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
 
@@ -588,16 +588,16 @@ myKeys =
     searchBindings
 
 kitty prog = ("kitty -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
-termite prog = ("termite -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
+alacritty prog = ("alacritty -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
   map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "sage", "utop", "xosview", "ydcv"] ++
-  [ NS "ghci" "termite -t ghci -e 'zsh -c \"stack ghci || ghci\"'" (title =? "ghci") doSPFloat
+  [ NS "ghci" "alacritty -t ghci -e 'zsh -c \"stack ghci || ghci\"'" (title =? "ghci") doSPFloat
   , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
   , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat
   ]
   where
-    f cmd = NS name (termite cmd) (fmap (name ==) title) doSPFloat
+    f cmd = NS name (alacritty cmd) (fmap (name ==) title) doSPFloat
       where
         name = head $ words cmd
     doTopFloat = customFloating $ W.RationalRect (1/3) 0 (1/3) (1/3)
@@ -722,13 +722,13 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn (termite "zsh -ic \"tmux new -As default\"")
-  , Project wsIM "~" . Just $ spawn (termite "irc")
+  , Project wsGen "~" . Just $ spawn (alacritty "zsh -ic \"tmux new -As default\"")
+  , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (termite "tmux new -As ida")
-  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (termite "tmux new -As ida")
-  , Project wsMail "/tmp" . Just $ spawn (termite "neomutt")
+  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (alacritty "tmux new -As ida")
+  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (alacritty "tmux new -As ida")
+  , Project wsMail "/tmp" . Just $ spawn (alacritty "neomutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"
   ]
