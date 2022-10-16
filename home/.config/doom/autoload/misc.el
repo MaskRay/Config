@@ -25,22 +25,6 @@
       (message (kill-new (concat "b" filename ":" (number-to-string (line-number-at-pos)))))
     (error "Couldn't find filename in current buffer")))
 
-;; PATCH counsel-esh-history
-;;;###autoload
-(defun +my/ivy-eshell-history ()
-  (interactive)
-  (require 'em-hist)
-  (let* ((start-pos (save-excursion (eshell-bol) (point)))
-         (end-pos (point))
-         (input (buffer-substring-no-properties start-pos end-pos))
-         (command (ivy-read "Command: "
-                            (delete-dups
-                             (when (> (ring-size eshell-history-ring) 0)
-                               (ring-elements eshell-history-ring)))
-                            :initial-input input)))
-    (setf (buffer-substring start-pos end-pos) command)
-    (end-of-line)))
-
 ;;;###autoload
 (defun +my/ffap ()
   (interactive)

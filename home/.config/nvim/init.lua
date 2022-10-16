@@ -24,7 +24,7 @@ pcall(cmd, 'colorscheme tokyonight')
 
 local stl = {
   '%#ColorColumn#%2f',          -- buffer number
-  '%*»',                        -- separator
+  ' ',                          -- separator
   '%<',                         -- truncate here
   '%*»',                        -- separator
   '%*»',                        -- separator
