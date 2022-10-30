@@ -119,6 +119,11 @@ nmap('<leader>tw', '<cmd>set wrap!<cr>')
 nmapp('<leader>wo', '<C-w>o')
 nmapp('<leader>ws', '<C-w>s')
 nmapp('<leader>wv', '<C-w>v')
+--- , (references)
+nmap(',f', '<cmd>call CocLocations("ccls","textDocument/references",{"excludeRole":32})<cr>') -- not call
+nmap(',m', '<cmd>call CocLocations("ccls","textDocument/references",{"role":64})<cr>') -- macro
+nmap(',r', '<cmd>call CocLocations("ccls","textDocument/references",{"role":8})<cr>') -- read
+nmap(',w', '<cmd>call CocLocations("ccls","textDocument/references",{"role":16})<cr>') -- write
 -- x (xref)
 -- bases of up to 3 levels
 nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>')
