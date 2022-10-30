@@ -88,8 +88,6 @@ define fs
   step
 end
 
-source ~/.gdb/PyGDBOffsets/offsets.py
-
 #
 # C++ related beautifiers (optional)
 #
