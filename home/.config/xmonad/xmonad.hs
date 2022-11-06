@@ -506,7 +506,7 @@ myKeys =
                                   , "xbacklight =60"
                                   , "xbacklight =5"
                                   ])
-    , ("M-m m", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "ida", "ida64", "winecfg"])
+    , ("M-m m", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "wechat", "winecfg"])
     , ("M-m k", spawn "xkill")
     , ("M-m l", spawn "xscreensaver-command -lock")
 
@@ -587,7 +587,6 @@ myKeys =
     ] ++
     searchBindings
 
-kitty prog = ("kitty -T "++) . ((++) . head $ words prog) . (" -e "++) . (prog++) $ ""
 alacritty prog = ("alacritty -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
 
 scratchpads =
@@ -714,8 +713,7 @@ wsEmacs = "emacs"
 
 wsFloat = "float"
 wsGimp = "gimp"
-wsIda = "ida"
-wsIda64 = "i64"
+wsWechat = "wechat"
 wsInkscape = "inkscape"
 wsMail = "mail"
 
@@ -726,8 +724,7 @@ myProjects =
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-  , Project wsIda "/tmp" . Just $ spawn "ida" >> spawn (alacritty "tmux new -As ida")
-  , Project wsIda64 "/tmp" . Just $ spawn "ida64" >> spawn (alacritty "tmux new -As ida")
+  , Project wsWechat "/tmp" . Just $ spawn (alacritty "tmux new -As wechat")
   , Project wsMail "/tmp" . Just $ spawn (alacritty "neomutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"

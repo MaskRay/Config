@@ -2,10 +2,13 @@
 require 'set'
 
 body = []
+out = []
 
 while l = STDIN.gets
   case l.strip
   when ''
+  when /^\/\//
+    out << l.chomp
   when /^#define/
   when /^#include </
   when /^using /
@@ -24,11 +27,11 @@ idents = ['read', 'ri', 'rd', 'rl', 'long', 'rb_tree_tag']
 idents_use = Set.new
 
 defines = {
-  'REP' => '#define REP(i, n) for (long i = 0; i < (n); i++)',
-  'REP1' => '#define REP1(i, n) for (long i = 1; i <= (n); i++)',
-  'FOR' => '#define FOR(i, a, b) for (long i = (a); i < (b); i++)',
-  'PER1' => '#define PER1(i, n) for (long i = (n); i > 0; i--)',
-  'ROF' => '#define ROF(i, a, b) for (long i = (b); --i >= (a); )',
+  'REP' => '#define REP(i, n) for (int i = 0; i < (n); i++)',
+  'REP1' => '#define REP1(i, n) for (int i = 1; i <= (n); i++)',
+  'FOR' => '#define FOR(i, a, b) for (int i = (a); i < (b); i++)',
+  'PER1' => '#define PER1(i, n) for (int i = (n); i > 0; i--)',
+  'ROF' => '#define ROF(i, a, b) for (int i = (b); --i >= (a); )',
   'SIZE' => '#define SIZE(x) (sizeof(x)/sizeof(*x))',
   'ALL' => '#define ALL(x) (x).begin(), (x).end()',
   'eb' => '#define eb emplace_back',
@@ -81,7 +84,7 @@ headers = {
   'list' => ['list'],
   'map' => ['map','multimap'],
   'memory' => ['make_unique','unique_ptr'],
-  'numeric' => ['accumulate','gcd','inner_product','iota','partial_sum'],
+  'numeric' => ['accumulate','gcd','inner_product','iota','lcm','partial_sum'],
   'pthread.h' => ['pthread_create'],
   'queue' => ['queue', 'priority_queue'],
   'set' => ['set','multiset'],
@@ -106,8 +109,6 @@ end
 headers_use = Set.new
 
 ### Scan
-
-out = []
 
 body << l.chomp while l = STDIN.gets
 words = body.map {|l| l.scan /[\w\.]+/ }.flatten.to_set
@@ -172,7 +173,7 @@ out << '' if ! out.empty? && ! idents.empty?
 
 if idents_use.member? 'ri'
   out.push << "int ri() {
-  int m = 0, s = 0, c;
+  int m = 0, s = 0; unsigned c;
   while ((c = getchar())-'0' >= 10u) m = c == '-';
   for (; c-'0' < 10u; c = getchar()) s = s*10+c-'0';
   return m ? -s : s;

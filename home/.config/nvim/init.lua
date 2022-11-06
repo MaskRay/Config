@@ -59,6 +59,10 @@ local function nmapp(lhs, rhs, opts)
   vim.api.nvim_set_keymap('n', lhs, rhs, options)
 end
 
+local function xnmap(keys, func, desc)
+  vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+end
+
 map('n', ':', ';')
 map('n', ';', ':')
 map('x', ':', ';')
@@ -68,8 +72,10 @@ map('x', ';', ':')
 nmap('ga', ':<C-u>CocList -I symbols<cr>')
 nmap('gj', ':HopLineAC<cr>')
 nmap('gk', ':opLineBC<cr>')
+xnmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 -- <leader>
-nmap('<leader><leader>', '<cmd>Telescope buffers<cr>')
+xnmap('<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+xnmap('<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', {silent=true})
 -- <leader>a (app)
 nmap('<leader>ag', '<cmd>%!genhdr<cr>')
@@ -247,6 +253,7 @@ if packer then
     use 'junegunn/fzf.vim'
     use 'lewis6991/gitsigns.nvim'
     use 'phaazon/hop.nvim'
+    use 'rluba/jai.vim'
     use 'kdheepak/lazygit.nvim'
     use 'ggandor/lightspeed.nvim'
     use 'alaviss/nim.nvim'
@@ -254,7 +261,7 @@ if packer then
     use 'terrortylor/nvim-comment'
     use 'mfussenegger/nvim-dap'
     use 'neovim/nvim-lspconfig'
-    use 'nvim-treesitter/nvim-treesitter'
+    use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
     use {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end}
     use 'nvim-treesitter/nvim-treesitter-textobjects'
     use 'nvim-treesitter/playground'
