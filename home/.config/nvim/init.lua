@@ -240,38 +240,46 @@ function prequire(...)
   return nil
 end
 
-cmd 'packadd packer.nvim'
-local packer = prequire('packer')
-if packer then
-  require('packer').startup(function()
-    use 'wbthomason/packer.nvim'
-
-    use 'folke/tokyonight.nvim'
-
-    use 'neoclide/coc.nvim'
-    use 'junegunn/fzf'
-    use 'junegunn/fzf.vim'
-    use 'lewis6991/gitsigns.nvim'
-    use 'phaazon/hop.nvim'
-    use 'rluba/jai.vim'
-    use 'kdheepak/lazygit.nvim'
-    use 'ggandor/lightspeed.nvim'
-    use 'alaviss/nim.nvim'
-    use {'hrsh7th/nvim-cmp', requires = {"hrsh7th/cmp-buffer", "hrsh7th/cmp-nvim-lsp"}}
-    use 'terrortylor/nvim-comment'
-    use 'mfussenegger/nvim-dap'
-    use 'neovim/nvim-lspconfig'
-    use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
-    use {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end}
-    use 'nvim-treesitter/nvim-treesitter-textobjects'
-    use 'nvim-treesitter/playground'
-    use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
-    use 'justinmk/vim-dirvish'
-    use 'tpope/vim-fugitive'
-    use 'mhinz/vim-grepper'
-    use 'preservim/vimux'
-    use 'folke/which-key.nvim'
-  end)
-
-  require 'plugins'
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
 end
+local packer_bootstrap = ensure_packer()
+
+require('packer').startup(function(use)
+  use 'wbthomason/packer.nvim'
+
+  use 'folke/tokyonight.nvim'
+
+  use 'neoclide/coc.nvim'
+  use 'junegunn/fzf'
+  use 'junegunn/fzf.vim'
+  use 'lewis6991/gitsigns.nvim'
+  use 'phaazon/hop.nvim'
+  use 'rluba/jai.vim'
+  use 'kdheepak/lazygit.nvim'
+  use 'ggandor/lightspeed.nvim'
+  use 'alaviss/nim.nvim'
+  use {'hrsh7th/nvim-cmp', requires = {"hrsh7th/cmp-buffer", "hrsh7th/cmp-nvim-lsp"}}
+  use 'terrortylor/nvim-comment'
+  use 'mfussenegger/nvim-dap'
+  use 'neovim/nvim-lspconfig'
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end}
+  use 'nvim-treesitter/nvim-treesitter-textobjects'
+  use 'nvim-treesitter/playground'
+  use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
+  use 'justinmk/vim-dirvish'
+  use 'tpope/vim-fugitive'
+  use 'mhinz/vim-grepper'
+  use 'preservim/vimux'
+  use 'folke/which-key.nvim'
+end)
+
+require 'plugins'

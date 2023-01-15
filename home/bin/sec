@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-archive=/home/ray/Sed/sed.zip
+archive=~/Sed/sed.zip
 dir=/tmp/sed
 
 while getopts h opt; do

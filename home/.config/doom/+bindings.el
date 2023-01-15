@@ -121,10 +121,10 @@
      :desc "Last buffer" :n "b" #'evil-switch-to-windows-last-buffer
      "l" #'ivy-switch-buffer
      )
-   (:prefix ("e" . "error")
-     "n" #'flycheck-next-error
-     "p" #'flycheck-previous-error
-     )
+   ;;(:prefix ("e" . "error")
+   ;;  "n" #'flycheck-next-error
+   ;;  "p" #'flycheck-previous-error
+   ;;  )
    (:prefix "g"
      "*" (+my/prefix-M-x "magit-")
      :desc "Magit blame"               "b"   #'magit-blame-addition

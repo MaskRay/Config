@@ -3,15 +3,16 @@
 display() {
   hh=$(xrandr | awk '{sub(",","",$10);print $10;exit}')
   h=120
-  xbacklight $1
-  dzen2 -p 1 -y $[(hh-h)/2] -h $h -fn "-*-dejavu sans-*-*-*-*-$h-*-*-*-*-*-*-*" <<< "Backlight: $(xbacklight -get)"
+  light=$(</sys/class/backlight/intel_backlight/brightness)
+  sudo su -c "echo $(($light $1 $2)) > /sys/class/backlight/intel_backlight/brightness"
+  dzen2 -p 1 -y $[(hh-h)/2] -h $h -fn "-*-dejavu sans-*-*-*-*-$h-*-*-*-*-*-*-*" <<< "Backlight: $(</sys/class/backlight/intel_backlight/brightness)"
 }
 
 case "$1" in
   u|up)
-    display +4;;
+    display + 4;;
   d|down)
-    display -4;;
+    display - 4;;
   *)
     exit 1;;
 esac

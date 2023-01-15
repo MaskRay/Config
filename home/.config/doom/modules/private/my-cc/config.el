@@ -111,16 +111,17 @@
 (use-package! modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
-(use-package! llvm-mode
-  :load-path "~/llvm/llvm/utils/emacs")
+(when (file-exists-p (expand-file-name "~/llvm"))
+  (use-package! llvm-mode
+    :load-path "~/llvm/llvm/utils/emacs")
 
-(use-package! tablegen-mode
-  :load-path "~/llvm/llvm/utils/emacs"
-  :defer t
-  :mode "\\.td\\'"
-  :config
-  (map!
-   :map tablegen-mode-map
-   (:leader
-     :n "=" #'clang-format-region
-     )))
+  (use-package! tablegen-mode
+    :load-path "~/llvm/llvm/utils/emacs"
+    :defer t
+    :mode "\\.td\\'"
+    :config
+    (map!
+     :map tablegen-mode-map
+     (:leader
+      :n "=" #'clang-format-region
+      ))))

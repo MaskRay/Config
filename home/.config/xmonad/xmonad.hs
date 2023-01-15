@@ -33,6 +33,7 @@ import qualified XMonad.Actions.FlexibleManipulate as Flex
 import XMonad.Actions.Commands
 import XMonad.Actions.CopyWindow (copy, copyToAll, killAllOtherCopies, wsContainingCopies)
 import XMonad.Actions.CycleWS
+import qualified XMonad.Actions.CycleWS as CycleWS
 import XMonad.Actions.DynamicProjects (Project(..), dynamicProjects, shiftToProjectPrompt, switchProjectPrompt)
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.FloatKeys
@@ -333,8 +334,7 @@ myManageHook = composeAll $
         ]
     tileBelow = insertPosition Below Newer
 
-myHandleEventHook = docksEventHook
-                <+> fadeWindowsEventHook
+myHandleEventHook = fadeWindowsEventHook
                 <+> dynamicTitle myDynHook
                 <+> handleEventHook def
                 <+> XMonad.Layout.Fullscreen.fullscreenEventHook
@@ -349,14 +349,13 @@ myDynamicLog h = do
   let check ws | ws `elem` copies =
                  pad . xmobarColor yellow red . wrap "*" " "  $ ws
                | otherwise = pad ws
-  ewmhDesktopsLogHook
   dynamicLogWithPP $ xmobarPP
     { ppOutput  = hPutStrLn h
     , ppCurrent = xmobarColor active "" . wrap "[" "]"
     , ppVisible = xmobarColor base0  "" . wrap "(" ")"
     , ppHidden = check
     , ppUrgent = xmobarColor red    "" . wrap " " " "
-    , ppSort    = (. namedScratchpadFilterOutWorkspace) <$> ppSort def
+    , ppSort    = ppSort def
     , ppTitle   = xmobarColor active "" . shorten 50
     }
 
@@ -371,12 +370,9 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
 
 -- hidden, non-empty workspaces less scratchpad
-nextNonEmptyWS = findWorkspace getSortByIndexNoSP Next HiddenNonEmptyWS 1
-        >>= \t -> (windows . W.view $ t)
-prevNonEmptyWS = findWorkspace getSortByIndexNoSP Prev HiddenNonEmptyWS 1
-        >>= \t -> (windows . W.view $ t)
-getSortByIndexNoSP =
-        fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex
+nextNonEmptyWS = windows . W.greedyView =<< findWorkspace getSortByIndexNoSP Next (hiddenWS :&: CycleWS.Not emptyWS) 1
+prevNonEmptyWS = windows . W.greedyView =<< findWorkspace getSortByIndexNoSP Prev (hiddenWS :&: CycleWS.Not emptyWS) 1
+getSortByIndexNoSP = fmap (.filterOutWs [scratchpadWorkspaceTag]) getSortByIndex
 
 myNav2DConf = def { defaultTiledNavigation = centerNavigation
                   , layoutNavigation = [("Full", centerNavigation)]
@@ -392,7 +388,6 @@ myKeys =
       toggleCopyToAll = wsContainingCopies >>= \ws -> case ws of
          [] -> windows copyToAll
          _ -> killAllOtherCopies
-      tryMsgR x y = sequence_ [(tryMessage_ x y), refresh]
       zipKey0 m ks as f = zipWith (\k d -> (m ++ k, f d)) ks as
       zipKey1 m ks as f b = zipWith (\k d -> (m ++ k, f d b)) ks as
       arrowKeys = map (wrap "<" ">" . show) dirs
@@ -450,10 +445,8 @@ myKeys =
 
     ----- Resize
 
-    , ("M-[", tryMsgR (ExpandTowards L) Shrink)
-    , ("M-]", tryMsgR (ExpandTowards R) Expand)
-    , ("M-S-[", tryMsgR (ExpandTowards U) MirrorShrink)
-    , ("M-S-]", tryMsgR (ExpandTowards D) MirrorExpand)
+    , ("M-[", sendMessage $ ExpandTowards L)
+    , ("M-]", sendMessage $ ExpandTowards R)
 
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
     , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
@@ -574,7 +567,7 @@ myKeys =
     , ("M-C-b", sendMessage $ Toggle NOBORDERS)
 
     -- prompts
-    , ("M-y b", windowPromptBring myXPConfig)
+    , ("M-y b", windowPrompt myXPConfig Bring allWindows)
     , ("M-y c", mainCommandPrompt myXPConfig)
     , ("M-y d", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser $HOME/Documents\"")
     , ("M-y e", spawn "~/Dev/Util/rofimoji/rofimoji.py")
@@ -720,11 +713,11 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn (alacritty "zsh -ic \"tmux new -As default\"")
+  , Project wsGen "~" . Just $ spawn "alacritty -t zsh -e zsh -ic \"tmux new -As default\""
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-  , Project wsWechat "/tmp" . Just $ spawn (alacritty "tmux new -As wechat")
+  , Project wsWechat "/tmp" . Just $ spawn "alacritty -t zsh -e zsh -ic \"tmux new -As weechat\""
   , Project wsMail "/tmp" . Just $ spawn (alacritty "neomutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"
