@@ -1,0 +1,8 @@
+#!/usr/bin/expect -f
+spawn rr replay -d cgdb {*}$argv
+expect {
+  "Type <RET>" {send "\r"; exp_continue}
+  "(rr)" {send "b main\r"}
+}
+expect "(rr)" {send "c\r"}
+interact
