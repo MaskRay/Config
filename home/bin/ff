@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+# Simplified lit runner for a single test.
+import argparse
+import os, re, sys
+from ipdb import set_trace as bp
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-d', '--debug', type=int, default=-1, help='rr record the specified command')
+    ap.add_argument('-r', '--run', type=int, default=-1, help='run the specified command')
+    ap.add_argument('--release', action='store_true', help='use /tmp/Rel as the build directory')
+    ap.add_argument('--binutils', action='store_true')
+    ap.add_argument('-n', action='store_true', help='dry run')
+    ap.add_argument('file')
+    args = ap.parse_args()
+    if args.debug >= 0:
+        args.run = args.debug
+
+    home = os.path.expanduser('~')
+    build_dir = '/tmp/Rel' if args.release else '/tmp/Debug'
+    os.environ["PATH"] = os.path.expanduser(build_dir + '/bin') + os.pathsep + os.environ['PATH']
+
+    # GNU binutils
+    if args.binutils:
+        del sys.argv[1]
+        os.environ["PATH"] = os.path.expanduser('~/Dev/binutils-gdb/out/release/ld') + os.pathsep + os.environ['PATH']
+
+    cwd = os.getcwd()
+    fname = os.path.realpath(args.file)
+    tmp = os.path.join(os.path.dirname(fname), 'a')
+    dirname = os.path.dirname(fname).replace(home, '$HOME')
+    cmd_idx = 0
+    last = ''
+    try:
+       fh = open(fname)
+    except FileNotFoundError:
+        print('not exist', file=sys.stderr)
+        return
+    substs = sorted([
+        ('/t', lambda: os.path.relpath(tmp, cwd)),
+        # See llvm/utils/lit/lit/llvm/config.py
+        ('clang', lambda: 'clang'),
+        ('clang_cc1', lambda: f'clang -cc1 -internal-isystem {build_dir}/lib/clang/17/include -nostdsysteminc'),
+        ('errc_EACCES', lambda: '"Permission denied"'),
+        ('llc_dwarf', lambda: 'llc'),
+        # See lld/test/MachO/lit.local.cfg
+        ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk')),
+        ('p', lambda: os.path.relpath(dirname, cwd)),
+        ('python', lambda: 'python3'),
+        ('run', lambda: ''),
+        ('s', lambda: os.path.relpath(fname, cwd)),
+        ('S', lambda: os.path.relpath(dirname, cwd)),
+        ('t', lambda: os.path.relpath(tmp, cwd)),
+    ], key=lambda x: -len(x[0]))
+
+    with fh as f:
+        for line in f.readlines():
+            line = line.strip()
+            match = re.search(r'RUN:[ \t]', line)
+            if not match:
+                last = ''
+                continue
+            line = line[match.end():]
+            if line[-1] == '\\':
+                last += line[:-1]
+                continue
+            line = last + line
+            last = ''
+
+            if 'rm ' in line and ('..' in line or (not re.search(r'rm (-f|-fr|-rf) %t', line))):
+                continue
+
+            line1 = ''
+            idx = 0
+            while (idx1 := line.find('%', idx)) != -1:
+                line1 += line[idx:idx1]
+                idx = idx1+1
+                for s in substs:
+                    if line[idx:].startswith(s[0]):
+                        line1 += s[1]()
+                        idx += len(s[0])
+                        break
+                else:
+                    line1 += line[idx-1]
+            line = line1 + line[idx:]
+
+            if args.run < 0:
+                print(f'{cmd_idx:^2} {line}')
+            if not args.n:
+                os.system(line)
+            if args.run == cmd_idx:
+                if (idx := line.find('|')) >= 0:
+                    line = line[:idx]
+                line = f'{build_dir}/bin/{line}'
+                if args.debug >= 0:
+                    line = 'rr record ' + line
+                print(f'### {line}')
+                if not args.n:
+                    os.system(line)
+                    if args.debug >= 0:
+                        os.execvp('rr', ('rr', 'replay', '-d', 'cgdb'))
+                break
+
+            if match := re.search(r'\bcd ([/.\w]+)', line):
+                os.chdir(match.group(1))
+                cwd = os.getcwd()
+            cmd_idx += 1
+
+main()
