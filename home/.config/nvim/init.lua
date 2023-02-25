@@ -55,7 +55,7 @@ require('lazy').setup({
   spec = {
     'folke/tokyonight.nvim',
 
-    'neoclide/coc.nvim',
+    --'neoclide/coc.nvim',
     'junegunn/fzf',
     'junegunn/fzf.vim',
     'lewis6991/gitsigns.nvim',
