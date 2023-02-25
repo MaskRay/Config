@@ -200,6 +200,7 @@ myShowWNameTheme = def
     , swn_color             = "#FFFFFF"
     }
 
+rayLayout = avoidStruts $ layoutHook def
 
 myLayout = showWorkspaceName
              $ onWorkspace "float" floatWorkSpace
@@ -600,7 +601,7 @@ myConfig xmobar = docks . dynamicProjects myProjects . withNavigation2DConfig my
     , normalBorderColor  = "#000000"
     , focusedBorderColor = "#3939ff"
     , mouseBindings      = myMouseBindings
-    , layoutHook         = myLayout
+    , layoutHook         = rayLayout
     , manageHook         = myManageHook
     , handleEventHook    = myHandleEventHook -- <+> focusFollow -- >> clockEventHook
     , logHook            = historyHook >> myDynamicLog xmobar

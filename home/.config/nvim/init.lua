@@ -2,6 +2,7 @@ local cmd = vim.cmd
 local fn = vim.fn
 local g = vim.g
 local o = vim.o
+local M = {}
 
 g.mapleader = ' '
 
@@ -73,8 +74,10 @@ require('lazy').setup({
     -- {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
     'pwntester/octo.nvim',
+    {'stevearc/overseer.nvim', opts = {}},
     'nvim-treesitter/playground',
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
+     {'akinsho/toggleterm.nvim', config = true},
     'justinmk/vim-dirvish',
     'tpope/vim-fugitive',
     'mhinz/vim-grepper',
@@ -157,16 +160,20 @@ nmap('<leader>es', ':sp <C-r>=expand("%:p:h") . "/"<cr>')
 nmap('<leader>ev', ':vsp <C-r>=expand("%:p:h") . "/"<cr>')
 nmapp('<leader>en', '<Plug>(coc-diagnostic-next')
 nmapp('<leader>ep', '<Plug>(coc-diagnostic-prev')
--- <leader>f (file)
+-- <leader>f (find & file)
+nmap('<leader>f\'', '<cmd>Telescope marks<cr>')
+nmap('<leader>f<cr>', '<cmd>Telescope resume<cr>')
 nmap('<leader>fc', '<cmd>cd %:p:h<cr>')
 nmap('<leader>fe', '<cmd>e ~/.config/nvim/init.lua<cr>')
 nmap('<leader>ff', '<cmd>Telescope find_files<cr>')
+nmap('<leader>fg', '<cmd>Telescope git_files<cr>')
+nmap('<leader>fk', '<cmd>Telescope keymaps<cr>')
 nmap('<leader>fr', '<cmd>Telescope oldfiles<cr>')
 -- <leader>g (fugitive)
 nmap('<leader>gb', '<cmd>Git blame<cr>')
 nmap('<leader>gd', '<cmd>Git diff<cr>')
+nmap('<leader>gg', '<cmd>lua toggle_term_cmd({cmd="lazygit",direction="float"})<cr>')
 nmap('<leader>gl', '<cmd>Git log<cr>')
-nmap('<leader>gg', '<cmd>Git status<cr>')
 -- <leader>l (lsp)
 nmap('<leader>le', '<cmd>CocList diagnostics<cr>')
 nmapp('<leader>lf', '<Plug>(coc-fix-current)')
@@ -175,11 +182,16 @@ nmapp('<leader>lr', '<Plug>(coc-rename)')
 -- <leader>q (quit)
 nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
+nmap('<leader>sb', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 nmap('<leader>sd', '<cmd>Telescope live_grep<cr>')
 nmap('<leader>sp', '<cmd>lua my_fd()<cr>')
-nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
+nmap('<leader>ss', '<cmd>lua require("telescope.builtin").live_grep({default_text=vim.fn.expand("<cword>")})<cr>')
+--nnoremap <expr> <leader>sF ':Telescope find_files<cr>' . "'" . expand('<cword>')
 nmap('<leader>sS', '<cmd>Grepper -noprompt -cword<cr>')
--- <leader>t (toggle)
+-- <leader>t (toggle & terminal)
+nmap('<leader>tf', '<cmd>ToggleTerm direction=float<cr>')
+nmap('<leader>th', '<cmd>ToggleTerm direction=horizontal size=10<cr>')
+nmap('<leader>tv', '<cmd>ToggleTerm direction=vertical size=80<cr>')
 nmap('<leader>tl', '<cmd>lua require("fn").toggle_loclist()<cr>')
 nmap('<leader>tn', '<cmd>set number!<cr>')
 nmap('<leader>tq', '<cmd>lua require("fn").toggle_qf()<cr>')
@@ -206,6 +218,8 @@ nmap('xD', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true,
 nmap('xc', '<cmd>call CocLocations("ccls","$ccls/call")<cr>')
 -- callee
 nmap('xC', '<cmd>call CocLocations("ccls","$ccls/call",{"callee":v:true})<cr>')
+-- member
+nmap('xm', '<cmd>call CocLocations("ccls","$ccls/member")<cr>')
 nmap('xt', '<cmd>call MarkPush()<cr>:call CocAction("jumpTypeDefinition")<cr>')
 -- misc
 nmap('<M-down>', '<cmd>cnext<cr>')
@@ -350,5 +364,25 @@ vim.api.nvim_create_user_command('RR', function(opts)
   vim.cmd 'Termdebug'
   my_gdb_keymap('/bin/rr')
 end, {})
+
+M.user_terminals = {}
+function toggle_term_cmd(opts)
+  local terms = M.user_terminals
+  opts = vim.tbl_deep_extend('force', {hidden = true}, opts)
+  local num = vim.v.count > 0 and vim.v.count or 1
+  -- if terminal doesn't exist yet, create it
+  if not terms[opts.cmd] then terms[opts.cmd] = {} end
+  if not terms[opts.cmd][num] then
+    if not opts.count then opts.count = vim.tbl_count(terms) * 100 + num end
+    local on_exit = opts.on_exit
+    opts.on_exit = function(...)
+      terms[opts.cmd][num] = nil
+      if on_exit then on_exit(...) end
+    end
+    terms[opts.cmd][num] = require("toggleterm.terminal").Terminal:new(opts)
+  end
+  -- toggle the terminal
+  terms[opts.cmd][num]:toggle()
+end
 
 require 'plugins'
