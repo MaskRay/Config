@@ -20,7 +20,6 @@ o.updatetime = 100
 
 cmd 'filetype plugin on'
 cmd 'filetype plugin indent on'
-pcall(cmd, 'colorscheme tokyonight')
 
 local stl = {
   '%#ColorColumn#%2f',          -- buffer number
@@ -43,6 +42,50 @@ local stl = {
   '%*',                         -- restore normal highlight
 }
 o.statusline = table.concat(stl)
+
+function prequire(...)
+  local status, lib = pcall(require, ...)
+  if status then return lib end
+  return nil
+end
+
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath})
+end
+vim.opt.rtp:prepend(lazypath)
+
+require('lazy').setup({
+  spec = {
+    'folke/tokyonight.nvim',
+
+    'neoclide/coc.nvim',
+    'junegunn/fzf',
+    'junegunn/fzf.vim',
+    'lewis6991/gitsigns.nvim',
+    'phaazon/hop.nvim',
+    'rluba/jai.vim',
+    'kdheepak/lazygit.nvim',
+    'ggandor/lightspeed.nvim',
+    'alaviss/nim.nvim',
+    {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
+    'terrortylor/nvim-comment',
+    'mfussenegger/nvim-dap',
+    'neovim/nvim-lspconfig',
+    {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
+    {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    'nvim-treesitter/playground',
+    {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
+    'justinmk/vim-dirvish',
+    'tpope/vim-fugitive',
+    'mhinz/vim-grepper',
+    'preservim/vimux',
+    'folke/which-key.nvim',
+  }
+})
+
+pcall(cmd, 'colorscheme tokyonight')
 
 -- Mappings {{{1
 local function map(mode, lhs, rhs, opts)
@@ -233,53 +276,5 @@ aug Nim
   au FileType nim :call Nim_init()
 aug END
 ]], true)
-
-function prequire(...)
-  local status, lib = pcall(require, ...)
-  if status then return lib end
-  return nil
-end
-
-local ensure_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-  if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
-    vim.cmd [[packadd packer.nvim]]
-    return true
-  end
-  return false
-end
-local packer_bootstrap = ensure_packer()
-
-require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
-
-  use 'folke/tokyonight.nvim'
-
-  use 'neoclide/coc.nvim'
-  use 'junegunn/fzf'
-  use 'junegunn/fzf.vim'
-  use 'lewis6991/gitsigns.nvim'
-  use 'phaazon/hop.nvim'
-  use 'rluba/jai.vim'
-  use 'kdheepak/lazygit.nvim'
-  use 'ggandor/lightspeed.nvim'
-  use 'alaviss/nim.nvim'
-  use {'hrsh7th/nvim-cmp', requires = {"hrsh7th/cmp-buffer", "hrsh7th/cmp-nvim-lsp"}}
-  use 'terrortylor/nvim-comment'
-  use 'mfussenegger/nvim-dap'
-  use 'neovim/nvim-lspconfig'
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
-  use {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end}
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
-  use 'nvim-treesitter/playground'
-  use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
-  use 'justinmk/vim-dirvish'
-  use 'tpope/vim-fugitive'
-  use 'mhinz/vim-grepper'
-  use 'preservim/vimux'
-  use 'folke/which-key.nvim'
-end)
 
 require 'plugins'
