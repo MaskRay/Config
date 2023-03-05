@@ -80,9 +80,24 @@ require('lazy').setup({
     'justinmk/vim-dirvish',
     'tpope/vim-fugitive',
     'mhinz/vim-grepper',
+    'dstein64/vim-startuptime',
     'preservim/vimux',
     'folke/which-key.nvim',
-  }
+  },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        'gzip',
+        'matchit',
+        'matchparen',
+        'netrwPlugin',
+        'tarPlugin',
+        'tohtml',
+        'tutor',
+        'zipPlugin',
+      },
+    },
+  },
 })
 
 pcall(cmd, 'colorscheme tokyonight')

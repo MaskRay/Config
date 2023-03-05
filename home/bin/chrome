@@ -1,4 +1,2 @@
 #!/bin/sh
-#/opt/google/chrome-beta/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --audio-buffer-size=2048 --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac --allow-running-insecure-content chrome://new-tab "$@"
-#google-chrome-stable --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --audio-buffer-size=2048 --proxy-pac-url=file:///home/ray/.config/google-chrome/proxy.pac --allow-running-insecure-content chrome://new-tab "$@"
-/opt/google/chrome/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome chrome://new-tab "$@"
+/opt/google/chrome/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --ozone-platform=wayland chrome://new-tab "$@"
