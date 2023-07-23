@@ -1,2 +1,10 @@
-#!/bin/sh
-git pull --rebase origin main && git commit --amend --date=now --no-edit && git push origin HEAD:main && git fetch origin main:main && git rebase main && git checkout main
+#!/bin/zsh
+setopt local_options no_case_match
+branch=$(git branch --show-current)
+if [[ $(git log -1 --pretty=%B) =~ 'WIP|RFC' ]]; then
+  echo wip, dont push
+  exit 1
+fi
+
+git pull --rebase origin main && git commit --amend --date=now --no-edit && git push origin HEAD:main && git fetch origin main:main && git switch main || exit 1
+[[ $branch != main ]] && git branch -D $branch

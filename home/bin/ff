@@ -6,6 +6,7 @@ from ipdb import set_trace as bp
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('-b', '--build', default='/tmp/Debug', help='build directory')
     ap.add_argument('-d', '--debug', type=int, default=-1, help='rr record the specified command')
     ap.add_argument('-r', '--run', type=int, default=-1, help='run the specified command')
     ap.add_argument('--release', action='store_true', help='use /tmp/Rel as the build directory')
@@ -17,7 +18,7 @@ def main():
         args.run = args.debug
 
     home = os.path.expanduser('~')
-    build_dir = '/tmp/Rel' if args.release else '/tmp/Debug'
+    build_dir = '/tmp/Rel' if args.release else args.build
     os.environ["PATH"] = os.path.expanduser(build_dir + '/bin') + os.pathsep + os.environ['PATH']
 
     # GNU binutils
@@ -37,11 +38,13 @@ def main():
         print('not exist', file=sys.stderr)
         return
     substs = sorted([
+        ('/p', lambda: os.path.relpath(dirname, cwd)),
         ('/t', lambda: os.path.relpath(tmp, cwd)),
         # See llvm/utils/lit/lit/llvm/config.py
         ('clang', lambda: 'clang'),
         ('clang_cc1', lambda: f'clang -cc1 -internal-isystem {build_dir}/lib/clang/17/include -nostdsysteminc'),
         ('errc_EACCES', lambda: '"Permission denied"'),
+        ('itanium_abi_triple', lambda: 'x86_64'),
         ('llc_dwarf', lambda: 'llc'),
         # See lld/test/MachO/lit.local.cfg
         ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk')),
@@ -56,6 +59,7 @@ def main():
     with fh as f:
         for line in f.readlines():
             line = line.strip()
+            if 'END.' in line: break
             match = re.search(r'RUN:[ \t]', line)
             if not match:
                 last = ''

@@ -1,2 +1,2 @@
 #%Module
-prepend-path PATH $env(HOME)/.gem/ruby/2.7.0/bin
+prepend-path PATH $env(HOME)/.local/share/gem/ruby/3.1.0/bin

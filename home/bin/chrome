@@ -1,2 +1,2 @@
 #!/bin/sh
-/opt/google/chrome/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome --ozone-platform=wayland chrome://new-tab "$@"
+/opt/google/chrome/chrome --disk-cache-dir=/dev/shm --user-data-dir=$HOME/.config/google-chrome chrome://new-tab "$@"
