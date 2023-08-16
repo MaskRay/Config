@@ -1,5 +1,0 @@
-[Unit]
-Description=Check for new versions
-
-[Service]
-ExecStart=/usr/bin/nvchecker -n %h/abs/nvchecker.ini
