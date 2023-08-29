@@ -101,18 +101,6 @@ if [[ -n $ZSH_VERSION ]]; then
   hash -d d=~/Documents
 fi
 
-# auto sudo {{{1
-alias brctl='sudo brctl'
-alias ip='sudo ip'
-alias iw='sudo iw'
-alias mount='sudo mount'
-alias netstat='sudo netstat'
-alias nmap='sudo nmap'
-alias ss='sudo ss'
-alias tc='sudo tc'
-alias umount='sudo umount'
-alias sv='sudo vi'
-alias sd='sudo sysdig'
 
 # dev {{{1
 alias gdb='gdb -q'
@@ -205,7 +193,8 @@ alias glf='git l --follow'
 alias glp='git l -p'
 alias gpl='git pull'
 alias gpu='git push'
-alias gs='git status'
+alias gs='git switch'
+alias gst='git status'
 alias ghost='command gs'
 alias grt='[[ ! -z `git rev-parse --show-cdup` ]] && cd `git rev-parse --show-cdup` || pwd'
 
@@ -460,7 +449,7 @@ gt() {
     --preview 'git show --color=always {} | head -200'
 }
 
-gh() {
+ghash() {
   is_in_git_repo || return
   git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
   fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
