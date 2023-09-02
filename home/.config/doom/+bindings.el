@@ -167,17 +167,6 @@
      :desc "Find snippet for mode"  "s" #'yas-visit-snippet-file
      :desc "Find snippet"           "S" #'+default/find-in-snippets)
 
-   (:prefix ("s" . "search")
-     "b" #'swiper-all
-     :desc "Directory"              "d" #'+ivy/project-search-from-cwd
-     :desc "Project"                "/" #'+ivy/project-search
-     "s" (λ! (minibuffer-with-setup-hook
-                  (lambda () (insert ivy--default)) (+ivy/project-search)))
-     :desc "Symbols"                "i" #'imenu
-     :desc "Symbols across buffers" "I" #'imenu-anywhere
-     :desc "Online providers"       "o" #'+lookup/online-select
-     )
-
    (:prefix ("t" . "toggle")
      "d" #'toggle-debug-on-error
      "D" #'+my/realtime-elisp-doc

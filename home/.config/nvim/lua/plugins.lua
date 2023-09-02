@@ -1,3 +1,15 @@
+require'hop'.setup()
+
+require('telescope').setup{
+  defaults = {
+    mappings = {
+      i = {
+        ['<C-h>'] = 'which_key'
+      }
+    }
+  },
+}
+
 local treesitter = require 'nvim-treesitter.configs'
 treesitter.setup {
   ensure_installed = {'cpp', 'python'},
@@ -126,3 +138,8 @@ require('nvim_comment').setup()
 
 -- Default map: <leader>h ]c [c
 require('gitsigns').setup()
+
+local neogit = require('neogit')
+neogit.setup {}
+
+require('which-key').setup()

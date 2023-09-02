@@ -43,12 +43,6 @@ local stl = {
 }
 o.statusline = table.concat(stl)
 
-function prequire(...)
-  local status, lib = pcall(require, ...)
-  if status then return lib end
-  return nil
-end
-
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git', '--branch=stable', lazypath})
@@ -67,6 +61,7 @@ require('lazy').setup({
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
     'ggandor/lightspeed.nvim',
+    'NeogitOrg/neogit',
     'alaviss/nim.nvim',
     {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
     'terrortylor/nvim-comment',
@@ -106,10 +101,13 @@ pcall(cmd, 'colorscheme tokyonight')
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end
-  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+  vim.keymap.set(mode, lhs, rhs, options)
 end
 local function nmap(lhs, rhs, opts)
   map('n', lhs, rhs, opts)
+end
+local function tmap(lhs, rhs, opts)
+  map('t', lhs, rhs, opts)
 end
 local function nmapp(lhs, rhs, opts)
   local options = {}
@@ -129,7 +127,7 @@ map('x', ';', ':')
 -- g
 nmap('ga', ':<C-u>CocList -I symbols<cr>')
 nmap('gj', ':HopLineAC<cr>')
-nmap('gk', ':opLineBC<cr>')
+nmap('gk', ':HopLineBC<cr>')
 xnmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 -- <leader>
 xnmap('<leader>?', require('telescope.builtin').oldfiles, '[?] Find recently opened files')
@@ -143,7 +141,10 @@ nmap('<leader>bn', '<cmd>bn<cr>')
 nmap('<leader>bp', '<cmd>bp<cr>')
 nmap('<leader>bN', '<cmd>new<cr>')
 nmap('<leader>bR', '<cmd>e<cr>')
--- <leader>d (diff)
+-- <leader>c (compile)
+nmap('<leader>cc', '<cmd>make<cr>')
+-- <leader>d (debug, diff)
+nmap('<leader>db', '<cmd>Break<cr>')
 nmap('<leader>dt', '<cmd>diffthis<cr>')
 nmap('<leader>do', '<cmd>bufdo diffoff<cr>')
 -- <leader>e (error)
@@ -171,7 +172,8 @@ nmapp('<leader>lr', '<Plug>(coc-rename)')
 nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
 nmap('<leader>sd', '<cmd>Telescope live_grep<cr>')
-nmap('<leader>ss', '<cmd>lua require("telescope.builtin").grep_string()<cr>')
+nmap('<leader>sp', '<cmd>lua my_fd()<cr>')
+nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 nmap('<leader>sS', '<cmd>Grepper -noprompt -cword<cr>')
 -- <leader>t (toggle)
 nmap('<leader>tl', '<cmd>lua require("fn").toggle_loclist()<cr>')
@@ -190,7 +192,8 @@ nmap(',r', '<cmd>call CocLocations("ccls","textDocument/references",{"role":8})<
 nmap(',w', '<cmd>call CocLocations("ccls","textDocument/references",{"role":16})<cr>') -- write
 -- x (xref)
 -- bases of up to 3 levels
-nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>')
+nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{})<cr>')
+nmap('xB', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>')
 -- derived of up to 3 levels
 nmap('xd', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true})<cr>')
 -- derived of up to 3 levels
@@ -210,6 +213,14 @@ nmap('L', '<cmd>call MarkPop(1)<cr>')
 nmap('K', '<cmd>silent call CocAction("doHover")<cr>')
 nmap('U', '<cmd>call MyHopThenDefinition()<cr>')
 nmap('zx', '<cmd>bdelete<cr>')
+nmap('<f1>', '<cmd>Gdb<cr>')
+nmap('<f2>', '<cmd>Program<cr>')
+nmap('<f11>', '<cmd>Break<cr>')
+nmap('<f12>', '<cmd>Clear<cr>')
+tmap('<C-h>', '<C-\\><C-n><C-w>h')
+tmap('<C-j>', '<C-\\><C-n><C-w>j')
+tmap('<C-k>', '<C-\\><C-n><C-w>k')
+tmap('<C-l>', '<C-\\><C-n><C-w>l')
 
 -- Autocmd {{{1
 function nvim_create_augroups(definitions)
@@ -227,9 +238,6 @@ local autocmds = {
   restore_cursor = {
     {'BufRead', '*', [[call setpos(".", getpos("'\""))]]};
   };
-  packer = {
-    {'BufWritePost', 'plugins.lua', 'PackerCompile'};
-  };
   toggle_search_highlighting = {
     {'InsertEnter', '*', 'setlocal nohlsearch'};
   };
@@ -239,6 +247,15 @@ local autocmds = {
   };
 }
 nvim_create_augroups(autocmds)
+
+function my_fd(opts)
+  opts = opts or {}
+  opts.cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  if vim.v.shell_error ~= 0 then
+    opts.cwd = vim.lsp.get_active_clients()[1].config.root_dir
+  end
+  require'telescope.builtin'.find_files(opts)
+end
 
 vim.api.nvim_exec([[
 let g:mark_ring = [{},{},{},{},{},{},{},{},{},{}]
@@ -290,6 +307,44 @@ aug Nim
   au!
   au FileType nim :call Nim_init()
 aug END
+
+command! GdbStart :call TermDebugSendCommand('start')
+command! GdbUp :call TermDebugSendCommand('up')
+command! GdbDown :call TermDebugSendCommand('down')
+command! GdbQuit :call TermDebugSendCommand('quit')
 ]], true)
+
+vim.g.termdebug_config = {
+  wide = 1,
+}
+local function my_gdb_keymap(process)
+  for _,buf in pairs(vim.api.nvim_list_bufs()) do
+    if string.find(vim.api.nvim_buf_get_name(buf), process) then
+      vim.keymap.set('n', 'c', '<cmd>Continue<cr>', {buffer=buf})
+      vim.keymap.set('n', 'd', '<cmd>GdbDown<cr>', {buffer=buf})
+      vim.keymap.set('n', 'f', '<cmd>Finish<cr>', {buffer=buf})
+      vim.keymap.set('n', 'n', '<cmd>Over<cr>', {buffer=buf})
+      vim.keymap.set('n', 'r', '<cmd>GdbStart<cr>', {buffer=buf})
+      vim.keymap.set('n', 's', '<cmd>Step<cr>', {buffer=buf})
+      vim.keymap.set('n', 'u', '<cmd>GdbUp<cr>', {buffer=buf})
+      vim.keymap.set('n', 'v', '<cmd>call TermDebugSendCommand("info locals")<cr>', {buffer=buf})
+      vim.keymap.set('n', 'w', '<cmd>call TermDebugSendCommand("where")<cr>', {buffer=buf})
+      vim.keymap.set('t', ';', '<C-\\><C-n>', {buffer=buf})
+    end
+  end
+end
+vim.api.nvim_exec('packadd termdebug', true)
+vim.api.nvim_create_user_command('RunGdb', function(opts)
+  vim.wo.scrolloff = 999
+  vim.cmd "sil! unlet g:termdebug_config['command']"
+  vim.cmd 'Termdebug'
+  my_gdb_keymap('/bin/gdb')
+end, {})
+vim.api.nvim_create_user_command('RR', function(opts)
+  vim.wo.scrolloff = 999
+  vim.cmd "let g:termdebug_config['command'] = ['rr', 'replay', '--']"
+  vim.cmd 'Termdebug'
+  my_gdb_keymap('/bin/rr')
+end, {})
 
 require 'plugins'
