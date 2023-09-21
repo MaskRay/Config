@@ -20,6 +20,9 @@ def main():
     home = os.path.expanduser('~')
     build_dir = '/tmp/Rel' if args.release else args.build
     os.environ["PATH"] = os.path.expanduser(build_dir + '/bin') + os.pathsep + os.environ['PATH']
+    os.environ['LLVM_DISABLE_SYMBOLIZATION'] = '1'
+    os.environ['LLD_IN_TEST'] = '1'
+    os.environ['LLD_VERSION'] = 'LLD 1.0'
 
     # GNU binutils
     if args.binutils:
@@ -47,7 +50,8 @@ def main():
         ('itanium_abi_triple', lambda: 'x86_64'),
         ('llc_dwarf', lambda: 'llc'),
         # See lld/test/MachO/lit.local.cfg
-        ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk')),
+        ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem -fatal_warnings')),
+        ('no-fatal-warnings-lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem')),
         ('p', lambda: os.path.relpath(dirname, cwd)),
         ('python', lambda: 'python3'),
         ('run', lambda: ''),
