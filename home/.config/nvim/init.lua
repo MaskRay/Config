@@ -10,6 +10,8 @@ o.shiftwidth = 2
 o.expandtab = true
 o.number = true
 o.termguicolors = true
+o.grepprg = 'rg --vimgrep'
+o.grepformat = '%f:%l:%c:%m'
 
 o.backup = true
 o.backupdir = os.getenv('HOME') .. '/.cache/nvim/backup//'

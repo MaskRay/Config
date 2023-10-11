@@ -1,7 +1,7 @@
 #!/bin/zsh
 setopt local_options no_case_match
 branch=$(git branch --show-current)
-if [[ $(git log -1 --pretty=%B) =~ 'WIP|RFC' ]]; then
+if [[ $(git log -1 --pretty=%B) =~ 'WIP' ]]; then
   echo wip, dont push
   exit 1
 fi

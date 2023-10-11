@@ -2,25 +2,28 @@
 dry_run=
 if [[ $1 == --dry-run ]]; then dry_run=1; shift; fi
 
+autoload -U regexp-replace
 f() {
   for f in $1/*(ND.^x); do
     [[ ${f##*/} =~ '^\.' ]] && continue
+    ff=$f
+    regexp-replace ff '^\./' ''
     if [[ -n $dry_run ]]; then
-      echo $f
+      echo $ff
     elif [[ $(wc -l < $f) == 1 ]]; then
-      echo "echo '$(<$f)' > $f"
+      echo "echo '$(<$f)' > $ff"
     else
       if [[ ${f##*/} == Makefile ]]; then
-        printf '%s\n' "sed 's/^        /\\t/' > $f <<'eof'"
+        printf '%s\n' "sed 's/^        /\\t/' > $ff <<'eof'"
       else
-        echo "cat > $f <<'eof'"
+        echo "cat > $ff <<'eof'"
       fi
       cat $f
       echo eof
     fi
   done
   for d in $1/*(ND/); do
-    [[ $d =~ '^\.' ]] && continue
+    [[ $d =~ '^\.[^/]|.ccls-cache' ]] && continue
     echo mkdir -p $d
     f $d
   done
