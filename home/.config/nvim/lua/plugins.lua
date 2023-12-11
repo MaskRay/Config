@@ -142,4 +142,6 @@ require('gitsigns').setup()
 local neogit = require('neogit')
 neogit.setup {}
 
+require('octo').setup()
+
 require('which-key').setup()

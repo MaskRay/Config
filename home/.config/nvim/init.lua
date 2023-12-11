@@ -72,6 +72,7 @@ require('lazy').setup({
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
     {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
+    'pwntester/octo.nvim',
     'nvim-treesitter/playground',
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
     'justinmk/vim-dirvish',
