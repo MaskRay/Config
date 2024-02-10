@@ -442,7 +442,7 @@ gbl() {
   sed 's#^remotes/##'
 }
 
-gt() {
+gtag() {
   is_in_git_repo || return
   git tag --sort -version:refname |
   fzf-down --multi --preview-window right:70% \

@@ -83,12 +83,14 @@
   frag = magenta bold
 [diff]
   mnemonicprefix = true
-  tool = vimdiff
-  algorithm = patience
+  tool = nvim
+	algorithm = histogram
 [diff "lisp"]
   xfuncname="^(\\((def|test).*)$"
 [diff "python"]
   xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"
+[difftool "nvim"]
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [format]
   pretty = mine
 [github]
@@ -96,7 +98,10 @@
 [log]
   date = local
 [merge]
-  tool = vimdiff
+	tool = nvim
+	conflictStyle = zdiff3
+[mergetool "nvim"]
+	cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\""
 #[mergetool "vimdiffnice"]
 #  cmd = vimdiff -c \"wincmd J\" -c \"/<<<<<<< \" $MERGED $LOCAL $BASE $REMOTE
 [pretty]
