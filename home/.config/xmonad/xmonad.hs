@@ -40,7 +40,6 @@ import XMonad.Actions.FloatKeys
 import XMonad.Actions.FloatSnap
 import XMonad.Actions.GridSelect
 import XMonad.Actions.GroupNavigation
-import XMonad.Actions.MessageFeedback (tryMessage_)
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.Promote (promote)
 import qualified XMonad.Actions.Search as S
@@ -73,7 +72,6 @@ import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Minimize
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
-import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
 import XMonad.Layout.IM
 import XMonad.Layout.PerScreen
@@ -205,7 +203,6 @@ myShowWNameTheme = def
     }
 
 
--- gimpLayout = named "Gimp" $ withIM (0.130) (Role "gimp-toolbox") $ (simpleDrawer 0.2 0.2 (Role "gimp-dock") `onRight` Full)
 myLayout = showWorkspaceName
              $ onWorkspace "float" floatWorkSpace
              $ fullscreenFloat -- fixes floating windows going full screen, while retaining "bounded" fullscreen
@@ -403,7 +400,7 @@ myKeys =
     zipKey1 "M-S-" dirKeys dirs windowSwap True ++
     zipKey0 "M-C-" dirKeys dirs (sendMessage . pullGroup) ++
     [ ("M-" ++ m ++ [k], f i)
-        | (i, k) <- zip myWorkspaces "uiop"
+        | (i, k) <- zip myWorkspaces "uiop["
         , (f, m) <- [ (windows . W.greedyView, "")
                     , (windows . liftM2 (.) W.view W.shift, "S-")
                     ]
@@ -444,9 +441,6 @@ myKeys =
     , ("M-.", sendMessage (IncMasterN (-1)))
 
     ----- Resize
-
-    , ("M-[", sendMessage $ ExpandTowards L)
-    , ("M-]", sendMessage $ ExpandTowards R)
 
     , ("M-S-<L>", withFocused (keysResizeWindow (-30,0) (0,0))) --shrink float at right
     , ("M-S-<R>", withFocused (keysResizeWindow (30,0) (0,0))) --expand float at right
@@ -706,7 +700,7 @@ wsEmacs = "emacs"
 
 wsFloat = "float"
 wsGimp = "gimp"
-wsWechat = "wechat"
+wsTmp = "tmp"
 wsInkscape = "inkscape"
 wsMail = "mail"
 
@@ -717,7 +711,7 @@ myProjects =
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
 
-  , Project wsWechat "/tmp" . Just $ spawn "alacritty -t zsh -e zsh -ic \"tmux new -As weechat\""
+  , Project wsTmp "/tmp" . Just $ spawn "true"
   , Project wsMail "/tmp" . Just $ spawn (alacritty "neomutt")
   , Project wsGimp "/tmp" . Just $ spawn "gimp"
   , Project wsInkscape "/tmp" . Just $ spawn "inkscape"
