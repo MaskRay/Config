@@ -34,6 +34,7 @@ def main():
     tmp = os.path.join(os.path.dirname(fname), 'a')
     dirname = os.path.dirname(fname).replace(home, '$HOME')
     cmd_idx = 0
+    lineno = 0
     last = ''
     try:
        fh = open(fname)
@@ -50,8 +51,8 @@ def main():
         ('itanium_abi_triple', lambda: 'x86_64'),
         ('llc_dwarf', lambda: 'llc'),
         # See lld/test/MachO/lit.local.cfg
-        ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem -fatal_warnings')),
-        ('no-fatal-warnings-lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 10.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem')),
+        ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 11.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem -fatal_warnings')),
+        ('no-fatal-warnings-lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 11.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem')),
         ('p', lambda: os.path.relpath(dirname, cwd)),
         ('python', lambda: 'python3'),
         ('run', lambda: ''),
@@ -63,6 +64,7 @@ def main():
     with fh as f:
         for line in f.readlines():
             line = line.strip()
+            lineno += 1
             if 'END.' in line: break
             match = re.search(r'RUN:[ \t]', line)
             if not match:
@@ -95,8 +97,9 @@ def main():
             if args.run < 0:
                 print(f'{cmd_idx:^2} {line}')
             if not args.n:
-                os.system(line)
-            if args.run == cmd_idx:
+                if os.system(line) != 0:
+                    sys.exit(1)
+            if args.run == lineno:
                 if (idx := line.find('|')) >= 0:
                     line = line[:idx]
                 line = f'{build_dir}/bin/{line}'
@@ -104,7 +107,8 @@ def main():
                     line = 'rr record ' + line
                 print(f'### {line}')
                 if not args.n:
-                    os.system(line)
+                    if os.system(line) != 0:
+                        sys.exit(1)
                     if args.debug >= 0:
                         os.execvp('rr', ('rr', 'replay', '-d', 'cgdb'))
                 break
