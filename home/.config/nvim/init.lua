@@ -79,6 +79,7 @@ require('lazy').setup({
     'tpope/vim-fugitive',
     'mhinz/vim-grepper',
     'dstein64/vim-startuptime',
+    'vim-crystal/vim-crystal',
     'preservim/vimux',
     'folke/which-key.nvim',
   },
