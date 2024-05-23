@@ -33,7 +33,6 @@ def main():
     fname = os.path.realpath(args.file)
     tmp = os.path.join(os.path.dirname(fname), 'a')
     dirname = os.path.dirname(fname).replace(home, '$HOME')
-    cmd_idx = 0
     lineno = 0
     last = ''
     try:
@@ -95,7 +94,7 @@ def main():
             line = line1 + line[idx:]
 
             if args.run < 0:
-                print(f'{cmd_idx:^2} {line}')
+                print(f'{lineno:^2} {line}')
             if not args.n:
                 if os.system(line) != 0:
                     sys.exit(1)
@@ -116,6 +115,5 @@ def main():
             if match := re.search(r'\bcd ([/.\w]+)', line):
                 os.chdir(match.group(1))
                 cwd = os.getcwd()
-            cmd_idx += 1
 
 main()
