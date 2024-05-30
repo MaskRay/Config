@@ -5,7 +5,7 @@ if [[ $1 == --dry-run ]]; then dry_run=1; shift; fi
 autoload -U regexp-replace
 f() {
   for f in $1/*(ND.^x); do
-    [[ ${f##*/} =~ '^\.' ]] && continue
+    [[ ${f##*/} =~ '^\.|\.o$' ]] && continue
     ff=$f
     regexp-replace ff '^\./' ''
     if [[ -n $dry_run ]]; then
@@ -23,7 +23,7 @@ f() {
     fi
   done
   for d in $1/*(ND/); do
-    [[ $d =~ '^\.[^/]|.ccls-cache' ]] && continue
+    [[ $d =~ '^\.[^/]|/\.' ]] && continue
     echo mkdir -p $d
     f $d
   done
