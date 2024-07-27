@@ -70,7 +70,7 @@ require('lazy').setup({
     'mfussenegger/nvim-dap',
     'neovim/nvim-lspconfig',
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-    {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
+    -- {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
     'pwntester/octo.nvim',
     'nvim-treesitter/playground',
