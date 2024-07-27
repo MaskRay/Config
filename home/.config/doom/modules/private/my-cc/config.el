@@ -79,7 +79,7 @@
     (add-to-list 'projectile-project-root-files-bottom-up ".ccls-root"))
   ;; Avoid using `:after' because it ties the :config below to when `lsp-mode'
   ;; loads, rather than `ccls' loads.
-  (after! lsp-mode (require 'ccls))
+  (after! lsp-mode (require 'ccls) (require 'lsp-ui))
   :config
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   ;; overlay is slow

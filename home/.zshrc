@@ -66,7 +66,6 @@ for i ({1..9}) alias $i="cd +$i"; unset i
 
 setopt no_complete_aliases
 setopt auto_continue            #automatically send SIGCON to disowned jobs
-setopt extended_glob            # so that patterns like ^() *~() ()# can be used
 setopt pushd_ignore_dups        # do not push dups on stack
 setopt brace_ccl                # expand alphabetic brace expressions
 setopt correct                  # spell check for commands only

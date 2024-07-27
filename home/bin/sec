@@ -30,6 +30,7 @@ case $1 in
     if (cd $dir && find . | zip -@ -P $pass $tmp) && mv $tmp $archive; then
       [[ -n $delete ]] && rm -r $dir
     fi
+    :
     ;;
   d)
     [[ -d $dir ]] || mkdir $dir
