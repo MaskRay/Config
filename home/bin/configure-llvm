@@ -1,0 +1,80 @@
+#!/bin/zsh
+dry_run=
+PROJECTS=(-DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;flang;lldb;lld;compiler-rt;mlir;polly;libc;cross-project-tests' -DLLVM_ENABLE_RUNTIMES='openmp;libcxx;libcxxabi;libunwind')
+SLIM=(-DCLANG_ENABLE_ARCMT=off -DCLANG_ENABLE_STATIC_ANALYZER=off -DCLANG_PLUGIN_SUPPORT=off)
+
+while (($#)); do
+  case $1 in
+    --full) SLIM=() ;;
+    --light) PROJECTS=(-DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld;compiler-rt') ;;
+    --dry-run) dry_run=1 ;;
+    -*) echo "unknown option $1" >&1; exit ;;
+    *) break ;;
+  esac
+  shift
+done
+
+LLVM=(-GNinja "${PROJECTS[@]}" "${SLIM[@]}" -DCMAKE_CXX_COMPILER=$HOME/Stable/bin/clang++ -DCMAKE_C_COMPILER=$HOME/Stable/bin/clang -DCMAKE_CXX_ARCHIVE_CREATE="$HOME/Stable/bin/llvm-ar qc --thin <TARGET> <OBJECTS>" -DCMAKE_CXX_ARCHIVE_FINISH=:
+  -DLLVM_OPTIMIZED_TABLEGEN=On -DLLVM_APPEND_VC_REV=OFF -DLLVM_ENABLE_LLD=On -DPython3_EXECUTABLE=/usr/bin/python3
+  -DLIBOMPTARGET_BUILD_DEVICERTL_BCLIB=off -DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=off -DLIBOMPTARGET_BUILD_CUDA_PLUGIN=off)
+[[ $(uname -a) =~ 'x86_64 GNU' ]] && LLVM=(${LLVM[@]} -DCMAKE_{EXE,SHARED}_LINKER_FLAGS='-Wl,-z,pack-relative-relocs')
+for i in "${LLVM[@]}"; do
+  (($LLVM[(Ie)$i])) && LLVMFULL+=("$i")
+done
+LLVMFULL+=(-DCLANG_ENABLE_ARCMT=on -DCLANG_ENABLE_STATIC_ANALYZER=on)
+
+linux=
+[[ -f /etc/lsb_release ]] && linux=1
+
+cmake() {
+  if [[ -n $dry_run ]]; then
+    echo cmake "$@"
+  else
+    command cmake "$@"
+  fi
+}
+
+# Build with system gcc
+if [[ $1 == stable ]]; then
+  cmake -GNinja -Sllvm -Bout/stable -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=host -DLLVM_ENABLE_PROJECTS='clang;lld;compiler-rt' ${linux:+-DLLVM_USE_LINKER=gold} -DLLVM_APPEND_VC_REV=OFF ${SLIM}
+  [[ -n $dry_run ]] || ninja -C out/stable clang lld msan
+
+# Build with stable clang/lld
+elif [[ $1 == preset ]]; then
+  cmake -Sllvm -B/tmp/Rel -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/opt/Rel ${LLVMFULL} -DLLVM_BUILD_EXAMPLES=on -DLLVM_ENABLE_ASSERTIONS=on -DLLVM_ENABLE_{CURL,HTTPLIB,SPHINX}=ON -DLLVM_BINUTILS_INCDIR=$HOME/Dev/binutils-gdb/include -DLLVM_OPTIMIZED_TABLEGEN=Off -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD='ARC;AVR;CSKY;DirectX;LoongArch;M68k;SPIRV;Xtensa' -DLIBCXX_ABI_VERSION=2
+  #cmake -Sllvm -B/tmp/Debug -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=Debug ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DCMAKE_{EXE,SHARED}_LINKER_FLAGS=-Wl,--gdb-index -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCOMPILER_RT_DEBUG=On -DLLVM_USE_SPLIT_DWARF=On -DLLVM_BINUTILS_INCDIR=$HOME/Dev/binutils-gdb/include -DLLVM_OPTIMIZE_SANITIZED_BUILDS=OFF -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD='ARC;AVR;LoongArch;M68k;Xtensa' 
+  cmake -Sllvm -B/tmp/Debug -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=Debug ${LLVM} -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCOMPILER_RT_DEBUG=On -DLLVM_USE_SPLIT_DWARF=On -DLLVM_BINUTILS_INCDIR=$HOME/Dev/binutils-gdb/include -DLLVM_OPTIMIZE_SANITIZED_BUILDS=OFF -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD='ARC;AVR;LoongArch;M68k;Xtensa' 
+elif [[ $1 == laptop ]]; then
+  cmake -Sllvm -B$HOME/llvm/out/debug -DBUILD_SHARED_LIBS=On -DCMAKE_BUILD_TYPE=Debug ${LLVM} -DCMAKE_CXX_COMPILER=$HOME/Stable/bin/clang++ -DCMAKE_C_COMPILER=$HOME/Stable/bin/clang -DCMAKE_CXX_ARCHIVE_CREATE="$HOME/Stable/bin/llvm-ar qc --thin <TARGET> <OBJECTS>" -DCMAKE_CXX_ARCHIVE_FINISH=: -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCOMPILER_RT_DEBUG=On -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld' -DLLVM_TARGETS_TO_BUILD='AArch64;X86;RISCV' -DLLVM_PARALLEL_LINK_JOBS=2 -DLLVM_USE_SPLIT_DWARF=On -DLLVM_OPTIMIZE_SANITIZED_BUILDS=OFF
+elif [[ $1 == static-debug ]]; then
+  cmake -Sllvm -B/tmp/StaticDebug -DCMAKE_BUILD_TYPE=Debug ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DCMAKE_{EXE,SHARED}_LINKER_FLAGS=-Wl,--gdb-index -DCOMPILER_RT_DEBUG=On -DLLVM_USE_SPLIT_DWARF=On -DLLVM_BINUTILS_INCDIR=$HOME/Dev/binutils-gdb/include "${@:2}"
+
+elif [[ $1 == asan ]]; then
+  cmake -Sllvm -B/tmp/out/asan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g1' -DLLVM_USE_SANITIZER=Address -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off -DLLVM_ENABLE_PROJECTS='clang;lld;clang-tools-extra'
+elif [[ $1 == tsan ]]; then
+  cmake -Sllvm -B/tmp/out/tsan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DLLVM_USE_SANITIZER=Thread -DLLVM_ENABLE_PROJECTS='clang;lld'
+elif [[ $1 == ubsan ]]; then
+  cmake -Sllvm -B/tmp/out/ubsan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DLLVM_USE_SANITIZER=Undefined -DLLVM_ENABLE_PROJECTS='clang;lld'
+
+elif [[ $1 == custom* ]]; then
+  rm -fr /tmp/out/$1
+  cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=Release ${LLVM} "${@:2}"
+
+# Build with a stage-1 clang/lld
+elif [[ $1 == s2-debug ]]; then
+  LLVM+=(-DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_OPTIMIZED_TABLEGEN=On -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld;compiler-rt')
+  cmake -Sllvm -B/tmp/out/s2 -DCMAKE_BUILD_TYPE=Debug ${LLVM} -DCMAKE_CXX_FLAGS='-g -stdlib=libc++' -DCMAKE_{EXE,SHARED}_LINKER_FLAGS=-stdlib=libc++ -DLLVM_ENABLE_ASSERTIONS=on -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off "${@:2}"
+elif [[ $1 == s2-release ]]; then
+  LLVM+=(-DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld;compiler-rt')
+  cmake -Sllvm -B/tmp/out/s2-release -DCMAKE_BUILD_TYPE=Release ${LLVM} -DLLVM_ENABLE_ASSERTIONS=on
+  #cmake -Sllvm -B/tmp/out/s2-release -DCMAKE_BUILD_TYPE=Release ${LLVM} -DCMAKE_CXX_FLAGS='-stdlib=libc++' -DCMAKE_{EXE,SHARED}_LINKER_FLAGS=-stdlib=libc++ -DLLVM_ENABLE_ASSERTIONS=on
+elif [[ $1 == s2-asan* ]]; then
+  # ninja clang lld asan compiler-rt-headers
+  cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_USE_SANITIZER=Address -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off -DLLVM_ENABLE_PROJECTS='clang;lld;clang-tools-extra;mlir'
+elif [[ $1 == s2-ubsan* ]]; then
+  # ninja clang lld ubsan compiler-rt-headers
+  cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_USE_SANITIZER=Undefined -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off -DLLVM_ENABLE_PROJECTS='clang;lld;clang-tools-extra'
+elif [[ $1 == s2-custom* ]]; then
+  rm -fr /tmp/out/$1
+  cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=Release ${LLVM} -DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang "${@:2}"
+fi
