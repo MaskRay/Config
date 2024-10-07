@@ -136,6 +136,19 @@ vim.api.nvim_exec('hi default link CocHoverRange NONE', true)
 
 require('nvim_comment').setup()
 
+local Hydra = require("hydra")
+-- TODO: not working
+-- Hydra({
+--   name = 'lsp xref',
+--   mode = 'n',
+--   body = 'x',
+--   heads = {
+--     {'n', '<cmd>CocNext<cr>'},
+--     {'p', '<cmd>CocPrev<cr>'},
+--     { "q", nil, { exit = true, nowait = true } },
+--   },
+-- })
+
 -- Default map: <leader>h ]c [c
 require('gitsigns').setup()
 

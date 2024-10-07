@@ -61,6 +61,7 @@ require('lazy').setup({
     'junegunn/fzf.vim',
     'lewis6991/gitsigns.nvim',
     'phaazon/hop.nvim',
+    'nvimtools/hydra.nvim',
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
     'ggandor/lightspeed.nvim',
@@ -220,6 +221,8 @@ nmap('xc', '<cmd>call CocLocations("ccls","$ccls/call")<cr>')
 nmap('xC', '<cmd>call CocLocations("ccls","$ccls/call",{"callee":v:true})<cr>')
 -- member
 nmap('xm', '<cmd>call CocLocations("ccls","$ccls/member")<cr>')
+nmap('xn', '<cmd>CocNext<cr>')
+nmap('xp', '<cmd>CocPrev<cr>')
 nmap('xt', '<cmd>call MarkPush()<cr>:call CocAction("jumpTypeDefinition")<cr>')
 -- misc
 nmap('<M-down>', '<cmd>cnext<cr>')
