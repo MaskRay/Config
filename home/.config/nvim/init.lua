@@ -56,14 +56,19 @@ require('lazy').setup({
   spec = {
     'folke/tokyonight.nvim',
 
-    'neoclide/coc.nvim',
+    'ranjithshegde/ccls.nvim',
+    'stevearc/dressing.nvim',
+    -- 'neoclide/coc.nvim',
     'junegunn/fzf',
     'junegunn/fzf.vim',
     'lewis6991/gitsigns.nvim',
+    'ThePrimeagen/harpoon',
     'phaazon/hop.nvim',
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
     'ggandor/lightspeed.nvim',
+    'williamboman/mason.nvim',
+    'williamboman/mason-lspconfig.nvim',
     'NeogitOrg/neogit',
     'alaviss/nim.nvim',
     {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
@@ -107,7 +112,12 @@ pcall(cmd, 'colorscheme tokyonight')
 -- Mappings {{{1
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
-  if opts then options = vim.tbl_extend('force', options, opts) end
+  if opts then
+    if type(opts) == 'string' then
+      opts = {desc = opts}
+    end
+    options = vim.tbl_extend('force', options, opts)
+  end
   vim.keymap.set(mode, lhs, rhs, options)
 end
 local function nmap(lhs, rhs, opts)
@@ -118,7 +128,12 @@ local function tmap(lhs, rhs, opts)
 end
 local function nmapp(lhs, rhs, opts)
   local options = {}
-  if opts then options = vim.tbl_extend('force', options, opts) end
+  if opts then
+    if type(opts) == 'string' then
+      opts = {desc = opts}
+    end
+    options = vim.tbl_extend('force', options, opts)
+  end
   vim.api.nvim_set_keymap('n', lhs, rhs, options)
 end
 
@@ -133,31 +148,28 @@ map('x', ';', ':')
 
 -- g
 nmap('ga', ':<C-u>CocList -I symbols<cr>')
-nmap('gj', ':HopLineAC<cr>')
-nmap('gk', ':HopLineBC<cr>')
-xnmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+nmap('gj', ':HopLineAC<cr>', 'Hop line down')
+nmap('gk', ':HopLineBC<cr>', 'Hop line up')
 -- <leader>
 xnmap('<leader>?', require('telescope.builtin').oldfiles, '[?] Find recently opened files')
 xnmap('<leader><space>', require('telescope.builtin').buffers, '[ ] Find existing buffers')
-nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', {silent=true})
+nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
 -- <leader>a (app)
 nmap('<leader>ag', '<cmd>%!genhdr<cr>')
 nmap('<leader>aG', '<cmd>%!genhdr windows<cr>')
 -- <leader>b (buffer)
-nmap('<leader>bn', '<cmd>bn<cr>')
-nmap('<leader>bp', '<cmd>bp<cr>')
-nmap('<leader>bN', '<cmd>new<cr>')
+nmap('<leader>bn', '<cmd>bn<cr>', 'Next buffer')
+nmap('<leader>bp', '<cmd>bp<cr>', 'Previous buffer')
+nmap('<leader>bN', '<cmd>new<cr>', 'New empty buffer')
 nmap('<leader>bR', '<cmd>e<cr>')
 -- <leader>c (compile)
-nmap('<leader>cc', '<cmd>make<cr>')
+nmap('<leader>cc', '<cmd>OverseerRun<cr>', 'OverseerRun')
 -- <leader>d (debug, diff)
 nmap('<leader>db', '<cmd>Break<cr>')
 nmap('<leader>dt', '<cmd>diffthis<cr>')
 nmap('<leader>do', '<cmd>bufdo diffoff<cr>')
 -- <leader>e (error)
 nmap('<leader>ee', ':e <C-r>=expand("%:p:h") . "/"<cr>')
-nmap('<leader>es', ':sp <C-r>=expand("%:p:h") . "/"<cr>')
-nmap('<leader>ev', ':vsp <C-r>=expand("%:p:h") . "/"<cr>')
 nmapp('<leader>en', '<Plug>(coc-diagnostic-next')
 nmapp('<leader>ep', '<Plug>(coc-diagnostic-prev')
 -- <leader>f (find & file)
@@ -172,22 +184,32 @@ nmap('<leader>fr', '<cmd>Telescope oldfiles<cr>')
 -- <leader>g (fugitive)
 nmap('<leader>gb', '<cmd>Git blame<cr>')
 nmap('<leader>gd', '<cmd>Git diff<cr>')
-nmap('<leader>gg', '<cmd>lua toggle_term_cmd({cmd="lazygit",direction="float"})<cr>')
+nmap('<leader>gg', '<cmd>lua ToggleTermCmd({cmd="lazygit",direction="float"})<cr>')
 nmap('<leader>gl', '<cmd>Git log<cr>')
+-- <leader>h (harpoon)
+local mark = require("harpoon.mark")
+local ui = require("harpoon.ui")
+nmap("<leader>ha", mark.add_file)
+nmap("<leader>he", ui.toggle_quick_menu)
+nmap("<leader>1", function() ui.nav_file(1) end, 'Harpoon 1')
+nmap("<leader>2", function() ui.nav_file(2) end, 'Harpoon 2')
+nmap("<leader>3", function() ui.nav_file(3) end, 'Harpoon 3')
+nmap("<leader>4", function() ui.nav_file(4) end, 'Harpoon 4')
+nmap("<leader>5", function() ui.nav_file(5) end, 'Harpoon 5')
+nmap("<leader>6", function() ui.nav_file(6) end, 'Harpoon 6')
 -- <leader>l (lsp)
-nmap('<leader>le', '<cmd>CocList diagnostics<cr>')
-nmapp('<leader>lf', '<Plug>(coc-fix-current)')
-nmap('<leader>li', '<cmd>CocList outline<cr>')
-nmapp('<leader>lr', '<Plug>(coc-rename)')
+nmap('<leader>le', '<cmd>CocList diagnostics<cr>', 'LSP diagnostics')
+nmapp('<leader>lf', '<Plug>(coc-fix-current)', 'Fix')
+nmap('<leader>li', '<cmd>CocList outline<cr>', 'Outline')
+nmapp('<leader>lr', '<Plug>(coc-rename)', 'Rename')
+-- <leader>p (project)
+nmap('<leader>pf', '<cmd>lua require("telescope.builtin").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
 -- <leader>q (quit)
 nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
-nmap('<leader>sb', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
-nmap('<leader>sd', '<cmd>Telescope live_grep<cr>')
-nmap('<leader>sp', '<cmd>lua my_fd()<cr>')
-nmap('<leader>ss', '<cmd>lua require("telescope.builtin").live_grep({default_text=vim.fn.expand("<cword>")})<cr>')
---nnoremap <expr> <leader>sF ':Telescope find_files<cr>' . "'" . expand('<cword>')
-nmap('<leader>sS', '<cmd>Grepper -noprompt -cword<cr>')
+nmap('<leader>sd', '<cmd>lua require("telescope.builtin").live_grep({cwd=vim.fn.expand("%:p:h")})<cr>', 'Search directory')
+nmap('<leader>sp', '<cmd>lua require("telescope.builtin").live_grep({cwd=MyProject()})<cr>', 'Search project')
+nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>', 'Search buffer')
 -- <leader>t (toggle & terminal)
 nmap('<leader>tf', '<cmd>ToggleTerm direction=float<cr>')
 nmap('<leader>th', '<cmd>ToggleTerm direction=horizontal size=10<cr>')
@@ -207,22 +229,16 @@ nmap(',m', '<cmd>call CocLocations("ccls","textDocument/references",{"role":64})
 nmap(',r', '<cmd>call CocLocations("ccls","textDocument/references",{"role":8})<cr>') -- read
 nmap(',w', '<cmd>call CocLocations("ccls","textDocument/references",{"role":16})<cr>') -- write
 -- x (xref)
--- bases of up to 3 levels
-nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{})<cr>')
-nmap('xB', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>')
--- derived of up to 3 levels
-nmap('xd', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true})<cr>')
--- derived of up to 3 levels
-nmap('xD', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true,"levels":3})<cr>')
--- caller
-nmap('xc', '<cmd>call CocLocations("ccls","$ccls/call")<cr>')
--- callee
-nmap('xC', '<cmd>call CocLocations("ccls","$ccls/call",{"callee":v:true})<cr>')
--- member
-nmap('xm', '<cmd>call CocLocations("ccls","$ccls/member")<cr>')
-nmap('xn', '<cmd>CocNext<cr>')
-nmap('xp', '<cmd>CocPrev<cr>')
-nmap('xt', '<cmd>call MarkPush()<cr>:call CocAction("jumpTypeDefinition")<cr>')
+nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{})<cr>', 'base')
+nmap('xB', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>', 'base 3')
+nmap('xd', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true})<cr>', 'derive')
+nmap('xD', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true,"levels":3})<cr>', 'derive 3')
+nmap('xc', '<cmd>call CocLocations("ccls","$ccls/call")<cr>', 'caller')
+nmap('xC', '<cmd>call CocLocations("ccls","$ccls/call",{"callee":v:true})<cr>', 'callee')
+nmap('xm', '<cmd>call CocLocations("ccls","$ccls/member")<cr>', 'member')
+nmap('xn', '<cmd>CocNext<cr>', 'LSP next')
+nmap('xp', '<cmd>CocPrev<cr>', 'LSP previous')
+nmap('xt', '<cmd>call MarkPush()<cr>:call CocAction("jumpTypeDefinition")<cr>', 'type definition')
 -- misc
 nmap('<M-down>', '<cmd>cnext<cr>')
 nmap('<M-up>', '<cmd>cprevious<cr>')
@@ -245,6 +261,7 @@ nmap('<f1>', '<cmd>Gdb<cr>')
 nmap('<f2>', '<cmd>Program<cr>')
 nmap('<f11>', '<cmd>Break<cr>')
 nmap('<f12>', '<cmd>Clear<cr>')
+nmap('<M-`>', '<cmd>OverseerToggle<cr>')
 tmap('<C-h>', '<C-\\><C-n><C-w>h')
 tmap('<C-j>', '<C-\\><C-n><C-w>j')
 tmap('<C-k>', '<C-\\><C-n><C-w>k')
@@ -276,16 +293,11 @@ local autocmds = {
 }
 nvim_create_augroups(autocmds)
 
-function my_fd(opts)
-  opts = opts or {}
-  opts.cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
-  if vim.v.shell_error ~= 0 then
-    opts.cwd = vim.lsp.get_active_clients()[1].config.root_dir
-  end
-  require'telescope.builtin'.find_files(opts)
+function MyProject()
+  return vim.fn.systemlist("git rev-parse --show-toplevel")[1]
 end
 
-vim.api.nvim_exec([[
+vim.api.nvim_exec2([[
 let g:mark_ring = [{},{},{},{},{},{},{},{},{},{}]
 let g:mark_ring_i = 0
 
@@ -340,7 +352,7 @@ command! GdbStart :call TermDebugSendCommand('start')
 command! GdbUp :call TermDebugSendCommand('up')
 command! GdbDown :call TermDebugSendCommand('down')
 command! GdbQuit :call TermDebugSendCommand('quit')
-]], true)
+]], {})
 
 vim.g.termdebug_config = {
   wide = 1,
@@ -376,7 +388,7 @@ vim.api.nvim_create_user_command('RR', function(opts)
 end, {})
 
 M.user_terminals = {}
-function toggle_term_cmd(opts)
+function ToggleTermCmd(opts)
   local terms = M.user_terminals
   opts = vim.tbl_deep_extend('force', {hidden = true}, opts)
   local num = vim.v.count > 0 and vim.v.count or 1

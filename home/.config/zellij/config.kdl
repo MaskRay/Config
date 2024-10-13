@@ -13,18 +13,19 @@ keybinds {
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt h" { MoveFocusOrTab "Left"; }
         bind "Alt l" { MoveFocusOrTab "Right"; }
-        bind "Alt n" { NewPane; }
         bind "Alt w" { ToggleFloatingPanes;}
     }
 
     tmux clear-defaults=true {
-        bind "Ctrl l" { Write 2; SwitchToMode "Normal"; }
+        bind "Ctrl l" { Write 12; SwitchToMode "Normal"; }
         bind "Esc" { SwitchToMode "Normal"; }
         bind "\"" { NewPane "Down"; SwitchToMode "Normal"; }
         bind "%" { NewPane "Right"; SwitchToMode "Normal"; }
         bind "c" { NewTab; SwitchToMode "Normal"; }
         bind "g" { SwitchToMode "Locked"; }
-        bind "h" { SwitchToMode "Move"; }
+        bind "h" { GoToPreviousTab; SwitchToMode "Normal"; }
+        bind "l" { GoToNextTab; SwitchToMode "Normal"; }
+        bind "m" { SwitchToMode "Move"; }
         bind "n" { SwitchToMode "Resize"; }
         bind "o" { SwitchToMode "Session"; }
         bind "p" { SwitchToMode "Pane"; }
