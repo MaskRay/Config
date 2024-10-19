@@ -68,7 +68,7 @@
   )
 
 (use-package! ccls
-  :load-path "~/Dev/Emacs/emacs-ccls"
+  ;; :load-path "~/Dev/Emacs/emacs-ccls"
   :hook ((c-mode-local-vars c++-mode-local-vars objc-mode-local-vars) . +ccls|enable)
   :init
   (defun +my/ccls-code-lens ()

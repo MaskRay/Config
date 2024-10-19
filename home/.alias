@@ -55,8 +55,8 @@ if [[ -n $ZSH_VERSION ]]; then
   alias -g P="|column -t"
   alias -g S="|sort"
   alias -g X="|xargs"
-  alias -g G='|egrep --color=auto'
-  alias -g EG='|& egrep --color=auto'
+  alias -g G='|grep -E --color=auto'
+  alias -g EG='|& grep -E --color=auto'
   alias -g H="|head -n $(($LINES-2))"
   alias -g T="|tail -n $(($LINES-2))"
   alias -g N='>/dev/null'

@@ -4,6 +4,7 @@
 
 (package! avy)
 (package! atomic-chrome)
+(package! ccls)
 (package! eglot)
 (package! lispyville)
 ;; (package! lsp-mode :ignore t)
