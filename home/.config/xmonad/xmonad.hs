@@ -707,7 +707,7 @@ myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
   , Project wsGen "~" . Just $ spawn "alacritty -t zsh -e zsh -ic \"tmux new -As default\""
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
-  , Project wsEmacs "~" . Just $ spawn "LC_CTYPE=zh_CN.UTF-8 emacs"
+  , Project wsEmacs "~" . Just $ spawn "neovide"
 
   , Project wsTmp "/tmp" . Just $ spawn "true"
   , Project wsMail "/tmp" . Just $ spawn (alacritty "neomutt")
