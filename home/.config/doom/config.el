@@ -239,11 +239,39 @@
   :config
   (setq lsp-lens-enable nil) ;; Very slow
   (setq lsp-auto-guess-root t lsp-eldoc-prefer-signature-help nil)
-  (setq lsp-semantic-tokens-enable t)
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-keep-workspace-alive nil)
+
+  (setq lsp-semantic-tokens-enable t)
+  (defface lsp-face-semhl-namespace-scope
+           '((t :weight bold)) "highlight for namespace scope symbols" :group 'lsp-semantic-tokens)
+  (cl-loop for color in '("#429921" "#58c1a4" "#5ec648" "#36815b" "#83c65d"
+                          "#417b2f" "#43cc71" "#7eb769" "#58bf89" "#3e9f4a")
+         for i = 0 then (1+ i)
+         do (custom-declare-face (intern (format "lsp-face-semhl-id%d" i))
+                                 `((t :foreground ,color))
+                                 "" :group 'lsp-semantic-tokens))
+  (setq lsp-semantic-token-modifier-faces
+        `(("declaration" . lsp-face-semhl-interface)
+          ("definition" . lsp-face-semhl-definition)
+          ("implementation" . lsp-face-semhl-implementation)
+          ("readonly" . lsp-face-semhl-constant)
+          ("static" . lsp-face-semhl-static)
+          ("deprecated" . lsp-face-semhl-deprecated)
+          ("abstract" . lsp-face-semhl-keyword)
+          ("async" . lsp-face-semhl-macro)
+          ("modification" . lsp-face-semhl-operator)
+          ("documentation" . lsp-face-semhl-comment)
+          ("defaultLibrary" . lsp-face-semhl-default-library)
+          ("classScope" . lsp-face-semhl-member)
+          ("namespaceScope" . lsp-face-semhl-namespace-scope)
+          ,@(cl-loop for i from 0 to 10
+                     collect (cons (format "id%d" i)
+                                   (intern (format "lsp-face-semhl-id%d" i))))
+          ))
+
   (add-hook 'evil-insert-state-entry-hook (lambda () (setq-local lsp-hover-enabled nil)))
   (add-hook 'evil-insert-state-exit-hook (lambda () (setq-local lsp-hover-enabled t)))
   )
