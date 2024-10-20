@@ -2,7 +2,7 @@
 # Simplified lit runner for a single test.
 import argparse
 import os, re, sys
-from ipdb import set_trace as bp
+#from ipdb import set_trace as bp
 
 def main():
     ap = argparse.ArgumentParser()
