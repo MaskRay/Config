@@ -99,19 +99,23 @@ local on_attach = function(client, bufnr)
   nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
   nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
   nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
-  nmap('<M-,>', '<cmd>lua vim.lsp.buf.references()<CR>', 'References')
-  nmap('<M-j>', '<cmd>lua vim.lsp.buf.definition()<CR>', 'Definitions')
-  nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
-  nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>')
-  nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-  nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', 'Rename')
-  nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>')
-  nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>')
-  nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
-  nmap('K', '<cmd>lua vim.lsp.buf.hover()<CR>', 'Hover')
-  nmap('[e', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
-  nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<CR>')
-  nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', 'Declarations')
+  -- nmap('<M-,>', '<cmd>lua vim.lsp.buf.references()<CR>', 'References')
+  nmap('<M-,>', '<cmd>Telescope lsp_references<CR>', 'References')
+  -- nmap('<M-j>', '<cmd>lua vim.lsp.buf.definition()<cr>', 'Definitions')
+  nmap('<M-j>', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
+  nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
+  nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
+  nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
+  nmap('<space>li', '<cmd>Inspect<cr>')
+  nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename')
+  nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>')
+  nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>')
+  nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>')
+  nmap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', 'Hover')
+  nmap('[e', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+  nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+  nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', 'Declarations')
+  nmap('ga', '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>', 'Workspace symbols')
   nmap('xB', '<cmd>CclsBaseHierarchy<cr>')
   nmap('xC', '<cmd>CclsOutgoingCalls<cr>', 'callee')
   nmap('xD', '<cmd>CclsDerivedHierarchy<cr>')
@@ -119,10 +123,31 @@ local on_attach = function(client, bufnr)
   nmap('xb', '<cmd>CclsBase<cr>')
   nmap('xc', '<cmd>CclsIncomingCalls<cr>', 'caller')
   nmap('xd', '<cmd>CclsDerived<cr>')
-  nmap('xi', '<cmd>lua vim.lsp.buf.implementation()<CR>', 'Implementation')
+  nmap('xi', '<cmd>lua vim.lsp.buf.implementation()<cr>', 'Implementation')
   nmap('xm', '<cmd>CclsMember<cr>', 'member')
-  nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', 'Type definition')
+  nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', 'Type definition')
   nmap('xv', '<cmd>CclsVars<cr>', 'vars')
+
+  if client.supports_method 'textDocument/documentHighlight' then
+    vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
+    vim.api.nvim_clear_autocmds {buffer = bufnr, group = 'lsp_document_highlight'}
+    vim.api.nvim_create_autocmd('CursorHold', {
+      callback = vim.lsp.buf.document_highlight,
+      buffer = bufnr,
+      group = 'lsp_document_highlight',
+      desc = 'Document Highlight',
+    })
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      callback = vim.lsp.buf.clear_references,
+      buffer = bufnr,
+      group = 'lsp_document_highlight',
+      desc = 'Clear All the References',
+    })
+  end
+
+  if client.server_capabilities.semanticTokensProvider then
+    vim.treesitter.stop(bufnr)
+  end
 end
 local servers = {'ccls', 'lua_ls', 'nimls', 'pyright', 'rust_analyzer', 'ts_ls'}
 for _, lsp in ipairs(servers) do
@@ -138,6 +163,9 @@ for _, lsp in ipairs(servers) do
         index = {
           threads = 0,
           initialBlacklist = {"/(test|unittests)/"},
+        };
+        highlight = {
+          rainbow = 10,
         };
       }
     })
@@ -220,10 +248,50 @@ cmp.setup {
   completion = {completeopt = 'menu,menuone,noinsert'}
 }
 
-vim.api.nvim_exec('hi default link CocHoverRange NONE', true)
-
 require('mason').setup()
 require('mason-lspconfig').setup()
+
+local func_colors = {
+  '#e5b124', '#927754', '#eb992c', '#e2bf8f', '#d67c17',
+  '#88651e', '#e4b953', '#a36526', '#b28927', '#d69855',
+}
+local type_colors = {
+  '#e1afc3', '#d533bb', '#9b677f', '#e350b6', '#a04360',
+  '#dd82bc', '#de3864', '#ad3f87', '#dd7a90', '#e0438a',
+}
+local param_colors = {
+  '#e5b124', '#927754', '#eb992c', '#e2bf8f', '#d67c17',
+  '#88651e', '#e4b953', '#a36526', '#b28927', '#d69855',
+}
+local var_colors = {
+  '#429921', '#58c1a4', '#5ec648', '#36815b', '#83c65d',
+  '#419b2f', '#43cc71', '#7eb769', '#58bf89', '#3e9f4a',
+}
+local all_colors = {
+  class = type_colors,
+  constructor = func_colors,
+  enum = type_colors,
+  enumMember = var_colors,
+  field = var_colors,
+  ['function'] = func_colors,
+  method = func_colors,
+  parameter = param_colors,
+  struct = type_colors,
+  typeAlias = type_colors,
+  typeParameter = type_colors,
+  variable = var_colors
+}
+for type, colors in pairs(all_colors) do
+  for i = 1,#colors do
+    vim.api.nvim_set_hl(0, string.format('@lsp.typemod.%s.id%s.cpp', type, i-1), {fg=colors[i]})
+  end
+end
+
+vim.cmd([[
+hi @lsp.mod.classScope.cpp gui=italic
+hi @lsp.mod.static.cpp gui=bold
+hi @lsp.typemod.variable.namespaceScope.cpp gui=bold,underline
+]])
 
 require('nvim_comment').setup()
 

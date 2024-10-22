@@ -67,6 +67,7 @@ require('lazy').setup({
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
     'ggandor/lightspeed.nvim',
+    'nvimdev/lspsaga.nvim',
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'NeogitOrg/neogit',
@@ -200,7 +201,7 @@ nmap("<leader>6", function() ui.nav_file(6) end, 'Harpoon 6')
 -- <leader>l (lsp)
 nmap('<leader>le', '<cmd>CocList diagnostics<cr>', 'LSP diagnostics')
 nmapp('<leader>lf', '<Plug>(coc-fix-current)', 'Fix')
-nmap('<leader>li', '<cmd>CocList outline<cr>', 'Outline')
+-- nmap('<leader>li', '<cmd>CocList outline<cr>', 'Outline')
 nmapp('<leader>lr', '<Plug>(coc-rename)', 'Rename')
 -- <leader>p (project)
 nmap('<leader>pf', '<cmd>lua require("telescope.builtin").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
@@ -247,7 +248,7 @@ nmapp('<M-,>', '<Plug>(coc-references)')
 nmap('H', '<cmd>call MarkPop(-1)<cr>')
 nmap('L', '<cmd>call MarkPop(1)<cr>')
 nmap('K', '<cmd>silent call CocAction("doHover")<cr>')
-nmap('U', '<cmd>call MyHopThenDefinition()<cr>')
+nmap('U', '<cmd>lua MyHopThenDefinition()<cr>')
 nmap('zx', '<cmd>bdelete<cr>')
 nmap('[l', vim.cmd.lfirst)
 nmap('[l', vim.cmd.lprev)
@@ -293,6 +294,12 @@ local autocmds = {
 }
 nvim_create_augroups(autocmds)
 
+function MyHopThenDefinition()
+  require'hop'.hint_words()
+  vim.api.nvim_call_function('MarkPush', {})
+  require'telescope.builtin'.lsp_definitions()
+end
+
 function MyProject()
   return vim.fn.systemlist("git rev-parse --show-toplevel")[1]
 end
@@ -318,12 +325,6 @@ fu! MarkPop(d)
     silent exec 'e ' . fnameescape(mark.path)
   endif
   call cursor(mark.line, mark.col)
-endf
-
-fu! MyHopThenDefinition()
-  lua require'hop'.hint_words()
-  call MarkPush()
-  call CocAction("jumpDefinition")
 endf
 
 fu! My_coc_hover()
