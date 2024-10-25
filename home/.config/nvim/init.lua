@@ -112,7 +112,7 @@ pcall(cmd, 'colorscheme tokyonight')
 
 -- Mappings {{{1
 local function map(mode, lhs, rhs, opts)
-  local options = {noremap = true}
+  local options = {}
   if opts then
     if type(opts) == 'string' then
       opts = {desc = opts}
