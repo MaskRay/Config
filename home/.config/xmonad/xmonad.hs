@@ -565,7 +565,6 @@ myKeys =
     , ("M-y e", spawn "~/Dev/Util/rofimoji/rofimoji.py")
     , ("M-y p", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser $HOME/Papers\"")
     , ("M-y r", spawn "rofi -sort -sorting-method fzf -show run")
-    , ("M-<Space>", spawn "rofi -sort -matching fuzzy -show run")
     , ("M-y t", spawn "rofi -sort -sorting-method fzf -show file -modi file:\"rofi-file-browser /tmp\"")
     , ("M-y v", spawn "pavucontrol")
     , ("M-y m", spawn "menu")

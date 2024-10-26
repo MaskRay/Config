@@ -125,7 +125,6 @@ alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administ
 alias clip='xclip -i -selection clipboard'
 alias dhc='sudo dhcpcd -x wlp3s0; sudo dhcpcd wlp3s0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias drsync='rsync --progress --partial --delete --size-only'
-alias e='emacsclient -nw -c'
 alias mt=multitail
 alias mtr='sudo mtr --curses'
 alias px='proxychains -f ~/.config/proxychains0.conf'
@@ -142,6 +141,10 @@ alias wee=weechat-curses
 alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias xi='xinit -- -nolisten tcp -ardelay 170 -arinterval 40 :0 vt$XDG_VTNR'
 alias xst='xstow -d ~/.local/stow'
+
+alias e="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote"
+alias vs="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
+alias t="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote-tab"
 
 ## with common options
 alias R='R --quiet'

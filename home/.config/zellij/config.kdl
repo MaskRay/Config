@@ -1,7 +1,7 @@
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
 keybinds {
     normal clear-defaults=true {
-        bind "Ctrl l" { SwitchToMode "Tmux"; }
+        bind "Ctrl Space" { SwitchToMode "Tmux"; }
         unbind "Ctrl b"
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt =" { Resize "Increase"; }
@@ -12,26 +12,29 @@ keybinds {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt h" { MoveFocusOrTab "Left"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
         bind "Alt l" { MoveFocusOrTab "Right"; }
         bind "Alt w" { ToggleFloatingPanes;}
     }
 
     tmux clear-defaults=true {
-        bind "Ctrl l" { Write 12; SwitchToMode "Normal"; }
+        bind "Ctrl Space" { Write 0; SwitchToMode "Normal"; }
         bind "Esc" { SwitchToMode "Normal"; }
-        bind "\"" { NewPane "Down"; SwitchToMode "Normal"; }
-        bind "%" { NewPane "Right"; SwitchToMode "Normal"; }
         bind "c" { NewTab; SwitchToMode "Normal"; }
+        bind "e" { EditScrollback; SwitchToMode "Normal"; }
         bind "g" { SwitchToMode "Locked"; }
-        bind "h" { GoToPreviousTab; SwitchToMode "Normal"; }
-        bind "l" { GoToNextTab; SwitchToMode "Normal"; }
+        bind "h" { NewPane "Down"; SwitchToMode "Normal"; }
         bind "m" { SwitchToMode "Move"; }
+        bind "n" { GoToNextTab; SwitchToMode "Normal"; }
         bind "n" { SwitchToMode "Resize"; }
         bind "o" { SwitchToMode "Session"; }
+        bind "p" { GoToPreviousTab; SwitchToMode "Normal"; }
         bind "p" { SwitchToMode "Pane"; }
         bind "q" { Quit; }
         bind "s" { SwitchToMode "Scroll"; }
         bind "t" { SwitchToMode "Tab"; }
+        bind "v" { NewPane "Right"; SwitchToMode "Normal"; }
     }
 
     // locked {
@@ -310,7 +313,7 @@ themes {
 // The name of the default layout to load on startup
 // Default: "default"
 //
-// default_layout "compact"
+default_layout "compact"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal

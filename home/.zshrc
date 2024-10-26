@@ -473,5 +473,5 @@ fi
 if [[ -f ~/bin/modulecmd.tcl ]]; then
   module() { eval `~/bin/modulecmd.tcl zsh $*`; }
   module use ~/.modules
-  module load go nim ruby rust #wasm nodejs yarn
+  module load deno go nim ruby rust #wasm nodejs yarn
 fi
