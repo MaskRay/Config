@@ -1,4 +1,18 @@
-require'hop'.setup()
+local M = {}
+M.lsp = require'lsp'
+
+require'leap'.add_default_mappings(true)
+require'mini.surround'.setup({
+  mappings = {
+    add = "gza", -- Add surrounding in Normal and Visual modes
+    delete = "gzd", -- Delete surrounding
+    find = "gzf", -- Find surrounding (to the right)
+    find_left = "gzF", -- Find surrounding (to the left)
+    highlight = "gzh", -- Highlight surrounding
+    replace = "gzr", -- Replace surrounding
+    update_n_lines = "gzn", -- Update `n_lines`
+  },
+})
 
 require('telescope').setup{
   defaults = {
@@ -70,6 +84,8 @@ treesitter.setup {
   },
 }
 
+require'trouble'.setup()
+
 local nvim_lsp = require 'lspconfig'
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -82,7 +98,11 @@ local on_attach = function(client, bufnr)
       end
       options = vim.tbl_extend('force', options, opts)
     end
-    vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, options)
+    if type(opts) == 'string' then
+      vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, options)
+    else
+      vim.keymap.set(mode, lhs, rhs, {buffer=true})
+    end
   end
   local function nmap(lhs, rhs, opts)
     map('n', lhs, rhs, opts)
@@ -94,6 +114,7 @@ local on_attach = function(client, bufnr)
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
+  nmap('J', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
   map('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
   nmap(',f', '<cmd>lua require("ccls.protocol").request("textDocument/references",{excludeRole=32})<cr>') -- not call
   nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
@@ -101,8 +122,6 @@ local on_attach = function(client, bufnr)
   nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
   -- nmap('<M-,>', '<cmd>lua vim.lsp.buf.references()<CR>', 'References')
   nmap('<M-,>', '<cmd>Telescope lsp_references<CR>', 'References')
-  -- nmap('<M-j>', '<cmd>lua vim.lsp.buf.definition()<cr>', 'Definitions')
-  nmap('<M-j>', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
   nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
   nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
   nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
@@ -125,23 +144,34 @@ local on_attach = function(client, bufnr)
   nmap('xd', '<cmd>CclsDerived<cr>')
   nmap('xi', '<cmd>lua vim.lsp.buf.implementation()<cr>', 'Implementation')
   nmap('xm', '<cmd>CclsMember<cr>', 'member')
+  nmap('xn', function() M.lsp.words.jump(vim.v.count1) end, 'Next reference')
+  nmap('xp', function() M.lsp.words.jump(-vim.v.count1) end, 'Prev reference')
   nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', 'Type definition')
   nmap('xv', '<cmd>CclsVars<cr>', 'vars')
 
-  if client.supports_method 'textDocument/documentHighlight' then
-    vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
-    vim.api.nvim_clear_autocmds {buffer = bufnr, group = 'lsp_document_highlight'}
-    vim.api.nvim_create_autocmd('CursorHold', {
-      callback = vim.lsp.buf.document_highlight,
+  if client.supports_method 'textDocument/codeLens' then
+    vim.api.nvim_create_autocmd({'BufEnter'}, {
+      group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
       buffer = bufnr,
-      group = 'lsp_document_highlight',
-      desc = 'Document Highlight',
+      callback = function(ev)
+        vim.lsp.codelens.refresh({bufnr = 0})
+      end,
     })
-    vim.api.nvim_create_autocmd('CursorMoved', {
-      callback = vim.lsp.buf.clear_references,
+    vim.lsp.codelens.refresh({bufnr = 0})
+  end
+
+  if client.supports_method 'textDocument/documentHighlight' then
+    vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
+      group = vim.api.nvim_create_augroup('lsp_word_' .. bufnr, {clear = true}),
       buffer = bufnr,
-      group = 'lsp_document_highlight',
-      desc = 'Clear All the References',
+      callback = function(ev)
+        if ev.event:find('CursorMoved') then
+          vim.lsp.buf.clear_references()
+        else
+          vim.lsp.buf.document_highlight()
+        end
+      end,
+      desc = 'Document Highlight',
     })
   end
 
@@ -149,7 +179,7 @@ local on_attach = function(client, bufnr)
     vim.treesitter.stop(bufnr)
   end
 end
-local servers = {'ccls', 'lua_ls', 'nimls', 'pyright', 'rust_analyzer', 'ts_ls'}
+local servers = {'ccls', 'lua_ls', 'marksman', 'nimls', 'pyright', 'rust_analyzer'}
 for _, lsp in ipairs(servers) do
   local options = {
     on_attach = on_attach,
@@ -206,6 +236,15 @@ for _, lsp in ipairs(servers) do
   end
   nvim_lsp[lsp].setup(options)
 end
+nvim_lsp.denols.setup {
+  on_attach = on_attach,
+  root_dir = nvim_lsp.util.root_pattern('deno.json', 'deno.jsonc'),
+}
+nvim_lsp.ts_ls.setup {
+  on_attach = on_attach,
+  root_dir = nvim_lsp.util.root_pattern('package.json'),
+  single_file_support = false,
+}
 
 local cmp = require('cmp')
 cmp.setup {
@@ -301,6 +340,175 @@ require('gitsigns').setup()
 local neogit = require('neogit')
 neogit.setup {}
 
-require('octo').setup()
+require'neo-tree'.setup {
+  window = {
+    mappings = {
+      ["l"] = "open",
+      ["h"] = "close_node",
+      ["<space>"] = "none",
+      ["Y"] = {
+        function(state)
+          local node = state.tree:get_node()
+          local path = node:get_id()
+          vim.fn.setreg("+", path, "c")
+        end,
+        desc = "Copy Path to Clipboard",
+      },
+      ["O"] = {
+        function(state)
+          require("lazy.util").open(state.tree:get_node().path, { system = true })
+        end,
+        desc = "Open with System Application",
+      },
+      ["P"] = { "toggle_preview", config = { use_float = false } },
+    },
+  },
+  filesystem = {
+    follow_current_file = {
+      enabled = true,
+      leave_dirs_open = false,
+    },
+  },
+}
+
+-- require('octo').setup()
+
+require('which-key').setup({
+  defaults = {},
+  spec = {
+    {'<leader><tab>', group = 'tabs'},
+    {'<leader>a', group = 'app'},
+    {'<leader>c', group = 'code'},
+    {'<leader>f', group = 'file/find'},
+    {'<leader>g', group = 'git'},
+    {'<leader>gh', group = 'hunks'},
+    {'<leader>gz', group = 'surround'},
+    {'<leader>l', group = 'lsp'},
+    {'<leader>p', group = 'project'},
+    {'<leader>s', group = 'search'},
+    {'<leader>t', group = 'toggle/terminal'},
+    {'<leader>q', group = 'quit'},
+    {'<leader>x', group = 'xref'},
+  },
+})
 
 require('which-key').setup()
+
+local dap = require('dap')
+local dapui = require('dapui')
+dapui.setup()
+require'dap-python'.setup('python3')
+require'mason-nvim-dap'.setup()
+
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+
+dap.adapters.gdb = {
+  id = 'gdb',
+  type = 'executable',
+  command = 'gdb',
+  args = { '--interpreter=dap' },
+}
+dap.configurations.c = {
+  {
+    name = "Launch",
+    type = "gdb",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    args = function()
+      local args_str = vim.fn.input({
+        prompt = 'Arguments: ',
+      })
+      return vim.split(args_str, ' +')
+    end,
+    cwd = "${workspaceFolder}",
+    stopAtBeginningOfMainSubprogram = true,
+  },
+  {
+    name = 'Attach to process (GDB)',
+    type = 'gdb',
+    request = 'attach',
+    processId = require('dap.utils').pick_process,
+  },
+  {
+    name = "rr connect",
+    type = "gdb",
+    request = "launch",
+    cwd = "${workspaceFolder}",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    stopAtBeginningOfMainSubprogram = true,
+    MIMode = "gdb",
+    miDebuggerServerAddress = "localhost:5050",
+    serverLaunchTimeout = 5000,
+    postRemoteConnectCommands = {
+      {
+        text = "monitor reset",
+        ignoreFailures = false
+      },
+      {
+        text = "load",
+        ignoreFailures = false
+      },
+    },
+  }
+}
+dap.configurations.cpp = dap.configurations.c
+dap.configurations.rust = {}
+
+dap.reverse_continue = function()
+  local s = dap.session()
+  if not s then return end
+  s:evaluate("-exec set exec-direction reverse")
+  dap.continue()
+  s:evaluate("-exec set exec-direction forward")
+end
+dap.reverse_step_over = function()
+  local s = require("dap").session()
+  if not s then return end
+  s:evaluate("-exec set exec-direction reverse")
+  dap.step_over()
+  s:evaluate("-exec set exec-direction forward")
+end
+dap.reverse_step_out = function()
+  local s = require("dap").session()
+  if not s then return end
+  s:evaluate("-exec set exec-direction reverse")
+  dap.step_out()
+  s:evaluate("-exec set exec-direction forward")
+end
+dap.reverse_step_into = function()
+  local s = require("dap").session()
+  if not s then return end
+  s:evaluate("-exec set exec-direction reverse")
+  dap.step_into()
+  s:evaluate("-exec set exec-direction forward")
+end
+
+vim.keymap.set('n', '<F1>', dap.terminate)
+vim.keymap.set('n', '<F5>', dap.toggle_breakpoint)
+vim.keymap.set('n', '<F8>', dap.continue)
+vim.keymap.set('n', '<F10>', dap.step_over)
+vim.keymap.set('n', '<F11>', dap.step_into)
+vim.keymap.set('n', '<F12>', dap.step_out)
+vim.keymap.set('n', '<A-up>', dap.down)
+vim.keymap.set('n', '<A-down>', dap.up)
+vim.keymap.set('n', 'g<F8>', dap.continue)
+vim.keymap.set('n', 'g<F10>', dap.reverse_step_over)
+vim.keymap.set('n', 'g<F11>', dap.reverse_step_into)
+vim.keymap.set('n', 'g<F12>', dap.reverse_step_out)
+
+return M

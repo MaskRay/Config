@@ -1,5 +1,4 @@
 local cmd = vim.cmd
-local fn = vim.fn
 local g = vim.g
 local o = vim.o
 local M = {}
@@ -59,34 +58,51 @@ require('lazy').setup({
     'ranjithshegde/ccls.nvim',
     'stevearc/dressing.nvim',
     -- 'neoclide/coc.nvim',
-    'junegunn/fzf',
-    'junegunn/fzf.vim',
     'lewis6991/gitsigns.nvim',
     'ThePrimeagen/harpoon',
-    'phaazon/hop.nvim',
+    'nvimtools/hydra.nvim',
+    {'smoka7/hop.nvim', config = true},
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
-    'ggandor/lightspeed.nvim',
+    'ggandor/leap.nvim',
     'nvimdev/lspsaga.nvim',
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
+    'jay-babu/mason-nvim-dap.nvim',
+    {'echasnovski/mini.sessions', config = true},
+    {'echasnovski/mini.starter', config = true},
+    'echasnovski/mini.surround',
     'NeogitOrg/neogit',
+    {
+      'nvim-neo-tree/neo-tree.nvim',
+      branch = "v3.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons",
+        "MunifTanjim/nui.nvim",
+      }
+    },
+
     'alaviss/nim.nvim',
     {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
+    {'folke/noice.nvim', config = true},
     'terrortylor/nvim-comment',
     'mfussenegger/nvim-dap',
+    'mfussenegger/nvim-dap-python',
+    {'rcarriga/nvim-dap-ui', dependencies = {'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio'}},
+    'jonboh/nvim-dap-rr',
     'neovim/nvim-lspconfig',
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
     -- {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
-    'pwntester/octo.nvim',
+    -- 'pwntester/octo.nvim',
     {'stevearc/overseer.nvim', opts = {}},
     'nvim-treesitter/playground',
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
+    'folke/trouble.nvim',
      {'akinsho/toggleterm.nvim', config = true},
     'justinmk/vim-dirvish',
     'tpope/vim-fugitive',
-    'mhinz/vim-grepper',
     'dstein64/vim-startuptime',
     'vim-crystal/vim-crystal',
     'preservim/vimux',
@@ -95,14 +111,33 @@ require('lazy').setup({
   performance = {
     rtp = {
       disabled_plugins = {
-        'gzip',
-        'matchit',
-        'matchparen',
-        'netrwPlugin',
-        'tarPlugin',
+        '2html_plugin',
         'tohtml',
-        'tutor',
+        'getscript',
+        'getscriptPlugin',
+        'gzip',
+        'logipat',
+        'netrw',
+        'netrwPlugin',
+        'netrwSettings',
+        'netrwFileHandlers',
+        'matchit',
+        'tar',
+        'tarPlugin',
+        'rrhelper',
+        'spellfile_plugin',
+        'vimball',
+        'vimballPlugin',
+        'zip',
         'zipPlugin',
+        'tutor',
+        'rplugin',
+        'syntax',
+        'synmenu',
+        'optwin',
+        'compiler',
+        'bugreport',
+        'ftplugin',
       },
     },
   },
@@ -138,53 +173,55 @@ local function nmapp(lhs, rhs, opts)
   vim.api.nvim_set_keymap('n', lhs, rhs, options)
 end
 
-local function xnmap(keys, func, desc)
-  vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-end
-
-map('n', ':', ';')
-map('n', ';', ':')
-map('x', ':', ';')
-map('x', ';', ':')
+map({'n', 'x'}, ':', ';')
+map({'n', 'x'}, ';', ':')
 
 -- g
 nmap('ga', ':<C-u>CocList -I symbols<cr>')
 nmap('gj', ':HopLineAC<cr>', 'Hop line down')
 nmap('gk', ':HopLineBC<cr>', 'Hop line up')
 -- <leader>
-xnmap('<leader>?', require('telescope.builtin').oldfiles, '[?] Find recently opened files')
-xnmap('<leader><space>', require('telescope.builtin').buffers, '[ ] Find existing buffers')
+nmap('<leader><space>', require('telescope.builtin').buffers, '[ ] Find existing buffers')
 nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
+nmap('<leader>?', function() require('dapui').eval(nil, { enter = true }) end)
 -- <leader>a (app)
 nmap('<leader>ag', '<cmd>%!genhdr<cr>')
 nmap('<leader>aG', '<cmd>%!genhdr windows<cr>')
 -- <leader>b (buffer)
+nmap('<leader>be', function() require'neo-tree.command'.execute({source = 'buffers', toggle = true}) end, 'Buffer explorer')
 nmap('<leader>bn', '<cmd>bn<cr>', 'Next buffer')
 nmap('<leader>bp', '<cmd>bp<cr>', 'Previous buffer')
 nmap('<leader>bN', '<cmd>new<cr>', 'New empty buffer')
 nmap('<leader>bR', '<cmd>e<cr>')
--- <leader>c (compile)
-nmap('<leader>cc', '<cmd>OverseerRun<cr>', 'OverseerRun')
 -- <leader>d (debug, diff)
-nmap('<leader>db', '<cmd>Break<cr>')
-nmap('<leader>dt', '<cmd>diffthis<cr>')
+nmap('<leader>db', function() require('dap').toggle_breakpoint() end)
+nmap('<leader>dc', function() require('dap').continue() end)
+nmap('<leader>dC', function() require('dap').run_to_cursor() end)
+nmap('<leader>de', function() require('dap').eval() end)
+nmap('<leader>dl', function() require('dap').run_last() end)
 nmap('<leader>do', '<cmd>bufdo diffoff<cr>')
+nmap('<leader>dp', function() require('dap').pause() end)
+nmap('<leader>dt', function() require('dap').terminate() end)
+nmap('<leader>du', function() require('dapui').toggle() end)
+nmap('<leader>dw', function() require('dap.ui.widgets').hover() end)
 -- <leader>e (error)
 nmap('<leader>ee', ':e <C-r>=expand("%:p:h") . "/"<cr>')
-nmapp('<leader>en', '<Plug>(coc-diagnostic-next')
-nmapp('<leader>ep', '<Plug>(coc-diagnostic-prev')
 -- <leader>f (find & file)
 nmap('<leader>f\'', '<cmd>Telescope marks<cr>')
 nmap('<leader>f<cr>', '<cmd>Telescope resume<cr>')
-nmap('<leader>fc', '<cmd>cd %:p:h<cr>')
-nmap('<leader>fe', '<cmd>e ~/.config/nvim/init.lua<cr>')
+nmap('<leader>fc', '<cmd>e ~/.config/nvim/init.lua<cr>')
+nmap('<leader>fe', function() require'neo-tree.command'.execute({toggle = true, dir = MyProject()}) end, 'Explorer (project)')
+nmap('<leader>fE', function() require'neo-tree.command'.execute({toggle = true, dir = vim.uv.cwd()}) end, 'Explorer (cwd)')
 nmap('<leader>ff', '<cmd>Telescope find_files<cr>')
 nmap('<leader>fg', '<cmd>Telescope git_files<cr>')
-nmap('<leader>fk', '<cmd>Telescope keymaps<cr>')
+nmap('<leader>fk', function() require('which-key').show({global=false}) end, 'which-key')
 nmap('<leader>fr', '<cmd>Telescope oldfiles<cr>')
--- <leader>g (fugitive)
-nmap('<leader>gb', '<cmd>Git blame<cr>')
+-- <leader>g (git)
+nmap('<leader>gb', function() require'my.util'.blame_line() end)
+nmap('<leader>gB', '<cmd>Git blame<cr>')
 nmap('<leader>gd', '<cmd>Git diff<cr>')
+nmap('<leader>ge', function() require'neo-tree.command'.execute({source='git_status', toggle = true}) end, 'Git explorer')
+nmap('<leader>gf', function() require'my.util'.lazygit({size={width=0.9}, args={'log', '-f', vim.api.nvim_buf_get_name(0)}}) end)
 nmap('<leader>gg', '<cmd>lua ToggleTermCmd({cmd="lazygit",direction="float"})<cr>')
 nmap('<leader>gl', '<cmd>Git log<cr>')
 -- <leader>h (harpoon)
@@ -203,70 +240,101 @@ nmap('<leader>le', '<cmd>CocList diagnostics<cr>', 'LSP diagnostics')
 nmapp('<leader>lf', '<Plug>(coc-fix-current)', 'Fix')
 -- nmap('<leader>li', '<cmd>CocList outline<cr>', 'Outline')
 nmapp('<leader>lr', '<Plug>(coc-rename)', 'Rename')
+-- <leader>o (overseer)
+nmap('<leader>ow', '<cmd>OverseerToggle<cr>')
+nmap('<leader>oo', '<cmd>OverseerRun<cr>')
+nmap('<leader>oq', '<cmd>OverseerQuickAction<cr>')
+nmap('<leader>oi', '<cmd>OverseerInfo<cr>')
+nmap('<leader>ob', '<cmd>OverseerBuild<cr>')
+nmap('<leader>ot', '<cmd>OverseerTaskAction<cr>')
+nmap('<leader>oc', '<cmd>OverseerClearCache<cr>')
 -- <leader>p (project)
 nmap('<leader>pf', '<cmd>lua require("telescope.builtin").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
 -- <leader>q (quit)
 nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
 nmap('<leader>sd', '<cmd>lua require("telescope.builtin").live_grep({cwd=vim.fn.expand("%:p:h")})<cr>', 'Search directory')
+nmap('<leader>sh', '<cmd>Telescope help_tags<cr>')
+nmap('<leader>sk', '<cmd>Telescope keymaps<cr>')
 nmap('<leader>sp', '<cmd>lua require("telescope.builtin").live_grep({cwd=MyProject()})<cr>', 'Search project')
 nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>', 'Search buffer')
+nmap('<leader>sna', function() require'noice'.cmd('all') end, 'Noice All')
+nmap('<leader>snd', function() require'noice'.cmd('dismiss') end, 'Dismiss All')
+nmap('<leader>snh', function() require'noice'.cmd('history') end, 'Noice History')
+nmap('<leader>snl', function() require'noice'.cmd('last') end, 'Noice Last Message')
+nmap('<leader>snt', function() require'noice'.cmd('pick') end, 'Noice Picker (Telescope/FzfLua)')
 -- <leader>t (toggle & terminal)
-nmap('<leader>tf', '<cmd>ToggleTerm direction=float<cr>')
-nmap('<leader>th', '<cmd>ToggleTerm direction=horizontal size=10<cr>')
-nmap('<leader>tv', '<cmd>ToggleTerm direction=vertical size=80<cr>')
-nmap('<leader>tl', '<cmd>lua require("fn").toggle_loclist()<cr>')
+nmap('<leader>tf', function() require'toggleterm'.toggle(vim.v.count, nil, MyProject(), 'float', nil) end)
+nmap('<leader>th', function() require'toggleterm'.toggle(vim.v.count, 10, MyProject(), 'horizontal', nil) end)
+nmap('<leader>tv', function() require'toggleterm'.toggle(vim.v.count, 80, MyProject(), 'vertical', nil) end)
+nmap('<leader>tl', '<cmd>Trouble loclist toggle<cr>', 'Location List (Trouble)')
 nmap('<leader>tn', '<cmd>set number!<cr>')
-nmap('<leader>tq', '<cmd>lua require("fn").toggle_qf()<cr>')
+nmap('<leader>tq', '<cmd>Trouble qflist toggle<cr>', 'Quickfix List (Trouble)')
 nmap('<leader>ts', '<cmd>set spell!<cr>')
 nmap('<leader>tw', '<cmd>set wrap!<cr>')
 -- w (window)
 nmapp('<leader>wo', '<C-w>o')
 nmapp('<leader>ws', '<C-w>s')
 nmapp('<leader>wv', '<C-w>v')
---- , (references)
-nmap(',f', '<cmd>call CocLocations("ccls","textDocument/references",{"excludeRole":32})<cr>') -- not call
-nmap(',m', '<cmd>call CocLocations("ccls","textDocument/references",{"role":64})<cr>') -- macro
-nmap(',r', '<cmd>call CocLocations("ccls","textDocument/references",{"role":8})<cr>') -- read
-nmap(',w', '<cmd>call CocLocations("ccls","textDocument/references",{"role":16})<cr>') -- write
--- x (xref)
-nmap('xb', '<cmd>call CocLocations("ccls","$ccls/inheritance",{})<cr>', 'base')
-nmap('xB', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"levels":3})<cr>', 'base 3')
-nmap('xd', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true})<cr>', 'derive')
-nmap('xD', '<cmd>call CocLocations("ccls","$ccls/inheritance",{"derived":v:true,"levels":3})<cr>', 'derive 3')
-nmap('xc', '<cmd>call CocLocations("ccls","$ccls/call")<cr>', 'caller')
-nmap('xC', '<cmd>call CocLocations("ccls","$ccls/call",{"callee":v:true})<cr>', 'callee')
-nmap('xm', '<cmd>call CocLocations("ccls","$ccls/member")<cr>', 'member')
-nmap('xn', '<cmd>CocNext<cr>', 'LSP next')
-nmap('xp', '<cmd>CocPrev<cr>', 'LSP previous')
-nmap('xt', '<cmd>call MarkPush()<cr>:call CocAction("jumpTypeDefinition")<cr>', 'type definition')
+-- x (trouble)
+nmap('<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', 'Diagnostics (Trouble)')
+nmap('<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', 'Buffer Diagnostics (Trouble)')
+nmap('<leader>cs', '<cmd>Trouble symbols toggle<cr>', 'Symbols (Trouble)')
+nmap('<leader>cS', '<cmd>Trouble lsp toggle<cr>', 'LSP references/definitions/... (Trouble)')
 -- misc
 nmap('<M-down>', '<cmd>cnext<cr>')
 nmap('<M-up>', '<cmd>cprevious<cr>')
-nmap('<M-j>', '<cmd>call MarkPush()<cr>:call CocAction("jumpDefinition")<cr>')
-nmapp('<M-,>', '<Plug>(coc-references)')
-nmap('H', '<cmd>call MarkPop(-1)<cr>')
-nmap('L', '<cmd>call MarkPop(1)<cr>')
-nmap('K', '<cmd>silent call CocAction("doHover")<cr>')
-nmap('U', '<cmd>lua MyHopThenDefinition()<cr>')
+nmap('H', '<cmd>pop<cr>', 'Tag stack backward')
+nmap('J', 'gd', {remap=true})
+nmap('L', '<cmd>tag<cr>', 'Tag stack forward')
+nmap('U', function()
+  require'hop'.hint_words()
+  require'telescope.builtin'.lsp_definitions()
+end, 'Hop+definition')
 nmap('zx', '<cmd>bdelete<cr>')
 nmap('[l', vim.cmd.lfirst)
-nmap('[l', vim.cmd.lprev)
-nmap('[q', vim.cmd.cfirst)
-nmap('[q', vim.cmd.cprev)
-nmap(']L', vim.cmd.llast)
-nmap(']Q', vim.cmd.clast)
+nmap('[q', function()
+  if require('trouble').is_open() then
+    require('trouble').prev({ skip_groups = true, jump = true })
+  else
+    local ok, err = pcall(vim.cmd.cprev)
+    if not ok then
+      vim.notify(err, vim.log.levels.ERROR)
+    end
+  end
+end)
 nmap(']l', vim.cmd.lfirst)
-nmap(']q', vim.cmd.cnext)
+nmap(']q', function()
+  if require('trouble').is_open() then
+    require('trouble').next({ skip_groups = true, jump = true })
+  else
+    local ok, err = pcall(vim.cmd.cnext)
+    if not ok then
+      vim.notify(err, vim.log.levels.ERROR)
+    end
+  end
+end)
 nmap('<f1>', '<cmd>Gdb<cr>')
 nmap('<f2>', '<cmd>Program<cr>')
 nmap('<f11>', '<cmd>Break<cr>')
 nmap('<f12>', '<cmd>Clear<cr>')
+map({'i', 'n'}, '<C-s>', '<cmd>w<cr><esc>', 'Save file')
+nmap('<C-h>', '<C-w>h')
+nmap('<C-j>', '<C-w>j')
+nmap('<C-k>', '<C-w>k')
+nmap('<C-l>', '<C-w>l')
 nmap('<M-`>', '<cmd>OverseerToggle<cr>')
-tmap('<C-h>', '<C-\\><C-n><C-w>h')
-tmap('<C-j>', '<C-\\><C-n><C-w>j')
-tmap('<C-k>', '<C-\\><C-n><C-w>k')
-tmap('<C-l>', '<C-\\><C-n><C-w>l')
+nmap('<Tab><Tab>', '<cmd>tabnew<cr>')
+nmap('<Tab>d', '<cmd>tabclose<cr>')
+nmap('<Tab>f', '<cmd>tabfirst<cr>')
+nmap('<Tab>l', '<cmd>tablast<cr>')
+tmap('<C-h>', '<cmd>wincmd h<cr>')
+tmap('<C-j>', '<cmd>wincmd j<cr>')
+tmap('<C-k>', '<cmd>wincmd k<cr>')
+tmap('<C-l>', '<cmd>wincmd l<cr>')
+tmap('<C-s>', '<C-\\><C-n>')
+map({'n', 't'}, '<C-/>', '<cmd>ToggleTerm<cr>')
+map({'n', 't'}, '<C-_>', '<cmd>ToggleTerm<cr>')
 
 -- Autocmd {{{1
 function nvim_create_augroups(definitions)
@@ -287,52 +355,17 @@ local autocmds = {
   toggle_search_highlighting = {
     {'InsertEnter', '*', 'setlocal nohlsearch'};
   };
-  coc_show_hover = {
-    -- {'CursorHold', '*', 'call My_coc_hover()'};
-    -- {'CursorHoldI', '*', 'silent call CocActionAsync("showSignatureHelp")'};
-  };
 }
 nvim_create_augroups(autocmds)
 
-function MyHopThenDefinition()
-  require'hop'.hint_words()
-  vim.api.nvim_call_function('MarkPush', {})
-  require'telescope.builtin'.lsp_definitions()
-end
+--cmd 'autocmd TermOpen * startinsert'
+cmd 'autocmd WinEnter * if &buftype ==# "terminal" | startinsert | endif'
 
 function MyProject()
-  return vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  return require('my.util').get_root()
 end
 
 vim.api.nvim_exec2([[
-let g:mark_ring = [{},{},{},{},{},{},{},{},{},{}]
-let g:mark_ring_i = 0
-
-fu! MarkPush()
-  let g:mark_ring[g:mark_ring_i] = {'path': expand('%:p'), 'line': line('.'), 'col': col('.')}
-  let g:mark_ring_i = (g:mark_ring_i + 1) % len(g:mark_ring)
-endf
-
-fu! MarkPop(d)
-  let g:mark_ring[g:mark_ring_i] = {'path': expand('%:p'), 'line': line('.'), 'col': col('.')}
-  let g:mark_ring_i = (g:mark_ring_i + a:d + len(g:mark_ring)) %  len(g:mark_ring)
-  let mark = g:mark_ring[g:mark_ring_i]
-  if !has_key(mark, 'path')
-    echo 'empty g:mark_ping'
-    return
-  endif
-  if mark.path !=# expand('%:p')
-    silent exec 'e ' . fnameescape(mark.path)
-  endif
-  call cursor(mark.line, mark.col)
-endf
-
-fu! My_coc_hover()
-  if (coc#float#has_float() == 0 && CocHasProvider('hover') == 1)
-    silent call CocActionAsync('doHover')
-  endif
-endf
-
 fu! C_init()
   setl cino+=g0,:0,j1,l1,N-s,t0,(0
 endf
@@ -409,3 +442,11 @@ function ToggleTermCmd(opts)
 end
 
 require 'plugins'
+
+local function file_exists(name)
+  local f = io.open(name, "r")
+  return f ~= nil and io.close(f)
+end
+if file_exists(vim.fn.stdpath('config') .. '/lua/local.lua') then
+  require 'local'
+end
