@@ -24,11 +24,6 @@
    ;; :nm ">" #'lispyville-next-closing
    :m "RET" #'+ivy/switch-workspace-buffer
 
-   :n "C-h" #'lispyville-backward-up-list
-   :n "C-j" #'lispyville-forward-sexp
-   :n "C-k" #'lispyville-backward-sexp
-   :n "C-l" #'lispyville-up-list
-
    :n "H"  #'lsp-ui-peek-jump-backward
    :n "L"  #'lsp-ui-peek-jump-forward
    :m "C-H"  #'+my/xref-jump-backward-file
@@ -40,7 +35,7 @@
  :n "M-;"  #'eval-expression
  :n "M-."  #'+lookup/definition
  :n "M-f"  #'swiper
- :n "M-j"  #'+my/find-definitions
+ :n "J"    #'+my/find-definitions
 
  :n [tab]  #'evil-window-next
  :n "C-1" #'+popup/raise
