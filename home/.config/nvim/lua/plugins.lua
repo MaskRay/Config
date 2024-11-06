@@ -1,6 +1,40 @@
 local M = {}
 M.lsp = require'lsp'
 
+require'better_escape'.setup {
+  default_mappings = false,
+  mappings = {
+    i = {
+      --  first_key[s]
+      j = {
+        --  second_key[s]
+        k = "<Esc>",
+      },
+    },
+    c = {
+      j = {
+        k = "<Esc>",
+        j = "<Esc>",
+      },
+    },
+    t = {
+      j = {
+        k = "<C-\\><C-n>",
+      },
+    },
+    v = {
+      j = {
+        k = "<Esc>",
+      },
+    },
+    s = {
+      j = {
+        k = "<Esc>",
+      },
+    },
+  },
+}
+
 require'leap'.add_default_mappings(true)
 require'mini.surround'.setup({
   mappings = {
@@ -116,6 +150,7 @@ local on_attach = function(client, bufnr)
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   nmap('J', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
   map('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+  map('v', '=', '<cmd>lua vim.lsp.buf.format()<CR>')
   nmap(',f', '<cmd>lua require("ccls.protocol").request("textDocument/references",{excludeRole=32})<cr>') -- not call
   nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
   nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
@@ -127,6 +162,7 @@ local on_attach = function(client, bufnr)
   nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
   nmap('<space>li', '<cmd>Inspect<cr>')
   nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename')
+  nmap('<space>ls', function() require'my.util'.switch_source_header(0) end, 'Switch source and header')
   nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>')
   nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>')
   nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>')
@@ -135,6 +171,7 @@ local on_attach = function(client, bufnr)
   nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<cr>')
   nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', 'Declarations')
   nmap('ga', '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>', 'Workspace symbols')
+  nmap('x', '<Nop>')
   nmap('xB', '<cmd>CclsBaseHierarchy<cr>')
   nmap('xC', '<cmd>CclsOutgoingCalls<cr>', 'callee')
   nmap('xD', '<cmd>CclsDerivedHierarchy<cr>')
@@ -277,7 +314,6 @@ cmp.setup {
       select = true
     }),
   },
-  snippet = {expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end},
   sources = {
     {name = 'buffer'}, {name = 'nvim_lsp'}, {name = "ultisnips"},
     {name = "nvim_lua"}, {name = "look"}, {name = "path"},
@@ -322,7 +358,9 @@ local all_colors = {
 }
 for type, colors in pairs(all_colors) do
   for i = 1,#colors do
-    vim.api.nvim_set_hl(0, string.format('@lsp.typemod.%s.id%s.cpp', type, i-1), {fg=colors[i]})
+    for _, lang in pairs({'c', 'cpp'}) do
+      vim.api.nvim_set_hl(0, string.format('@lsp.typemod.%s.id%s.%s', type, i-1, lang), {fg=colors[i]})
+    end
   end
 end
 

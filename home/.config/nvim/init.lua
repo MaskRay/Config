@@ -55,6 +55,7 @@ require('lazy').setup({
   spec = {
     'folke/tokyonight.nvim',
 
+    'max397574/better-escape.nvim',
     'ranjithshegde/ccls.nvim',
     'stevearc/dressing.nvim',
     -- 'neoclide/coc.nvim',
@@ -98,6 +99,7 @@ require('lazy').setup({
     -- 'pwntester/octo.nvim',
     {'stevearc/overseer.nvim', opts = {}},
     'nvim-treesitter/playground',
+    {'folke/snacks.nvim', config = true},
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
     'folke/trouble.nvim',
      {'akinsho/toggleterm.nvim', config = true},
@@ -224,6 +226,7 @@ nmap('<leader>ge', function() require'neo-tree.command'.execute({source='git_sta
 nmap('<leader>gf', function() require'my.util'.lazygit({size={width=0.9}, args={'log', '-f', vim.api.nvim_buf_get_name(0)}}) end)
 nmap('<leader>gg', '<cmd>lua ToggleTermCmd({cmd="lazygit",direction="float"})<cr>')
 nmap('<leader>gl', '<cmd>Git log<cr>')
+nmap('<leader>gw', function() require'snacks'.gitbrowse() end, 'Git Browse')
 -- <leader>h (harpoon)
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
@@ -255,6 +258,7 @@ nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
 nmap('<leader>sd', '<cmd>lua require("telescope.builtin").live_grep({cwd=vim.fn.expand("%:p:h")})<cr>', 'Search directory')
 nmap('<leader>sh', '<cmd>Telescope help_tags<cr>')
+nmap('<leader>si', '<cmd>Telescope lsp_document_symbols<cr>')
 nmap('<leader>sk', '<cmd>Telescope keymaps<cr>')
 nmap('<leader>sp', '<cmd>lua require("telescope.builtin").live_grep({cwd=MyProject()})<cr>', 'Search project')
 nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>', 'Search buffer')
