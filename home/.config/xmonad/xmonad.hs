@@ -373,7 +373,7 @@ myNav2DConf = def { defaultTiledNavigation = centerNavigation
                   , layoutNavigation = [("Full", centerNavigation)]
                   , unmappedWindowRect = [("Full", singleWindowRect)] }
 
-myTerminal = "alacritty"
+myTerminal = "wezterm"
 
 myKeys =
     let
@@ -426,8 +426,6 @@ myKeys =
     ----- Workspace / Project
 
     , ("M-a", toggleWS' ["NSP"])
-    , ("M-s", switchProjectPrompt warmPromptTheme)
-    , ("M-S-s", shiftToProjectPrompt warmPromptTheme)
 
     ----- Layout
 
@@ -476,24 +474,7 @@ myKeys =
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "alacritty" >> sendMessage (JumpToLayout "ResizableTall"))
-    , ("M-C-i", spawn "toggle-invert")
-    , ("M-v", spawn $ "sleep .2 ; xdotool type --delay 0 --clearmodifiers \"$(xclip -o)\"")
-
-    --, ("M-m h", withFocused hideWindow)
-    --, ("M-m S-h", popOldestHiddenWindow)
-    , ("M-m b", spawnSelected def [ "xbacklight =30"
-                                  , "xbacklight =40"
-                                  , "xbacklight =20"
-                                  , "xbacklight =10"
-                                  , "xbacklight =15"
-                                  , "xbacklight =50"
-                                  , "xbacklight =60"
-                                  , "xbacklight =5"
-                                  ])
-    , ("M-m m", spawnSelected def ["zsh -c 'xdg-open /tmp/*(om[1])'", "audacity", "wireshark-gtk", "wechat", "winecfg"])
-    , ("M-m k", spawn "xkill")
-    , ("M-m l", spawn "xscreensaver-command -lock")
+    , ("M-<Return>", spawn "wezterm" >> sendMessage (JumpToLayout "ResizableTall"))
 
     , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
     , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
@@ -535,21 +516,13 @@ myKeys =
     , ("C-' a", namedScratchpadAction scratchpads "alsamixer")
     , ("C-' c", namedScratchpadAction scratchpads "cmus")
     , ("C-' d", namedScratchpadAction scratchpads "goldendict")
-    , ("C-' e", namedScratchpadAction scratchpads "erl")
     , ("C-' g", namedScratchpadAction scratchpads "gp")
     , ("C-' h", namedScratchpadAction scratchpads "ghci")
-    , ("C-' i", namedScratchpadAction scratchpads "idris")
-    , ("C-' j", namedScratchpadAction scratchpads "j8")
-    , ("C-' m", namedScratchpadAction scratchpads "sage")
     , ("C-' n", namedScratchpadAction scratchpads "node")
-    , ("C-' o", namedScratchpadAction scratchpads "utop")
     , ("C-' p", namedScratchpadAction scratchpads "ipython")
     , ("C-' r", namedScratchpadAction scratchpads "pry")
     , ("C-' s", namedScratchpadAction scratchpads "ydcv")
     , ("C-' t", namedScratchpadAction scratchpads "htop")
-    , ("C-' u", namedScratchpadAction scratchpads "R")
-    , ("C-' w", namedScratchpadAction scratchpads "writefull")
-    , ("C-' z", namedScratchpadAction scratchpads "zeal")
 
     , ("M-C-<Space>", sendMessage $ Toggle NBFULL)
     , ("M-C-t", sendMessage $ Toggle TABBED)
@@ -571,10 +544,11 @@ myKeys =
     ] ++
     searchBindings
 
-alacritty prog = ("alacritty -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
+--alacritty prog = ("alacritty -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
+alacritty prog = "wezterm start " ++ prog
 
 scratchpads =
-  map f ["alsamixer", "cmus", "erl", "gp", "htop", "idris", "ipython", "j8 -c", "node --harmony", "pry", "R", "sage", "utop", "xosview", "ydcv"] ++
+  map f ["alsamixer", "cmus", "htop", "ipython", "node", "pry", "ydcv"] ++
   [ NS "ghci" "alacritty -t ghci -e 'zsh -c \"stack ghci || ghci\"'" (title =? "ghci") doSPFloat
   , NS "goldendict" "goldendict" (className =? "GoldenDict") doSPFloat
   , NS "writefull" "~/.local/opt/writefull/Writefull" (title =? "Writefull") doSPFloat
@@ -704,7 +678,7 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn "alacritty -t zsh -e zsh -ic \"tmux new -As default\""
+  , Project wsGen "~" . Just $ spawn "wezterm start tmux new -As default"
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "neovide"
 
