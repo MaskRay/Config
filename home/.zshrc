@@ -21,9 +21,6 @@ typeset -U path
 path=(~/bin ~/.local/bin ~/.cargo/bin ~/.yarn/bin "$path[@]")
 path=( ${(u)^path:A}(N-/) )
 
-[[ $TERM = xterm-termite ]] && export TERM=xterm-256color
-[[ $TERM = xterm ]] && export TERM=xterm-256color
-
 # Look {{{1
 PROMPT=$'%F{cyan}%B%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b%F{white}$(my_git_prompt)\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'
 #. /usr/share/zsh/site-contrib/zsh-syntax-highlighting.zsh
@@ -466,8 +463,6 @@ if [[ -s '/etc/zsh_command_not_found' ]]; then
 elif [[ -s '/usr/share/doc/pkgfile/command-not-found.zsh' ]]; then
   source '/usr/share/doc/pkgfile/command-not-found.zsh'
 fi
-
-#(($+VTE_VERSION)) && source /etc/profile.d/vte.sh
 
 # Environment Modules {{{1
 if [[ -f ~/bin/modulecmd.tcl ]]; then

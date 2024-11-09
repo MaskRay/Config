@@ -99,6 +99,7 @@ if [[ -n $ZSH_VERSION ]]; then
 
   # Path aliases {{{2
   hash -d d=~/Documents
+  hash -d t=~/tmp
 fi
 
 
@@ -109,36 +110,22 @@ alias ggdb='gdb -ix ~/.gdb/gdbinit.gef'
 alias pgdb='gdb -ix ~/.gdb/gdbinit.pwndbg'
 
 alias cl=clang++
-alias db=lldb
-alias j8=/usr/lib/j8/bin/jconsole
-alias jqt=/usr/lib/j8/bin/jqt
-alias lid.sys='lid-idutils -f ~/Util/idutils/usr-include.ID'
-alias mkid.sys='mkid -f ~/Util/idutils/usr-include.ID /usr/include'
-alias segf='LD_PRELOAD=/usr/lib/libSegFault.so SEGFAULT_SIGNALS=all'
-devflag() { set -x; export CFLAGS="-g3 -fsanitize=address,undefined"; export CXXFLAGS="$CFLAGS -std=c++1y"; set +x; }
-optflag() { set -x; export CFLAGS="-g3 -O3 -fkeep-inline-functions"; export CXXFLAGS=$CFLAGS; set +x; }
-unflag() { set -x; unset CFLAGS CXXFLAGS; set +x; }
 
 # applications {{{1
-alias book='cd ~/Book && xdg-open http://0:4000; gitbook serve -o /tmp/book'
 alias cifs='sudo mount -t cifs //10.0.0.3/c /mnt -o iocharset=utf8,user=Administrator,pass=,uid=1000,gid=1000,users --verbose'
 alias clip='xclip -i -selection clipboard'
 alias dhc='sudo dhcpcd -x wlp3s0; sudo dhcpcd wlp3s0 -C /lib/dhcpcd/dhcpcd-hooks/20-resolv.conf'
 alias drsync='rsync --progress --partial --delete --size-only'
-alias mt=multitail
 alias mtr='sudo mtr --curses'
 alias px='proxychains -f ~/.config/proxychains0.conf'
 alias px1='proxychains -f ~/.config/proxychains1.conf'
 alias py=python
-alias py2=python2
 alias py3=python3
 alias qq='wine ~/.wine/drive_c/Program\ Files/QQ/Bin/QQ.exe'
 alias rb=ruby
 alias se=sudoedit
-alias tmuxa='tmux a || tmux new -s default' # TODO tmux 2.0 supports attach-session -A
 alias vimmin='vi -u NONE --cmd "set nocp | sy on | filetype plugin indent on"' # install aur/neovim-git && ln -sf nvim /usr/bin/vi
 alias wee=weechat-curses
-alias win='WINEPATH="d:/mingw/bin;d:/mingw/msys/1.0/bin" wine'
 alias xi='xinit -- -nolisten tcp -ardelay 170 -arinterval 40 :0 vt$XDG_VTNR'
 alias xst='xstow -d ~/.local/stow'
 
@@ -147,7 +134,6 @@ alias vs="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
 alias t="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote-tab"
 
 ## with common options
-alias R='R --quiet'
 alias dstat='dstat -dnmcl --socket --top-io -N enp4s0f2,wlp3s0'
 alias rsync='rsync --progress --partial'
 alias luit='luit -encoding gbk'
@@ -171,10 +157,7 @@ alias u2g='iconv -f UTF-8 -t GBK'
 alias pwget='proxychains wget'
 alias vnc='vncviewer -QualityLevel=0 -CompressLevel=3 -PreferredEncoding=ZRLE -FullScreen=1 -Shared=1'
 alias spice='spicec -h 0 -p 5900'
-alias matlab='~/.local/opt/matlab/bin/matlab'
-alias math='~/.local/opt/mathematica/Executables/Mathematica -graphicssystem native'
 alias matlabc='~/.local/opt/matlab/bin/matlab -nodisplay -r clc'
-alias blockdump='sudo sysctl vm.block_dump=1'
 alias mtp='simple-mtpfs /media'
 
 # git {{{1
@@ -216,11 +199,6 @@ alias cal='cal -3'
 
 # package management {{{1
 ## Arch Linux {{{2
-alias aS='sudo aura -S'
-alias aSs='aura -Ss'
-alias aA='sudo aura -A'
-alias aAs='aura -As'
-alias aSyu='sudo aura -Syu'
 alias pD='sudo pacman -D'
 alias yS='yay -S'
 alias ySs='yay -Ss'
@@ -242,22 +220,6 @@ alias pQo="pacman -Qo"
 alias pacexp="sudo pacman -D --asexp"     # Mark one or more installed packages as explicitly installed
 alias pacimp="sudo pacman -D --asdep"     # Mark one or more installed packages as non explicitly installed
 
-## dpkg {{{2
-alias apti='sudo aptitude install'
-alias apts='sudo aptitude search'
-alias aptr='sudo aptitude remove'
-alias aptu='sudo aptitude update'
-alias aptq='apt-cache show'
-
-## yum {{{2
-alias yumi='sudo yum install'             # Installs package(s).
-alias yuml='yum list'                     # Lists packages.
-alias yums='sudo yum search'              # Searches for a package.
-alias yumq='yum info'                     # Displays package information.
-alias yumu='sudo yum update'              # Updates packages.
-alias yumU='sudo yum upgrade'             # Upgrades packages.
-alias yumr='sudo yum remove'              # Removes package(s).
-
 # Gentoo-specific {{{2
 if [[ -n "$EPREFIX" ]]; then
   SUDO_IFNOT_PREFIX=
@@ -272,7 +234,6 @@ alias eiu='FORMAT="<installedversions:I>" I="<category>/<name>-<version>[<use>]\
 alias disp='sudo dispatch-conf'
 
 # binary {{{1
-alias bv=bviplus
 alias off='LC_ALL=C grep --color=auto -Pabo'
 alias lt=ltrace
 alias ob='objdump -w -M intel'
@@ -282,15 +243,6 @@ alias sst='sudo strace'
 alias strings='strings -a -tx' # CVE-2014-8485
 
 # functions {{{1
-
-ew() {
-  wmctrl -a emacs@
-  emacsclient "$@"
-}
-
-mtrg() {
-  sudo mtr -lnc 1 "$1" | awk 'function geo(ip) {s="geoiplookup "ip; s|&getline; s|&getline; split($0, a, "[,:] "); return a[3]","a[4]","a[5]","a[6]}; $1=="h" { print "h "$2" "$3" "geo($3)}'
-}
 
 web() {
   #twistd web --path "$1" -p "${2:-8000}"
@@ -308,16 +260,6 @@ if [[ -n $ZSH_VERSION ]]; then
 fi
 c() { cd "$1" && ls -a; }
 
-256tab() {
-  for k in `seq 0 1`;do
-    for j in `seq $((16+k*18)) 36 $((196+k*18))`;do
-      for i in `seq $j $((j+17))`; do
-        printf "\e[01;$1;38;5;%sm%4s" $i $i;
-      done;echo;
-    done;
-  done
-}
-
 ssht() { ssh -t "$1" "tmux new -As $2"; }
 
 fweb() {
@@ -325,6 +267,15 @@ fweb() {
   install -m 600 ~/.config/google-chrome/Default/History "$f"
   sqlite3 "$f" 'select title, url from urls order by last_visit_time desc' | fzf --multi | sed -r 's#.*(https?://)#\1#' | xargs xdg-open
   rm -f "$f"
+}
+
+y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  if cwd="$(command cat -- "$tmp")" && [[ -n "$cwd" ]] && [[ "$cwd" != "$PWD" ]]; then
+    builtin cd -- "$cwd"
+  fi
+  'rm' -f -- "$tmp"
 }
 
 #############################################################
@@ -360,17 +311,6 @@ fshow() {
               xargs -I % sh -c 'vim fugitive://\$(git rev-parse --show-toplevel)/.git//% < /dev/tty'"
 }
 
-# ftags - search ctags
-ftags() {
-  local line
-  [ -e tags ] &&
-  line=$(
-    awk 'BEGIN { FS="\t" } !/^!/ {print toupper($4)"\t"$1"\t"$2"\t"$3}' tags |
-    cut -c1-$COLUMNS | fzf --nth=2 --tiebreak=begin
-  ) && $EDITOR $(cut -f3 <<< "$line") -c "set nocst" \
-                                      -c "silent tag $(cut -f2 <<< "$line")"
-}
-
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
@@ -395,10 +335,6 @@ fo() {
       ${EDITOR:-vim} "$file"
     fi
   fi
-}
-
-fzf_tmux_words() {
-  tmuxwords.rb --all --scroll 500 --min 5 | fzf-down --multi | paste -sd" " -
 }
 
 # ftpane - switch pane (@george-b)
