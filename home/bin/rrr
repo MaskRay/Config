@@ -1,4 +1,5 @@
 #!/usr/bin/expect -f
+set timeout 120
 spawn rr replay -d cgdb {*}$argv
 expect {
   "Type <RET>" {send "\r"; exp_continue}

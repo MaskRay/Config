@@ -18,20 +18,12 @@ function md
 end
 
 # Environment variables {{{1
-set -x LESS '-MRi --shift 5'
+set -x LESS '-FiMRwX --shift 5 -z-4'
 set -x GREP_OPTIONS '--color=auto'
 set -x MENUCONFIG_COLOR blackbg
 
-# Set LS_COLORS {{{2
 if command -q dircolors  # GNU coreutils
   set GNU 1
-end
-if set -q GNU
-  if match 256color TERM; and [ -f ~/.lscolor256 ]
-    eval (dircolors -c ~/.lscolor256 | sed 's/env/ -x/')
-  else if [ -f ~/.lscolor ]
-    eval (dircolors -c ~/.lscolor | sed 's/env/ -x/')
-  end
 end
 
 # Theme {{{1
@@ -72,54 +64,79 @@ end
 # Aliases {{{1
 
 # ls {{{2
-if set -q GNU
-  alias ls 'ls -XF --color=auto --time-style="+'\e'[33m['\e'[32m%Y-%m-%d '\e'[35m%k:%M'\e'[33m]'\e'[m"'
-else
-  alias ls 'ls -F'
-end
-alias l 'ls -l'
-alias la 'l -A'
-alias lh 'l -h'
-alias l1 'tree --dirsfirst -ChFL 1'
-alias l2 'tree --dirsfirst -ChFL 2'
-alias l3 'tree --dirsfirst -ChFL 3'
-alias l4 'tree --dirsfirst -ChFL 4'
+alias l 'eza -l'
+alias la 'eza -lA'
+alias ls eza
 
 # coreutils {{{2
-alias L less
+abbr -a --position anywhere L '| less'
 alias c cat
 alias cp 'cp -iv'
-alias eg 'egrep -I'
-alias g 'grep -I'
 alias mv 'mv -iv'
 if set -q GNU
   alias rm 'rm -iv --one-file-system'
 else
   alias rm 'rm -iv'
 end
-alias x xargs
 
 # git {{{2
-alias ga 'git add'
-alias gau 'git add -u'
-alias gb 'git branch'
-alias gcl 'git clone'
-alias gco 'git checkout'
-alias gd 'git diff'
-alias gl 'git l'
-alias glp 'git l -p'
-alias gpl 'git pull'
-alias gpu 'git push'
-alias gs 'git status'
+abbr ga 'git add'
+abbr gau 'git add -u'
+abbr gb 'git branch'
+abbr gcl 'git clone'
+abbr gco 'git checkout'
+abbr gd 'git diff'
+abbr gdc 'git diff --cached'
+abbr gl 'git l'
+abbr glp 'git l -p'
+abbr gpl 'git pull'
+abbr gpu 'git push'
+abbr gs 'git switch'
+abbr gst 'git status'
 
-# others
+## others
 alias psg 'ps aux | g'
 alias 2pdf 'libreoffice --headless --convert-to pdf'
 alias clip 'xsel -ib'
 alias gdb 'command gdb -q'
 alias port '/sbin/ss -ntlp'
-alias r ruby
+alias py python
+alias rb ruby
 alias rsync 'rsync --progress --partial'
 alias t task
+
+alias e="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote"
+alias vs="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
+alias t="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote-tab"
+
+## systemd {{{2
+alias sy='sudo systemctl'
+alias syu='systemctl --user'
+
+## Arch Linux {{{2
+alias pD='sudo pacman -D'
+alias yS='yay -S'
+alias ySs='yay -Ss'
+alias ySyu='yay -Syua --noconfirm'
+alias pSy='sudo pacman -Sy'
+alias pSyu='sudo pacman -Syu --noconfirm' # Synchronize with repositories and then upgrade packages that are out of date on the local system.
+alias pS='sudo pacman -S'                 # Install specific package(s) from the repositories
+alias pU='sudo pacman -U'                 # Install specific package not from the repositories but from a file
+alias pR='sudo pacman -R'                 # Remove the specified package(s), retaining its configuration(s) and required dependencies
+alias pRns='sudo pacman -Rns'             # Remove the specified package(s), its configuration(s) and unneeded dependencies
+alias pSi='pacman -Si'                    # Display information about a given package in the repositories
+alias pSs='pacman -Ss'                    # Search for package(s) in the repositories
+alias pQi='pacman -Qi'                    # Display information about a given package in the local database
+alias pQs='pacman -Qs'                    # Search for package(s) in the local database
+alias paclo="pacman -Qdt"                 # List all packages which are orphaned
+alias pacc="sudo pacman -Scc"             # Clean cache - delete all not currently installed package files
+alias pQl="pacman -Ql"                    # List all files installed by a given package
+alias pQo="pacman -Qo"
+alias pacexp="sudo pacman -D --asexp"     # Mark one or more installed packages as explicitly installed
+alias pacimp="sudo pacman -D --asdep"     # Mark one or more installed packages as non explicitly installed
+
+if type -q jj
+  jj util completion fish | source
+end
 
 # vim:sw=2 sts=2 et fdm=marker

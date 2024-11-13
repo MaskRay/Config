@@ -207,6 +207,8 @@ delete-horizontal-space() {
 }
 zle -N delete-horizontal-space
 
+[[ -n ${commands[jj]} ]] && source <(jj util completion zsh)
+
 bindkey -M menuselect '^o' accept-and-infer-next-history
 
 #check if a binary exists in path
