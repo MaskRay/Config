@@ -5,7 +5,7 @@ function prepend_to_path -d "Prepend the given dir to PATH if it exists and is n
         end
     end
 end
-set PATH ~/bin ~/.local/bin ~/.gem/ruby/1.9.1/bin $PATH
+set PATH ~/bin ~/.local/bin ~/.cargo/bin ~/.nimble/bin $PATH
 
 # Functions {{{1
 function match
@@ -18,6 +18,7 @@ function md
 end
 
 # Environment variables {{{1
+set -x EDITOR nvim
 set -x LESS '-FiMRwX --shift 5 -z-4'
 set -x GREP_OPTIONS '--color=auto'
 set -x MENUCONFIG_COLOR blackbg
@@ -63,6 +64,13 @@ end
 
 # Aliases {{{1
 
+alias ... 'cd ../..'
+alias .... 'cd ../../..'
+alias ..... 'cd ../../../..'
+function last_history_item
+  echo $history[1]
+end
+abbr -a !! --position anywhere --function last_history_item
 # ls {{{2
 alias l 'eza -l'
 alias la 'eza -lA'
@@ -78,11 +86,16 @@ if set -q GNU
 else
   alias rm 'rm -iv'
 end
+abbr ob objdump
+abbr re readelf -W
+
+abbr ni ninja
 
 # git {{{2
 abbr ga 'git add'
 abbr gau 'git add -u'
 abbr gb 'git branch'
+abbr gc 'git commit'
 abbr gcl 'git clone'
 abbr gco 'git checkout'
 abbr gd 'git diff'
@@ -91,52 +104,61 @@ abbr gl 'git l'
 abbr glp 'git l -p'
 abbr gpl 'git pull'
 abbr gpu 'git push'
+abbr grs 'git restore'
 abbr gs 'git switch'
 abbr gst 'git status'
 
 ## others
+alias +x 'chmod +x'
 alias psg 'ps aux | g'
 alias 2pdf 'libreoffice --headless --convert-to pdf'
 alias clip 'xsel -ib'
 alias gdb 'command gdb -q'
 alias port '/sbin/ss -ntlp'
-alias py python
-alias rb ruby
+abbr py python
+abbr rb ruby
 alias rsync 'rsync --progress --partial'
-alias t task
 
-alias e="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote"
-alias vs="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
-alias t="nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote-tab"
+alias e "nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote"
+alias vs "nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
+alias t "nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote-tab"
 
 ## systemd {{{2
-alias sy='sudo systemctl'
-alias syu='systemctl --user'
+abbr sy 'sudo systemctl'
+abbr syu 'systemctl --user'
 
 ## Arch Linux {{{2
-alias pD='sudo pacman -D'
-alias yS='yay -S'
-alias ySs='yay -Ss'
-alias ySyu='yay -Syua --noconfirm'
-alias pSy='sudo pacman -Sy'
-alias pSyu='sudo pacman -Syu --noconfirm' # Synchronize with repositories and then upgrade packages that are out of date on the local system.
-alias pS='sudo pacman -S'                 # Install specific package(s) from the repositories
-alias pU='sudo pacman -U'                 # Install specific package not from the repositories but from a file
-alias pR='sudo pacman -R'                 # Remove the specified package(s), retaining its configuration(s) and required dependencies
-alias pRns='sudo pacman -Rns'             # Remove the specified package(s), its configuration(s) and unneeded dependencies
-alias pSi='pacman -Si'                    # Display information about a given package in the repositories
-alias pSs='pacman -Ss'                    # Search for package(s) in the repositories
-alias pQi='pacman -Qi'                    # Display information about a given package in the local database
-alias pQs='pacman -Qs'                    # Search for package(s) in the local database
-alias paclo="pacman -Qdt"                 # List all packages which are orphaned
-alias pacc="sudo pacman -Scc"             # Clean cache - delete all not currently installed package files
-alias pQl="pacman -Ql"                    # List all files installed by a given package
-alias pQo="pacman -Qo"
-alias pacexp="sudo pacman -D --asexp"     # Mark one or more installed packages as explicitly installed
-alias pacimp="sudo pacman -D --asdep"     # Mark one or more installed packages as non explicitly installed
+abbr pD 'sudo pacman -D'
+abbr yS 'yay -S'
+abbr ySs 'yay -Ss'
+abbr ySyu 'yay -Syua --noconfirm'
+abbr pSy 'sudo pacman -Sy'
+abbr pSyu 'sudo pacman -Syu --noconfirm' # Synchronize with repositories and then upgrade packages that are out of date on the local system.
+abbr pS 'sudo pacman -S'                 # Install specific package(s) from the repositories
+abbr pU 'sudo pacman -U'                 # Install specific package not from the repositories but from a file
+abbr pR 'sudo pacman -R'                 # Remove the specified package(s), retaining its configuration(s) and required dependencies
+abbr pRns 'sudo pacman -Rns'             # Remove the specified package(s), its configuration(s) and unneeded dependencies
+abbr pSi 'pacman -Si'                    # Display information about a given package in the repositories
+abbr pSs 'pacman -Ss'                    # Search for package(s) in the repositories
+abbr pQi 'pacman -Qi'                    # Display information about a given package in the local database
+abbr pQs 'pacman -Qs'                    # Search for package(s) in the local database
+abbr paclo "pacman -Qdt"                 # List all packages which are orphaned
+abbr pacc "sudo pacman -Scc"             # Clean cache - delete all not currently installed package files
+abbr pQl "pacman -Ql"                    # List all files installed by a given package
+abbr pQo "pacman -Qo"
+abbr pacexp "sudo pacman -D --asexp"     # Mark one or more installed packages as explicitly installed
+abbr pacimp "sudo pacman -D --asdep"     # Mark one or more installed packages as non explicitly installed
 
-if type -q jj
-  jj util completion fish | source
+type -q fzf && fzf --fish | source
+
+type -q jj && jj util completion fish | source
+
+if test -d ~/Util/z.lua && command -q lua
+  lua ~/Util/z.lua/z.lua --init fish | source
+end
+
+if test -f ~/.config/fish/local.fish
+  source ~/.config/fish/local.fish
 end
 
 # vim:sw=2 sts=2 et fdm=marker
