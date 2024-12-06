@@ -89,6 +89,8 @@
   xfuncname="^(\\((def|test).*)$"
 [diff "python"]
   xfuncname="^\\s*(class.*\\(.*\\)|def.*)(\\(|:)"
+[difftool]
+	prompt = false
 [difftool "nvim"]
 	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [format]
