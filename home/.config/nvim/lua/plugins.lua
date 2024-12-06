@@ -155,8 +155,7 @@ local on_attach = function(client, bufnr)
   nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
   nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
   nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
-  -- nmap('<M-,>', '<cmd>lua vim.lsp.buf.references()<CR>', 'References')
-  nmap('<M-,>', '<cmd>Telescope lsp_references<CR>', 'References')
+  nmap('M', '<cmd>Telescope lsp_references<cr>', 'References')
   nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
   nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
   nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
@@ -372,8 +371,51 @@ hi @lsp.typemod.variable.namespaceScope.cpp gui=bold,underline
 
 require('nvim_comment').setup()
 
--- Default map: <leader>h ]c [c
-require('gitsigns').setup()
+local gitsigns = require('gitsigns')
+gitsigns.setup {
+  on_attach = function(bufnr)
+    local function map(mode, l, r, opts)
+      if type(opts) == 'string' then
+        opts = { desc = opts }
+      else
+        opts = {}
+      end
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then
+        vim.cmd.normal({ ']c', bang = true })
+      else
+        gitsigns.nav_hunk('next')
+      end
+    end)
+
+    map('n', '[c', function()
+      if vim.wo.diff then
+        vim.cmd.normal({ '[c', bang = true })
+      else
+        gitsigns.nav_hunk('prev')
+      end
+    end)
+
+    -- Actions
+    map('n', '<leader>hs', gitsigns.stage_hunk, 'stage_hunk')
+    map('n', '<leader>hr', gitsigns.reset_hunk, 'reset_hunk')
+    map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('n', '<leader>hS', gitsigns.stage_buffer, 'stage_buffer')
+    map('n', '<leader>hu', gitsigns.undo_stage_hunk, 'undo_stage_hunk')
+    map('n', '<leader>hR', gitsigns.reset_buffer, 'reset_buffer')
+    map('n', '<leader>hp', gitsigns.preview_hunk, 'preview_hunk')
+    map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
+    map('n', '<leader>hd', gitsigns.diffthis, 'diffthis')
+    map('n', '<leader>hD', function() gitsigns.diffthis('~') end, 'diffthis ~')
+    -- Text object
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
+}
 
 local neogit = require('neogit')
 neogit.setup {}

@@ -1,9 +1,8 @@
 local cmd = vim.cmd
-local g = vim.g
 local o = vim.o
 local M = {}
 
-g.mapleader = ' '
+vim.g.mapleader = ' '
 
 o.softtabstop = 2
 o.shiftwidth = 2
@@ -19,6 +18,22 @@ o.directory = os.getenv('HOME') .. '/.cache/nvim/swap//'
 o.undofile = true
 o.undodir = os.getenv('HOME') .. '/.cache/nvim/undo//'
 o.updatetime = 100
+o.timeoutlen = 300
+
+if vim.g.neovide then
+  vim.g.neovide_cursor_animation_length = 0
+  vim.g.neovide_scroll_animation_length = 0
+  vim.g.neovide_scale_factor = 1.0
+  local change_scale_factor = function(delta)
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
+  end
+  vim.keymap.set("n", "<C-=>", function()
+    change_scale_factor(1.25)
+  end)
+  vim.keymap.set("n", "<C-->", function()
+    change_scale_factor(1 / 1.25)
+  end)
+end
 
 cmd 'filetype plugin on'
 cmd 'filetype plugin indent on'
@@ -70,6 +85,7 @@ require('lazy').setup({
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'jay-babu/mason-nvim-dap.nvim',
+    {'echasnovski/mini.bracketed', config = true},
     {'echasnovski/mini.sessions', config = true},
     {'echasnovski/mini.starter', config = true},
     'echasnovski/mini.surround',
@@ -96,10 +112,15 @@ require('lazy').setup({
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
     -- {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
+
     -- 'pwntester/octo.nvim',
     {'stevearc/overseer.nvim', opts = {}},
     'nvim-treesitter/playground',
-    {'folke/snacks.nvim', config = true},
+    {
+      'folke/snacks.nvim', opts = {
+        statuscolumn = {enabled=false},
+      }
+    },
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
     'folke/trouble.nvim',
      {'akinsho/toggleterm.nvim', config = true},
@@ -144,6 +165,16 @@ require('lazy').setup({
     },
   },
 })
+
+require'tokyonight'.setup {
+  style = 'night',
+  on_colors = function(colors)
+    colors.comment = '#939dc6'
+  end,
+  on_highlights = function(hl, colors)
+    hl.LineNr = {fg = "#939dc6"}
+  end,
+}
 
 pcall(cmd, 'colorscheme tokyonight')
 
@@ -239,10 +270,7 @@ nmap("<leader>4", function() ui.nav_file(4) end, 'Harpoon 4')
 nmap("<leader>5", function() ui.nav_file(5) end, 'Harpoon 5')
 nmap("<leader>6", function() ui.nav_file(6) end, 'Harpoon 6')
 -- <leader>l (lsp)
-nmap('<leader>le', '<cmd>CocList diagnostics<cr>', 'LSP diagnostics')
-nmapp('<leader>lf', '<Plug>(coc-fix-current)', 'Fix')
--- nmap('<leader>li', '<cmd>CocList outline<cr>', 'Outline')
-nmapp('<leader>lr', '<Plug>(coc-rename)', 'Rename')
+nmap('<leader>lr', [[:%s/\<<C-r><C-w>\>//g<Left><Left>]], 'Rename')
 -- <leader>o (overseer)
 nmap('<leader>ow', '<cmd>OverseerToggle<cr>')
 nmap('<leader>oo', '<cmd>OverseerRun<cr>')
@@ -296,7 +324,6 @@ nmap('U', function()
   require'telescope.builtin'.lsp_definitions()
 end, 'Hop+definition')
 nmap('zx', '<cmd>bdelete<cr>')
-nmap('[l', vim.cmd.lfirst)
 nmap('[q', function()
   if require('trouble').is_open() then
     require('trouble').prev({ skip_groups = true, jump = true })
@@ -307,7 +334,6 @@ nmap('[q', function()
     end
   end
 end)
-nmap(']l', vim.cmd.lfirst)
 nmap(']q', function()
   if require('trouble').is_open() then
     require('trouble').next({ skip_groups = true, jump = true })
