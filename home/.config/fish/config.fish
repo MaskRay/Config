@@ -86,6 +86,7 @@ if set -q GNU
 else
   alias rm 'rm -iv'
 end
+alias fd 'fd --hidden --no-ignore'
 abbr ob objdump
 abbr re readelf -W
 

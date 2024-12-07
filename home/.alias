@@ -44,6 +44,7 @@ else
 fi
 alias dmesg='dmesg -H || dmesg | less'
 alias du='du -h'
+alias fd='fd --hidden --no-ignore'
 alias free='free -m'
 alias head='head -n $((${LINES:-`tput lines 4>/dev/null||echo -n 12`} - 3))'
 alias mv='mv -iv'
