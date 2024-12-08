@@ -111,7 +111,7 @@ abbr gst 'git status'
 
 ## others
 alias +x 'chmod +x'
-alias psg 'ps aux | g'
+alias psg 'ps aux | grep -E'
 alias 2pdf 'libreoffice --headless --convert-to pdf'
 alias clip 'xsel -ib'
 alias gdb 'command gdb -q'
