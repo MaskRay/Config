@@ -1,25 +1,24 @@
 #!/bin/zsh
-read dev size <<< $(xrandr | awk '/^[A-Z-]{2,}[0-9] connected/{dev=$1} /^   [0-9x]+/&&dev&&dev!="eDP-1"{print dev" "$1;exit}')
+read dev size <<< $(xrandr | awk '/^[-0-1A-Z]+ connected/{dev=$1} /^   ?[0-9x]+/&&dev&&dev!="eDP-1"{print dev" "$1;exit}')
+
+if [[ $1 == -v ]]; then
+  xrandr() {
+    echo xrandr $@
+    command xrandr $@
+  }
+  shift 1
+fi
 
 case $1 in
   1)
     #xrandr --output eDP-1 --mode 1920x1080 --output $dev --off
-    xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --off
-    ;;
-  22)
-    xrandr --output eDP-1 --off --output $dev --auto --rotate left
+    xrandr --output eDP-1 --mode 3840x2400
     ;;
   2)
     xrandr --output eDP-1 --off --output $dev --auto --rotate normal
     ;;
-  3)
-    xrandr --output HDMI-1 --mode 1920x1080 --output eDP1 --mode 1920x1080 --right-of HDMI-1
-    ;;
-  ll)
-    xrandr --output eDP-1 --mode 1920x1080 --output $dev --mode $size --right-of eDP-1 --rotate left
-    ;;
   l)
-    xrandr --output eDP-1 --mode 1920x1080 --output $dev --mode $size --right-of eDP-1 --rotate normal
+    xrandr --output eDP-1 --mode 1920x1080 --scale 1x1 --output $dev --mode $size --scale 1x1 --right-of eDP-1 --rotate normal
     ;;
   r)
     xrandr --output $dev --mode $size --output eDP-1 --mode 1920x1080 --right-of $dev
