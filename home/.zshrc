@@ -20,6 +20,7 @@ WORDCHARS='*?_-[]~=&;!#$%^(){}<>'
 typeset -U path
 path=(~/bin ~/.local/bin ~/.cargo/bin ~/.yarn/bin "$path[@]")
 path=( ${(u)^path:A}(N-/) )
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
 # Look {{{1
 PROMPT=$'%F{cyan}%B%n %F{white}@ %F{magenta}%m %F{white}>>= %F{green}%~ %1(j,%F{red}:%j,)%b%F{white}$(my_git_prompt)\n%F{blue}%B%(?..[%?] )%{%F{red}%}%# %F{white}%b'

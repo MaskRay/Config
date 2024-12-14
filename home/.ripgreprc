@@ -1,2 +1,7 @@
+# Search hidden files and directories.
 --hidden
---glob=!.git/*
+
+# Don't respect ignore files (.gitignore, .ignore, etc.).
+--no-ignore
+
+--glob=!{.git,.jj}
