@@ -107,4 +107,6 @@ skip -rfu ^std::
 #pretty_printers.register_pretty_printer_commands()
 #end
 
+skip -gfi /home/ray/llvm/llvm/include/llvm/ADT/*
+
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-
