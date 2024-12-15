@@ -57,6 +57,7 @@ require('telescope').setup{
       }
     }
   },
+  extensions = {fzf = {}},
   pickers = {
     find_files = {
       mappings = {
@@ -79,18 +80,38 @@ require('telescope').setup{
     },
   },
 }
+require'telescope'.load_extension'fzf'
 
 local treesitter = require 'nvim-treesitter.configs'
 treesitter.setup {
   ensure_installed = {'cpp', 'python'},
-  highlight = {enable = true},
+  highlight = { enable = true },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "<M-o>",
+      scope_incremental = "<M-O>",
+      node_incremental = "<M-o>",
+      node_decremental = "<M-i>",
+    },
+  },
   textobjects = {
+    lsp_interop = {
+      enable = true,
+      border = 'none',
+      floating_preview_opts = {},
+      peek_definition_code = {
+        ["<leader>df"] = "@function.outer",
+        ["<leader>dF"] = "@class.outer",
+      },
+    },
     move = {
       enable = true,
       set_jumps = true,
       goto_next_start = {
         [']m'] = '@class.outer',
         [']]'] = '@function.outer',
+        [']o'] = '@loop.*',
       },
       goto_next_end = {
         [']M'] = '@class.outer',
@@ -98,6 +119,7 @@ treesitter.setup {
       goto_previous_start = {
         ['[m'] = '@class.outer',
         ['[['] = '@function.outer',
+        ['[o'] = '@loop.*',
       },
       goto_previous_end = {
         ['[M'] = '@class.outer',
@@ -185,6 +207,11 @@ local on_attach = function(client, bufnr)
   nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', 'Type definition')
   nmap('xv', '<cmd>CclsVars<cr>', 'vars')
 
+  nmap('xh', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='U'}) end)
+  nmap('xj', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='R'}) end)
+  nmap('xk', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='L'}) end)
+  nmap('xl', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='D'}) end)
+
   if client.supports_method 'textDocument/codeLens' then
     vim.api.nvim_create_autocmd({'BufEnter'}, {
       group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
@@ -215,7 +242,8 @@ local on_attach = function(client, bufnr)
     vim.treesitter.stop(bufnr)
   end
 end
-local servers = {'ccls', 'lua_ls', 'marksman', 'nimls', 'pyright', 'rust_analyzer'}
+
+local servers = {'ccls', 'lua_ls', 'marksman', 'mlir_lsp_server', 'nimls', 'pyright', 'rust_analyzer', 'tblgen_lsp_server'}
 for _, lsp in ipairs(servers) do
   local options = {
     on_attach = on_attach,
