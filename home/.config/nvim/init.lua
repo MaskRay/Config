@@ -85,6 +85,7 @@ require('lazy').setup({
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'jay-babu/mason-nvim-dap.nvim',
+    {'echasnovski/mini.ai', config = true},
     {'echasnovski/mini.bracketed', config = true},
     {'echasnovski/mini.sessions', config = true},
     {'echasnovski/mini.starter', config = true},
@@ -122,6 +123,8 @@ require('lazy').setup({
       }
     },
     {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
+    {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
+    'aaronik/treewalker.nvim',
     'folke/trouble.nvim',
      {'akinsho/toggleterm.nvim', config = true},
     'justinmk/vim-dirvish',
@@ -211,8 +214,12 @@ map({'n', 'x'}, ';', ':')
 
 -- g
 nmap('ga', ':<C-u>CocList -I symbols<cr>')
-nmap('gj', ':HopLineAC<cr>', 'Hop line down')
-nmap('gk', ':HopLineBC<cr>', 'Hop line up')
+-- nmap('gj', ':HopLineAC<cr>', 'Hop line down')
+-- nmap('gk', ':HopLineBC<cr>', 'Hop line up')
+nmap('gj', ':Treewalker Down<CR>')
+nmap('gk', ':Treewalker Up<CR>')
+nmap('gh', ':Treewalker Left<CR>')
+nmap('gl', ':Treewalker Right<CR>')
 -- <leader>
 nmap('<leader><space>', require('telescope.builtin').buffers, '[ ] Find existing buffers')
 nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
