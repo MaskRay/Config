@@ -41,6 +41,7 @@ alias dd=disassemble
 # Plugins {{{1
 
 #source ~/.gdb/pygdb-fork.py
+source ~/llvm/llvm/utils/gdb-scripts/prettyprinters.py
 
 define b_a
   #b __asan_report_load1
@@ -106,5 +107,7 @@ skip -rfu ^std::
 #import pretty_printers
 #pretty_printers.register_pretty_printer_commands()
 #end
+
+skip -gfi /home/ray/llvm/llvm/include/llvm/ADT/*
 
 # -*- vim: set sts=2 sw=2 et fdm=marker: -*-
