@@ -84,10 +84,11 @@
   (evil-set-initial-state 'ccls-tree-mode 'emacs)
   ;; overlay is slow
   ;; Use https://github.com/emacs-mirror/emacs/commits/feature/noverlay
-  (setq ccls-sem-highlight-method 'font-lock)
+  ;; (setq ccls-sem-highlight-method 'font-lock)
   (add-hook 'lsp-after-open-hook #'+my/ccls-code-lens)
-  (ccls-use-default-rainbow-sem-highlight)
+  ;; (ccls-use-default-rainbow-sem-highlight)
   ;; https://github.com/maskray/ccls/blob/master/src/config.h
+
   (setq
    ccls-initialization-options
    `(:clang
@@ -104,7 +105,9 @@
        ["^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
         "^/usr/(local/)?include/c\\+\\+/v1/"
         ]))
-     :index (:initialBlacklist ,+ccls-initial-blacklist :parametersInDeclarations :json-false :trackDependency 1)))
+     :index (:initialBlacklist ,+ccls-initial-blacklist :parametersInDeclarations :json-false :trackDependency 1)
+     :highlight (:rainbow 10)
+     ))
 
   )
 
