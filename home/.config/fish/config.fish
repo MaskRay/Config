@@ -1,10 +1,3 @@
-function prepend_to_path -d "Prepend the given dir to PATH if it exists and is not already in it"
-    if test -d $argv[1]
-        if not contains $argv[1] $PATH
-            set -gx PATH "$argv[1]" $PATH
-        end
-    end
-end
 set PATH ~/bin ~/.local/bin ~/.cargo/bin ~/.nimble/bin $PATH
 
 # Functions {{{1
@@ -39,16 +32,16 @@ set fish_greeting ''
 # Prompt {{{2
 set fish_prompt_pwd_dir_length 0
 function fish_prompt
+  set st $status
+  if test $status -eq 0
+    set st
+  end
   set reset \e'[m'
   set red \e'[31m'
   set blue \e'[1m'\e'[34m'
   set magenta \e'[1m'\e'[35m'
   set cyan \e'[1m'\e'[36m'
   set white \e'[37m'
-
-  if not set -q __fish_prompt_hostname
-    set -g __fish_prompt_hostname (hostname -s)
-  end
 
   switch $USER
     case root
@@ -57,7 +50,7 @@ function fish_prompt
       set user_prompt '%'
   end
 
-  echo $blue\u256d\u2500$cyan(whoami) $white@ $magenta$__fish_prompt_hostname $white'>>=' $cyan(prompt_pwd) $reset(fish_git_prompt)
+  echo $blue\u256d\u2500$cyan(whoami) $white@ $magenta(prompt_hostname) $white'>>=' $cyan(prompt_pwd) $reset(fish_git_prompt) $reset$st
   echo -n $blue\u2570\u2500$red$user_prompt(set_color normal)' '
 end
 
