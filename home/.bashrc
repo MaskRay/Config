@@ -24,6 +24,7 @@ alias ll='ls -l'
 
 prepend_path $HOME/.local/bin
 prepend_path $HOME/.rvm/bin
+prepend_path $HOME/.cargo/bin
 #export PATH="$HOME/.local/bin:$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
 
 export NVM_DIR="$HOME/.nvm"

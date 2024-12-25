@@ -1,0 +1,64 @@
+(defcfg
+  concurrent-tap-hold yes
+  log-layer-changes no
+  process-unmapped-keys yes
+)
+(defvar
+  tt 200 ;; tap-time
+  ht 160 ;; hold-time
+)
+
+(defalias
+  tab (tap-hold $tt $ht tab (layer-while-held extend))
+  cap (tap-hold $tt $ht esc lctl)
+  ;; cap (tap-hold $tt $hold-time esc (layer-while-held vim-nav))
+  a (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ lmet) break)
+  s (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ lalt) break)
+  d (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ lctl) break)
+  f (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ lsft) break)
+  j (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold-release-timeout 0 250 _ rsft _) break)
+  k (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold-release-timeout 0 250 _ rctl _) break)
+  l (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ ralt) break)
+  ; (switch ((key-timing 1 less-than $tt)) _ break () (tap-hold $tt $ht _ rmet) break)
+)
+
+(defsrc
+  tab  q    w    e    r    t         y    u    i    o    p    [
+  caps a    s    d    f    g         h    j    k    l    ;    '
+  lsft z    x    c    v    b         n    m    ,    .    /    rsft
+)
+(deflayer default
+  @tab _    _    _    _    _         _    _    _    _    _    _
+  @cap @a   @s   @d   @f   _         _    @j   @k   @l   @;   _
+  _    _    _    _    _    _         _    _    _    _    _    _
+)
+(deflayer extend
+  _    _    _    _    lrld _         _    C-S-tab C-tab  _    _    _
+  _    _    _    _    _    _         left down up   rght _    _
+  _    _    _    _    _    _         home pgdn pgup end  _    _
+)
+
+(defchordsv2
+  (j  k     ) esc 100 all-released ()
+  (   k  l  ) =   100 all-released ()
+  (j     l  ) S-= 100 all-released ()
+  (      l ;) -   100 all-released ()
+)
+
+(defalias
+  pc (macro [ c)
+  nc (macro ] c)
+  pr (macro [ [)
+  nr (macro ] ])
+  ph (macro [ h)
+  nh (macro ] h)
+  pd (macro [ d)
+  nd (macro ] d)
+  pq (macro [ q)
+  nq (macro ] q)
+)
+(deflayer vim-nav
+  _    _    _    @pc  @nc  _         _    @nh  @ph  _    _    _
+  _    _    _    @pr  @nr  _         _    @nd  @pd  _    _    _
+  _    _    _    _    _    _         _    @nq  @pq  _    _    _
+)
