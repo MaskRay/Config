@@ -98,6 +98,8 @@ set print static-members off
 #set print vtbl on
 #set demangle-style gnu-v3
 
+skip -rfu ^std::
+
 #python
 #import sys
 #sys.path.insert(0, '/usr/share/gdb/python/gdb/command')
