@@ -83,6 +83,7 @@ end
 alias fd 'fd --hidden --no-ignore'
 abbr ob objdump
 abbr re readelf -W
+abbr G -p anywhere '| grep -E'
 
 abbr ni ninja
 
@@ -147,6 +148,22 @@ abbr pacimp "sudo pacman -D --asdep"     # Mark one or more installed packages a
 type -q fzf && fzf --fish | source
 
 type -q jj && jj util completion fish | source
+
+for i in /tmp/Debug/bin/*
+  alias my(string split -r -m1 / $i)[2] $i
+  alias rr(string split -r -m1 / $i)[2] "rr record $i"
+end
+alias myob=/tmp/Debug/bin/llvm-objdump
+alias mylit=/tmp/Debug/bin/llvm-lit
+alias rrob="rr record /tmp/Debug/bin/llvm-objdump"
+
+for i in /tmp/Rel/bin/*
+  alias f(string split -r -m1 / $i)[2] $i
+end
+alias fob=/tmp/Rel/bin/llvm-objdump
+alias flit=/tmp/Rel/bin/llvm-lit
+
+alias fobj "fob --no-addresses --no-show-raw-insn -M intel --symbolize-operands"
 
 if test -d ~/Util/z.lua && command -q lua
   lua ~/Util/z.lua/z.lua --init fish | source
