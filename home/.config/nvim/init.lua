@@ -208,6 +208,14 @@ local function nmapp(lhs, rhs, opts)
   end
   vim.api.nvim_set_keymap('n', lhs, rhs, options)
 end
+-- diagnostic
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
 
 map({'n', 'x'}, ':', ';')
 map({'n', 'x'}, ';', ':')
@@ -261,9 +269,11 @@ nmap('<leader>gb', function() require'my.util'.blame_line() end)
 nmap('<leader>gB', '<cmd>Git blame<cr>')
 nmap('<leader>gd', '<cmd>Git diff<cr>')
 nmap('<leader>ge', function() require'neo-tree.command'.execute({source='git_status', toggle = true}) end, 'Git explorer')
-nmap('<leader>gf', function() require'my.util'.lazygit({size={width=0.9}, args={'log', '-f', vim.api.nvim_buf_get_name(0)}}) end)
-nmap('<leader>gg', '<cmd>lua ToggleTermCmd({cmd="lazygit",direction="float"})<cr>')
-nmap('<leader>gl', '<cmd>Git log<cr>')
+nmap('<leader>gf', function() Snacks.lazygit.log_file() end, 'Lazygit Current File History')
+nmap('<leader>gg', function() Snacks.lazygit( { cwd = MyProject() }) end, 'Lazygit (Root Dir)')
+nmap('<leader>gG', function() Snacks.lazygit() end, 'Lazygit (cwd)')
+nmap('<leader>gl', function() Snacks.lazygit.log({ cwd = MyProject() }) end, 'Lazygit Log')
+nmap('<leader>gL', function() Snacks.lazygit.log() end, 'Lazygit Log (cwd)')
 nmap('<leader>gw', function() require'snacks'.gitbrowse() end, 'Git Browse')
 -- <leader>h (harpoon)
 local mark = require("harpoon.mark")
@@ -311,6 +321,9 @@ nmap('<leader>tn', '<cmd>set number!<cr>')
 nmap('<leader>tq', '<cmd>Trouble qflist toggle<cr>', 'Quickfix List (Trouble)')
 nmap('<leader>ts', '<cmd>set spell!<cr>')
 nmap('<leader>tw', '<cmd>set wrap!<cr>')
+-- u (inspect)
+nmap('<leader>ui', '<cmd>Inspect<cr>')
+nmap('<leader>uI', '<cmd>InspectTree<cr>')
 -- w (window)
 nmapp('<leader>wo', '<C-w>o')
 nmapp('<leader>ws', '<C-w>s')
@@ -351,6 +364,13 @@ nmap(']q', function()
     end
   end
 end)
+nmap('<leader>cd', vim.diagnostic.open_float, 'Line Diagnostics')
+nmap(']d', diagnostic_goto(true), 'Next Diagnostic')
+nmap('[d', diagnostic_goto(false), 'Prev Diagnostic')
+nmap(']e', diagnostic_goto(true, 'ERROR'), 'Next Error')
+nmap('[e', diagnostic_goto(false, 'ERROR'), 'Prev Error')
+nmap(']w', diagnostic_goto(true, 'WARN'), 'Next Warning')
+nmap('[w', diagnostic_goto(false, 'WARN'), 'Prev Warning')
 nmap('<f1>', '<cmd>Gdb<cr>')
 nmap('<f2>', '<cmd>Program<cr>')
 nmap('<f11>', '<cmd>Break<cr>')
@@ -395,6 +415,39 @@ local autocmds = {
   };
 }
 nvim_create_augroups(autocmds)
+
+-- close some filetypes with <q>
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("my_close_with_q", {clear=true}),
+  pattern = {
+    "checkhealth",
+    "dbout",
+    "help",
+    "lspinfo",
+    "neotest-output",
+    "neotest-output-panel",
+    "neotest-summary",
+    "notify",
+    "qf",
+    "snacks_win",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+  },
+  callback = function(event)
+    vim.bo[event.buf].buflisted = false
+    vim.schedule(function()
+      vim.keymap.set("n", "q", function()
+        vim.cmd("close")
+        pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+      end, {
+        buffer = event.buf,
+        silent = true,
+        desc = "Quit buffer",
+      })
+    end)
+  end,
+})
 
 --cmd 'autocmd TermOpen * startinsert'
 cmd 'autocmd WinEnter * if &buftype ==# "terminal" | startinsert | endif'
