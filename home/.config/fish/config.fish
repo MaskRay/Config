@@ -114,6 +114,7 @@ alias port '/sbin/ss -ntlp'
 abbr py python
 abbr rb ruby
 alias rsync 'rsync --progress --partial'
+alias xst 'xstow -d ~/.local/stow'
 
 alias e "nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote"
 alias vs "nvr --servername=$XDG_RUNTIME_DIR/nvim.pipe --remote -O"
