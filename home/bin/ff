@@ -96,8 +96,10 @@ def main():
             if args.run < 0:
                 print(f'{lineno:^2} {line}')
             if not args.n:
-                if os.system(line) != 0:
-                    sys.exit(1)
+                # Use bash to support echo -e
+                ret = os.spawnlp(os.P_WAIT, 'bash', 'bash', '-c', line)
+                if ret != 0:
+                    sys.exit(ret)
             if args.run == lineno:
                 if (idx := line.find('|')) >= 0:
                     line = line[:idx]
@@ -106,13 +108,13 @@ def main():
                     line = 'rr record ' + line
                 print(f'### {line}')
                 if not args.n:
-                    if os.system(line) != 0:
+                    if os.spawnlp(os.P_WAIT, 'bash', 'bash', '-c', line) != 0:
                         sys.exit(1)
                     if args.debug >= 0:
                         os.execvp('rr', ('rr', 'replay', '-d', 'cgdb'))
                 break
 
-            if match := re.search(r'\bcd ([/.\w]+)', line):
+            if match := re.search(r' cd ([/.\w]+)', line):
                 os.chdir(match.group(1))
                 cwd = os.getcwd()
 
