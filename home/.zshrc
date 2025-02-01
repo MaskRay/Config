@@ -227,8 +227,6 @@ bindkey '^xh' _complete_help
 # General aliases & functions (partially shared with bash) {{{2
 [[ -f ~/.alias ]] && source ~/.alias
 
-function arcfilter() { arc amend; git log -1 --pretty=%B | awk '/Reviewers:|Subscribers:/{p=1} /Reviewed By:|Differential Revision:/{p=0} !p && !/^Summary:$/ {sub(/^Summary: /,"");print}' | git commit --amend --date=now -F -; }
-
 for i in gb gf gh gr gt; do
   zle -N $i
 done

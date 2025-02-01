@@ -35,6 +35,15 @@ require'better_escape'.setup {
   },
 }
 
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.c3 = {
+  install_info = {
+    url = "https://github.com/c3lang/tree-sitter-c3",
+    files = {"src/parser.c", "src/scanner.c"},
+    branch = "main",
+  },
+}
+
 require'leap'.add_default_mappings(true)
 require'mini.surround'.setup({
   mappings = {

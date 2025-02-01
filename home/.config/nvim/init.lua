@@ -35,9 +35,6 @@ if vim.g.neovide then
   end)
 end
 
-cmd 'filetype plugin on'
-cmd 'filetype plugin indent on'
-
 local stl = {
   '%#ColorColumn#%2f',          -- buffer number
   ' ',                          -- separator
@@ -478,6 +475,18 @@ command! GdbUp :call TermDebugSendCommand('up')
 command! GdbDown :call TermDebugSendCommand('down')
 command! GdbQuit :call TermDebugSendCommand('quit')
 ]], {})
+
+cmd 'filetype plugin on'
+cmd 'filetype plugin indent on'
+
+vim.filetype.add({extension = {inc = 'cpp'}})
+vim.filetype.add({
+  extension = {
+    c3 = "c3",
+    c3i = "c3",
+    c3t = "c3",
+  },
+})
 
 vim.g.termdebug_config = {
   wide = 1,
