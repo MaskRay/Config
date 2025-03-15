@@ -93,13 +93,7 @@ def main():
                     line1 += line[idx-1]
             line = line1 + line[idx:]
 
-            if args.run < 0:
-                print(f'{lineno:^2} {line}')
-            if not args.n:
-                # Use bash to support echo -e
-                ret = os.spawnlp(os.P_WAIT, 'bash', 'bash', '-c', line)
-                if ret != 0:
-                    sys.exit(ret)
+            # If --run/--debug matches, runs the specified command.
             if args.run == lineno:
                 if (idx := line.find('|')) >= 0:
                     line = line[:idx]
@@ -111,8 +105,16 @@ def main():
                     if os.spawnlp(os.P_WAIT, 'bash', 'bash', '-c', line) != 0:
                         sys.exit(1)
                     if args.debug >= 0:
-                        os.execvp('rr', ('rr', 'replay', '-d', 'cgdb'))
+                        #os.execvp('rr', ('rr', 'replay', '-d', 'cgdb'))
+                        os.execvp('rrr', ('rrr',))
                 break
+            else:
+                print(f'{lineno:^2} {line}')
+                if not args.n:
+                    # Use bash to support echo -e
+                    ret = os.spawnlp(os.P_WAIT, 'bash', 'bash', '-c', line)
+                    if ret != 0:
+                        sys.exit(ret)
 
             if match := re.search(r' cd ([/.\w]+)', line):
                 os.chdir(match.group(1))
