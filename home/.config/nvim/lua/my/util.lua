@@ -16,7 +16,7 @@ end
 
 function M.blame_line(opts)
   opts = vim.tbl_deep_extend("force", {
-    count = 3,
+    count = 5,
     filetype = "git",
     size = {
       width = 0.8,
