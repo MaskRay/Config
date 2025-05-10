@@ -95,6 +95,8 @@ def main():
 
             # If --run/--debug matches, runs the specified command.
             if args.run == lineno:
+                if line.startswith(' not '):
+                    line = line[idx+5:]
                 if (idx := line.find('|')) >= 0:
                     line = line[:idx]
                 line = f'{build_dir}/bin/{line}'

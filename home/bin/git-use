@@ -3,4 +3,4 @@ if [[ -z $1 ]]; then
   echo git use $1
   exit 1
 fi
-git rebase $(git rev-parse --abbrev-ref origin/HEAD) "$1"
+git rebase $(git rev-parse --abbrev-ref origin/HEAD) "$1" "${@:2}"
