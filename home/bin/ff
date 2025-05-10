@@ -95,8 +95,10 @@ def main():
 
             # If --run/--debug matches, runs the specified command.
             if args.run == lineno:
-                if (idx := line.find('|')) >= 0:
-                    line = line[:idx]
+                if line.startswith('not '):
+                    line = line[4:]
+                if (pos := line.find('|')) >= 0:
+                    line = line[:pos]
                 line = f'{build_dir}/bin/{line}'
                 if args.debug >= 0:
                     line = 'rr record ' + line
