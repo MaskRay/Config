@@ -29,7 +29,7 @@ config.keys = {
    { key = 'C', mods = 'SUPER', action = act.CopyTo 'Clipboard' },
    { key = 'V', mods = 'SUPER', action = act.PasteFrom 'Clipboard' },
    { key = 'F', mods = 'SHIFT|CTRL', action = act.Search 'CurrentSelectionOrEmptyString' },
-   { key = ' ', mods = 'SHIFT|CTRL', action = act.ActivateCopyMode },
+   -- { key = ' ', mods = 'SHIFT|CTRL', action = act.ActivateCopyMode },
 
   {
     key = 'p',
