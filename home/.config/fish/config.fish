@@ -87,6 +87,7 @@ abbr re readelf -W
 abbr G -p anywhere '| grep -E'
 
 abbr ni ninja
+alias rg 'rg -u'
 
 # git {{{2
 alias ga 'git add'

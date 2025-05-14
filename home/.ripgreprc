@@ -1,7 +1,4 @@
 # Search hidden files and directories.
 --hidden
 
-# Don't respect ignore files (.gitignore, .ignore, etc.).
---no-ignore
-
---glob=!{.git,.jj,out}
+--glob=!{.git,.jj,out,.ccls-cache}
