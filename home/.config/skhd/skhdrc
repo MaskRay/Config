@@ -1,0 +1,4 @@
+cmd - 1 : open -a "Google Chrome"
+cmd - 2 : open -a Wezterm
+cmd - 3 : open -a "Microsoft Teams"
+cmd - 4 : open -a "Microsoft Outlook"
