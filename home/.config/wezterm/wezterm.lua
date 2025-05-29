@@ -1,6 +1,6 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
-local projects = require 'projects'
+-- local projects = require 'projects'
 local act = wezterm.action
 
 config.hide_tab_bar_if_only_one_tab = true
@@ -13,7 +13,7 @@ config.color_scheme = 'Catppuccin Mocha'
 config.font = wezterm.font 'FantasqueSansM Nerd Font'
 config.font_size = 18
 
-config.leader = { mods = 'SUPER', key = 'm', timeout_milliseconds = 1000 }
+config.leader = {mods = 'ALT', key = 'm'}
 config.keys = {
   {mods = 'LEADER|CTRL', key = 'a', action = act.SendKey { key = 'a', mods = 'CTRL'}},
   {mods = 'LEADER', key = 'v', action = act.SplitHorizontal { domain = 'CurrentPaneDomain'}},
@@ -26,17 +26,17 @@ config.keys = {
   {mods = 'CTRL|SHIFT', key = 'w', action = act.CloseCurrentTab {confirm=true}},
 
    -- copy, paste, search --
-   { key = 'C', mods = 'SUPER', action = act.CopyTo 'Clipboard' },
-   { key = 'V', mods = 'SUPER', action = act.PasteFrom 'Clipboard' },
-   { key = 'F', mods = 'SHIFT|CTRL', action = act.Search 'CurrentSelectionOrEmptyString' },
+  { key = 'c', mods = 'SUPER', action = act.CopyTo 'Clipboard' },
+  { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' },
+  { key = 'f', mods = 'SHIFT|CTRL', action = act.Search 'CurrentSelectionOrEmptyString' },
    -- { key = ' ', mods = 'SHIFT|CTRL', action = act.ActivateCopyMode },
 
-  {
-    key = 'p',
-    mods = 'LEADER',
-    -- Present in to our project picker
-    action = projects.choose_project(),
-  },
+  -- {
+  --   key = 'p',
+  --   mods = 'LEADER',
+  --   -- Present in to our project picker
+  --   action = projects.choose_project(),
+  -- },
     {
     key = 'f',
     mods = 'LEADER',
