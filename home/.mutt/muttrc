@@ -178,7 +178,7 @@ set crypt_replysignencrypted = yes
 unset crypt_verify_sig
 
 # Misc {{{1
-set editor="vim +'norm }' +'norm o' %s" # insert mode
+set editor="nvim +'norm }' +'norm o' %s" # insert mode
 #auto_view application/msword application/pdf application/vnd.oasis.opendocument.text text/html
 auto_view application/* image/* text/html
 alternative_order text/plain text/html
