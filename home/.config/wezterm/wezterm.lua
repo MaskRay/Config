@@ -24,6 +24,7 @@ config.keys = {
   {mods = 'LEADER', key = 'l', action = act {ActivatePaneDirection='Right'}},
   {mods = 'CTRL|SHIFT', key = 't', action = act.SpawnTab 'CurrentPaneDomain'},
   {mods = 'CTRL|SHIFT', key = 'w', action = act.CloseCurrentTab {confirm=true}},
+  {mods = 'CTRL|SHIFT', key = 'Space', action = act.DisableDefaultAssignment},
 
    -- copy, paste, search --
   { key = 'c', mods = 'SUPER', action = act.CopyTo 'Clipboard' },
