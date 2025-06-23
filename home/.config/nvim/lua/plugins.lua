@@ -258,7 +258,7 @@ for _, lsp in ipairs(servers) do
     options = vim.tbl_extend('force', options, {
       init_options = {
         index = {
-          threads = 0,
+          threads = 50,
           initialBlacklist = {"/(test|unittests)/"},
         };
         highlight = {
