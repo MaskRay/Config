@@ -63,25 +63,27 @@ require('telescope').setup{
       i = {
         ['<C-h>'] = 'which_key',
         ['<M-n>'] = require('telescope.actions').insert_original_cword,
-        ['<C-w>'] = function(prompt_bufnr)
-          -- find parent directory https://github.com/nvim-telescope/telescope.nvim/issues/2179
-          local current_picker = require('telescope.actions.state').get_current_picker(prompt_bufnr)
-          local cwd = current_picker.cwd and tostring(current_picker.cwd)
-              or vim.loop.cwd()
-          local parent_dir = vim.fs.dirname(cwd)
-
-          require('telescope.actions').close(prompt_bufnr)
-          require('telescope.builtin').find_files {
-            prompt_title = vim.fs.basename(parent_dir),
-            cwd = parent_dir,
-          }
-        end,
       }
     }
   },
-  extensions = {fzf = {}},
+  extensions = {
+    fzf = {},
+    pathogen = {
+      attach_mappings = function(map, actions)
+        map("i", "<C-o>", actions.proceed_with_parent_dir)
+        map("i", "<C-l>", actions.revert_back_last_dir)
+        map("i", "<C-b>", actions.change_working_directory)
+        map("i", "<C-g>g", actions.grep_in_result)
+        map("i", "<C-g>i", actions.invert_grep_in_result)
+      end,
+      use_last_search_for_live_grep = false,
+      -- uses a relative path instead of the full path
+      relative_prompt_path = false,
+    },
+  },
 }
 require'telescope'.load_extension'fzf'
+require'telescope'.load_extension'pathogen'
 
 local treesitter = require 'nvim-treesitter.configs'
 treesitter.setup {

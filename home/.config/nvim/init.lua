@@ -119,7 +119,7 @@ require('lazy').setup({
         statuscolumn = {enabled=false},
       }
     },
-    {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim'}},
+    {'nvim-telescope/telescope.nvim', dependencies = {'nvim-lua/plenary.nvim', 'brookhong/telescope-pathogen.nvim'}},
     {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
     'aaronik/treewalker.nvim',
     'folke/trouble.nvim',
@@ -226,8 +226,8 @@ nmap('gk', ':Treewalker Up<CR>')
 nmap('gh', ':Treewalker Left<CR>')
 nmap('gl', ':Treewalker Right<CR>')
 -- <leader>
-nmap('<leader><space>', require('telescope.builtin').buffers, '[ ] Find existing buffers')
-nmap('<leader>.', '<cmd>lua require("telescope.builtin").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
+nmap('<leader><space>', '<cmd>lua require("pathogen").quick_buffer()<cr>', '[ ] Find existing buffers')
+nmap('<leader>.', '<cmd>lua require("pathogen").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
 nmap('<leader>?', function() require('dapui').eval(nil, { enter = true }) end)
 -- <leader>a (app)
 nmap('<leader>ag', '<cmd>%!genhdr<cr>')
@@ -294,15 +294,15 @@ nmap('<leader>ob', '<cmd>OverseerBuild<cr>')
 nmap('<leader>ot', '<cmd>OverseerTaskAction<cr>')
 nmap('<leader>oc', '<cmd>OverseerClearCache<cr>')
 -- <leader>p (project)
-nmap('<leader>pf', '<cmd>lua require("telescope.builtin").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
+nmap('<leader>pf', '<cmd>lua require("pathogen").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
 -- <leader>q (quit)
 nmap('<leader>qq', '<cmd>quit<cr>')
 -- <leader>s (search)
-nmap('<leader>sd', '<cmd>lua require("telescope.builtin").live_grep({cwd=vim.fn.expand("%:p:h")})<cr>', 'Search directory')
+nmap('<leader>sd', '<cmd>lua require("pathogen").live_grep({cwd=vim.fn.expand("%:p:h")})<cr>', 'Search directory')
 nmap('<leader>sh', '<cmd>Telescope help_tags<cr>')
 nmap('<leader>si', '<cmd>Telescope lsp_document_symbols<cr>')
 nmap('<leader>sk', '<cmd>Telescope keymaps<cr>')
-nmap('<leader>sp', '<cmd>lua require("telescope.builtin").live_grep({cwd=MyProject()})<cr>', 'Search project')
+nmap('<leader>sp', '<cmd>lua require("pathogen").live_grep({cwd=MyProject()})<cr>', 'Search project')
 nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>', 'Search buffer')
 nmap('<leader>sna', function() require'noice'.cmd('all') end, 'Noice All')
 nmap('<leader>snd', function() require'noice'.cmd('dismiss') end, 'Dismiss All')
