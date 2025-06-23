@@ -195,16 +195,17 @@ vim.api.nvim_create_autocmd('LspAttach', {
     nmap('xk', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='L'}) end)
     nmap('xl', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='D'}) end)
 
-    if client.supports_method 'textDocument/codeLens' then
-      vim.api.nvim_create_autocmd({'BufEnter'}, {
-        group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
-        buffer = bufnr,
-        callback = function(ev)
-          vim.lsp.codelens.refresh({bufnr = 0})
-        end,
-      })
-      vim.lsp.codelens.refresh({bufnr = 0})
-    end
+    client.server_capabilities.codeLensProvider = false
+    -- if client.supports_method 'textDocument/codeLens' then
+    --   vim.api.nvim_create_autocmd({'BufEnter'}, {
+    --     group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
+    --     buffer = bufnr,
+    --     callback = function(ev)
+    --       vim.lsp.codelens.refresh({bufnr = 0})
+    --     end,
+    --   })
+    --   vim.lsp.codelens.refresh({bufnr = 0})
+    -- end
 
     if client.supports_method 'textDocument/documentHighlight' then
       vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
@@ -230,7 +231,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.lsp.config('ccls', {
   init_options = {
     index = {
-      threads = 0,
+      threads = 50,
       initialBlacklist = {"/(test|unittests)/|flang/"},
     },
     highlight = {
