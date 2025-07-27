@@ -24,8 +24,8 @@ old=
 pid=
 while :; do
   width=$(xrandr -q | awk 'NR==1{print $8}')
-  #  tasks=(${(f)"$(task taskbar | sed -n '4,/^$/{/^$/!p}')"})
-  tasks=(${(f)"$(agenda | awk -vFPAT='([^,]*)|(\"[^\"]+\")' 'NR>1 && $4=="TODO"{s=$6; if($7){sub("\\.{6}","",$7); s=s" "$7} if($1)print s"  "$2; }')"})
+  tasks=(${(f)"$(task taskbar | sed -n '4,/^$/{/^$/!p}')"})
+  #tasks=(${(f)"$(agenda | awk -vFPAT='([^,]*)|(\"[^\"]+\")' 'NR>1 && $4=="TODO"{s=$6; if($7){sub("\\.{6}","",$7); s=s" "$7} if($1)print s"  "$2; }')"})
   if [[ $tasks != $old ]]; then
     echo new
     [[ -n $pid ]] && kill $pid

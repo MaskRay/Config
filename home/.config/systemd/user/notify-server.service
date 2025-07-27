@@ -1,8 +1,0 @@
-[Unit]
-Description=notify-client -> notify-server -> notify-send
-
-[Service]
-ExecStart=/home/ray/bin/notify-server
-
-[Install]
-WantedBy=graphical.target
