@@ -22,6 +22,7 @@ keybinds {
         bind "Ctrl Space" { Write 0; SwitchToMode "Normal"; }
         bind "Esc" { SwitchToMode "Normal"; }
         bind "c" { NewTab; SwitchToMode "Normal"; }
+        bind "d" { Detach; }
         bind "e" { EditScrollback; SwitchToMode "Normal"; }
         bind "g" { SwitchToMode "Locked"; }
         bind "h" { NewPane "Down"; SwitchToMode "Normal"; }
@@ -31,7 +32,6 @@ keybinds {
         bind "o" { SwitchToMode "Session"; }
         bind "p" { GoToPreviousTab; SwitchToMode "Normal"; }
         bind "p" { SwitchToMode "Pane"; }
-        bind "q" { Quit; }
         bind "s" { SwitchToMode "Scroll"; }
         bind "t" { SwitchToMode "Tab"; }
         bind "v" { NewPane "Right"; SwitchToMode "Normal"; }

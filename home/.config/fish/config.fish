@@ -172,6 +172,9 @@ if test -d ~/Util/z.lua && command -q lua
   lua ~/Util/z.lua/z.lua --init fish | source
 end
 
+if test -f ~/.config/fish/conf.d/fnm.fish
+  source ~/.config/fish/conf.d/fnm.fish
+end
 if test -f ~/.config/fish/local.fish
   source ~/.config/fish/local.fish
 end

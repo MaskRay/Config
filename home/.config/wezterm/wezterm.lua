@@ -19,7 +19,7 @@ config.color_scheme = 'Catppuccin Mocha'
 config.font = wezterm.font 'FantasqueSansM Nerd Font'
 config.font_size = is_mac and 24 or 18
 
-config.leader = {mods = 'CTRL', key = 'Space'}
+config.leader = {mods = 'ALT', key = 'Space'}
 config.disable_default_key_bindings = is_mac
 config.keys = {
   { key = 'Space', mods = "LEADER|CTRL", action = act.SendKey { key = "Space", mods = "CTRL" } },
@@ -41,7 +41,7 @@ config.keys = {
 
   -- Navigate panes
   {
-    key = 'h', mods = 'ALT',
+    key = 'h', mods = 'LEADER',
     action = wezterm.action_callback(function(window, pane)
       local tab = window:mux_window():active_tab()
       if tab:get_pane_direction('Left') ~= nil then
@@ -52,7 +52,7 @@ config.keys = {
     end),
   },
   {
-    key = 'l', mods = 'ALT',
+    key = 'l', mods = 'LEADER',
     action = wezterm.action_callback(function(window, pane)
       local tab = window:mux_window():active_tab()
       if tab:get_pane_direction('Right') ~= nil then
@@ -62,8 +62,8 @@ config.keys = {
       end
     end),
   },
-  { key = 'j', mods = 'ALT', action = act {ActivatePaneDirection='Down'}},
-  { key = 'k', mods = 'ALT', action = act {ActivatePaneDirection='Up'}},
+  { key = 'j', mods = 'LEADER', action = act {ActivatePaneDirection='Down'}},
+  { key = 'k', mods = 'LEADER', action = act {ActivatePaneDirection='Up'}},
 
   -- Resize pane
   { key = 'H', mods = 'LEADER', action = act.AdjustPaneSize {'Left', 3}},
