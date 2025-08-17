@@ -299,6 +299,7 @@ nmap('<leader>sd', '<cmd>lua require("pathogen").live_grep({cwd=vim.fn.expand("%
 nmap('<leader>sh', '<cmd>Telescope help_tags<cr>')
 nmap('<leader>si', '<cmd>Telescope lsp_document_symbols<cr>')
 nmap('<leader>sk', '<cmd>Telescope keymaps<cr>')
+nmap('<leader>so', '<cmd>lua require("pathogen").live_grep({cwd=MySubProject()})<cr>', 'Search subproject')
 nmap('<leader>sp', '<cmd>lua require("pathogen").live_grep({cwd=MyProject()})<cr>', 'Search project')
 nmap('<leader>ss', '<cmd>Telescope current_buffer_fuzzy_find<cr>', 'Search buffer')
 nmap('<leader>sna', function() require'noice'.cmd('all') end, 'Noice All')
@@ -448,6 +449,17 @@ cmd 'autocmd WinEnter * if &buftype ==# "terminal" | startinsert | endif'
 
 function MyProject()
   return require('my.util').get_root()
+end
+function MySubProject()
+  local root = require('my.util').get_root()
+  local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+  local dir2 = dir
+  while true do
+    dir = vim.fs.dirname(dir)
+    if #dir <= #root then break end
+    dir2 = dir
+  end
+  return dir2
 end
 
 vim.api.nvim_exec2([[
