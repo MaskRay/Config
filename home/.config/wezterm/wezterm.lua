@@ -89,7 +89,6 @@ config.keys = {
   --   action = projects.choose_project(),
   -- },
   { key = "s", mods = "CTRL|SHIFT", action = workspace_switcher.switch_workspace() },
-  { key = 't', mods = 'CTRL|SHIFT', action = wezterm.action.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES' }},
   { key = "[", mods = "LEADER", action = act.SwitchWorkspaceRelative(-1) },
   { key = "]", mods = "LEADER", action = act.SwitchWorkspaceRelative(1) },
 }
