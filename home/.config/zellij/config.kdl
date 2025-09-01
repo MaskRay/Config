@@ -5,10 +5,6 @@ keybinds {
         unbind "Ctrl b"
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt =" { Resize "Increase"; }
-        bind "Alt Down" { MoveFocus "Down"; }
-        bind "Alt Left" { MoveFocusOrTab "Left"; }
-        bind "Alt Right" { MoveFocusOrTab "Right"; }
-        bind "Alt Up" { MoveFocus "Up"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt h" { MoveFocusOrTab "Left"; }
