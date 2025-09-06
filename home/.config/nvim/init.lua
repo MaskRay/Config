@@ -99,7 +99,7 @@ require('lazy').setup({
     },
 
     'alaviss/nim.nvim',
-    {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
+    -- {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
     {'folke/noice.nvim', config = true},
     'terrortylor/nvim-comment',
     'mfussenegger/nvim-dap',
@@ -130,6 +130,48 @@ require('lazy').setup({
     'vim-crystal/vim-crystal',
     'preservim/vimux',
     'folke/which-key.nvim',
+
+    -- AI
+    {
+      'zbirenbaum/copilot.lua',
+      config = function() require('copilot').setup({}) end,
+    },
+    {
+      'saghen/blink.cmp',
+      dependencies = { 'fang2hou/blink-copilot' },
+      opts = {
+        sources = {
+          default = { 'copilot' },
+          providers = {
+            copilot = {
+              name = 'copilot',
+              module = 'blink-copilot',
+              score_offset = 100,
+              async = true,
+              opts = {
+                max_completions = 3,
+              }
+            },
+          },
+        },
+      },
+    },
+    {
+      'yetone/avante.nvim',
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        'stevearc/dressing.nvim',
+        'nvim-lua/plenary.nvim',
+        'MunifTanjim/nui.nvim',
+        {
+          'MeanderingProgrammer/render-markdown.nvim',
+          opts = { file_types = { 'Avante' } },
+          ft = { 'Avante' },
+        },
+      },
+      build = 'make',
+      opts = { provider = 'copilot' },
+    },
   },
   performance = {
     rtp = {
