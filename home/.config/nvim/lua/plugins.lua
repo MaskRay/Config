@@ -313,46 +313,6 @@ nvim_lsp.ts_ls.setup {
   single_file_support = false,
 }
 
-local cmp = require('cmp')
-cmp.setup {
-  formatting = {
-    format = function(entry, vim_item)
-      vim_item.menu = ({
-        buffer = "[Buffer]",
-        nvim_lsp = "[LSP]",
-        ultisnips = "[UltiSnips]",
-        nvim_lua = "[Lua]",
-        cmp_tabnine = "[TabNine]",
-        look = "[Look]",
-        path = "[Path]",
-        spell = "[Spell]",
-        calc = "[Calc]",
-        emoji = "[Emoji]"
-      })[entry.source.name]
-      return vim_item
-    end
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<Tab>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true
-    }),
-  },
-  sources = {
-    {name = 'buffer'}, {name = 'nvim_lsp'}, {name = "ultisnips"},
-    {name = "nvim_lua"}, {name = "look"}, {name = "path"},
-    {name = 'cmp_tabnine'}, {name = "calc"}, {name = "spell"},
-    {name = "emoji"}
-  },
-  completion = {completeopt = 'menu,menuone,noinsert'}
-}
-
 require('mason').setup()
 require('mason-lspconfig').setup()
 

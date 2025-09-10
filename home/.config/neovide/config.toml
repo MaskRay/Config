@@ -1,0 +1,6 @@
+[font]
+normal = ["FantasqueSansM Nerd Font"]
+size = 20.0
+
+[font.features]
+"FantasqueSansM Nerd Font" = ["-calt"]
