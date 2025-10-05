@@ -1,2 +1,4 @@
 .ccls-cache
 .ccls-root
+
+**/.claude/settings.local.json
