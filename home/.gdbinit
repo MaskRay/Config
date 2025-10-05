@@ -26,6 +26,8 @@ set python print-stack full
 
 # Bindings {{{1
 
+alias dd=disassemble
+alias fi=finish
 alias var=info variables
 
 define li
@@ -36,24 +38,11 @@ document li
   list machine instructions
 end
 
-alias dd=disassemble
-
 # Plugins {{{1
 
 #source ~/.gdb/pygdb-fork.py
 
 define b_a
-  #b __asan_report_load1
-  #b __asan_report_load2
-  #b __asan_report_load4
-  #b __asan_report_load8
-  #b __asan_report_load16
-  #b __asan_report_store1
-  #b __asan_report_store2
-  #b __asan_report_store4
-  #b __asan_report_store8
-  #b __asan_report_store16
-  #b __asan_report_error
   b __asan::ReportGenericError
 end
 
@@ -79,13 +68,56 @@ define b_u
   b __ubsan_handle_vla_bound_not_positive
 end
 
-#define nub
-#  python nextUntilBreakpoint()
-#end
+python
+class SkipFrames(gdb.Command):
+    """Move through stack, skipping frames matching regex pattern.
+    Usage: usk [pattern]  - up-skip
+           dsk [pattern]  - down-skip
+           fsk [pattern]  - finish-skip
+    Moves up/down/finish through frames, skipping any where the filename matches the pattern.
+    """
+    def __init__(self, cmd_name, gdb_command, cmd_class):
+        self.gdb_command = gdb_command
+        super(SkipFrames, self).__init__(cmd_name, cmd_class)
 
-define fs
-  finish
-  step
+    def invoke(self, arg, from_tty):
+        pattern = re.compile(arg.strip() if arg.strip() else r'\.cargo|/rustc')
+
+        # Save current pagination setting and disable it
+        pagination = gdb.parameter("pagination")
+        gdb.execute("set pagination off", to_string=True)
+
+        try:
+            while True:
+                # Execute the command (up/down/finish)
+                gdb.execute(self.gdb_command, to_string=True)
+
+                # Get current frame and source info
+                frame = gdb.selected_frame()
+                sal = frame.find_sal()
+
+                # Check filename
+                if sal.symtab and sal.symtab.filename:
+                    filename = sal.symtab.filename
+                    # If doesn't match unwanted pattern, stop here
+                    if not pattern.search(filename):
+                        gdb.execute("frame")  # Display frame info
+                        break
+                    else:
+                        print(f"Skipping: {filename}")
+                else:
+                    # No debug info - stop here to be safe
+                    gdb.execute("frame")
+                    break
+        except gdb.error as e:
+            print(f"Cannot go further: {e}")
+        finally:
+            # Restore pagination setting
+            gdb.execute(f"set pagination {'on' if pagination else 'off'}", to_string=True)
+
+SkipFrames("usk", "up", gdb.COMMAND_STACK)
+SkipFrames("dsk", "down", gdb.COMMAND_STACK)
+SkipFrames("fsk", "finish", gdb.COMMAND_RUNNING)
 end
 
 #
@@ -95,10 +127,13 @@ end
 #set print pretty on
 #set print object on
 set print static-members off
-#set print vtbl on
-#set demangle-style gnu-v3
 
-skip -rfu ^std::
+python
+import os
+prettyprinter_path = os.path.expanduser("~/llvm/llvm/utils/gdb-scripts/prettyprinters.py")
+if os.path.exists(prettyprinter_path):
+    gdb.execute(f"source {prettyprinter_path}")
+end
 
 #python
 #import sys
