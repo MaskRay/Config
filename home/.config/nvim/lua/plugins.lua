@@ -87,7 +87,7 @@ require'telescope'.load_extension'pathogen'
 
 local treesitter = require 'nvim-treesitter.configs'
 treesitter.setup {
-  ensure_installed = {'cpp', 'python'},
+  ensure_installed = {'cpp', 'python', 'rust'},
   highlight = { enable = true },
   incremental_selection = {
     enable = true,
@@ -112,20 +112,20 @@ treesitter.setup {
       enable = true,
       set_jumps = true,
       goto_next_start = {
-        [']m'] = '@class.outer',
+        [']c'] = '@class.outer',
         [']]'] = '@function.outer',
         [']o'] = '@loop.*',
       },
       goto_next_end = {
-        [']M'] = '@class.outer',
+        [']C'] = '@class.outer',
       },
       goto_previous_start = {
-        ['[m'] = '@class.outer',
+        ['[c'] = '@class.outer',
         ['[['] = '@function.outer',
         ['[o'] = '@loop.*',
       },
       goto_previous_end = {
-        ['[M'] = '@class.outer',
+        ['[C'] = '@class.outer',
       },
     },
     select = {
@@ -375,17 +375,17 @@ gitsigns.setup {
       vim.keymap.set(mode, l, r, opts)
     end
     -- Navigation
-    map('n', ']c', function()
+    map('n', ']g', function()
       if vim.wo.diff then
-        vim.cmd.normal({ ']c', bang = true })
+        vim.cmd.normal({ ']g', bang = true })
       else
         gitsigns.nav_hunk('next')
       end
     end)
 
-    map('n', '[c', function()
+    map('n', '[g', function()
       if vim.wo.diff then
-        vim.cmd.normal({ '[c', bang = true })
+        vim.cmd.normal({ '[g', bang = true })
       else
         gitsigns.nav_hunk('prev')
       end
