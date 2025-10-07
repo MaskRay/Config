@@ -30,6 +30,7 @@ keybinds {
         bind "p" { SwitchToMode "Pane"; }
         bind "s" { SwitchToMode "Scroll"; }
         bind "t" { SwitchToMode "Tab"; }
+        bind "x" { CloseFocus; SwitchToMode "Normal"; }
         bind "v" { NewPane "Right"; SwitchToMode "Normal"; }
     }
 
