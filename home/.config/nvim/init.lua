@@ -141,7 +141,7 @@ require('lazy').setup({
       dependencies = { 'fang2hou/blink-copilot' },
       opts = {
         sources = {
-          default = { 'copilot' },
+          default = { 'lsp', 'copilot' },
           providers = {
             copilot = {
               name = 'copilot',
