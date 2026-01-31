@@ -48,6 +48,7 @@ def main():
         ('clang_cc1', lambda: f'clang -cc1 -internal-isystem {build_dir}/lib/clang/17/include -nostdsysteminc'),
         ('errc_EACCES', lambda: '"Permission denied"'),
         ('itanium_abi_triple', lambda: 'x86_64'),
+        ('llvm_obj_root', lambda: build_dir+'/bin'),
         ('llc_dwarf', lambda: 'llc'),
         # See lld/test/MachO/lit.local.cfg
         ('lld', lambda: os.path.expanduser('ld64.lld -arch x86_64 -platform_version macos 11.0 11.0 -syslibroot ~/llvm/lld/test/MachO/Inputs/MacOSX.sdk -lSystem -fatal_warnings')),
@@ -59,12 +60,21 @@ def main():
         ('S', lambda: os.path.relpath(dirname, cwd)),
         ('t', lambda: os.path.relpath(tmp, cwd)),
     ], key=lambda x: -len(x[0]))
+    # User-defined substitutions via DEFINE: directive
+    defines = {}
 
     with fh as f:
         for line in f.readlines():
             line = line.strip()
             lineno += 1
             if 'END.' in line: break
+            # Handle DEFINE: directive
+            if match := re.search(r'DEFINE:[ \t]*', line):
+                defn = line[match.end():]
+                # Parse %{name} = value
+                if m := re.match(r'%\{(\w+)\}\s*=\s*(.*)', defn):
+                    defines[m.group(1)] = m.group(2)
+                continue
             match = re.search(r'RUN:[ \t]', line)
             if not match:
                 last = ''
@@ -84,6 +94,15 @@ def main():
             while (idx1 := line.find('%', idx)) != -1:
                 line1 += line[idx:idx1]
                 idx = idx1+1
+                # Handle %{name} substitution
+                if line[idx:idx+1] == '{':
+                    end = line.find('}', idx)
+                    if end != -1:
+                        name = line[idx+1:end]
+                        if name in defines:
+                            line1 += defines[name]
+                            idx = end + 1
+                            continue
                 for s in substs:
                     if line[idx:].startswith(s[0]):
                         line1 += s[1]()
