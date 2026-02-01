@@ -82,6 +82,5 @@ elif [[ $1 == s2-ubsan* ]]; then
   # ninja clang lld ubsan compiler-rt-headers
   cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_COMPILER=$HOME/llvm/out/stable/bin/clang++ -DCMAKE_C_COMPILER=$HOME/llvm/out/stable/bin/clang -DLLVM_USE_SANITIZER=Undefined -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off -DLLVM_ENABLE_PROJECTS='clang;lld;clang-tools-extra'
 elif [[ $1 == s2-custom* ]]; then
-  rm -fr /tmp/out/$1
   cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=Release ${LLVM} -DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang "${@:2}"
 fi
