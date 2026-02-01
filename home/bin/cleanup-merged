@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+# Find and delete local branches whose changes have been squash-merged into origin/main
+
+# Build a set of patch-ids from recent commits on origin/main (past 3 days)
+def recent_patch_ids
+  commits = `git log origin/main --since='3 days ago' --author=maskray --format=%H`.lines.map(&:strip)
+  patch_ids = {}
+  commits.each do |commit|
+    patch_id = `git show #{commit} | git patch-id --stable 2>/dev/null`.split.first
+    patch_ids[patch_id] = commit if patch_id && !patch_id.empty?
+  end
+  patch_ids
+end
+
+def branch_patch_id(branch)
+  merge_base = `git merge-base origin/main #{branch} 2>/dev/null`.strip
+  return nil if merge_base.empty?
+  `git diff #{merge_base}...#{branch} | git patch-id --stable 2>/dev/null`.split.first
+end
+
+# Get all local branches (excluding current branch marked with *)
+local_branches = `git branch`.lines.map { |b| b.strip.sub(/^\* /, '') }.reject(&:empty?)
+
+# Get the current branch to avoid deleting it
+current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+
+puts "Checking recent commits on origin/main..."
+patch_ids = recent_patch_ids
+
+merged_branches = []
+
+local_branches.each do |branch|
+  next if branch == current_branch
+  next if branch == "main" || branch == "master"
+
+  # Check if branch is an ancestor (regular merge)
+  if system("git merge-base --is-ancestor #{branch} origin/main 2>/dev/null")
+    merged_branches << [branch, nil]
+    next
+  end
+
+  # Check if branch's patch-id matches a recent commit (squash merge)
+  pid = branch_patch_id(branch)
+  if pid && patch_ids[pid]
+    merged_branches << [branch, patch_ids[pid]]
+  end
+end
+
+if merged_branches.empty?
+  puts "No merged branches found."
+  exit 0
+end
+
+puts "\nThe following local branches appear to be merged into origin/main:"
+merged_branches.each do |branch, commit|
+  if commit
+    puts "  - #{branch} (squash-merged as #{commit[0, 12]})"
+  else
+    puts "  - #{branch}"
+  end
+end
+
+puts "\nDelete these branches? [y/N/i(nteractive)] "
+answer = $stdin.gets.strip.downcase
+
+case answer
+when 'y'
+  merged_branches.each do |branch, _|
+    puts "Deleting #{branch}..."
+    system("git branch -D #{branch}")
+    system("git push -d maskray #{branch} 2>/dev/null")
+  end
+when 'i'
+  merged_branches.each do |branch, _|
+    print "Delete '#{branch}'? [y/N] "
+    if $stdin.gets.strip.downcase == 'y'
+      system("git branch -D #{branch}")
+      system("git push -d maskray #{branch} 2>/dev/null")
+    else
+      puts "Skipped #{branch}"
+    end
+  end
+else
+  puts "Aborted."
+end
