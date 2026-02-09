@@ -1,9 +1,17 @@
 #!/usr/bin/env ruby
-# Find and delete local branches whose changes have been squash-merged into origin/main
+# Find and delete local branches whose changes have been squash-merged into origin/main or origin/master
 
-# Build a set of patch-ids from recent commits on origin/main (past 3 days)
-def recent_patch_ids
-  commits = `git log origin/main --since='3 days ago' --author=maskray --format=%H`.lines.map(&:strip)
+# Detect the default branch (main or master)
+def default_branch
+  %w[main master].each do |b|
+    return "origin/#{b}" if system("git rev-parse --verify origin/#{b} >/dev/null 2>&1")
+  end
+  abort "Could not find origin/main or origin/master"
+end
+
+# Build a set of patch-ids from recent commits on the default branch (past 3 days)
+def recent_patch_ids(base)
+  commits = `git log #{base} --since='3 days ago' --author=maskray --format=%H`.lines.map(&:strip)
   patch_ids = {}
   commits.each do |commit|
     patch_id = `git show #{commit} | git patch-id --stable 2>/dev/null`.split.first
@@ -12,8 +20,8 @@ def recent_patch_ids
   patch_ids
 end
 
-def branch_patch_id(branch)
-  merge_base = `git merge-base origin/main #{branch} 2>/dev/null`.strip
+def branch_patch_id(branch, base)
+  merge_base = `git merge-base #{base} #{branch} 2>/dev/null`.strip
   return nil if merge_base.empty?
   `git diff #{merge_base}...#{branch} | git patch-id --stable 2>/dev/null`.split.first
 end
@@ -24,8 +32,9 @@ local_branches = `git branch`.lines.map { |b| b.strip.sub(/^\* /, '') }.reject(&
 # Get the current branch to avoid deleting it
 current_branch = `git rev-parse --abbrev-ref HEAD`.strip
 
-puts "Checking recent commits on origin/main..."
-patch_ids = recent_patch_ids
+base = default_branch
+puts "Checking recent commits on #{base}..."
+patch_ids = recent_patch_ids(base)
 
 merged_branches = []
 
@@ -34,13 +43,13 @@ local_branches.each do |branch|
   next if branch == "main" || branch == "master"
 
   # Check if branch is an ancestor (regular merge)
-  if system("git merge-base --is-ancestor #{branch} origin/main 2>/dev/null")
+  if system("git merge-base --is-ancestor #{branch} #{base} 2>/dev/null")
     merged_branches << [branch, nil]
     next
   end
 
   # Check if branch's patch-id matches a recent commit (squash merge)
-  pid = branch_patch_id(branch)
+  pid = branch_patch_id(branch, base)
   if pid && patch_ids[pid]
     merged_branches << [branch, patch_ids[pid]]
   end
@@ -51,7 +60,7 @@ if merged_branches.empty?
   exit 0
 end
 
-puts "\nThe following local branches appear to be merged into origin/main:"
+puts "\nThe following local branches appear to be merged into #{base}:"
 merged_branches.each do |branch, commit|
   if commit
     puts "  - #{branch} (squash-merged as #{commit[0, 12]})"

@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+if (( $# < 1 )); then
+  print -u2 "Usage: $0 <pr-number> [base-branch]"
+  exit 1
+fi
+
+pr=$1
+base=${2:-main}
+
+git fetch origin "+pull/$pr/head:$pr"
+git rebase "$base" "$pr"

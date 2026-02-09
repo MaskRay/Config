@@ -1,5 +1,5 @@
 export EDITOR=nvim
-export LESS="-FiMRwX --shift 5 -z-4"
+export LESS="-FiMRwX --shift 5"
 export MENUCONFIG_COLOR=blackbg
 export SUDO_PROMPT=$'[\e[31;5msudo\e[m] password for \e[33;1m%p\e[m: '
 export PAGER='less -s' # squeeze blank lines

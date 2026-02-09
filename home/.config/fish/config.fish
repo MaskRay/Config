@@ -12,7 +12,7 @@ end
 
 # Environment variables {{{1
 set -x EDITOR nvim
-set -x LESS '-FiMRwX --shift 5 -z-4'
+set -x LESS '-FiMRwX --shift 5'
 set -x GREP_OPTIONS '--color=auto'
 set -x MENUCONFIG_COLOR blackbg
 set -x RIPGREP_CONFIG_PATH $HOME/.ripgreprc
