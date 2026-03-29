@@ -40,3 +40,4 @@ application/vnd.openxmlformats-officedocument.presentationml.presentation=wps-of
 
 ; .epub
 application/epub+zip=ebook-viewer.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop

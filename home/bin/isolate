@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+if ENV["ISOLATE_ENV"]
+  warn "warning: already isolated"
+  exec(*ARGV)
+end
+
+home = ENV.fetch("HOME")
+pwd = Dir.pwd
+
+args = %W[
+  --dev-bind /dev /dev
+  --proc /proc
+  --bind /tmp /tmp
+  --tmpfs /run
+  --setenv PROMPT_ENV_INDICATOR isolated
+  --setenv ISOLATE_ENV #{pwd}
+]
+
+ro = %W[/usr /etc
+  #{home}/bin #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
+
+rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude #{home}/llvm #{home}/Dev #{pwd}]
+
+# ro before rw: later mounts overlay earlier ones, so rw subtrees win
+ro.each { |p| args.push("--ro-bind", p, p) if File.exist?(p) }
+rw.each { |p| args.push("--bind", p, p) if File.exist?(p) }
+
+# Merged-usr symlinks (Arch: /bin -> usr/bin, etc.)
+%w[bin lib lib64 sbin].each do |l|
+  p = "/#{l}"
+  if File.symlink?(p)    then args.push("--symlink", File.readlink(p), p)
+  elsif File.directory?(p) then args.push("--ro-bind", p, p)
+  end
+end
+
+# If /etc/resolv.conf is a symlink outside /etc (e.g. /run/systemd/resolve),
+# bind the real file so DNS works despite /run being a tmpfs.
+resolv = "/etc/resolv.conf"
+if File.symlink?(resolv)
+  real = File.realpath(resolv)
+  args.push("--ro-bind", real, real) unless real.start_with?("/etc/")
+end
+
+if (cfg = ENV["ISOLATE_EXTRA_CONFIG"]) && File.file?(cfg)
+  File.foreach(cfg, chomp: true) do |line|
+    line.strip!
+    args.concat(line.split) unless line.empty? || line.start_with?("#")
+  end
+  args.push("--ro-bind", "/dev/null", cfg)
+end
+
+exec("bwrap", *args, *ARGV)
