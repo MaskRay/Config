@@ -582,4 +582,10 @@ vim.keymap.set('n', 'g<F10>', dap.reverse_step_over)
 vim.keymap.set('n', 'g<F11>', dap.reverse_step_into)
 vim.keymap.set('n', 'g<F12>', dap.reverse_step_out)
 
+require'claudecode'.setup {
+  terminal = {
+    split_width_percentage = 0.4,
+  },
+}
+
 return M
