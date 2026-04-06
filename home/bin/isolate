@@ -5,6 +5,7 @@ if ENV["ISOLATE_ENV"]
   warn "warning: already isolated"
   exec(*ARGV)
 end
+exec(*ARGV) if RUBY_PLATFORM.include?("darwin")
 
 home = ENV.fetch("HOME")
 pwd = Dir.pwd
@@ -19,9 +20,10 @@ args = %W[
 ]
 
 ro = %W[/usr /etc
-  #{home}/bin #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
+  #{home}/bin #{home}/Stable #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
 
-rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude #{home}/llvm #{home}/Dev #{pwd}]
+rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude
+  #{home}/AgentConfig #{home}/Dev #{home}/llvm #{pwd}]
 
 # ro before rw: later mounts overlay earlier ones, so rw subtrees win
 ro.each { |p| args.push("--ro-bind", p, p) if File.exist?(p) }
