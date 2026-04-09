@@ -35,16 +35,11 @@ require'better_escape'.setup {
   },
 }
 
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.c3 = {
-  install_info = {
-    url = "https://github.com/c3lang/tree-sitter-c3",
-    files = {"src/parser.c", "src/scanner.c"},
-    branch = "main",
-  },
-}
-
-require'leap'.add_default_mappings(true)
+vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
+vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
+vim.keymap.set('n',             'gs', '<Plug>(leap-from-window)')
+vim.keymap.set({'x', 'o'},      'x',  '<Plug>(leap-forward-till)')
+vim.keymap.set({'x', 'o'},      'X',  '<Plug>(leap-backward-till)')
 require'mini.surround'.setup({
   mappings = {
     add = "gza", -- Add surrounding in Normal and Visual modes
@@ -145,173 +140,135 @@ treesitter.setup {
 
 require'trouble'.setup()
 
-local nvim_lsp = require 'lspconfig'
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-  local function map(mode, lhs, rhs, opts)
-    local options = {noremap = true, silent = true}
-    if opts then
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    local bufnr = ev.buf
+    local function map(mode, lhs, rhs, opts)
+      local options = {buffer = bufnr}
       if type(opts) == 'string' then
-        opts = {desc = opts}
+        options.desc = opts
+      elseif opts then
+        options = vim.tbl_extend('force', options, opts)
       end
-      options = vim.tbl_extend('force', options, opts)
+      vim.keymap.set(mode, lhs, rhs, options)
     end
-    if type(opts) == 'string' then
-      vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, options)
-    else
-      vim.keymap.set(mode, lhs, rhs, {buffer=true})
+    local function nmap(lhs, rhs, opts)
+      map('n', lhs, rhs, opts)
     end
-  end
-  local function nmap(lhs, rhs, opts)
-    map('n', lhs, rhs, opts)
-  end
 
-  local function buf_set_option(name, value) vim.api.nvim_set_option_value(name, value, {scope='local'}) end
+    vim.api.nvim_set_option_value('omnifunc', 'v:lua.vim.lsp.omnifunc', {scope='local'})
 
-  -- Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+    nmap('J', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
+    map('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
+    map('v', '=', '<cmd>lua vim.lsp.buf.format()<CR>')
+    nmap(',f', '<cmd>lua require("ccls.protocol").request("textDocument/references",{excludeRole=32})<cr>') -- not call
+    nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
+    nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
+    nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
+    nmap('M', '<cmd>Telescope lsp_references<cr>', 'References')
+    nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
+    nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
+    nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
+    nmap('<space>li', '<cmd>Inspect<cr>')
+    nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename')
+    nmap('<space>ls', '<cmd>CclsSwitchSourceHeader<cr>', 'Switch source and header')
+    nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>')
+    nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>')
+    nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>')
+    nmap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', 'Hover')
+    nmap('[e', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+    nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+    nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', 'Declarations')
+    nmap('ga', '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>', 'Workspace symbols')
+    nmap('x', '<Nop>')
+    nmap('xB', '<cmd>CclsBaseHierarchy<cr>')
+    nmap('xC', '<cmd>CclsOutgoingCalls<cr>', 'callee')
+    nmap('xD', '<cmd>CclsDerivedHierarchy<cr>')
+    nmap('xM', '<cmd>CclsMemberHierarchy<cr>', 'member')
+    nmap('xb', '<cmd>CclsBase<cr>')
+    nmap('xc', '<cmd>CclsIncomingCalls<cr>', 'caller')
+    nmap('xd', '<cmd>CclsDerived<cr>')
+    nmap('xi', '<cmd>lua vim.lsp.buf.implementation()<cr>', 'Implementation')
+    nmap('xm', '<cmd>CclsMember<cr>', 'member')
+    nmap('xn', function() M.lsp.words.jump(vim.v.count1) end, 'Next reference')
+    nmap('xp', function() M.lsp.words.jump(-vim.v.count1) end, 'Prev reference')
+    nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', 'Type definition')
+    nmap('xv', '<cmd>CclsVars<cr>', 'vars')
 
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  nmap('J', '<cmd>Telescope lsp_definitions<cr>', 'Definitions')
-  map('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>')
-  map('v', '=', '<cmd>lua vim.lsp.buf.format()<CR>')
-  nmap(',f', '<cmd>lua require("ccls.protocol").request("textDocument/references",{excludeRole=32})<cr>') -- not call
-  nmap(',m', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=64})<cr>') -- macro
-  nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
-  nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
-  nmap('M', '<cmd>Telescope lsp_references<cr>', 'References')
-  nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
-  nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
-  nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
-  nmap('<space>li', '<cmd>Inspect<cr>')
-  nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename')
-  nmap('<space>ls', '<cmd>CclsSwitchSourceHeader<cr>', 'Switch source and header')
-  nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>')
-  nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>')
-  nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>')
-  nmap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', 'Hover')
-  nmap('[e', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-  nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<cr>')
-  nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', 'Declarations')
-  nmap('ga', '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>', 'Workspace symbols')
-  nmap('x', '<Nop>')
-  nmap('xB', '<cmd>CclsBaseHierarchy<cr>')
-  nmap('xC', '<cmd>CclsOutgoingCalls<cr>', 'callee')
-  nmap('xD', '<cmd>CclsDerivedHierarchy<cr>')
-  nmap('xM', '<cmd>CclsMemberHierarchy<cr>', 'member')
-  nmap('xb', '<cmd>CclsBase<cr>')
-  nmap('xc', '<cmd>CclsIncomingCalls<cr>', 'caller')
-  nmap('xd', '<cmd>CclsDerived<cr>')
-  nmap('xi', '<cmd>lua vim.lsp.buf.implementation()<cr>', 'Implementation')
-  nmap('xm', '<cmd>CclsMember<cr>', 'member')
-  nmap('xn', function() M.lsp.words.jump(vim.v.count1) end, 'Next reference')
-  nmap('xp', function() M.lsp.words.jump(-vim.v.count1) end, 'Prev reference')
-  nmap('xt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', 'Type definition')
-  nmap('xv', '<cmd>CclsVars<cr>', 'vars')
+    nmap('xh', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='U'}) end)
+    nmap('xj', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='R'}) end)
+    nmap('xk', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='L'}) end)
+    nmap('xl', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='D'}) end)
 
-  nmap('xh', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='U'}) end)
-  nmap('xj', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='R'}) end)
-  nmap('xk', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='L'}) end)
-  nmap('xl', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='D'}) end)
+    if client.supports_method 'textDocument/codeLens' then
+      vim.api.nvim_create_autocmd({'BufEnter'}, {
+        group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
+        buffer = bufnr,
+        callback = function(ev)
+          vim.lsp.codelens.refresh({bufnr = 0})
+        end,
+      })
+      vim.lsp.codelens.refresh({bufnr = 0})
+    end
 
-  if client.supports_method 'textDocument/codeLens' then
-    vim.api.nvim_create_autocmd({'BufEnter'}, {
-      group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
-      buffer = bufnr,
-      callback = function(ev)
-        vim.lsp.codelens.refresh({bufnr = 0})
-      end,
-    })
-    vim.lsp.codelens.refresh({bufnr = 0})
-  end
-
-  if client.supports_method 'textDocument/documentHighlight' then
-    vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
-      group = vim.api.nvim_create_augroup('lsp_word_' .. bufnr, {clear = true}),
-      buffer = bufnr,
-      callback = function(ev)
-        if ev.event:find('CursorMoved') then
-          vim.lsp.buf.clear_references()
-        else
-          vim.lsp.buf.document_highlight()
-        end
-      end,
-      desc = 'Document Highlight',
-    })
-  end
-
-  if client.server_capabilities.semanticTokensProvider then
-    vim.treesitter.stop(bufnr)
-  end
-end
-
-local servers = {'ccls', 'lua_ls', 'marksman', 'mlir_lsp_server', 'nimls', 'pyright', 'rust_analyzer', 'tblgen_lsp_server'}
-for _, lsp in ipairs(servers) do
-  local options = {
-    on_attach = on_attach,
-    flags = {
-      debounce_text_changes = 150,
-    }
-  }
-  if lsp == 'ccls' then
-    options = vim.tbl_extend('force', options, {
-      init_options = {
-        index = {
-          threads = 0,
-          initialBlacklist = {"/(test|unittests)/"},
-        };
-        highlight = {
-          rainbow = 10,
-        };
-      }
-    })
-  elseif lsp == 'lua_ls' then
-    options = vim.tbl_extend('force', options, {
-      on_init = function(client)
-        if client.workspace_folders then
-          local path = client.workspace_folders[1].name
-          if vim.uv.fs_stat(path..'/.luarc.json') or vim.uv.fs_stat(path..'/.luarc.jsonc') then
-            return
+    if client.supports_method 'textDocument/documentHighlight' then
+      vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
+        group = vim.api.nvim_create_augroup('lsp_word_' .. bufnr, {clear = true}),
+        buffer = bufnr,
+        callback = function(ev)
+          if ev.event:find('CursorMoved') then
+            vim.lsp.buf.clear_references()
+          else
+            vim.lsp.buf.document_highlight()
           end
-        end
+        end,
+        desc = 'Document Highlight',
+      })
+    end
 
-        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-          runtime = {
-            -- Tell the language server which version of Lua you're using
-            -- (most likely LuaJIT in the case of Neovim)
-            version = 'LuaJIT'
-          },
-          -- Make the server aware of Neovim runtime files
-          workspace = {
-            checkThirdParty = false,
-            library = {
-              vim.env.VIMRUNTIME
-              -- Depending on the usage, you might want to add additional paths here.
-              -- "${3rd}/luv/library"
-              -- "${3rd}/busted/library",
-            }
-            -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
-            -- library = vim.api.nvim_get_runtime_file("", true)
-          }
-        })
-      end,
-      settings = {
-        Lua = {}
-      }
+    if client.server_capabilities.semanticTokensProvider then
+      vim.treesitter.stop(bufnr)
+    end
+  end,
+})
+
+vim.lsp.config('ccls', {
+  init_options = {
+    index = {
+      threads = 0,
+      initialBlacklist = {"/(test|unittests)/|flang/"},
+    },
+    highlight = {
+      rainbow = 10,
+    },
+  },
+})
+vim.lsp.config('lua_ls', {
+  on_init = function(client)
+    if client.workspace_folders then
+      local path = client.workspace_folders[1].name
+      if vim.uv.fs_stat(path..'/.luarc.json') or vim.uv.fs_stat(path..'/.luarc.jsonc') then
+        return
+      end
+    end
+    client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+      runtime = { version = 'LuaJIT' },
+      workspace = {
+        checkThirdParty = false,
+        library = { vim.env.VIMRUNTIME },
+      },
     })
-  end
-  nvim_lsp[lsp].setup(options)
-end
-nvim_lsp.denols.setup {
-  on_attach = on_attach,
-  root_dir = nvim_lsp.util.root_pattern('deno.json', 'deno.jsonc'),
-}
-nvim_lsp.ts_ls.setup {
-  on_attach = on_attach,
-  root_dir = nvim_lsp.util.root_pattern('package.json'),
-  single_file_support = false,
-}
+  end,
+  settings = { Lua = {} },
+})
+vim.lsp.config('denols', {
+  root_markers = {'deno.json', 'deno.jsonc'},
+})
+vim.lsp.config('ts_ls', {
+  root_markers = {'package.json'},
+})
+vim.lsp.enable({'ccls', 'lua_ls', 'marksman', 'mlir_lsp_server', 'nimls', 'pyright', 'rust_analyzer', 'tblgen_lsp_server', 'denols', 'ts_ls'})
 
 require('mason').setup()
 require('mason-lspconfig').setup()
@@ -462,125 +419,6 @@ require('which-key').setup({
     {'<leader>x', group = 'xref'},
   },
 })
-
-require('which-key').setup()
-
-local dap = require('dap')
-local dapui = require('dapui')
-dapui.setup()
-require'dap-python'.setup('python3')
-require'mason-nvim-dap'.setup()
-
-dap.listeners.before.attach.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.launch.dapui_config = function()
-  dapui.open()
-end
-dap.listeners.before.event_terminated.dapui_config = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited.dapui_config = function()
-  dapui.close()
-end
-
-dap.adapters.gdb = {
-  id = 'gdb',
-  type = 'executable',
-  command = 'gdb',
-  args = { '--interpreter=dap' },
-}
-dap.configurations.c = {
-  {
-    name = "Launch",
-    type = "gdb",
-    request = "launch",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    args = function()
-      local args_str = vim.fn.input({
-        prompt = 'Arguments: ',
-      })
-      return vim.split(args_str, ' +')
-    end,
-    cwd = "${workspaceFolder}",
-    stopAtBeginningOfMainSubprogram = true,
-  },
-  {
-    name = 'Attach to process (GDB)',
-    type = 'gdb',
-    request = 'attach',
-    processId = require('dap.utils').pick_process,
-  },
-  {
-    name = "rr connect",
-    type = "gdb",
-    request = "launch",
-    cwd = "${workspaceFolder}",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    stopAtBeginningOfMainSubprogram = true,
-    MIMode = "gdb",
-    miDebuggerServerAddress = "localhost:5050",
-    serverLaunchTimeout = 5000,
-    postRemoteConnectCommands = {
-      {
-        text = "monitor reset",
-        ignoreFailures = false
-      },
-      {
-        text = "load",
-        ignoreFailures = false
-      },
-    },
-  }
-}
-dap.configurations.cpp = dap.configurations.c
-dap.configurations.rust = {}
-
-dap.reverse_continue = function()
-  local s = dap.session()
-  if not s then return end
-  s:evaluate("-exec set exec-direction reverse")
-  dap.continue()
-  s:evaluate("-exec set exec-direction forward")
-end
-dap.reverse_step_over = function()
-  local s = require("dap").session()
-  if not s then return end
-  s:evaluate("-exec set exec-direction reverse")
-  dap.step_over()
-  s:evaluate("-exec set exec-direction forward")
-end
-dap.reverse_step_out = function()
-  local s = require("dap").session()
-  if not s then return end
-  s:evaluate("-exec set exec-direction reverse")
-  dap.step_out()
-  s:evaluate("-exec set exec-direction forward")
-end
-dap.reverse_step_into = function()
-  local s = require("dap").session()
-  if not s then return end
-  s:evaluate("-exec set exec-direction reverse")
-  dap.step_into()
-  s:evaluate("-exec set exec-direction forward")
-end
-
-vim.keymap.set('n', '<F1>', dap.terminate)
-vim.keymap.set('n', '<F5>', dap.toggle_breakpoint)
-vim.keymap.set('n', '<F8>', dap.continue)
-vim.keymap.set('n', '<F10>', dap.step_over)
-vim.keymap.set('n', '<F11>', dap.step_into)
-vim.keymap.set('n', '<F12>', dap.step_out)
-vim.keymap.set('n', '<A-up>', dap.down)
-vim.keymap.set('n', '<A-down>', dap.up)
-vim.keymap.set('n', 'g<F8>', dap.continue)
-vim.keymap.set('n', 'g<F10>', dap.reverse_step_over)
-vim.keymap.set('n', 'g<F11>', dap.reverse_step_into)
-vim.keymap.set('n', 'g<F12>', dap.reverse_step_out)
 
 require'claudecode'.setup {
   terminal = {

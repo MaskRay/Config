@@ -77,11 +77,10 @@ require('lazy').setup({
     {'smoka7/hop.nvim', config = true},
     'rluba/jai.vim',
     'kdheepak/lazygit.nvim',
-    'ggandor/leap.nvim',
+    {url = 'https://codeberg.org/andyg/leap.nvim'},
     'nvimdev/lspsaga.nvim',
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
     {'echasnovski/mini.ai', config = true},
     {'echasnovski/mini.bracketed', config = true},
     {'echasnovski/mini.sessions', config = true},
@@ -99,21 +98,13 @@ require('lazy').setup({
     },
 
     'alaviss/nim.nvim',
-    -- {'hrsh7th/nvim-cmp', dependencies = {'hrsh7th/cmp-buffer', 'hrsh7th/cmp-nvim-lsp'}},
     {'folke/noice.nvim', config = true},
     'terrortylor/nvim-comment',
-    'mfussenegger/nvim-dap',
-    'mfussenegger/nvim-dap-python',
-    {'rcarriga/nvim-dap-ui', dependencies = {'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio'}},
-    'jonboh/nvim-dap-rr',
     'neovim/nvim-lspconfig',
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-    -- {'romgrk/nvim-treesitter-context', config = function() require('treesitter-context').setup() end},
     'nvim-treesitter/nvim-treesitter-textobjects',
 
-    -- 'pwntester/octo.nvim',
     {'stevearc/overseer.nvim', opts = {}},
-    'nvim-treesitter/playground',
     {
       'folke/snacks.nvim', opts = {
         statuscolumn = {enabled=false},
@@ -275,7 +266,6 @@ nmap('gl', ':Treewalker Right<CR>')
 -- <leader>
 nmap('<leader><space>', '<cmd>lua require("pathogen").quick_buffer()<cr>', '[ ] Find existing buffers')
 nmap('<leader>.', '<cmd>lua require("pathogen").find_files({search_dirs={vim.fn.expand("%:h:p")}})<cr>', 'Find .')
-nmap('<leader>?', function() require('dapui').eval(nil, { enter = true }) end)
 -- <leader>a (app)
 nmap('<leader>ag', '<cmd>%!genhdr<cr>')
 nmap('<leader>aG', '<cmd>%!genhdr windows<cr>')
@@ -285,17 +275,8 @@ nmap('<leader>bn', '<cmd>bn<cr>', 'Next buffer')
 nmap('<leader>bp', '<cmd>bp<cr>', 'Previous buffer')
 nmap('<leader>bN', '<cmd>new<cr>', 'New empty buffer')
 nmap('<leader>bR', '<cmd>e<cr>')
--- <leader>d (debug, diff)
-nmap('<leader>db', function() require('dap').toggle_breakpoint() end)
-nmap('<leader>dc', function() require('dap').continue() end)
-nmap('<leader>dC', function() require('dap').run_to_cursor() end)
-nmap('<leader>de', function() require('dap').eval() end)
-nmap('<leader>dl', function() require('dap').run_last() end)
+-- <leader>d (diff)
 nmap('<leader>do', '<cmd>bufdo diffoff<cr>')
-nmap('<leader>dp', function() require('dap').pause() end)
-nmap('<leader>dt', function() require('dap').terminate() end)
-nmap('<leader>du', function() require('dapui').toggle() end)
-nmap('<leader>dw', function() require('dap.ui.widgets').hover() end)
 -- <leader>e (error)
 nmap('<leader>ee', ':e <C-r>=expand("%:p:h") . "/"<cr>')
 -- <leader>f (find & file)
@@ -442,7 +423,7 @@ function nvim_create_augroups(definitions)
     vim.api.nvim_command('augroup '..group_name)
     vim.api.nvim_command('autocmd!')
     for _, def in ipairs(definition) do
-      local command = table.concat(vim.tbl_flatten{'autocmd', def}, ' ')
+      local command = table.concat(vim.iter({'autocmd', def}):flatten():totable(), ' ')
       vim.api.nvim_command(command)
     end
     vim.api.nvim_command('augroup END')
@@ -536,14 +517,6 @@ cmd 'filetype plugin on'
 cmd 'filetype plugin indent on'
 
 vim.filetype.add({extension = {inc = 'cpp'}})
-vim.filetype.add({
-  extension = {
-    c3 = "c3",
-    c3i = "c3",
-    c3t = "c3",
-  },
-})
-
 vim.g.termdebug_config = {
   wide = 1,
 }
