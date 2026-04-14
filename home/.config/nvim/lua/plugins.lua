@@ -80,63 +80,57 @@ require('telescope').setup{
 require'telescope'.load_extension'fzf'
 require'telescope'.load_extension'pathogen'
 
-local treesitter = require 'nvim-treesitter.configs'
-treesitter.setup {
-  ensure_installed = {'cpp', 'python', 'rust'},
-  highlight = { enable = true },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "<M-o>",
-      scope_incremental = "<M-O>",
-      node_incremental = "<M-o>",
-      node_decremental = "<M-i>",
-    },
-  },
-  textobjects = {
-    lsp_interop = {
-      enable = true,
-      border = 'none',
-      floating_preview_opts = {},
-      peek_definition_code = {
-        ["<leader>df"] = "@function.outer",
-        ["<leader>dF"] = "@class.outer",
-      },
-    },
-    move = {
-      enable = true,
-      set_jumps = true,
-      goto_next_start = {
-        [']c'] = '@class.outer',
-        [']]'] = '@function.outer',
-        [']o'] = '@loop.*',
-      },
-      goto_next_end = {
-        [']C'] = '@class.outer',
-      },
-      goto_previous_start = {
-        ['[c'] = '@class.outer',
-        ['[['] = '@function.outer',
-        ['[o'] = '@loop.*',
-      },
-      goto_previous_end = {
-        ['[C'] = '@class.outer',
-      },
-    },
-    select = {
-      enable = true,
-      lookahead = true,
-      keymaps = {
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
-      },
-    },
-  },
-}
+-- nvim-treesitter (main branch): install missing parsers
+do
+  local wanted = {'cpp', 'python', 'rust'}
+  local installed = require('nvim-treesitter').get_installed('parsers')
+  local missing = vim.tbl_filter(function(p) return not vim.list_contains(installed, p) end, wanted)
+  if #missing > 0 then require('nvim-treesitter').install(missing) end
+end
+
+-- Incremental node selection (replaces nvim-treesitter incremental_selection)
+do
+  local node
+  local function select_node(n)
+    if not n then return end
+    node = n
+    local sr, sc, er, ec = n:range()
+    vim.api.nvim_buf_set_mark(0, '<', sr + 1, sc, {})
+    vim.api.nvim_buf_set_mark(0, '>', er + 1, ec - 1, {})
+    vim.cmd('normal! gv')
+  end
+  vim.keymap.set({'n','x'}, '<M-o>', function()
+    select_node(vim.fn.mode() == 'n' and vim.treesitter.get_node() or node and node:parent())
+  end)
+  vim.keymap.set('x', '<M-i>', function() select_node(node and node:child(0)) end)
+  vim.keymap.set('x', '<M-O>', function()
+    if node then
+      local p = node:parent()
+      while p and p:parent() do p = p:parent() end
+      select_node(p)
+    end
+  end)
+end
+
+-- nvim-treesitter-textobjects (main branch)
+require('nvim-treesitter-textobjects').setup { select = {lookahead = true}, move = {set_jumps = true} }
+do
+  local s = require('nvim-treesitter-textobjects.select').select_textobject
+  local m = require('nvim-treesitter-textobjects.move')
+  local function sel(lhs, obj) vim.keymap.set({'x','o'}, lhs, function() s(obj, 'textobjects') end) end
+  local function mov(lhs, fn, obj) vim.keymap.set({'n','x','o'}, lhs, function() m[fn](obj, 'textobjects') end) end
+  sel('aa', '@parameter.outer')  sel('ia', '@parameter.inner')
+  sel('af', '@function.outer')   sel('if', '@function.inner')
+  sel('ac', '@class.outer')      sel('ic', '@class.inner')
+  mov(']]', 'goto_next_start',     '@function.outer')
+  mov('][', 'goto_next_end',       '@function.outer')
+  mov('[[', 'goto_previous_start', '@function.outer')
+  mov('[]', 'goto_previous_end',   '@function.outer')
+  mov(']c', 'goto_next_start',     '@class.outer')
+  mov('[c', 'goto_previous_start', '@class.outer')
+  mov(']o', 'goto_next_start',     '@loop.outer')
+  mov('[o', 'goto_previous_start', '@loop.outer')
+end
 
 require'trouble'.setup()
 

@@ -101,8 +101,8 @@ require('lazy').setup({
     {'folke/noice.nvim', config = true},
     'terrortylor/nvim-comment',
     'neovim/nvim-lspconfig',
-    {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-    'nvim-treesitter/nvim-treesitter-textobjects',
+    {'nvim-treesitter/nvim-treesitter', branch = 'main', build = ':TSUpdate'},
+    {'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main'},
 
     {'stevearc/overseer.nvim', opts = {}},
     {
