@@ -6,5 +6,8 @@ if [[ $(git log -1 --pretty=%B) =~ 'WIP|DO NOT' ]]; then
   exit 1
 fi
 
-git pull --rebase origin main && git commit --amend --date=now --no-edit && git push origin HEAD:main && git fetch origin main:main && git switch main || exit 1
-[[ $branch != main ]] && git branch -D $branch
+cd ~/llvm
+git pull --rebase origin main || exit 1
+LLVM_GITHUB_TOKEN=$(gh auth token) python llvm/utils/git-llvm-push --upstream-remote origin --remote maskray --auto-merge
+#git push origin HEAD:main && git fetch origin main:main && git switch main || exit 1
+#[[ $branch != main ]] && git branch -D $branch

@@ -14,16 +14,18 @@ args = %W[
   --dev-bind /dev /dev
   --proc /proc
   --bind /tmp /tmp
-  --tmpfs /run
+  --bind /run /run
   --setenv PROMPT_ENV_INDICATOR isolated
   --setenv ISOLATE_ENV #{pwd}
 ]
 
 ro = %W[/usr /etc
-  #{home}/bin #{home}/Stable #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
+  #{home}/Compiler
+  #{home}/Config
+  #{home}/Stable
+  #{home}/bin #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
 
-rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude
-  #{home}/AgentConfig #{home}/Dev #{home}/llvm #{pwd}]
+rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude #{home}/AgentConfig #{home}/llvm #{home}/Dev #{pwd}]
 
 # ro before rw: later mounts overlay earlier ones, so rw subtrees win
 ro.each { |p| args.push("--ro-bind", p, p) if File.exist?(p) }
