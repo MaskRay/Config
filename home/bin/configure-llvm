@@ -63,6 +63,16 @@ elif [[ $1 == tsan ]]; then
 elif [[ $1 == ubsan ]]; then
   cmake -Sllvm -B/tmp/out/ubsan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DLLVM_USE_SANITIZER=Undefined -DLLVM_ENABLE_PROJECTS='clang;lld'
 
+elif [[ $1 == coverage ]]; then
+  # -fprofile-continuous keeps counters mmap'd so processes that exit via _Exit
+  # (e.g. lld::exitLld with NoCleanup=true) still flush their counters.
+  # The flag automatically prepends %c to the file pattern, so do NOT add it
+  # to LLVM_PROFILE_FILE_PATTERN (the runtime rejects two %c specifiers).
+  # Reuse uninstrumented tblgens from /tmp/Rel so we don't compile or run an
+  # instrumented tblgen (it's a heavy build dependency that contributes nothing
+  # to lld coverage).
+  cmake -Sllvm -B/tmp/out/cov ${LLVM} -DLLVM_BUILD_INSTRUMENTED_COVERAGE=on -DLLVM_PROFILE_FILE_PATTERN='/tmp/out/profraw/%4m.profraw' -DCMAKE_C_FLAGS='-fprofile-continuous' -DCMAKE_CXX_FLAGS="--start-no-unused-arguments -Wa,--crel,--allow-experimental-crel --end-no-unused-arguments -fprofile-continuous" -DLLVM_TARGETS_TO_BUILD=all -DLLVM_TABLEGEN=/tmp/Rel/bin/llvm-tblgen -DCLANG_TABLEGEN=/tmp/Rel/bin/clang-tblgen -DLLVM_ENABLE_PROJECTS='clang;lld'
+
 elif [[ $1 == custom* ]]; then
   #rm -fr /tmp/out/$1
   cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=Release ${LLVM} "${@:2}"
