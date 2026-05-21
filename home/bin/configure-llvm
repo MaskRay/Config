@@ -62,6 +62,26 @@ elif [[ $1 == tsan ]]; then
   cmake -Sllvm -B/tmp/out/tsan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DLLVM_USE_SANITIZER=Thread -DLLVM_ENABLE_PROJECTS='clang;lld'
 elif [[ $1 == ubsan ]]; then
   cmake -Sllvm -B/tmp/out/ubsan -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_FLAGS_DEBUG='-g -fno-limit-debug-info' -DLLVM_USE_SANITIZER=Undefined -DLLVM_ENABLE_PROJECTS='clang;lld'
+elif [[ $1 == msan ]]; then
+  # Build an instrumented libc++/libc++abi, then point the main build at it.
+  # https://github.com/MaskRay/Config/wiki/LLVM#memorysanitizer
+  # Use out/stable clang (built against host glibc), not ~/Stable/bin: msan's
+  # struct stat interceptor must match the running libc or fs.cpp st_mode reads
+  # spuriously report use-of-uninitialized-value.
+  msan_common=(-GNinja -DCMAKE_CXX_COMPILER=$HOME/llvm/out/stable/bin/clang++ -DCMAKE_C_COMPILER=$HOME/llvm/out/stable/bin/clang -DCMAKE_CXX_ARCHIVE_CREATE="$HOME/llvm/out/stable/bin/llvm-ar qcS --thin <TARGET> <OBJECTS>" -DCMAKE_CXX_ARCHIVE_FINISH=: -DLLVM_APPEND_VC_REV=OFF -DLLVM_ENABLE_LLD=On -DLLVM_TARGETS_TO_BUILD=host -DLLVM_NATIVE_TOOL_DIR=/tmp/Rel/bin -DCLANG_ENABLE_ARCMT=off -DCLANG_ENABLE_STATIC_ANALYZER=off)
+  libcxx_out=$HOME/llvm/out/msan-libcxx
+  # Do NOT build an instrumented libunwind: the sanitizer runtime calls
+  # _Unwind_Backtrace for its own diagnostics, so an instrumented unwinder
+  # makes __msan_warning recurse into itself (stack overflow). Use the
+  # uninstrumented system unwinder via LIBCXXABI_USE_LLVM_UNWINDER=off.
+  # PER_TARGET_RUNTIME_DIR is on by default for the llvm build but not the
+  # standalone runtimes build; the hardcoded triple paths below need it.
+  cmake -Sruntimes -B$libcxx_out ${msan_common} -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi' -DLIBCXXABI_USE_LLVM_UNWINDER=off -DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=on -DLLVM_USE_SANITIZER=Memory
+  [[ -n $dry_run ]] || ninja -C $libcxx_out cxx cxxabi
+  sanitizer_ldflags="-Wl,--rpath=$libcxx_out/lib/x86_64-unknown-linux-gnu -L$libcxx_out/lib/x86_64-unknown-linux-gnu -lc++abi"
+  # See https://github.com/llvm/llvm-project/issues/19445 , http://www.cmake.org/Bug/view.php?id=15264
+  sanitizer_cflags="-nostdinc++ -isystem$libcxx_out/include/x86_64-unknown-linux-gnu/c++/v1 -isystem$libcxx_out/include/c++/v1 $sanitizer_ldflags -fsanitize=memory -w"
+  cmake -Sllvm -B/tmp/out/msan ${msan_common} -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang;lld' -DCMAKE_C_FLAGS=$sanitizer_cflags -DCMAKE_CXX_FLAGS=$sanitizer_cflags -DCMAKE_EXE_LINKER_FLAGS=$sanitizer_ldflags -DCMAKE_SHARED_LINKER_FLAGS=$sanitizer_ldflags -DLLVM_ENABLE_LIBCXX=On -DLLVM_USE_SPLIT_DWARF=On -DLLVM_USE_SANITIZER=Memory "${@:2}"
 
 elif [[ $1 == coverage ]]; then
   # -fprofile-continuous keeps counters mmap'd so processes that exit via _Exit
@@ -85,6 +105,9 @@ elif [[ $1 == s2-release ]]; then
   LLVM+=(-DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;lld;compiler-rt')
   cmake -Sllvm -B/tmp/out/s2-release -DCMAKE_BUILD_TYPE=Release ${LLVM} -DLLVM_ENABLE_ASSERTIONS=on
   #cmake -Sllvm -B/tmp/out/s2-release -DCMAKE_BUILD_TYPE=Release ${LLVM} -DCMAKE_CXX_FLAGS='-stdlib=libc++' -DCMAKE_{EXE,SHARED}_LINKER_FLAGS=-stdlib=libc++ -DLLVM_ENABLE_ASSERTIONS=on
+elif [[ $1 == s2-thinlto ]]; then
+  LLVM+=(-DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_ENABLE_PROJECTS='clang;lld')
+  cmake -Sllvm -B/tmp/out/s2-thinlto -DCMAKE_BUILD_TYPE=Release ${LLVM} -DLLVM_ENABLE_LTO=Thin -DLLVM_ENABLE_ASSERTIONS=on -DLLVM_PARALLEL_LINK_JOBS=2
 elif [[ $1 == s2-asan* ]]; then
   # ninja clang lld asan compiler-rt-headers
   cmake -Sllvm -B/tmp/out/$1 -DCMAKE_BUILD_TYPE=RelWithDebInfo ${LLVM} -DCMAKE_CXX_COMPILER=/tmp/Rel/bin/clang++ -DCMAKE_C_COMPILER=/tmp/Rel/bin/clang -DLLVM_USE_SANITIZER=Address -DLLVM_OPTIMIZE_SANITIZED_BUILDS=Off -DLLVM_ENABLE_PROJECTS='clang;lld;clang-tools-extra;mlir'
