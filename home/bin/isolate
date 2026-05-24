@@ -13,6 +13,7 @@ pwd = Dir.pwd
 args = %W[
   --dev-bind /dev /dev
   --proc /proc
+  --ro-bind /sys /sys
   --bind /tmp /tmp
   --bind /run /run
   --setenv PROMPT_ENV_INDICATOR isolated
