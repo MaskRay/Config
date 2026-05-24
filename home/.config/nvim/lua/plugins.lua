@@ -161,18 +161,16 @@ vim.api.nvim_create_autocmd('LspAttach', {
     nmap(',r', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=8})<cr>') -- read
     nmap(',w', '<cmd>lua require("ccls.protocol").request("textDocument/references",{role=16})<cr>') -- write
     nmap('M', '<cmd>Telescope lsp_references<cr>', 'References')
-    nmap('<space>=', '<cmd>lua vim.lsp.buf.formatting()<cr>')
-    nmap('<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>')
+    nmap('<space>=', '<cmd>lua vim.lsp.buf.format()<cr>')
+    nmap('<space>e', '<cmd>lua vim.diagnostic.open_float()<cr>')
     nmap('<space>lc', '<cmd>lua vim.lsp.buf.code_action()<cr>')
     nmap('<space>li', '<cmd>Inspect<cr>')
     nmap('<space>lr', '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename')
-    nmap('<space>ls', '<cmd>CclsSwitchSourceHeader<cr>', 'Switch source and header')
+    nmap('<space>ls', '<cmd>LspCclsSwitchSourceHeader<cr>', 'Switch source and header')
     nmap('<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>')
     nmap('<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>')
     nmap('<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>')
     nmap('K', '<cmd>lua vim.lsp.buf.hover()<cr>', 'Hover')
-    nmap('[e', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-    nmap(']e', '<cmd>lua vim.diagnostic.goto_next()<cr>')
     nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', 'Declarations')
     nmap('ga', '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>', 'Workspace symbols')
     nmap('x', '<Nop>')
@@ -195,15 +193,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
     nmap('xk', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='L'}) end)
     nmap('xl', function() require'my.util'.lsp_get_locations('$ccls/navigate', {direction='D'}) end)
 
-    if client.supports_method 'textDocument/codeLens' then
-      vim.api.nvim_create_autocmd({'BufEnter'}, {
-        group = vim.api.nvim_create_augroup('lsp_buf_' .. bufnr, {clear = true}),
-        buffer = bufnr,
-        callback = function(ev)
-          vim.lsp.codelens.refresh({bufnr = 0})
-        end,
-      })
-      vim.lsp.codelens.refresh({bufnr = 0})
+    if client:supports_method('textDocument/codeLens') then
+      vim.lsp.codelens.enable(false, { bufnr = ev.buf })
     end
 
     if client.supports_method 'textDocument/documentHighlight' then
