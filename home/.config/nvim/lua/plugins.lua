@@ -221,7 +221,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.lsp.config('ccls', {
   init_options = {
     index = {
-      threads = 0,
+      threads = 50,
       initialBlacklist = {"/(test|unittests)/|flang/"},
     },
     highlight = {
