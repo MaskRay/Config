@@ -1,2 +1,2 @@
 #!/bin/sh
-CLAUDE_CODE_TMPDIR=/tmp/agent exec isolate ~/.local/bin/claude "$@"
+SHELL=/usr/bin/zsh CLAUDE_CODE_TMPDIR=/tmp/agent exec isolate ~/.local/bin/claude "$@"

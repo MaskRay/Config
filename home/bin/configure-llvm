@@ -1,7 +1,7 @@
 #!/bin/zsh
 dry_run=
 PROJECTS=(-DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;flang;lld;lldb;mlir;polly;cross-project-tests' -DLLVM_ENABLE_RUNTIMES='compiler-rt;openmp;libc;libcxx;libcxxabi;libunwind')
-SLIM=(-DCLANG_ENABLE_OBJC_REWRITER=off -DCLANG_ENABLE_STATIC_ANALYZER=off -DCLANG_PLUGIN_SUPPORT=off)
+SLIM=(-DCLANG_ENABLE_OBJC_REWRITER=off -DCLANG_ENABLE_STATIC_ANALYZER=off -DCLANG_PLUGIN_SUPPORT=off -DLLVM_ENABLE_LIBXML2=off)
 
 while (($#)); do
   case $1 in
