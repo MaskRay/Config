@@ -24,6 +24,7 @@ ro = %W[/usr /etc
   #{home}/Compiler
   #{home}/Config
   #{home}/Stable
+  #{home}/maskray.me
   #{home}/bin #{home}/.local #{home}/.config #{home}/.gitconfig #{home}/.cargo]
 
 rw = %W[#{home}/.claude #{home}/.claude.json #{home}/.local/share/claude #{home}/AgentConfig #{home}/llvm #{home}/Dev #{pwd}]
