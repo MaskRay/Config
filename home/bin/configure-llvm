@@ -88,10 +88,14 @@ elif [[ $1 == coverage ]]; then
   # (e.g. lld::exitLld with NoCleanup=true) still flush their counters.
   # The flag automatically prepends %c to the file pattern, so do NOT add it
   # to LLVM_PROFILE_FILE_PATTERN (the runtime rejects two %c specifiers).
+  # The driver rejects -fprofile-continuous unless paired with -fprofile-generate/
+  # -fprofile-instr-generate; the bare flag only satisfies that check —
+  # LLVM_BUILD_INSTRUMENTED_COVERAGE appends -fprofile-instr-generate=<pattern>
+  # later and the last occurrence wins.
   # Reuse uninstrumented tblgens from /tmp/Rel so we don't compile or run an
   # instrumented tblgen (it's a heavy build dependency that contributes nothing
   # to lld coverage).
-  cmake -Sllvm -B/tmp/out/cov ${LLVM} -DLLVM_BUILD_INSTRUMENTED_COVERAGE=on -DLLVM_PROFILE_FILE_PATTERN='/tmp/out/profraw/%4m.profraw' -DCMAKE_C_FLAGS='-fprofile-continuous' -DCMAKE_CXX_FLAGS="--start-no-unused-arguments -Wa,--crel,--allow-experimental-crel --end-no-unused-arguments -fprofile-continuous" -DLLVM_TARGETS_TO_BUILD=all -DLLVM_TABLEGEN=/tmp/Rel/bin/llvm-tblgen -DCLANG_TABLEGEN=/tmp/Rel/bin/clang-tblgen -DLLVM_ENABLE_PROJECTS='clang;lld'
+  cmake -Sllvm -B/tmp/out/cov -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=on ${LLVM} -DLLVM_BUILD_INSTRUMENTED_COVERAGE=on -DLLVM_PROFILE_FILE_PATTERN='/tmp/out/profraw/%4m.profraw' -DCMAKE_C_FLAGS='-fprofile-instr-generate -fprofile-continuous' -DCMAKE_CXX_FLAGS="--start-no-unused-arguments -Wa,--crel,--allow-experimental-crel --end-no-unused-arguments -fprofile-instr-generate -fprofile-continuous" -DLLVM_TARGETS_TO_BUILD=all -DLLVM_TABLEGEN=/tmp/Rel/bin/llvm-tblgen -DCLANG_TABLEGEN=/tmp/Rel/bin/clang-tblgen -DLLVM_ENABLE_PROJECTS='clang;lld'
 
 elif [[ $1 == custom* ]]; then
   #rm -fr /tmp/out/$1
