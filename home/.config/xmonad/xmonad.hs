@@ -373,7 +373,7 @@ myNav2DConf = def { defaultTiledNavigation = centerNavigation
                   , layoutNavigation = [("Full", centerNavigation)]
                   , unmappedWindowRect = [("Full", singleWindowRect)] }
 
-myTerminal = "wezterm"
+myTerminal = "ghostty"
 
 myKeys =
     let
@@ -474,7 +474,7 @@ myKeys =
 
     , ("<Print>", spawn "import -silent -quality 100 /tmp/screen.jpg")
     , ("C-<Print>", spawn "import -silent window root /tmp/screen.jpg")
-    , ("M-<Return>", spawn "wezterm" >> sendMessage (JumpToLayout "ResizableTall"))
+    , ("M-<Return>", spawn "ghost" >> sendMessage (JumpToLayout "ResizableTall"))
 
     , ("<XF86MonBrightnessUp>", spawn "change_backlight up")
     , ("<XF86MonBrightnessDown>", spawn "change_backlight down")
@@ -545,7 +545,7 @@ myKeys =
     searchBindings
 
 --alacritty prog = ("alacritty -t "++) . ((++) . head $ words prog) . (" -e '"++) . (prog++) $ "'"
-alacritty prog = "wezterm start " ++ prog
+alacritty prog = "ghostty -e " ++ prog
 
 scratchpads =
   map f ["alsamixer", "cmus", "htop", "ipython", "node", "pry", "ydcv"] ++
@@ -678,7 +678,7 @@ wsMail = "mail"
 myProjects :: [Project]
 myProjects =
   [ Project wsWeb "~" . Just $ spawn "chromium"
-  , Project wsGen "~" . Just $ spawn "wezterm start tmux new -As default"
+  , Project wsGen "~" . Just $ spawn "ghostty -e tmux new -As default"
   , Project wsIM "~" . Just $ spawn (alacritty "irc")
   , Project wsEmacs "~" . Just $ spawn "neovide"
 

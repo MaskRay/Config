@@ -150,7 +150,9 @@ require('lazy').setup({
     },
     {
       'saghen/blink.cmp',
-      dependencies = { 'fang2hou/blink-copilot' },
+      branch = 'main', -- V2 is not tagged yet; it lives on main
+      dependencies = {'saghen/blink.lib', 'fang2hou/blink-copilot'},
+      build = function() require('blink.cmp').build():pwait() end,
       opts = {
         sources = {
           default = { 'lsp', 'copilot' },
