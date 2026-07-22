@@ -1,43 +1,5 @@
 [Default Applications]
-; text/html=firefox-bin.desktop
-; application/xhtml+xml=firefox-bin.desktop
-; x-scheme-handler/http=firefox-bin.desktop
-; x-scheme-handler/https=firefox-bin.desktop
+x-scheme-handler/claude=com.anthropic.Claude.desktop
 
-; image
-image/jpeg=geeqie.desktop
-image/gif=geeqie.desktop
-image/png=geeqie.desktop
-
-; text
-; inode/x-empty=gvim.desktop
-; text/c=nvr.desktop
-; text/plain=nvr.desktop
-
-; html
-text/html=chromium.desktop
-application/xhtml+xml=chromium.desktop
-x-scheme-handler/http=chromium.desktop
-x-scheme-handler/https=chromium.desktop
-application/x-asp=chromium.desktop
-; text/html=firefox.desktop
-; application/xhtml+xml=firefox.desktop
-; x-scheme-handler/http=firefox.desktop
-; x-scheme-handler/https=firefox.desktop
-; application/x-asp=firefox.desktop
-
-; .pdf .ps
-application/pdf=zathura.desktop
-application/postscript=zathura.desktop
-
-; .doc .docx
-application/msword=wps-office-wps.desktop
-application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps-office-wps.desktop
-
-; .ppt .pptx
-application/vnd.ms-powerpoint=wps-office-wpp.desktop
-application/vnd.openxmlformats-officedocument.presentationml.presentation=wps-office-wpp.desktop
-
-; .epub
-application/epub+zip=ebook-viewer.desktop
-x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+[Added Associations]
+x-scheme-handler/claude=com.anthropic.Claude.desktop;

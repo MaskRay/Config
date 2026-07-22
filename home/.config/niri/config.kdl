@@ -1,0 +1,189 @@
+// Docs: https://yalter.github.io/niri/
+
+input {
+    keyboard {
+        // Matches your `xset r rate 200 50`
+        repeat-delay 200
+        repeat-rate 50
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+    // Your xmonad used focusFollowsMouse=False, so we do NOT enable
+    // focus-follows-mouse here (uncomment to enable):
+    // focus-follows-mouse
+}
+
+layout {
+    gaps 8
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+    default-column-width { proportion 0.5; }
+    focus-ring {
+        width 2
+        active-color "#3939ff"    // your xmonad focusedBorderColor
+        inactive-color "#000000"  // your xmonad normalBorderColor
+    }
+    // Make the per-column tab indicator clearly visible (default is very thin).
+    tab-indicator {
+        width 8
+        gap 4
+        position "left"
+        active-color "#3939ff"
+        inactive-color "#666666"
+    }
+}
+
+prefer-no-csd
+
+screenshot-path "/tmp/screenshot-%Y%m%d-%H%M%S.png"
+
+// Let X11-only apps (rofi, goldendict, pavucontrol, copyq) run under niri.
+// DISPLAY is set for a REAL TTY session; in a nested trial X apps may not
+// launch, but ghostty (native Wayland) will — which is the point of the test.
+environment {
+    DISPLAY ":0"
+    // Identify the desktop so xdg-desktop-portal picks niri-portals.conf and
+    // GTK/Chrome apps know their environment.
+    XDG_CURRENT_DESKTOP "niri"
+}
+
+spawn-at-startup "xwayland-satellite"
+spawn-at-startup "mako"
+spawn-at-startup "waybar"
+// fcitx5 as the Wayland input method (registers via input-method-v2 so
+// native-Wayland apps like Chrome get IME, not just GTK apps via D-Bus).
+spawn-at-startup "fcitx5"
+
+// Scratchpad holding workspace, pinned to the internal display so it never
+// pushes your main (HDMI) workspaces down or renumbers them.
+workspace "scratch" {
+    open-on-output "eDP-1"
+}
+
+// Persistent named workspaces (xmonad-style fixed tags). niri parses a bare
+// number as a dynamic per-monitor *index*, so fixed slots must be named, and
+// the names must be non-numeric (a "1" reference is read as index 1).
+workspace "w1" { open-on-output "HDMI-A-1"; }
+workspace "w2" { open-on-output "HDMI-A-1"; }
+workspace "w3" { open-on-output "HDMI-A-1"; }
+workspace "w4" { open-on-output "HDMI-A-1"; }
+workspace "w5" { open-on-output "HDMI-A-1"; }
+
+// Float scratchpad windows (app_id "scratch-*") and goldendict.
+window-rule {
+    match app-id="^scratch-"
+    match app-id="^goldendict$"
+    open-floating true
+    default-column-width { proportion 0.6; }
+}
+
+binds {
+    // --- launch ---
+    Mod+Return { spawn "ghostty"; }
+    Mod+D      { spawn "fuzzel"; }
+
+    // --- window ---
+    Mod+BackSpace { close-window; }          // your M-<Backspace> = kill
+    Mod+Shift+C   { close-window; }          // i3/sway-style alias
+    Mod+Q         { close-window; }          // extra alias
+    Mod+T         { toggle-window-floating; } // your M-t = toggleFloat
+
+    // --- focus (scrollable columns) ---
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-down; }
+    Mod+H     { focus-column-left; }
+    Mod+L     { focus-column-right; }
+    Mod+K     { focus-window-up; }
+    Mod+J     { focus-window-down; }
+
+    // --- move ---
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down; }
+
+    // --- column sizing / grouping (your IncMaster/Merge analogues) ---
+    Mod+R       { switch-preset-column-width; }
+    Mod+Minus   { set-column-width "-10%"; }
+    Mod+Equal   { set-column-width "+10%"; }
+    Mod+F       { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Comma   { move-workspace-to-monitor-left; }   // throw workspace to left monitor (xmonad-style)
+    Mod+Period  { move-workspace-to-monitor-right; }  // throw workspace to right monitor
+
+    // --- workspaces (u i o p [ -> w1..w5, by name) ---
+    Mod+U { focus-workspace "w1"; }
+    Mod+I { focus-workspace "w2"; }
+    Mod+O { focus-workspace "w3"; }
+    Mod+P { focus-workspace "w4"; }
+    Mod+BracketLeft { focus-workspace "w5"; }
+    Mod+Shift+U { move-column-to-workspace "w1"; }
+    Mod+Shift+I { move-column-to-workspace "w2"; }
+    Mod+Shift+O { move-column-to-workspace "w3"; }
+    Mod+Shift+P { move-column-to-workspace "w4"; }
+    Mod+Shift+BracketLeft { move-column-to-workspace "w5"; }
+    Mod+grave       { focus-workspace-down; }   // your M-` nextNonEmptyWS (approx)
+    Mod+Shift+grave { focus-workspace-up; }
+
+    // --- monitors (your M-n / w e r) ---
+    Mod+N       { focus-monitor-next; }
+    Mod+Shift+N { move-column-to-monitor-next; }
+
+    // --- media / brightness (1:1 port of your XF86 binds) ---
+    XF86MonBrightnessUp   { spawn "change_backlight" "up"; }
+    XF86MonBrightnessDown { spawn "change_backlight" "down"; }
+    XF86AudioRaiseVolume  { spawn "change_volume" "up"; }
+    XF86AudioLowerVolume  { spawn "change_volume" "down"; }
+    XF86AudioMute         { spawn "change_volume" "toggle"; }
+    XF86AudioNext         { spawn "cmus-remote" "-n"; }
+    XF86AudioPrev         { spawn "cmus-remote" "-r"; }
+    XF86AudioPlay         { spawn "cmus-remote" "-p"; }
+    XF86AudioPause        { spawn "cmus-remote" "-u"; }
+
+    // --- screenshots (your Print) ---
+    Print      { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Mod+Print  { screenshot-window; }
+
+    // --- directional move (h/j/k/l, mirrors focus; xmonad M-S-hjkl) ---
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+Shift+K { move-window-up; }
+    Mod+Shift+J { move-window-down; }
+
+    // --- consume/expel into column (xmonad M-C-h / M-C-l pullGroup) ---
+    Mod+Ctrl+H { consume-or-expel-window-left; }
+    Mod+Ctrl+L { consume-or-expel-window-right; }
+
+    // --- window focus/swap (xmonad M-' M-; M-" M-: , M-g, M-z m) ---
+    Mod+Apostrophe       { focus-column-right; }
+    Mod+Semicolon        { focus-column-left; }
+    Mod+Shift+Apostrophe { move-column-right; }
+    Mod+Shift+Semicolon  { move-column-left; }
+    Mod+G                { focus-column-right; }
+    Mod+M                { focus-column-first; }
+
+    // --- tabbed column (xmonad TABBED toggle / merged view) ---
+    Mod+Ctrl+T { toggle-column-tabbed-display; }
+
+    // --- power off monitors (xmonad XF86Display dpms standby) ---
+    Mod+Ctrl+BackSpace { power-off-monitors; }
+
+    // --- chord-prefix replacements via fuzzel menus (niri has no key chords) ---
+    Mod+S     { spawn "niri-scratch-menu"; }   // xmonad C-' scratchpads
+    Mod+Slash { spawn "niri-websearch"; }      // xmonad M-/ search engines
+    Mod+Y     { spawn "niri-menu"; }           // xmonad M-y commands
+    Mod+Tab   { spawn "niri-window-switch"; }  // window switcher (xmonad windowPrompt)
+    Mod+Ctrl+Return { spawn "niri-scratch" "scratch-term" "ghostty" "--class=scratch-term"; }  // dropdown terminal
+
+    // --- session ---
+    Mod+Shift+Q { quit; }
+}
