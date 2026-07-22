@@ -1,0 +1,16 @@
+# Ghostty reads $XDG_CONFIG_HOME/ghostty/config.ghostty; a file named `config`
+# is ignored.
+font-family = Adwaita Mono
+
+# CJK fallback. SC carries the whole pan-CJK repertoire.
+font-family = Source Han Sans SC
+
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+
+# Optional: uncomment to render slightly bolder if it still looks thin.
+# font-thicken = true
+
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
