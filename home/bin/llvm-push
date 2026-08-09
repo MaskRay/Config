@@ -1,5 +1,10 @@
 #!/bin/zsh
 setopt local_options no_case_match
+merge_opts=(--auto-merge)
+if [[ $1 == --now ]]; then
+  merge_opts=()
+  shift
+fi
 branch=$(git branch --show-current)
 if [[ $(git log -1 --pretty=%B) =~ 'WIP|DO NOT' ]]; then
   echo wip, dont push
@@ -8,6 +13,6 @@ fi
 
 cd ~/llvm
 git pull --rebase origin main || exit 1
-LLVM_GITHUB_TOKEN=$(gh auth token) python llvm/utils/git-llvm-push --upstream-remote origin --remote maskray --auto-merge
+LLVM_GITHUB_TOKEN=$(gh auth token) python llvm/utils/git-llvm-push --upstream-remote origin --remote maskray $merge_opts
 #git push origin HEAD:main && git fetch origin main:main && git switch main || exit 1
 #[[ $branch != main ]] && git branch -D $branch

@@ -156,15 +156,15 @@ for i in /data/out/debug/bin/*
   alias my(string split -r -m1 / $i)[2] $i
   alias rr(string split -r -m1 / $i)[2] "rr record $i"
 end
-alias myob=/tmp/Debug/bin/llvm-objdump
-alias mylit=/tmp/Debug/bin/llvm-lit
+alias myob=/data/out/debug/bin/llvm-objdump
+alias mylit=/data/out/debug/bin/llvm-lit
 alias rrob="rr record /tmp/Debug/bin/llvm-objdump"
 
 for i in /data/out/rel/bin/*
   alias f(string split -r -m1 / $i)[2] $i
 end
-alias fob=/tmp/Rel/bin/llvm-objdump
-alias flit=/tmp/Rel/bin/llvm-lit
+alias fob=/data/out/rel/bin/llvm-objdump
+alias flit=/data/out/rel/bin/llvm-lit
 
 alias fobj "fob --no-addresses --no-show-raw-insn -M intel --symbolize-operands"
 

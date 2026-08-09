@@ -43,9 +43,10 @@ prefer-no-csd
 
 screenshot-path "/tmp/screenshot-%Y%m%d-%H%M%S.png"
 
-// Let X11-only apps (rofi, goldendict, pavucontrol, copyq) run under niri.
-// DISPLAY is set for a REAL TTY session; in a nested trial X apps may not
-// launch, but ghostty (native Wayland) will — which is the point of the test.
+// X11-only apps need Xwayland, which niri spawns itself from the
+// xwayland-satellite package. That package is not a hard dep: if the binary is
+// missing niri only logs a WARN and silently disables X support. A single
+// satellite instance always lands on :0, so pin DISPLAY here.
 environment {
     DISPLAY ":0"
     // Identify the desktop so xdg-desktop-portal picks niri-portals.conf and
@@ -53,7 +54,6 @@ environment {
     XDG_CURRENT_DESKTOP "niri"
 }
 
-spawn-at-startup "xwayland-satellite"
 spawn-at-startup "mako"
 spawn-at-startup "waybar"
 // fcitx5 as the Wayland input method (registers via input-method-v2 so

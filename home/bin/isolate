@@ -16,6 +16,7 @@ args = %W[
   --ro-bind /sys /sys
   --bind /tmp /tmp
   --bind /run /run
+  --bind /data /data
   --setenv PROMPT_ENV_INDICATOR isolated
   --setenv ISOLATE_ENV #{pwd}
 ]

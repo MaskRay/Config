@@ -6,7 +6,7 @@ from ipdb import set_trace as bp
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-b', '--build', default='/tmp/Debug', help='build directory')
+    ap.add_argument('-b', '--build', default='/data/out/debug', help='build directory')
     ap.add_argument('-d', '--debug', type=int, default=-1, help='rr record the specified command')
     ap.add_argument('-r', '--run', type=int, default=-1, help='run the specified command')
     ap.add_argument('--release', action='store_true', help='use /tmp/Rel as the build directory')
