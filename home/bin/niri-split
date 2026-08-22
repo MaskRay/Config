@@ -1,0 +1,52 @@
+#!/bin/sh
+# niri-split [N|+N|-N] [left|right]
+# Split the screen between the focused column and one neighbour: the focused
+# column gets N% and the neighbour gets the rest, so the pair exactly fills the
+# workspace.
+#
+# niri's own set-column-width only touches the focused column. In a scrolling
+# layout that means growing a column pushes its neighbour off-screen instead of
+# shrinking it, so there is no built-in "split ratio". Resizing both sides in
+# one shot restores that behaviour.
+#
+# N without a sign is an absolute percentage; +N/-N adjust the current split.
+# The neighbour is the column to the left, or the one to the right when the
+# focused column is already leftmost.
+set -eu
+
+arg=${1:-50}
+dir=${2:-left}
+
+wins=$(niri msg --json windows)
+cur=$(niri msg --json workspaces | jq -r 'map(select(.is_focused))[0].id')
+
+# Collapse the workspace's tiled windows into one entry per column. Column
+# indices are 1-based and dense, so array order is left-to-right screen order.
+plan=$(printf '%s' "$wins" | jq -r \
+    --argjson ws "$cur" --arg arg "$arg" --arg dir "$dir" '
+    [ .[] | select(.workspace_id == $ws and .is_floating == false) ]
+    | group_by(.layout.pos_in_scrolling_layout[0])
+    | map({ id: .[0].id,
+            w:  .[0].layout.tile_size[0],
+            foc: any(.[]; .is_focused) }) as $c
+    | ($c | map(.foc) | index(true)) as $f
+    | if $f == null then empty else
+        # Fall back to the other side when the preferred neighbour is off the end.
+        (if $dir == "right" then $f + 1 else $f - 1 end) as $d
+        | (if $d < 0 then $f + 1 elif $d >= ($c | length) then $f - 1 else $d end) as $n
+        | (if $n < 0 or $n >= ($c | length) then null else $c[$n] end) as $nb
+        # The pair may not currently fill the screen (a maximized column
+        # overlaps its neighbours), so read the ratio from the pair itself and
+        # let the new percentages renormalise it to exactly 100%.
+        | (if $nb == null then 100
+           else ($c[$f].w * 100 / ($c[$f].w + $nb.w) | round) end) as $now
+        | (if ($arg | test("^[+-]")) then $now + ($arg | tonumber) else ($arg | tonumber) end
+           | if . < 10 then 10 elif . > 90 then 90 else . end) as $new
+        | "\($new) \($nb.id // "-") \(100 - $new)"
+      end')
+
+[ -n "$plan" ] || exit 0
+set -- $plan
+
+niri msg action set-column-width "$1%"
+[ "$2" = "-" ] || niri msg action set-window-width --id "$2" "$3%"

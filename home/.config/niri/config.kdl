@@ -112,8 +112,17 @@ binds {
 
     // --- column sizing / grouping (your IncMaster/Merge analogues) ---
     Mod+R       { switch-preset-column-width; }
-    Mod+Minus   { set-column-width "-10%"; }
-    Mod+Equal   { set-column-width "+10%"; }
+    // Split ratio with the neighbouring column. set-column-width only resizes
+    // the focused column, so in a scrolling layout growing one column pushes
+    // its neighbour off-screen instead of shrinking it; niri-split resizes both
+    // sides so the pair keeps filling the screen.
+    Mod+Minus     { spawn "niri-split" "-5"; }
+    Mod+Equal     { spawn "niri-split" "+5"; }
+    Mod+Backslash { spawn "niri-split" "50"; }  // back to an even two-pane split
+    // niri's raw one-sided resize, for widening a column past the screen edge.
+    Mod+Ctrl+Minus { set-column-width "-10%"; }
+    Mod+Ctrl+Equal { set-column-width "+10%"; }
+    // Toggle: fills the screen width and scrolls the neighbours out of view.
     Mod+F       { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
     Mod+Comma   { move-workspace-to-monitor-left; }   // throw workspace to left monitor (xmonad-style)

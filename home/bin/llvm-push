@@ -6,12 +6,11 @@ if [[ $1 == --now ]]; then
   shift
 fi
 branch=$(git branch --show-current)
-if [[ $(git log -1 --pretty=%B) =~ 'WIP|DO NOT' ]]; then
+if [[ $(git log -1 --pretty=%B) =~ 'WIP|DO NOT|Claude-Session:' ]]; then
   echo wip, dont push
   exit 1
 fi
 
-cd ~/llvm
 git pull --rebase origin main || exit 1
 LLVM_GITHUB_TOKEN=$(gh auth token) python llvm/utils/git-llvm-push --upstream-remote origin --remote maskray $merge_opts
 #git push origin HEAD:main && git fetch origin main:main && git switch main || exit 1
