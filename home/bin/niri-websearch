@@ -1,0 +1,29 @@
+#!/bin/sh
+# Pick a search engine, type a query, open it in Chrome.
+# Replaces xmonad's M-/ <key> search-engine chords.
+set -eu
+
+engines='g|https://www.google.com/search?q=
+h|https://hoogle.haskell.org/?hoogle=
+w|https://en.wikipedia.org/wiki/Special:Search?search=
+d|https://duckduckgo.com/?q=
+gh|https://github.com/search?q=
+s|https://scholar.google.com/scholar?q=
+img|https://www.google.com/search?tbm=isch&q=
+def|https://www.google.com/search?q=define:
+math|https://mathworld.wolfram.com/search/?query=
+alpha|https://www.wolframalpha.com/input/?i=
+ud|https://www.urbandictionary.com/define.php?term=
+acm|https://dl.acm.org/action/doSearch?AllField='
+
+key=$(printf '%s\n' "$engines" | cut -d'|' -f1 | fuzzel --dmenu --prompt 'engine> ') || exit 0
+[ -n "$key" ] || exit 0
+
+url=$(printf '%s\n' "$engines" | grep -m1 "^$key|" | cut -d'|' -f2-)
+[ -n "$url" ] || exit 0
+
+query=$(: | fuzzel --dmenu --prompt "$key> ") || exit 0
+[ -n "$query" ] || exit 0
+
+enc=$(printf '%s' "$query" | jq -sRr @uri)
+exec chrome --ozone-platform=wayland "$url$enc"

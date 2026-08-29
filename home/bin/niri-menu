@@ -1,0 +1,24 @@
+#!/bin/sh
+# fuzzel command menu (replaces xmonad's M-y <key> chords).
+set -eu
+
+choice=$(printf '%s\n' run windows pavucontrol documents papers tmp emoji \
+    | fuzzel --dmenu --prompt 'menu> ') || exit 0
+
+case "$choice" in
+    run)         exec fuzzel ;;
+    windows)     exec niri-window-switch ;;
+    pavucontrol) exec pavucontrol ;;
+    documents)   exec niri-filebrowse "$HOME/Documents" ;;
+    papers)      exec niri-filebrowse "$HOME/Papers" ;;
+    tmp)         exec niri-filebrowse /tmp ;;
+    emoji)
+        # best-effort: rofimoji with a wayland selector if available
+        if command -v rofimoji >/dev/null; then
+            exec rofimoji --selector fuzzel --action copy
+        else
+            notify-send "niri-menu" "rofimoji not installed" 2>/dev/null || true
+        fi
+        ;;
+    *) exit 0 ;;
+esac

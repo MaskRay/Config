@@ -1,0 +1,11 @@
+#!/bin/sh
+# Fuzzy-pick a file/dir under DIR and open it. Wayland replacement for the
+# rofi-file-browser bindings (M-y d/p/t).
+set -eu
+
+dir=${1:-$HOME}
+sel=$(cd "$dir" 2>/dev/null && fd --hidden --follow --exclude .git . \
+    | fuzzel --dmenu --prompt "$(basename "$dir")> ") || exit 0
+[ -n "$sel" ] || exit 0
+
+exec xdg-open "$dir/$sel"

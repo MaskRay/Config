@@ -1,0 +1,39 @@
+#!/bin/sh
+# niri-scratch <app-id> [spawn command...]
+# Emulate an xmonad namedScratchpad under niri.
+# Matches a window by its Wayland app_id:
+#   - not running        -> spawn it (a window-rule floats "scratch-*" apps)
+#   - visible & focused   -> hide it (park on the "scratch" workspace)
+#   - hidden / unfocused  -> summon to the current workspace, floating, focused
+set -eu
+
+appid=$1
+shift
+
+wins=$(niri msg --json windows)
+sel=$(printf '%s' "$wins" | jq -c --arg a "$appid" 'map(select(.app_id==$a))[0] // empty')
+
+if [ -z "$sel" ]; then
+    exec niri msg action spawn -- "$@"
+fi
+
+id=$(printf '%s' "$sel" | jq -r '.id')
+foc=$(printf '%s' "$sel" | jq -r '.is_focused')
+winws=$(printf '%s' "$sel" | jq -r '.workspace_id')
+
+ws=$(niri msg --json workspaces)
+curid=$(printf '%s' "$ws" | jq -r 'map(select(.is_focused))[0].id')
+curname=$(printf '%s' "$ws" | jq -r 'map(select(.is_focused))[0].name // empty')
+
+if [ "$foc" = "true" ] && [ "$winws" = "$curid" ]; then
+    # Visible and focused -> hide.
+    niri msg action move-window-to-workspace --window-id "$id" --focus false "scratch"
+else
+    # Summon: float, pull to the current workspace, focus.
+    # Reference the current workspace by name if it has one, else by index.
+    ref=$curname
+    [ -z "$ref" ] && ref=$(printf '%s' "$ws" | jq -r 'map(select(.is_focused))[0].idx')
+    niri msg action move-window-to-floating --id "$id" 2>/dev/null || true
+    niri msg action move-window-to-workspace --window-id "$id" --focus true "$ref"
+    niri msg action focus-window --id "$id"
+fi

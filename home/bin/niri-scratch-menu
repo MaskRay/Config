@@ -1,0 +1,18 @@
+#!/bin/sh
+# fuzzel menu of scratchpads -> niri-scratch (replaces xmonad C-' <key> chords).
+set -eu
+
+choice=$(printf '%s\n' cmus htop alsamixer ipython node ydcv ghci goldendict \
+    | fuzzel --dmenu --prompt 'scratch> ') || exit 0
+
+case "$choice" in
+    cmus)       niri-scratch scratch-cmus       ghostty --class=scratch-cmus      -e cmus ;;
+    htop)       niri-scratch scratch-htop       ghostty --class=scratch-htop      -e htop ;;
+    alsamixer)  niri-scratch scratch-alsamixer  ghostty --class=scratch-alsamixer -e alsamixer ;;
+    ipython)    niri-scratch scratch-ipython    ghostty --class=scratch-ipython   -e ipython ;;
+    node)       niri-scratch scratch-node       ghostty --class=scratch-node      -e node ;;
+    ydcv)       niri-scratch scratch-ydcv       ghostty --class=scratch-ydcv      -e ydcv ;;
+    ghci)       niri-scratch scratch-ghci       ghostty --class=scratch-ghci      -e zsh -ic 'stack ghci || ghci' ;;
+    goldendict) niri-scratch goldendict         goldendict ;;
+    *) exit 0 ;;
+esac

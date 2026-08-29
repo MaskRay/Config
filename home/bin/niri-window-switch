@@ -1,0 +1,14 @@
+#!/bin/sh
+# Fuzzel window switcher -> focus the chosen window.
+# Replaces xmonad's windowPrompt / focus prompts.
+set -eu
+
+line=$(niri msg --json windows \
+    | jq -r '.[] | "\(.id)) \(.app_id // "?"): \(.title // "")"' \
+    | fuzzel --dmenu --prompt 'window> ') || exit 0
+[ -n "$line" ] || exit 0
+
+id=$(printf '%s' "$line" | sed 's/).*//')
+[ -n "$id" ] || exit 0
+
+exec niri msg action focus-window --id "$id"

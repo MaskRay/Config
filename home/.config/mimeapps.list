@@ -1,5 +1,10 @@
 [Default Applications]
 x-scheme-handler/claude=com.anthropic.Claude.desktop
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
 
 [Added Associations]
 x-scheme-handler/claude=com.anthropic.Claude.desktop;
