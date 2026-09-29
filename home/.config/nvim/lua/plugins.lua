@@ -218,7 +218,23 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+local ccls_root_markers = {'compile_commands.json', 'compile_flags.txt', '.ccls', '.git'}
 vim.lsp.config('ccls', {
+  -- A CMake build directory contains compile_commands.json and would become a
+  -- separate root with its own huge .ccls-cache. Map it to the source tree's
+  -- root instead so the existing client is reused; skip if none is found.
+  root_dir = function(bufnr, on_dir)
+    local root = vim.fs.root(bufnr, ccls_root_markers)
+    if not root then return end
+    local f = io.open(root .. '/CMakeCache.txt')
+    if f then
+      local src = f:read('*a'):match('\nCMAKE_HOME_DIRECTORY:INTERNAL=([^\n]*)')
+      f:close()
+      root = src and vim.fs.root(src, ccls_root_markers)
+      if not root or vim.uv.fs_stat(root .. '/CMakeCache.txt') then return end
+    end
+    on_dir(root)
+  end,
   init_options = {
     index = {
       threads = 0,
