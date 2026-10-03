@@ -22,6 +22,7 @@ args = %W[
 ]
 
 ro = %W[/usr /etc
+  #{home}/.ssh
   #{home}/Compiler
   #{home}/Config
   #{home}/Stable

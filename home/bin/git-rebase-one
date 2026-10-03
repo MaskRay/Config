@@ -1,0 +1,7 @@
+#!/bin/zsh
+# Rebase the tip commit of branch $2 onto branch $1, dropping the rest of $2's history.
+if (( $# < 2 )); then
+  echo "usage: git-rebase-one <onto> <branch>" >&2
+  exit 1
+fi
+git rebase --onto "$1" "$2~1" "$2" "${@:3}"

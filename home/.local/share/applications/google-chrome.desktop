@@ -111,7 +111,6 @@ Terminal=false
 Icon=google-chrome
 Type=Application
 Categories=Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
 X-Ayatana-Desktop-Shortcuts=NewWindow;NewIncognito
 
 [NewWindow Shortcut Group]
@@ -222,3 +221,4 @@ Name[zh_TW]=新增無痕式視窗
 StartupWMClass=google-chrome
 Exec=chrome
 TargetEnvironment=Unity
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml_xml;image/webp;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
