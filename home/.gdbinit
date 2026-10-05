@@ -120,6 +120,11 @@ SkipFrames("dsk", "down", gdb.COMMAND_STACK)
 SkipFrames("fsk", "finish", gdb.COMMAND_RUNNING)
 end
 
+define regname
+  set $mri = (const llvm::MCRegisterInfo *)TRI
+  printf "%d = %s\n", $arg0, $mri->RegStrings + $mri->Desc[$arg0].Name
+end
+
 #
 # C++ related beautifiers (optional)
 #
