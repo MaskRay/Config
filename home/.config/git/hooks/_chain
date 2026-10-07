@@ -1,0 +1,13 @@
+#!/bin/sh
+# Give a repository its own hook back.
+#
+# core.hooksPath replaces .git/hooks wholesale rather than adding to it, so
+# every hook name this directory does not define stops firing anywhere on the
+# machine.  Symlinking those names here to this script restores them: the
+# hook's own name comes from $0, and the repository's copy is exec'd with the
+# arguments and stdin git supplied.
+
+common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || common_dir=.git
+hook="$common_dir/hooks/$(basename "$0")"
+[ -x "$hook" ] && exec "$hook" "$@"
+exit 0

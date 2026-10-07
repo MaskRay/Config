@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""Rewrap the prose of a git commit message to 72 columns.
+
+The subject line, comment lines, fenced and indented code blocks, table
+rows, and the closing trailer paragraph are copied through byte for byte.
+Everything else is reflowed as a paragraph, a list item or a quoted run.
+
+A block is only reflowed when one of its lines actually overruns the
+limit; a block that already fits is emitted verbatim.  That keeps
+deliberate short-line layout intact and makes a second pass over an
+already-wrapped message a no-op.
+"""
+
+import re
+import sys
+import textwrap
+
+WIDTH = 72
+
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+SCISSORS = re.compile(r"^#\s*-+\s*>8\s*-+\s*$")
+BULLET = re.compile(r"^( {0,3})([-*+]|\d{1,9}[.)])( +)(.*)$")
+QUOTE = re.compile(r"^( {0,3}>+ ?)(.*)$")
+TRAILER = re.compile(r"^[A-Za-z][A-Za-z0-9-]*:(?: |$)")
+TABLE = re.compile(r"^ {0,3}\|")
+HARD_BREAK = re.compile(r"(?:  +|\\)$")
+
+
+def opaque(line):
+    """True for lines whose own layout is the content."""
+    return (
+        not line.strip()
+        or line.startswith("#")
+        or line.startswith("\t")
+        or line.startswith("    ")
+        or bool(TABLE.match(line))
+    )
+
+
+def trailer_start(lines):
+    """Index of the closing trailer paragraph, or len(lines) if there is none."""
+    end = len(lines)
+    while end and not lines[end - 1].strip():
+        end -= 1
+    start = end
+    while start and lines[start - 1].strip():
+        start -= 1
+    if start == 0 or start == end:
+        return len(lines)
+    if all(TRAILER.match(l) or l[:1].isspace() for l in lines[start:end]):
+        return start
+    return len(lines)
+
+
+def parse(body, trailers_at):
+    """Split the message body into verbatim runs and reflowable units."""
+    blocks = []
+
+    def keep(line):
+        if blocks and blocks[-1][0] == "verbatim":
+            blocks[-1][1].append(line)
+        else:
+            blocks.append(("verbatim", [line]))
+
+    fence = None
+    i = 0
+    while i < len(body):
+        line = body[i]
+        i += 1
+
+        if fence is not None:
+            keep(line)
+            m = FENCE.match(line)
+            if (
+                m
+                and m.group(1)[0] == fence[0]
+                and len(m.group(1)) >= len(fence)
+                and not m.group(2).strip()
+            ):
+                fence = None
+            continue
+
+        m = FENCE.match(line)
+        if m:
+            fence = m.group(1)
+            keep(line)
+            continue
+
+        if i == 1 or i > trailers_at or opaque(line):
+            keep(line)
+            continue
+
+        quote = QUOTE.match(line)
+        bullet = BULLET.match(line)
+        if quote:
+            head = quote.group(1) if quote.group(1).endswith(" ") else quote.group(1) + " "
+            cont = head
+            text = [quote.group(2).strip()]
+        elif bullet:
+            head = bullet.group(1) + bullet.group(2) + bullet.group(3)
+            cont = " " * len(head)
+            text = [bullet.group(4).strip()]
+        else:
+            head = cont = ""
+            text = [line.strip()]
+
+        raw = [line]
+        while i < len(body) and not HARD_BREAK.search(raw[-1]):
+            nxt = body[i]
+            if i >= trailers_at or opaque(nxt) or FENCE.match(nxt) or BULLET.match(nxt):
+                break
+            nq = QUOTE.match(nxt)
+            if bool(nq) != bool(quote):
+                break
+            text.append((nq.group(2) if nq else nxt).strip())
+            raw.append(nxt)
+            i += 1
+
+        blocks.append(("flow", head, cont, text, raw))
+
+    return blocks
+
+
+def rewrap(message):
+    lines = message.split("\n")
+
+    # `git commit -v` and --cleanup=scissors park the diff and the "everything
+    # below is ignored" banner behind a scissors line; that region is not ours.
+    cut = len(lines)
+    for i, line in enumerate(lines):
+        if SCISSORS.match(line):
+            cut = i
+            break
+    body, tail = lines[:cut], lines[cut:]
+
+    out = []
+    for block in parse(body, trailer_start(body)):
+        if block[0] == "verbatim":
+            out.extend(block[1])
+            continue
+        _, head, cont, text, raw = block
+        if max(len(l) for l in raw) <= WIDTH:
+            out.extend(raw)
+            continue
+        out.extend(
+            textwrap.wrap(
+                " ".join(t for t in text if t),
+                width=WIDTH,
+                initial_indent=head,
+                subsequent_indent=cont,
+                break_long_words=False,
+                break_on_hyphens=False,
+            )
+            or raw
+        )
+
+    return "\n".join(out + tail)
+
+
+def main(argv):
+    if len(argv) < 2:
+        return 0
+    path = argv[1]
+    with open(path, encoding="utf-8", errors="surrogateescape") as f:
+        original = f.read()
+    wrapped = rewrap(original)
+    if wrapped != original:
+        with open(path, "w", encoding="utf-8", errors="surrogateescape") as f:
+            f.write(wrapped)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

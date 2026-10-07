@@ -1,0 +1,17 @@
+#!/bin/sh
+# Rewrap the message Claude Code wrote, then hand control to the hook the
+# repository installs for itself.
+#
+# The rewrap is skipped outside Claude Code so hand-written messages keep
+# whatever shape they were typed in.  CLAUDECODE is exported into every
+# command Claude Code runs, including this hook's git process.
+
+dir=$(dirname "$0")
+
+if [ -n "$CLAUDECODE" ]; then
+  "$dir/_wrap-commit-msg" "$1" || :
+fi
+
+common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || common_dir=.git
+[ -x "$common_dir/hooks/commit-msg" ] && exec "$common_dir/hooks/commit-msg" "$@"
+exit 0
