@@ -197,6 +197,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
       vim.lsp.codelens.enable(false, { bufnr = ev.buf })
     end
 
+    if client:supports_method('textDocument/inlayHint') then
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+      nmap('<space>lh', function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+      end, 'Toggle inlay hints')
+    end
+
     if client.supports_method 'textDocument/documentHighlight' then
       vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
         group = vim.api.nvim_create_augroup('lsp_word_' .. bufnr, {clear = true}),

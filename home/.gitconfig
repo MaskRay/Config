@@ -124,7 +124,6 @@
   insteadOf = gh:
 [core]
 	quotePath = false
-	fsmonitor = true
 	hooksPath = ~/.config/git/hooks
 [http]
         #proxy = http://192.168.8.2:3128
