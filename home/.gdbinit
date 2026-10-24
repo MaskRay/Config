@@ -135,7 +135,7 @@ set print static-members off
 
 python
 import os
-prettyprinter_path = os.path.expanduser("~/llvm/llvm/utils/gdb-scripts/prettyprinters.py")
+prettyprinter_path = "/data/llvm/llvm/utils/gdb-scripts/prettyprinters.py"
 if os.path.exists(prettyprinter_path):
     gdb.execute(f"source {prettyprinter_path}")
 end

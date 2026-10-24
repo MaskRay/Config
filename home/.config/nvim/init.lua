@@ -313,13 +313,54 @@ end
 -- <leader>l (lsp)
 nmap('<leader>lr', [[:%s/\<<C-r><C-w>\>//g<Left><Left>]], 'Rename')
 -- <leader>o (overseer)
-nmap('<leader>ow', '<cmd>OverseerToggle<cr>')
-nmap('<leader>oo', '<cmd>OverseerRun<cr>')
-nmap('<leader>oq', '<cmd>OverseerQuickAction<cr>')
-nmap('<leader>oi', '<cmd>OverseerInfo<cr>')
-nmap('<leader>ob', '<cmd>OverseerBuild<cr>')
-nmap('<leader>ot', '<cmd>OverseerTaskAction<cr>')
-nmap('<leader>oc', '<cmd>OverseerClearCache<cr>')
+-- :Run <shell cmd> is :OverseerShell plus quickfix; %, %:p etc. are expanded.
+local function run(cmd)
+  require'overseer'.new_task({
+    cmd = vim.fn.expandcmd(cmd),
+    components = {{'on_output_quickfix', open_on_exit = 'failure',
+      errorformat = '%f:%l:%c: %trror: %m,%f:%l:%c: %tarning: %m,%f:%l:%c: %m'},
+      -- 'default' minus on_complete_dispose, so run_last always has a task; unique replaces the previous run of the same command.
+      'on_exit_set_status', 'on_complete_notify', 'unique'},
+  }):start()
+end
+vim.api.nvim_create_user_command('Run', function(a) run(a.args) end, {nargs = '+', complete = 'shellcmdline'})
+-- Saved commands, one per line ('#' starts a comment). Re-read on every pick, so edits apply without reloading.
+local run_commands = vim.fn.stdpath('config')..'/run-commands'
+local function run_pick()
+  local cmds = vim.tbl_filter(function(l) return l:match('%S') and not l:match('^%s*#') end,
+    vim.fn.filereadable(run_commands) == 1 and vim.fn.readfile(run_commands) or {})
+  if #cmds == 0 then vim.notify('No commands in '..run_commands, vim.log.levels.WARN) return end
+  vim.ui.select(cmds, {prompt = 'Run'}, function(c)
+    if c then vim.fn.histadd('cmd', 'Run '..c) run(c) end
+  end)
+end
+-- Jump to the first error (type set by %t above), else the first valid entry.
+local function qf_first_error()
+  local first
+  for i, e in ipairs(vim.fn.getqflist()) do
+    if e.valid == 1 then
+      first = first or i
+      if e.type:lower() == 'e' then first = i break end
+    end
+  end
+  if first then vim.cmd.cc(first) else vim.notify('No errors', vim.log.levels.WARN) end
+end
+local function run_last()
+  local overseer = require'overseer'
+  local tasks = overseer.list_tasks({
+    status = {overseer.STATUS.SUCCESS, overseer.STATUS.FAILURE, overseer.STATUS.CANCELED},
+    sort = require'overseer.task_list'.sort_finished_recently,
+  })
+  if tasks[1] then overseer.run_action(tasks[1], 'restart') else vim.notify('No finished task', vim.log.levels.WARN) end
+end
+nmap('<leader>oo', ':Run ', 'Run command')
+nmap('<leader>or', run_last, 'Rerun last task')
+nmap('<leader>op', run_pick, 'Run saved command')
+nmap('<leader>oP', function() vim.cmd.edit(run_commands) end, 'Edit saved commands')
+nmap('<leader>oe', qf_first_error, 'First error')
+nmap('<leader>ow', '<cmd>OverseerToggle<cr>', 'Task list')
+nmap('<leader>oa', '<cmd>OverseerTaskAction<cr>', 'Task action')
+nmap('<leader>ot', '<cmd>OverseerRun<cr>', 'Run template')
 -- <leader>p (project)
 nmap('<leader>pf', '<cmd>lua require("pathogen").find_files({search_dirs={MyProject()}})<cr>', {silent=true, desc='Find file in project'})
 -- <leader>q (quit)
