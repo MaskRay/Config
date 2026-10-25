@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+# Fast-forward each /data/llvm* worktree whose branch is main* to origin/main,
+# skipping a worktree while a process (build, gdb, test, ...) uses it or one of
+# its build directories. Then run cleanup-merged.
+require 'open3'
+
+WORKTREES = %w[/data/llvm /data/llvm2 /data/llvm3 /data/llvm4]
+BUILD_GLOBS = %w[/data/out/*/CMakeCache.txt /tmp/out/*/CMakeCache.txt]
+SHELLS = %w[zsh bash sh dash fish]
+# Neither these nor their non-shell descendants (MCP servers, LSP servers) block
+# a sync. A build run from one of them goes through a shell and still blocks.
+HOSTS = %w[nvim v ccls claude bwrap]
+TARGET = 'origin/main'
+
+def git(dir, *args)
+  out, err, st = Open3.capture3('git', '-C', dir, *args)
+  [out.strip, err.strip, st.success?]
+end
+
+# Map each worktree to itself plus the build directories configured from it.
+roots = WORKTREES.to_h { |wt| [wt, [wt]] }
+BUILD_GLOBS.flat_map { |g| Dir.glob(g) }.each do |cache|
+  src = File.read(cache)[/^CMAKE_HOME_DIRECTORY:\w+=(.*)/, 1]
+  wt = src && WORKTREES.find { |w| src.start_with?(w + '/') }
+  roots[wt] << File.dirname(cache) if wt
+end
+
+info = Dir.glob('/proc/[0-9]*').filter_map do |dir|
+  st = File.read("#{dir}/status")
+  [File.basename(dir).to_i, [st[/^Name:\s+(.*)/, 1], st[/^PPid:\s+(\d+)/, 1].to_i]]
+rescue SystemCallError
+  nil
+end.to_h
+
+# The script's own process and its ancestors (the invoking shell, tmux, ...).
+ancestors = [Process.pid]
+pid = Process.ppid
+while (_, ppid = info[pid])
+  ancestors << pid
+  pid = ppid
+end
+
+ignored = lambda do |pid|
+  return true if ancestors.include?(pid) || SHELLS.include?(info[pid][0])
+  while (comm, ppid = info[pid])
+    return true if HOSTS.include?(comm)
+    return false if SHELLS.include?(comm)
+    pid = ppid
+  end
+  false
+end
+
+procs = info.filter_map do |pid, (comm, _)|
+  next if ignored.(pid)
+  dir = "/proc/#{pid}"
+  args = File.read("#{dir}/cmdline").split("\0")
+  paths = [File.readlink("#{dir}/cwd"), (File.readlink("#{dir}/exe") rescue nil)].compact
+  { pid: pid, comm: comm, args: args, strs: paths + args }
+rescue SystemCallError
+  nil
+end
+
+_, err, ok = git(WORKTREES.first, 'fetch', '-q', 'origin', 'main')
+warn "git fetch failed, using the existing #{TARGET}: #{err}" unless ok
+
+WORKTREES.each do |wt|
+  next unless File.exist?("#{wt}/.git")
+  branch, = git(wt, 'symbolic-ref', '--short', '-q', 'HEAD')
+  unless branch.start_with?('main')
+    puts "#{wt}: on #{branch.empty? ? 'detached HEAD' : branch}, skipped"
+    next
+  end
+
+  re = /(?:#{roots[wt].map { Regexp.escape(_1) }.join('|')})(?=[\/:\s]|\z)/
+  busy = procs.select { |p| p[:strs].any? { re.match?(_1) } }
+  unless busy.empty?
+    puts "#{wt} [#{branch}]: in use, skipped"
+    busy.each { |p| puts "  #{p[:pid]} #{p[:comm]}: #{p[:args].join(' ')[0, 160]}" }
+    next
+  end
+
+  old, = git(wt, 'rev-parse', '--short=12', 'HEAD')
+  _, err, ok = git(wt, 'merge', '--ff-only', '-q', TARGET)
+  new, = git(wt, 'rev-parse', '--short=12', 'HEAD')
+  if !ok
+    puts "#{wt} [#{branch}]: fast-forward failed at #{old}: #{err}"
+  elsif old == new
+    puts "#{wt} [#{branch}]: #{old} (up to date)"
+  else
+    puts "#{wt} [#{branch}]: #{old} -> #{new}"
+  end
+end
+
+puts
+system('cleanup-merged', chdir: WORKTREES.first)
